@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Trade — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; }
+
+    /* ── Stock selector header ── */
+    .stock-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px;
+      background:var(--color-bg-card);
+      border-bottom:1px solid var(--color-border);
+    }
+    .selector-pill {
+      display:flex; align-items:center; gap:8px;
+      background:var(--color-bg-input);
+      border:1px solid var(--color-border);
+      border-radius:10px; padding:8px 12px;
+      cursor:pointer; min-width:150px;
+    }
+    .sel-symbol { font-size:14px; font-weight:700; }
+    .sel-dot { width:3px; height:3px; border-radius:50%; background:var(--color-text-disabled); }
+    .sel-name  { font-size:11px; color:var(--color-text-secondary); }
+
+    .price-info { text-align:right; }
+    .price-big { font-size:18px; font-weight:800; font-family:'JetBrains Mono',monospace; }
+    .price-date { font-size:10px; color:var(--color-text-disabled); margin-top:1px; }
+    .price-change { font-size:11px; font-weight:600; margin-top:1px; }
+    .price-change.up   { color:var(--color-buy); }
+    .price-change.down { color:var(--color-sell); }
+
+    /* Action icons row */
+    .header-icons { display:flex; gap:8px; margin-left:8px; }
+    .icon-sq {
+      width:32px; height:32px; border-radius:9px;
+      background:var(--color-bg-input); border:none; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--color-text-secondary);
+    }
+    .icon-sq.star-active { color:#f59e0b; background:rgba(245,158,11,0.12); }
+    .icon-sq svg { width:15px; height:15px; }
+
+    /* ── Content tabs ── */
+    .content-tabs {
+      display:flex; background:var(--color-bg-card);
+      border-bottom:1px solid var(--color-border);
+      padding:0 16px;
+    }
+    .ct-tab {
+      padding:12px 14px; font-size:14px; font-weight:600;
+      color:var(--color-text-disabled); border:none; background:transparent;
+      cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+      transition:all 0.15s ease;
+    }
+    .ct-tab.active { color:var(--color-primary); border-bottom-color:var(--color-primary); }
+
+    /* ── Order book ── */
+    .orderbook-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:8px; padding:12px 16px;
+    }
+    .ob-panel {
+      background:var(--color-bg-card);
+      border:1px solid var(--color-border);
+      border-radius:12px; overflow:hidden;
+    }
+    .ob-header {
+      display:grid; grid-template-columns:1fr 1fr 1fr;
+      padding:8px 10px;
+      border-bottom:1px solid var(--color-border);
+    }
+    .ob-header span { font-size:10px; font-weight:700; color:var(--color-text-disabled); text-transform:uppercase; }
+    .ob-header span:nth-child(2) { text-align:center; color:var(--color-buy); }
+    .ob-header span:nth-child(3) { text-align:right; color:var(--color-sell); }
+
+    .ob-row {
+      display:grid; grid-template-columns:1fr 1fr 1fr;
+      padding:5px 10px;
+      border-bottom:1px solid rgba(255,255,255,0.03);
+      position:relative; cursor:pointer;
+    }
+    .ob-row:last-child { border-bottom:none; }
+    .ob-row:hover { background:rgba(255,255,255,0.03); }
+
+    /* Depth bar */
+    .ob-row-depth-buy {
+      position:absolute; left:0; top:0; bottom:0;
+      background:rgba(0,192,118,0.07);
+      pointer-events:none; border-radius:0;
+    }
+    .ob-row-depth-sell {
+      position:absolute; right:0; top:0; bottom:0;
+      background:rgba(239,68,68,0.07);
+      pointer-events:none; border-radius:0;
+    }
+
+    .ob-qty   { font-size:11px; color:var(--color-text-secondary); font-family:'JetBrains Mono',monospace; }
+    .ob-price-buy  { font-size:11px; font-weight:600; color:var(--color-buy); text-align:center; font-family:'JetBrains Mono',monospace; }
+    .ob-price-sell { font-size:11px; font-weight:600; color:var(--color-sell); text-align:center; font-family:'JetBrains Mono',monospace; }
+    .ob-qty-right  { font-size:11px; color:var(--color-text-secondary); text-align:right; font-family:'JetBrains Mono',monospace; }
+
+    /* Executed orders panel */
+    .exec-panel {
+      margin:0 16px; background:var(--color-bg-card);
+      border:1px solid var(--color-border); border-radius:12px; overflow:hidden;
+    }
+    .exec-header {
+      padding:10px 12px; border-bottom:1px solid var(--color-border);
+      font-size:12px; font-weight:700; color:var(--color-text-secondary);
+    }
+    .exec-cols {
+      display:grid; grid-template-columns:1fr 1fr 1fr;
+      padding:7px 12px;
+      border-bottom:1px solid var(--color-border);
+    }
+    .exec-cols span { font-size:10px; color:var(--color-text-disabled); font-weight:600; }
+    .exec-cols span:last-child { text-align:right; }
+    .exec-empty { padding:14px 12px; text-align:center; font-size:11px; color:var(--color-text-disabled); }
+
+    /* ── Trade form ── */
+    .trade-form {
+      padding:12px 16px;
+      display:flex; flex-direction:column; gap:10px;
+    }
+
+    /* Order type + Buy/Sell row */
+    .form-row { display:flex; gap:8px; }
+
+    .type-select {
+      flex:1; display:flex; align-items:center; justify-content:space-between;
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:10px; padding:10px 12px;
+      font-size:13px; font-weight:600; cursor:pointer;
+    }
+    .type-select svg { width:16px; height:16px; color:var(--color-text-disabled); }
+
+    .buy-sell-toggle {
+      display:flex; flex:1; background:var(--color-bg-card);
+      border:1px solid var(--color-border); border-radius:10px; overflow:hidden;
+    }
+    .bst-btn {
+      flex:1; padding:10px;
+      font-size:13px; font-weight:700;
+      border:none; cursor:pointer;
+      transition:all 0.15s ease;
+      background:transparent; color:var(--color-text-disabled);
+    }
+    .bst-btn.active-buy  { background:var(--color-buy);  color:#fff; }
+    .bst-btn.active-sell { background:var(--color-sell); color:#fff; }
+
+    /* GTC selector */
+    .gtc-select {
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:10px; padding:10px 14px;
+      font-size:13px; font-weight:500; cursor:pointer;
+    }
+    .gtc-select svg { width:16px; height:16px; color:var(--color-text-disabled); }
+
+    /* Balance row */
+    .balance-row {
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:12px;
+    }
+    .bal-label { color:var(--color-text-disabled); }
+    .bal-value { font-family:'JetBrains Mono',monospace; font-weight:600; color:var(--color-text-primary); }
+    .bal-link  { color:var(--color-link); font-size:11px; cursor:pointer; }
+
+    /* Number inputs */
+    .num-input {
+      width:100%; background:var(--color-bg-card);
+      border:1px solid var(--color-border); border-radius:10px;
+      padding:12px 14px;
+      font-size:15px; font-weight:600; font-family:'JetBrains Mono',monospace;
+      color:var(--color-text-primary); outline:none;
+    }
+    .num-input::placeholder { color:var(--color-text-disabled); font-size:13px; font-weight:400; }
+    .num-input:focus { border-color:var(--color-primary); }
+
+    /* Price +/- row */
+    .price-row { display:flex; gap:6px; align-items:center; }
+    .pm-btn {
+      width:44px; height:44px; border-radius:10px;
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      font-size:20px; font-weight:700; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--color-text-primary); flex-shrink:0;
+      transition:background 0.1s ease;
+    }
+    .pm-btn:hover { background:var(--color-bg-input); }
+    .price-row .num-input { text-align:center; }
+
+    /* Step row */
+    .step-row {
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:11px; color:var(--color-text-disabled);
+    }
+    .step-btn {
+      font-size:11px; font-weight:600; color:var(--color-primary);
+      background:none; border:none; cursor:pointer; padding:0;
+    }
+
+    /* Submit */
+    .submit-btn {
+      width:100%; padding:14px;
+      border-radius:12px; border:none; cursor:pointer;
+      font-size:15px; font-weight:800;
+      color:#fff; transition:opacity 0.15s ease;
+    }
+    .submit-btn:hover { opacity:0.88; }
+    .submit-btn.buy-btn  { background:linear-gradient(90deg,#00C076,#00E08F); }
+    .submit-btn.sell-btn { background:linear-gradient(90deg,#EF4444,#FF5B5B); }
+  </style>
+</head>
+<body>
+
+  <!-- Stock Selector Header -->
+  <div class="stock-header">
+    <div class="selector-pill" onclick="showSymbolSearch()">
+      <i data-lucide="search" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
+      <span class="sel-symbol">AAPL</span>
+      <span class="sel-dot"></span>
+      <span class="sel-name">Apple Inc.</span>
+      <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="price-info">
+        <div class="price-big">$189.84</div>
+        <div class="price-date">2026-06-06</div>
+        <div class="price-change up">+1.23 (+0.65%)</div>
+      </div>
+      <div class="header-icons">
+        <button class="icon-sq" title="Compare"><i data-lucide="git-compare-arrows"></i></button>
+        <button class="icon-sq star-active" id="star-btn" onclick="toggleStar(this)" title="Watchlist">
+          <i data-lucide="star"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Tabs -->
+  <div class="content-tabs">
+    <button class="ct-tab active" onclick="switchTab('book', this)">Order Book</button>
+    <button class="ct-tab" onclick="switchTab('chart', this)">Chart</button>
+  </div>
+
+  <!-- Order Book Tab -->
+  <div id="tab-book">
+    <div class="orderbook-grid">
+      <!-- Bids (Buy) + Asks (Sell) combined in one panel -->
+      <div class="ob-panel" style="grid-column:1/-1">
+        <div class="ob-header">
+          <span>Qty (Buy)</span>
+          <span style="text-align:center;color:var(--color-buy)">Bid &nbsp; &nbsp; Ask</span>
+          <span style="text-align:right;color:var(--color-sell)">Qty (Sell)</span>
+        </div>
+        <div id="orderbook-rows"></div>
+      </div>
+    </div>
+
+    <!-- Executed Orders -->
+    <div class="exec-panel">
+      <div class="exec-header">Executed Orders</div>
+      <div class="exec-cols">
+        <span>Qty</span>
+        <span>Price</span>
+        <span>Time</span>
+      </div>
+      <div class="exec-empty">No trades yet</div>
+    </div>
+    <div style="height:10px"></div>
+  </div>
+
+  <!-- Chart Tab (hidden) -->
+  <div id="tab-chart" style="display:none;padding:12px 16px">
+    <div id="trade-chart" style="height:240px"></div>
+  </div>
+
+  <!-- Trade Form -->
+  <div class="trade-form">
+    <!-- Order type + Buy/Sell -->
+    <div class="form-row">
+      <button class="type-select" onclick="openOrderType()">
+        <span id="order-type-label">Market</span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+      <div class="buy-sell-toggle">
+        <button class="bst-btn active-buy" id="btn-buy"  onclick="setSide('buy')">Buy</button>
+        <button class="bst-btn"           id="btn-sell" onclick="setSide('sell')">Sell</button>
+      </div>
+    </div>
+
+    <!-- Duration -->
+    <button class="gtc-select" onclick="openDuration()">
+      <span id="duration-label">Good Till Cancelled (GTC)</span>
+      <i data-lucide="chevrons-up-down"></i>
+    </button>
+
+    <!-- Balance -->
+    <div class="balance-row">
+      <span class="bal-label">Available Balance:</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="bal-value">$24,850.00</span>
+        <span class="bal-link" onclick="openDeposit()">Deposit</span>
+      </div>
+    </div>
+
+    <!-- Quantity -->
+    <input class="num-input" type="number" min="1" id="qty-input" placeholder="Quantity" />
+
+    <!-- Price -->
+    <div class="price-row">
+      <button class="pm-btn" onclick="adjustPrice(-1)">−</button>
+      <input class="num-input" type="number" id="price-input" placeholder="Price" value="189.84" />
+      <button class="pm-btn" onclick="adjustPrice(+1)">+</button>
+    </div>
+
+    <!-- Step -->
+    <div class="step-row">
+      <span>Step: $0.01</span>
+      <button class="step-btn" onclick="setMarketPrice()">Use Market Price</button>
+    </div>
+
+    <!-- Submit -->
+    <button class="submit-btn buy-btn" id="submit-btn" onclick="placeOrder()">
+      Buy AAPL
+    </button>
+  </div>
+
+  <div style="height:16px"></div>
+
+  <script src="../../data/static.js"></script>
+  <script src="../scripts/chart.js"></script>
+  <script>
+    // ── Order book data ──
+    const OB_DATA = [
+      { buyQty:6519, bid:189.79, ask:189.84, sellQty:31306 },
+      { buyQty:10,   bid:189.79, ask:189.84, sellQty:50    },
+      { buyQty:36,   bid:189.79, ask:189.84, sellQty:750   },
+      { buyQty:28,   bid:189.79, ask:189.84, sellQty:1000  },
+      { buyQty:254,  bid:189.79, ask:189.84, sellQty:9     },
+      { buyQty:4,    bid:189.79, ask:189.85, sellQty:50    },
+      { buyQty:5,    bid:189.79, ask:189.85, sellQty:317   },
+      { buyQty:126,  bid:189.79, ask:189.85, sellQty:1400  },
+      { buyQty:100,  bid:189.78, ask:189.88, sellQty:34    },
+      { buyQty:10,   bid:189.78, ask:189.88, sellQty:2     },
+    ];
+
+    const maxBuyQty  = Math.max(...OB_DATA.map(r => r.buyQty));
+    const maxSellQty = Math.max(...OB_DATA.map(r => r.sellQty));
+
+    function renderOrderBook() {
+      const el = document.getElementById('orderbook-rows');
+      el.innerHTML = OB_DATA.map(row => {
+        const buyDepth  = (row.buyQty  / maxBuyQty  * 100).toFixed(0);
+        const sellDepth = (row.sellQty / maxSellQty * 100).toFixed(0);
+        return `
+          <div class="ob-row">
+            <div class="ob-row-depth-buy"  style="width:${buyDepth}%"></div>
+            <div class="ob-row-depth-sell" style="width:${sellDepth}%"></div>
+            <span class="ob-qty">${row.buyQty.toLocaleString()}</span>
+            <span class="ob-price-buy">${row.bid.toFixed(2)}</span>
+            <span style="display:none"></span>
+          </div>
+          <div class="ob-row" style="background:rgba(239,68,68,0.02)">
+            <div class="ob-row-depth-sell" style="width:${sellDepth}%"></div>
+            <span class="ob-qty"></span>
+            <span class="ob-price-sell" style="text-align:right;padding-right:4px">${row.ask.toFixed(2)}</span>
+            <span class="ob-qty-right">${row.sellQty.toLocaleString()}</span>
+          </div>`;
+      }).join('');
+    }
+
+    // ── Tab switch ──
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.ct-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-book').style.display  = tab === 'book'  ? 'block' : 'none';
+      document.getElementById('tab-chart').style.display = tab === 'chart' ? 'block' : 'none';
+      if (tab === 'chart') {
+        const data = [187.2,186.8,186.2,185.8,185.1,184.6,184.0,183.5,183.0,182.8,183.2,183.8,184.5,185.4,186.2,187.0,187.8,188.6,189.1,189.5,190.1,190.4,189.9,189.6,189.8,189.5,189.7,189.6,189.8,189.84];
+        renderLineChart('trade-chart', data, { height:220, color:'#00C076', showGrid:true });
+      }
+    }
+
+    // ── Side toggle ──
+    let currentSide = 'buy';
+    function setSide(side) {
+      currentSide = side;
+      document.getElementById('btn-buy').className  = 'bst-btn' + (side==='buy'  ? ' active-buy'  : '');
+      document.getElementById('btn-sell').className = 'bst-btn' + (side==='sell' ? ' active-sell' : '');
+      const sub = document.getElementById('submit-btn');
+      sub.className = 'submit-btn ' + (side==='buy' ? 'buy-btn' : 'sell-btn');
+      sub.textContent = (side==='buy' ? 'Buy' : 'Sell') + ' AAPL';
+    }
+
+    // ── Price stepper ──
+    const STEP = 0.01;
+    function adjustPrice(dir) {
+      const inp = document.getElementById('price-input');
+      const val = parseFloat(inp.value) || 189.84;
+      inp.value = (val + dir * STEP).toFixed(2);
+    }
+    function setMarketPrice() {
+      document.getElementById('price-input').value = '189.84';
+    }
+
+    // ── Place order ──
+    function placeOrder() {
+      const qty   = document.getElementById('qty-input').value;
+      const price = document.getElementById('price-input').value;
+      if (!qty || qty < 1) { alert('Please enter a valid quantity'); return; }
+      const side  = currentSide.toUpperCase();
+      const total = (parseFloat(qty) * parseFloat(price)).toFixed(2);
+      if (confirm(`${side} ${qty} × AAPL @ $${price} = $${total}\n\nConfirm order?`)) {
+        alert('Order submitted successfully!');
+      }
+    }
+
+    function toggleStar(btn) { btn.classList.toggle('star-active'); }
+    function showSymbolSearch() {}
+    function openOrderType() {}
+    function openDuration() {}
+    function openDeposit() { alert('Deposit flow'); }
+
+    renderOrderBook();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

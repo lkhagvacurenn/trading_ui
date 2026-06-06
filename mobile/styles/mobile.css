@@ -1,0 +1,80 @@
+/* =============================================
+   Mobile-specific styles — TradeX
+   ============================================= */
+
+/* ── Global ── */
+*, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent rubber-band scroll on outer body */
+body.no-scroll { overflow: hidden; }
+
+/* ── Custom scrollbar ── */
+::-webkit-scrollbar         { width: 3px; height: 3px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: var(--color-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-disabled); }
+
+/* ── Touch-friendly tap targets ── */
+button, a, [role="button"] { min-height: 36px; }
+
+/* ── Mono numbers ── */
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+/* ── Utility: hide scrollbar ── */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ── Micro-animations ── */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin { animation: spin 1s linear infinite; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.fade-in { animation: fadeIn 0.25s ease both; }
+
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+.pulse { animation: pulse 2s ease-in-out infinite; }
+
+/* ── Pill tabs (reusable) ── */
+.pill-tabs {
+  display: flex;
+  background: var(--color-bg-input);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 2px;
+}
+.pill-tab {
+  flex: 1; text-align: center;
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-size: 12px; font-weight: 600;
+  border: none; background: transparent; cursor: pointer;
+  color: var(--color-text-disabled);
+  transition: all 0.2s ease;
+}
+.pill-tab.active {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+/* ── Change badges ── */
+.badge-up   { background: rgba(0,192,118,0.15); color: var(--color-buy);  }
+.badge-down { background: rgba(239,68,68,0.15);  color: var(--color-sell); }
+.badge-flat { background: rgba(156,163,175,0.15); color: var(--color-text-disabled); }
+
+/* ── Divider ── */
+.m-divider { height: 1px; background: var(--color-border); }
+
+/* ── Safe area bottom spacer ── */
+.safe-bottom { height: env(safe-area-inset-bottom, 0); }

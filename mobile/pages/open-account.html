@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Open Account</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header {
+      display: flex; align-items: center;
+      padding: 14px 16px 10px;
+      gap: 12px;
+    }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    /* ── Step progress bar ── */
+    .step-bar {
+      display: flex; gap: 6px;
+      padding: 0 16px 20px;
+    }
+    .step-seg {
+      flex: 1; height: 3px; border-radius: 99px;
+      background: var(--color-bg-input);
+      transition: background 0.3s ease;
+    }
+    .step-seg.done   { background: var(--color-primary); }
+    .step-seg.active { background: var(--color-primary); opacity: 0.7; }
+
+    /* ── Form ── */
+    .form-body { padding: 0 16px; }
+    .field-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--color-text-secondary);
+      margin-bottom: 6px; display: block;
+    }
+    .field-wrap { margin-bottom: 14px; }
+
+    .inp {
+      width: 100%;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      padding: 13px 14px;
+      font-size: 14px;
+      color: var(--color-text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .inp:focus { border-color: var(--color-primary); }
+    .inp::placeholder { color: var(--color-text-disabled); }
+
+    .inp-select {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px; cursor: pointer;
+    }
+
+    .inp-date {
+      position: relative;
+    }
+    .inp-date-icon {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--color-text-disabled); pointer-events: none;
+    }
+    .inp-date-icon svg { width: 16px; height: 16px; }
+
+    /* ── Row (two cols) ── */
+    .field-row { display: flex; gap: 10px; }
+    .field-row .field-wrap { flex: 1; }
+
+    /* ── Btn ── */
+    .btn-primary {
+      width: 100%; padding: 14px;
+      background: var(--color-primary);
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer;
+      transition: opacity 0.15s;
+      margin-top: 8px; margin-bottom: 24px;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+
+    /* ── Agreements list ── */
+    .agreement-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .agreement-item:hover { border-color: var(--color-primary); }
+    .agreement-item .ag-left { display: flex; align-items: center; gap: 10px; }
+    .agreement-check {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(0,192,118,0.15);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-buy); flex-shrink: 0;
+    }
+    .agreement-check svg { width: 14px; height: 14px; }
+    .agreement-name { font-size: 13px; font-weight: 600; }
+    .chevron-icon { color: var(--color-text-disabled); }
+    .chevron-icon svg { width: 16px; height: 16px; }
+
+    /* Signature area */
+    .sig-header {
+      display: flex; align-items: center; justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+    .sig-draw-btn {
+      display: flex; align-items: center; gap: 6px;
+      border: 1.5px solid var(--color-border);
+      background: transparent; border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px; font-weight: 600;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+    }
+    .sig-draw-btn svg { width: 14px; height: 14px; }
+
+    #sig-canvas {
+      width: 100%; height: 160px;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      border-radius: 12px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .sig-clear-btn {
+      background: none; border: none;
+      color: var(--color-text-disabled); font-size: 12px;
+      cursor: pointer; margin-top: 6px; padding: 4px 0;
+    }
+    .sig-clear-btn svg { width: 13px; height: 13px; vertical-align: middle; margin-right: 3px; }
+
+    /* ── QR & payment step ── */
+    .qr-wrapper {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #qr-svg { width: 180px; height: 180px; }
+
+    .qr-fee-label {
+      text-align: center;
+      font-size: 14px; font-weight: 700;
+      color: var(--color-text-secondary);
+      margin-bottom: 20px;
+    }
+    .pay-apps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .pay-app-item {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      cursor: pointer;
+    }
+    .pay-app-icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #fff;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .pay-app-name { font-size: 10px; color: var(--color-text-disabled); text-align: center; }
+
+    .btn-check-payment {
+      width: 100%; padding: 14px;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      color: var(--color-text-primary);
+      cursor: pointer; margin-bottom: 24px;
+      transition: border-color 0.15s;
+    }
+    .btn-check-payment:hover { border-color: var(--color-primary); }
+
+    /* ── Success screen ── */
+    #step-success {
+      display: none;
+      flex-direction: column; align-items: center; justify-content: center;
+      min-height: 60vh;
+      text-align: center;
+      padding: 40px 32px;
+    }
+    .success-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, #00C076, #00e08f);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 0 0 10px rgba(0,192,118,0.1), 0 0 32px rgba(0,192,118,0.25);
+    }
+    .success-icon svg { width: 36px; height: 36px; color: #fff; }
+    .success-title { font-size: 22px; font-weight: 800; margin-bottom: 14px; }
+    .success-msg { font-size: 14px; color: var(--color-text-secondary); line-height: 1.65; margin-bottom: 32px; }
+    .btn-home {
+      width: 100%; padding: 14px;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      color: var(--color-text-primary); cursor: pointer;
+    }
+
+    /* ── Panel visibility ── */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">Open Securities Account</div>
+  </div>
+
+  <!-- Step progress -->
+  <div class="step-bar" id="step-bar">
+    <div class="step-seg active" id="seg-0"></div>
+    <div class="step-seg" id="seg-1"></div>
+    <div class="step-seg" id="seg-2"></div>
+    <div class="step-seg" id="seg-3"></div>
+  </div>
+
+  <!-- ══ STEP 1: Personal info ══ -->
+  <div class="step-panel active" id="step-1">
+    <div class="form-body">
+
+      <div class="field-row">
+        <div class="field-wrap">
+          <label class="field-label">First Name</label>
+          <input class="inp" type="text" placeholder="First name" />
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Last Name</label>
+          <input class="inp" type="text" placeholder="Last name" />
+        </div>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Date of Birth</label>
+        <div style="position:relative">
+          <input class="inp" type="date" style="padding-right:40px" />
+          <span class="inp-date-icon"><i data-lucide="calendar"></i></span>
+        </div>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Gender</label>
+        <select class="inp inp-select">
+          <option value="">Select gender</option>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Phone Number</label>
+        <input class="inp" type="tel" placeholder="+976 ···" />
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Home Address</label>
+        <input class="inp" type="text" placeholder="Address" />
+      </div>
+
+      <button class="btn-primary" onclick="goStep(2)">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: Bank account ══ -->
+  <div class="step-panel" id="step-2">
+    <div class="form-body">
+
+      <div class="field-wrap">
+        <label class="field-label">Select Bank</label>
+        <select class="inp inp-select">
+          <option>Khan Bank</option>
+          <option>Golomt Bank</option>
+          <option>Trade and Development Bank</option>
+          <option>Xac Bank</option>
+          <option>State Bank</option>
+          <option>Capitron Bank</option>
+        </select>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Account Number</label>
+        <input class="inp" type="tel" placeholder="Account number" />
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Account Holder Name</label>
+        <input class="inp" type="text" placeholder="Full name as on account" />
+      </div>
+
+      <button class="btn-primary" onclick="goStep(3)">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: Agreements & Signature ══ -->
+  <div class="step-panel" id="step-3">
+    <div class="form-body">
+
+      <!-- Agreements -->
+      <div class="agreement-item">
+        <div class="ag-left">
+          <div class="agreement-check"><i data-lucide="check"></i></div>
+          <span class="agreement-name">Account Opening Agreement</span>
+        </div>
+        <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
+      </div>
+
+      <div class="agreement-item">
+        <div class="ag-left">
+          <div class="agreement-check"><i data-lucide="check"></i></div>
+          <span class="agreement-name">Nominal Account Service Agreement</span>
+        </div>
+        <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
+      </div>
+
+      <div class="agreement-item">
+        <div class="ag-left">
+          <div class="agreement-check"><i data-lucide="check"></i></div>
+          <span class="agreement-name">Online Broker Service Agreement</span>
+        </div>
+        <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
+      </div>
+
+      <!-- Signature -->
+      <div style="margin-top:20px;margin-bottom:8px">
+        <div class="sig-header">
+          <button class="sig-draw-btn" onclick="clearCanvas()">
+            <i data-lucide="pencil"></i> Draw Signature
+          </button>
+        </div>
+        <canvas id="sig-canvas"></canvas>
+        <button class="sig-clear-btn" onclick="clearCanvas()">
+          <i data-lucide="eraser"></i> Clear
+        </button>
+      </div>
+
+      <button class="btn-primary" onclick="goStep(4)">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 4: Payment QR ══ -->
+  <div class="step-panel" id="step-4">
+    <div class="form-body">
+
+      <div class="qr-wrapper">
+        <!-- Simple SVG QR placeholder -->
+        <svg id="qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="white"/>
+          <!-- Top-left position square -->
+          <rect x="5" y="5" width="28" height="28" rx="3" fill="#000"/><rect x="9" y="9" width="20" height="20" rx="1" fill="white"/><rect x="13" y="13" width="12" height="12" fill="#000"/>
+          <!-- Top-right position square -->
+          <rect x="67" y="5" width="28" height="28" rx="3" fill="#000"/><rect x="71" y="9" width="20" height="20" rx="1" fill="white"/><rect x="75" y="13" width="12" height="12" fill="#000"/>
+          <!-- Bottom-left position square -->
+          <rect x="5" y="67" width="28" height="28" rx="3" fill="#000"/><rect x="9" y="71" width="20" height="20" rx="1" fill="white"/><rect x="13" y="75" width="12" height="12" fill="#000"/>
+          <!-- Data modules (random pattern) -->
+          <rect x="38" y="5" width="5" height="5" fill="#000"/><rect x="46" y="5" width="5" height="5" fill="#000"/><rect x="54" y="5" width="5" height="5" fill="#000"/>
+          <rect x="38" y="13" width="5" height="5" fill="#000"/><rect x="50" y="13" width="5" height="5" fill="#000"/>
+          <rect x="42" y="21" width="5" height="5" fill="#000"/><rect x="54" y="21" width="5" height="5" fill="#000"/>
+          <rect x="5" y="38" width="5" height="5" fill="#000"/><rect x="13" y="38" width="5" height="5" fill="#000"/><rect x="25" y="38" width="5" height="5" fill="#000"/>
+          <rect x="38" y="38" width="5" height="5" fill="#000"/><rect x="50" y="38" width="5" height="5" fill="#000"/><rect x="62" y="38" width="5" height="5" fill="#000"/>
+          <rect x="70" y="38" width="5" height="5" fill="#000"/><rect x="82" y="38" width="5" height="5" fill="#000"/><rect x="90" y="38" width="5" height="5" fill="#000"/>
+          <rect x="5" y="46" width="5" height="5" fill="#000"/><rect x="21" y="46" width="5" height="5" fill="#000"/><rect x="38" y="46" width="5" height="5" fill="#000"/>
+          <rect x="54" y="46" width="5" height="5" fill="#000"/><rect x="70" y="46" width="5" height="5" fill="#000"/><rect x="86" y="46" width="5" height="5" fill="#000"/>
+          <rect x="9" y="54" width="5" height="5" fill="#000"/><rect x="25" y="54" width="5" height="5" fill="#000"/><rect x="42" y="54" width="5" height="5" fill="#000"/>
+          <rect x="62" y="54" width="5" height="5" fill="#000"/><rect x="78" y="54" width="5" height="5" fill="#000"/>
+          <rect x="38" y="62" width="5" height="5" fill="#000"/><rect x="46" y="62" width="5" height="5" fill="#000"/><rect x="62" y="62" width="5" height="5" fill="#000"/>
+          <rect x="74" y="62" width="5" height="5" fill="#000"/><rect x="86" y="62" width="5" height="5" fill="#000"/>
+          <rect x="38" y="70" width="5" height="5" fill="#000"/><rect x="54" y="70" width="5" height="5" fill="#000"/><rect x="66" y="70" width="5" height="5" fill="#000"/>
+          <rect x="78" y="70" width="5" height="5" fill="#000"/><rect x="90" y="70" width="5" height="5" fill="#000"/>
+          <rect x="42" y="78" width="5" height="5" fill="#000"/><rect x="58" y="78" width="5" height="5" fill="#000"/><rect x="70" y="78" width="5" height="5" fill="#000"/>
+          <rect x="38" y="86" width="5" height="5" fill="#000"/><rect x="50" y="86" width="5" height="5" fill="#000"/><rect x="62" y="86" width="5" height="5" fill="#000"/>
+          <rect x="74" y="86" width="5" height="5" fill="#000"/><rect x="86" y="86" width="5" height="5" fill="#000"/>
+          <rect x="90" y="90" width="5" height="5" fill="#000"/>
+        </svg>
+      </div>
+
+      <div class="qr-fee-label">Account opening fee: 5,000₮</div>
+
+      <!-- Payment apps -->
+      <div class="pay-apps-grid" id="pay-apps-grid">
+        <!-- Populated by JS -->
+      </div>
+
+      <button class="btn-check-payment" onclick="checkPayment()">Check Payment</button>
+    </div>
+  </div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div id="step-success">
+    <div class="success-icon"><i data-lucide="check"></i></div>
+    <div class="success-title">Payment Successful!</div>
+    <div class="success-msg">
+      Your account opening request has been submitted. Since you do not yet have a securities account, we will proceed with the opening process.
+    </div>
+    <button class="btn-home" onclick="goHome()">Back to Home</button>
+  </div>
+
+
+<script>
+/* ── Payment apps ── */
+const PAY_APPS = [
+  { name: 'QPay',       color: '#2d6cdf' },
+  { name: 'Socialpay',  color: '#1a6fb0' },
+  { name: 'iPay',       color: '#6c4bb8' },
+  { name: 'Storepay',   color: '#c47c00' },
+  { name: 'Lendpay',    color: '#e05a2b' },
+  { name: 'Nomad',      color: '#2a5298' },
+  { name: 'MBank',      color: '#1b8a4e' },
+  { name: 'MobiFinance',color: '#4b6cb7' },
+  { name: 'Monpay',     color: '#2563eb' },
+  { name: 'Mobicom',    color: '#f59e0b' },
+  { name: 'Arig',       color: '#7c3aed' },
+  { name: 'ARD',        color: '#dc2626' },
+];
+
+const grid = document.getElementById('pay-apps-grid');
+PAY_APPS.forEach(app => {
+  const div = document.createElement('div');
+  div.className = 'pay-app-item';
+  div.innerHTML = `
+    <div class="pay-app-icon" style="background:${app.color}">${app.name.substring(0,3).toUpperCase()}</div>
+    <span class="pay-app-name">${app.name}</span>
+  `;
+  div.onclick = () => alert(`Opening ${app.name}…`);
+  grid.appendChild(div);
+});
+
+/* ── Step navigation ── */
+let currentStep = 1;
+function goStep(n) {
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  currentStep = n;
+  document.getElementById(`step-${n}`).classList.add('active');
+  updateStepBar(n);
+  window.scrollTo(0, 0);
+}
+
+function updateStepBar(n) {
+  [0,1,2,3].forEach(i => {
+    const seg = document.getElementById(`seg-${i}`);
+    const stepNum = i + 1;
+    seg.className = 'step-seg' + (stepNum < n ? ' done' : stepNum === n ? ' active' : '');
+  });
+}
+
+function goBack() {
+  if (currentStep > 1) {
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    currentStep--;
+    document.getElementById(`step-${currentStep}`).classList.add('active');
+    updateStepBar(currentStep);
+  } else {
+    window.history.back();
+  }
+}
+
+function checkPayment() {
+  [1,2,3,4].forEach(i => { document.getElementById(`step-${i}`).classList.remove('active'); });
+  document.getElementById('step-bar').style.display = 'none';
+  document.querySelector('.sub-header').style.display = 'none';
+  document.getElementById('step-success').style.display = 'flex';
+}
+
+function goHome() {
+  try { window.parent.navigateTo('home'); } catch(e) { window.history.back(); }
+}
+
+/* ── Signature canvas ── */
+const canvas = document.getElementById('sig-canvas');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+let lastX = 0, lastY = 0;
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width  = rect.width  * window.devicePixelRatio;
+  canvas.height = rect.height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-text-primary') || '#fff';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return [src.clientX - rect.left, src.clientY - rect.top];
+}
+
+canvas.addEventListener('mousedown',  e => { drawing = true; [lastX, lastY] = getPos(e); });
+canvas.addEventListener('mousemove',  e => { if (!drawing) return; draw(e); });
+canvas.addEventListener('mouseup',    () => { drawing = false; });
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e); }, { passive: false });
+canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; draw(e); }, { passive: false });
+canvas.addEventListener('touchend',   () => { drawing = false; });
+
+function draw(e) {
+  const [x, y] = getPos(e);
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  [lastX, lastY] = [x, y];
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+lucide.createIcons();
+</script>
+</body>
+</html>

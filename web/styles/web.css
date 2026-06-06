@@ -1,0 +1,16 @@
+/* =============================================
+   Web-specific overrides
+   ============================================= */
+
+/* Dense sidebar nav */
+.nav-link {
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.75rem;
+}
+
+/* Full-height iframe fills the content area */
+#page-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

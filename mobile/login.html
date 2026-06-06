@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BDSec — Sign In</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); overflow-x: hidden; }
+
+    /* ── Top bar ── */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px;
+      position: sticky; top: 0; z-index: 20;
+      background: var(--color-bg);
+    }
+    .lang-btn {
+      display: flex; align-items: center; gap: 6px;
+      border: 1px solid var(--color-border);
+      background: transparent;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px; font-weight: 600;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+    }
+    .lang-btn svg { width: 14px; height: 14px; }
+    .menu-btn {
+      background: none; border: none;
+      color: var(--color-text-secondary);
+      cursor: pointer; padding: 6px;
+    }
+    .menu-btn svg { width: 22px; height: 22px; }
+
+    /* ── Logo block ── */
+    .logo-block {
+      display: flex; justify-content: center; align-items: center;
+      padding: 24px 0 28px;
+    }
+    #logo-light { height: 60px; object-fit: contain; mix-blend-mode: multiply; }
+    #logo-dark  { height: 60px; object-fit: contain; mix-blend-mode: lighten; display: none; }
+    [data-theme="dark"] #logo-light { display: none; }
+    [data-theme="dark"] #logo-dark  { display: block; }
+
+    /* ── Auth toggle ── */
+    .auth-toggle {
+      display: flex;
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      margin: 0 20px 24px;
+      overflow: hidden;
+    }
+    .auth-toggle-btn {
+      flex: 1; padding: 11px 0;
+      font-size: 14px; font-weight: 700;
+      border: none; background: transparent;
+      color: var(--color-text-disabled);
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .auth-toggle-btn.active {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    /* ── Step progress ── */
+    .step-bar {
+      display: flex; gap: 6px;
+      padding: 0 20px 20px;
+    }
+    .step-seg {
+      flex: 1; height: 3px; border-radius: 99px;
+      background: var(--color-bg-input);
+      transition: background 0.3s ease;
+    }
+    .step-seg.done   { background: var(--color-primary); }
+    .step-seg.active { background: var(--color-primary); opacity: 0.7; }
+
+    /* ── Form section ── */
+    .form-section { padding: 0 20px; }
+    .field-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--color-text-secondary);
+      margin-bottom: 6px; display: block;
+    }
+    .field-wrap {
+      position: relative; margin-bottom: 14px;
+    }
+    .field-icon {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      color: var(--color-text-disabled);
+    }
+    .field-icon svg { width: 16px; height: 16px; }
+    .field-eye {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--color-text-disabled); padding: 4px;
+    }
+    .field-eye svg { width: 16px; height: 16px; }
+
+    .inp {
+      width: 100%;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 14px;
+      color: var(--color-text-primary);
+      outline: none;
+      transition: border-color 0.15s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .inp:focus { border-color: var(--color-primary); }
+    .inp::placeholder { color: var(--color-text-disabled); }
+    .inp.has-icon  { padding-left: 40px; }
+    .inp.has-eye   { padding-right: 40px; }
+
+    .inp-select {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    /* Registration number special row */
+    .reg-row { display: flex; gap: 8px; }
+    .reg-prefix {
+      display: flex; gap: 4px; flex-shrink: 0;
+    }
+    .reg-char-btn {
+      width: 40px; height: 48px; border-radius: 10px;
+      border: 1.5px solid var(--color-border);
+      background: var(--color-bg-card);
+      font-size: 15px; font-weight: 700;
+      color: var(--color-text-primary);
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .reg-char-btn.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    /* ── Row: checkbox + link ── */
+    .check-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .check-left { display: flex; align-items: center; gap: 8px; }
+    .check-left input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+    .check-left label { font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
+    .forgot-link { font-size: 13px; color: var(--color-primary); font-weight: 600; cursor: pointer; }
+
+    .terms-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
+    .terms-row input[type="checkbox"] { margin-top: 2px; width: 16px; height: 16px; accent-color: var(--color-primary); flex-shrink: 0; }
+    .terms-row label { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+    .terms-row label span { color: var(--color-primary); font-weight: 600; cursor: pointer; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      width: 100%; padding: 14px;
+      background: var(--color-primary);
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer;
+      transition: opacity 0.15s ease;
+      margin-bottom: 16px;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:active { opacity: 0.75; }
+
+    .or-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px; color: var(--color-text-disabled);
+      font-size: 13px;
+    }
+    .or-divider::before, .or-divider::after {
+      content: ''; flex: 1;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .btn-emongolia {
+      width: 100%; padding: 13px;
+      background: transparent;
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      font-size: 14px; font-weight: 600;
+      color: var(--color-text-primary); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: border-color 0.15s ease;
+      margin-bottom: 32px;
+    }
+    .btn-emongolia:hover { border-color: var(--color-primary); }
+    .emongolia-icon {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: linear-gradient(135deg, #e63946, #c1121f);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 900; color: #fff; letter-spacing: -0.5px;
+    }
+
+    /* ── OTP boxes ── */
+    .otp-email {
+      text-align: center; font-size: 14px; font-weight: 600;
+      color: var(--color-primary); margin-bottom: 24px;
+    }
+    .otp-grid {
+      display: flex; gap: 10px; justify-content: center;
+      margin-bottom: 28px;
+    }
+    .otp-box {
+      width: 46px; height: 54px;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      text-align: center; font-size: 20px; font-weight: 700;
+      color: var(--color-text-primary);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .otp-box:focus { border-color: var(--color-primary); }
+
+    .resend-btn {
+      width: 100%; padding: 13px;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      font-size: 14px; font-weight: 600;
+      color: var(--color-text-secondary); cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    /* ── Slide panels ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <button class="lang-btn">
+      <i data-lucide="globe"></i> English
+    </button>
+    <button class="menu-btn">
+      <i data-lucide="menu"></i>
+    </button>
+  </div>
+
+  <!-- Logo -->
+  <div class="logo-block">
+    <img id="logo-light" src="../public/logo.png" alt="BDSec" />
+    <img id="logo-dark"  src="../public/dark.png" alt="BDSec" />
+  </div>
+
+  <!-- Auth toggle -->
+  <div class="auth-toggle">
+    <button class="auth-toggle-btn active" id="toggle-login" onclick="switchAuth('login')">Login</button>
+    <button class="auth-toggle-btn" id="toggle-register" onclick="switchAuth('register')">Register</button>
+  </div>
+
+  <!-- ══ LOGIN PANEL ══ -->
+  <div class="panel active" id="panel-login">
+    <div class="form-section">
+
+      <!-- Username -->
+      <div class="field-wrap">
+        <span class="field-icon"><i data-lucide="user"></i></span>
+        <input class="inp has-icon" type="text" placeholder="Username" autocomplete="username" />
+      </div>
+
+      <!-- Password -->
+      <div class="field-wrap">
+        <span class="field-icon"><i data-lucide="lock"></i></span>
+        <input class="inp has-icon has-eye" type="password" id="login-pw" placeholder="Password" autocomplete="current-password" />
+        <button class="field-eye" onclick="togglePw('login-pw', this)"><i data-lucide="eye"></i></button>
+      </div>
+
+      <!-- Remember + forgot -->
+      <div class="check-row">
+        <label class="check-left">
+          <input type="checkbox" id="rem" />
+          <label for="rem">Remember device</label>
+        </label>
+        <span class="forgot-link">Forgot password?</span>
+      </div>
+
+      <button class="btn-primary" onclick="doLogin()">Login</button>
+
+      <div class="or-divider">or</div>
+
+      <button class="btn-emongolia">
+        <span class="emongolia-icon">e</span>
+        Login with E-Mongolia
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ REGISTER PANEL ══ -->
+  <div class="panel" id="panel-register">
+
+    <!-- Step progress -->
+    <div class="step-bar" id="reg-step-bar">
+      <div class="step-seg active" id="rseg-0"></div>
+      <div class="step-seg" id="rseg-1"></div>
+      <div class="step-seg" id="rseg-2"></div>
+    </div>
+
+    <!-- Step 1: Country + type -->
+    <div class="panel active form-section" id="reg-step-1">
+      <div class="field-wrap">
+        <label class="field-label">Country</label>
+        <select class="inp inp-select">
+          <option>Mongolia</option>
+          <option>United States</option>
+          <option>Japan</option>
+          <option>South Korea</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">User type</label>
+        <select class="inp inp-select">
+          <option>Individual</option>
+          <option>Corporate</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" onclick="regNext(2)">Continue</button>
+    </div>
+
+    <!-- Step 2: Credentials -->
+    <div class="panel form-section" id="reg-step-2">
+      <label class="field-label">Registration number</label>
+      <div class="reg-row" style="margin-bottom:14px">
+        <div class="reg-prefix">
+          <button class="reg-char-btn active" id="rc-A" onclick="setRegChar('A')">А</button>
+          <button class="reg-char-btn" id="rc-B" onclick="setRegChar('B')">Б</button>
+        </div>
+        <input class="inp" type="text" placeholder="Registration number" maxlength="8" style="flex:1" />
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Email / Phone number</label>
+        <input class="inp" type="text" placeholder="Email or phone" />
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Password</label>
+        <span class="field-icon"><i data-lucide="lock"></i></span>
+        <input class="inp has-icon has-eye" type="password" id="reg-pw" placeholder="Password" />
+        <button class="field-eye" onclick="togglePw('reg-pw', this)"><i data-lucide="eye"></i></button>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Confirm password</label>
+        <span class="field-icon"><i data-lucide="lock"></i></span>
+        <input class="inp has-icon has-eye" type="password" id="reg-pw2" placeholder="Re-enter password" />
+        <button class="field-eye" onclick="togglePw('reg-pw2', this)"><i data-lucide="eye"></i></button>
+      </div>
+
+      <div class="terms-row">
+        <input type="checkbox" id="terms" />
+        <label for="terms">I agree to the <span>Terms of Service</span> and <span>Privacy Policy</span></label>
+      </div>
+
+      <button class="btn-primary" onclick="regNext(3)">Continue</button>
+
+      <div class="or-divider">or</div>
+      <button class="btn-emongolia">
+        <span class="emongolia-icon">e</span>
+        Register with E-Mongolia
+      </button>
+    </div>
+
+    <!-- Step 3: OTP -->
+    <div class="panel form-section" id="reg-step-3">
+      <p style="font-size:14px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px;line-height:1.6">
+        A one-time code was sent to your phone number / email. Enter the 6-digit code below.
+      </p>
+      <div class="otp-email">blk*******@gmail.com</div>
+
+      <div class="otp-grid">
+        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+      </div>
+
+      <button class="btn-primary" onclick="doRegister()">Verify & Register</button>
+      <button class="resend-btn">Resend Code</button>
+    </div>
+
+  </div><!-- /panel-register -->
+
+
+<script>
+/* ── Auth tab switch ── */
+let currentAuth = 'login';
+function switchAuth(tab) {
+  currentAuth = tab;
+  document.getElementById('toggle-login').classList.toggle('active', tab === 'login');
+  document.getElementById('toggle-register').classList.toggle('active', tab === 'register');
+  document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+  document.getElementById('panel-register').classList.toggle('active', tab === 'register');
+  if (tab === 'register') setRegStep(1);
+}
+
+/* ── Register steps ── */
+let regStep = 1;
+function setRegStep(n) {
+  regStep = n;
+  [1,2,3].forEach(i => {
+    document.getElementById(`reg-step-${i}`).classList.toggle('active', i === n);
+    const seg = document.getElementById(`rseg-${i-1}`);
+    seg.className = 'step-seg' + (i < n ? ' done' : i === n ? ' active' : '');
+  });
+}
+function regNext(n) { setRegStep(n); }
+
+/* ── Registration prefix toggle ── */
+function setRegChar(c) {
+  document.querySelectorAll('.reg-char-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`rc-${c}`).classList.add('active');
+}
+
+/* ── Password visibility ── */
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  const isHidden = inp.type === 'password';
+  inp.type = isHidden ? 'text' : 'password';
+  btn.innerHTML = isHidden ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+  lucide.createIcons();
+}
+
+/* ── OTP auto-advance ── */
+function otpAdvance(inp) {
+  if (inp.value.length === 1) {
+    const next = inp.nextElementSibling;
+    if (next && next.classList.contains('otp-box')) next.focus();
+  }
+}
+
+/* ── Login / Register actions ── */
+function doLogin() {
+  sessionStorage.setItem('bdsec-auth', '1');
+  window.location.href = 'index.html';
+}
+function doRegister() {
+  sessionStorage.setItem('bdsec-auth', '1');
+  window.location.href = 'index.html';
+}
+
+lucide.createIcons();
+</script>
+</body>
+</html>

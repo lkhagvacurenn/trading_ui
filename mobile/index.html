@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BDSec</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link rel="stylesheet" href="../styles/components.css" />
+  <link rel="stylesheet" href="styles/mobile.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script>
+    (function () {
+      const t = localStorage.getItem('tradex-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+      // Auth guard — redirect to splash if not logged in
+      if (!sessionStorage.getItem('bdsec-auth')) {
+        window.location.replace('splash.html');
+      }
+    })();
+  </script>
+
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Inter', sans-serif; }
+
+    /* ── App shell ── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      background: var(--color-bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    #app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      height: 56px;
+      background: var(--color-bg-card);
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    /* Logo images */
+    #logo-light { height: 30px; object-fit: contain; mix-blend-mode: multiply; }
+    #logo-dark  { height: 30px; object-fit: contain; mix-blend-mode: lighten; display: none; }
+
+    [data-theme="dark"] #logo-light { display: none; }
+    [data-theme="dark"] #logo-dark  { display: block; }
+    [data-theme="light"] #logo-light { display: block; }
+    [data-theme="light"] #logo-dark  { display: none; }
+
+    .header-actions { display: flex; align-items: center; gap: 14px; }
+    .hbtn {
+      background: none; border: none; cursor: pointer;
+      color: var(--color-text-secondary); padding: 6px;
+      position: relative; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.15s ease;
+    }
+    .hbtn:hover { background: var(--color-bg-input); }
+    .hbtn svg { width: 22px; height: 22px; }
+    .notif-dot {
+      position: absolute; top: 4px; right: 4px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--color-primary-red);
+      border: 2px solid var(--color-bg-card);
+    }
+
+    /* ── Page iframe ── */
+    #page-frame {
+      flex: 1; border: none; width: 100%;
+      background: var(--color-bg); min-height: 0;
+      display: block;
+    }
+
+    /* ══════════════════════════════════════════════
+       BOTTOM NAV — Wave notch design
+    ══════════════════════════════════════════════ */
+    #nav-outer {
+      position: relative;
+      flex-shrink: 0;
+      height: 72px;
+      /* Extra top padding so FAB has room to extend above */
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* SVG nav background — covers the 72px nav area */
+    #nav-svg {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 100%; height: 72px;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* FAB container — floats above the notch */
+    #fab-wrapper {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 30%);
+      z-index: 10;
+      /* top set by JS */
+    }
+
+    /* FAB button */
+    .nav-fab {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #7c3aed 0%, #5b5bd6 45%, #3b82f6 100%);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow:
+        0 0 0 4px rgba(91, 91, 214, 0.14),
+        0 0 0 10px rgba(91, 91, 214, 0.06),
+        0 0 22px rgba(91, 91, 214, 0.50),
+        0 8px 18px rgba(0, 0, 0, 0.40);
+    }
+    .nav-fab:hover  { transform: scale(1.07); box-shadow: 0 0 0 6px rgba(91,91,214,0.18), 0 0 28px rgba(91,91,214,0.62), 0 10px 22px rgba(0,0,0,0.48); }
+    .nav-fab:active { transform: scale(0.93); }
+    .nav-fab svg { width: 20px; height: 20px; color: white; }
+
+    /* Nav tab grid — sits in the 72px area, z-index above SVG */
+    #nav-grid {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 72px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      display: grid;
+      grid-template-columns: 1fr 1fr 76px 1fr 1fr;
+      align-items: end;
+      padding-bottom: 10px;
+      z-index: 5;
+    }
+
+    /* Individual tab button */
+    .nav-tab {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: flex-end; gap: 3px;
+      border: none; background: transparent; cursor: pointer;
+      color: var(--color-text-disabled);
+      transition: color 0.2s ease;
+      padding: 4px 6px;
+      min-height: 0;
+    }
+    .nav-tab svg { width: 22px; height: 22px; }
+    .nav-tab span {
+      font-size: 10px; font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.01em;
+    }
+    .nav-tab.active { color: var(--color-primary); }
+
+    /* Center column spacer — above the notch, no tab here */
+    #nav-center-space { /* empty */ }
+
+
+    /* ══════════════════════════════════════════════
+       SLIDE-IN MENU OVERLAY
+    ══════════════════════════════════════════════ */
+    #menu-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      pointer-events: none;
+    }
+    #menu-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #menu-panel {
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 86%;
+      max-width: 360px;
+      background: var(--color-bg-card);
+      transform: translateX(100%);
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--color-border);
+    }
+    #menu-overlay.open { pointer-events: all; }
+    #menu-overlay.open #menu-backdrop { opacity: 1; }
+    #menu-overlay.open #menu-panel { transform: translateX(0); }
+
+    /* Menu inner styles */
+    .menu-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .menu-hdr-title { font-size: 18px; font-weight: 800; }
+    .menu-close-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-secondary);
+    }
+    .menu-close-btn svg { width: 18px; height: 18px; }
+
+    .menu-control-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .menu-ctrl-label { font-size: 14px; color: var(--color-text-secondary); }
+    .theme-toggle-circle {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--color-bg-input); border: 1px solid var(--color-border);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-primary); transition: background 0.15s;
+    }
+    .theme-toggle-circle:hover { background: var(--color-primary); color: #fff; }
+    .theme-toggle-circle svg { width: 16px; height: 16px; }
+    .lang-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 700;
+    }
+    .lang-badge svg { width: 16px; height: 16px; color: var(--color-text-disabled); }
+
+    .menu-section-lbl {
+      padding: 14px 20px 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--color-text-disabled); text-transform: uppercase;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 20px;
+      border: none; background: transparent; cursor: pointer; width: 100%;
+      text-align: left; color: var(--color-text-primary);
+      font-size: 15px; font-weight: 500;
+      transition: background 0.12s ease;
+      border-radius: 0;
+    }
+    .menu-item:hover   { background: var(--color-bg-input); }
+    .menu-item.current { background: rgba(73,73,170,0.1); color: var(--color-primary); }
+    .menu-item svg     { width: 20px; height: 20px; flex-shrink: 0; }
+    .menu-divider      { border: none; border-top: 1px solid var(--color-border); margin: 2px 0; }
+    .menu-signout      { color: var(--color-sell) !important; }
+  </style>
+</head>
+
+<body>
+<div id="app">
+
+  <!-- ════ HEADER ════════════════════════════════ -->
+  <header id="app-header">
+    <!-- Logo: switches by theme via CSS -->
+    <div style="display:flex;align-items:center">
+      <img id="logo-light" src="../public/logo.png" alt="BDSec Investments" />
+      <img id="logo-dark"  src="../public/dark.png" alt="BDSec Investments" />
+    </div>
+
+    <div class="header-actions">
+      <button class="hbtn" onclick="openNotifications()" aria-label="Notifications">
+        <i data-lucide="bell"></i>
+        <span class="notif-dot"></span>
+      </button>
+      <button class="hbtn" onclick="openMenu()" aria-label="Menu">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ════ PAGE CONTENT ══════════════════════════ -->
+  <iframe id="page-frame" src="pages/home.html" title="Page content"></iframe>
+
+  <!-- ════ BOTTOM NAV — Wave notch ══════════════ -->
+  <div id="nav-outer">
+
+    <!-- SVG wave-notch background (drawn by JS) -->
+    <svg id="nav-svg">
+      <defs>
+        <!-- Dark theme fill gradient -->
+        <linearGradient id="navGradDark" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#10152a" stop-opacity="0.97"/>
+          <stop offset="100%" stop-color="#0a0e1e" stop-opacity="1"/>
+        </linearGradient>
+        <!-- Light theme fill gradient -->
+        <linearGradient id="navGradLight" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.98"/>
+          <stop offset="100%" stop-color="#f3f4f6" stop-opacity="1"/>
+        </linearGradient>
+        <!-- Glow beneath notch -->
+        <radialGradient id="fabGlow" cx="50%" cy="0%" r="60%">
+          <stop offset="0%"   stop-color="#5b5bd6" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#5b5bd6" stop-opacity="0"/>
+        </radialGradient>
+        <!-- Drop shadow filter -->
+        <filter id="navShadow" x="-2%" y="-60%" width="104%" height="200%">
+          <feDropShadow dx="0" dy="-3" stdDeviation="10" flood-color="rgba(0,0,0,0.5)" flood-opacity="1"/>
+        </filter>
+        <filter id="navShadowLight" x="-2%" y="-60%" width="104%" height="200%">
+          <feDropShadow dx="0" dy="-2" stdDeviation="8" flood-color="rgba(0,0,0,0.12)" flood-opacity="1"/>
+        </filter>
+      </defs>
+
+      <!-- Glow pill in the notch area (behind FAB) -->
+      <ellipse id="notch-glow" rx="40" ry="22" fill="url(#fabGlow)" opacity="0.8"/>
+
+      <!-- Main nav fill path -->
+      <path id="nav-bg-path"/>
+
+      <!-- Top border line (same wave shape) -->
+      <path id="nav-border-path" fill="none" stroke-width="1"/>
+    </svg>
+
+    <!-- ── FAB ── -->
+    <div id="fab-wrapper">
+      <button class="nav-fab"
+              data-page="trade"
+              data-href="pages/trade.html"
+              data-title="Trade"
+              onclick="navigateToTrade()"
+              aria-label="Trade">
+        <i data-lucide="arrow-left-right"></i>
+      </button>
+    </div>
+
+    <!-- ── Tab buttons ── -->
+    <div id="nav-grid">
+      <button class="nav-tab active"
+              data-page="home" data-href="pages/home.html" data-title="Home">
+        <i data-lucide="home"></i>
+        <span>Home</span>
+      </button>
+
+      <button class="nav-tab"
+              data-page="balance" data-href="pages/balance.html" data-title="Balance">
+        <i data-lucide="credit-card"></i>
+        <span>Balance</span>
+      </button>
+
+      <div id="nav-center-space"></div>
+
+      <button class="nav-tab"
+              data-page="returns" data-href="pages/returns.html" data-title="Returns">
+        <i data-lucide="pie-chart"></i>
+        <span>Returns</span>
+      </button>
+
+      <button class="nav-tab"
+              data-page="ipo" data-href="pages/ipo.html" data-title="IPO">
+        <i data-lucide="trending-up"></i>
+        <span>IPO</span>
+      </button>
+    </div>
+  </div><!-- /nav-outer -->
+</div><!-- /app -->
+
+
+<!-- ════ MENU OVERLAY ══════════════════════════ -->
+<div id="menu-overlay">
+  <div id="menu-backdrop" onclick="closeMenu()"></div>
+  <div id="menu-panel">
+
+    <div class="menu-hdr">
+      <span class="menu-hdr-title">Menu</span>
+      <button class="menu-close-btn" onclick="closeMenu()">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <!-- Appearance -->
+    <div class="menu-control-row">
+      <span class="menu-ctrl-label">Appearance</span>
+      <button class="theme-toggle-circle" onclick="toggleTheme()" id="theme-circle-btn" title="Toggle theme">
+        <i data-lucide="sun" id="theme-circle-icon"></i>
+      </button>
+    </div>
+
+    <!-- Language -->
+    <div class="menu-control-row">
+      <span class="menu-ctrl-label">Language</span>
+      <div class="lang-badge">
+        <i data-lucide="globe"></i> EN
+      </div>
+    </div>
+
+    <div class="menu-divider"></div>
+
+    <!-- Profile -->
+    <button class="menu-item" onclick="menuNav('profile')">
+      <i data-lucide="user-circle"></i> My Profile
+    </button>
+
+    <div class="menu-divider"></div>
+
+    <div class="menu-section-lbl">My Section</div>
+    <button class="menu-item" onclick="menuNav('trade')">
+      <i data-lucide="arrow-left-right"></i> Orders
+    </button>
+    <button class="menu-item" onclick="menuNav('balance')">
+      <i data-lucide="credit-card"></i> Balance
+    </button>
+    <button class="menu-item" onclick="menuNav('returns')">
+      <i data-lucide="pie-chart"></i> Returns
+    </button>
+    <button class="menu-item" onclick="menuNav('deposit')">
+      <i data-lucide="landmark"></i> Deposit
+    </button>
+    <button class="menu-item" onclick="menuNav('withdraw')">
+      <i data-lucide="banknote"></i> Withdraw
+    </button>
+    <button class="menu-item" onclick="menuNav('open-account')">
+      <i data-lucide="file-text"></i> Open Securities Account
+    </button>
+    <button class="menu-item" onclick="menuNav('bank')">
+      <i data-lucide="building-2"></i> Bank Account
+    </button>
+
+    <div class="menu-divider"></div>
+
+    <div class="menu-section-lbl">General</div>
+    <button class="menu-item" onclick="menuNav('home')">
+      <i data-lucide="home"></i> Home
+    </button>
+    <button class="menu-item" onclick="menuNav('home')">
+      <i data-lucide="bar-chart-2"></i> Securities
+    </button>
+    <button class="menu-item current" onclick="menuNav('ipo')">
+      <i data-lucide="trending-up"></i> IPO
+    </button>
+    <button class="menu-item" onclick="menuNav('bank')">
+      <i data-lucide="landmark"></i> Bank
+    </button>
+
+    <div class="menu-divider"></div>
+
+    <button class="menu-item menu-signout" onclick="signOut()">
+      <i data-lucide="log-out"></i> Sign Out
+    </button>
+
+    <div style="height:30px"></div>
+  </div>
+</div>
+
+
+<script>
+/* ════════════════════════════════════════════════
+   Wave-notch nav — geometry
+════════════════════════════════════════════════ */
+const NAV_H  = 72;    // nav height px
+const NAV_NW = 40;    // half-notch width from center
+const NAV_ND = 16;    // notch depth px
+const FAB_H  = 62;    // FAB diameter
+// FAB bottom edge sits (NAV_ND - 2)px inside nav top
+// FAB top edge: -(FAB_H - (NAV_ND - 2)) = -(62 - 14) = -48
+const FAB_TOP = -(FAB_H - (NAV_ND - 2));  // -48px
+
+function buildNavWave(W) {
+  const cx  = W / 2;
+  const nw  = NAV_NW;
+  const nd  = NAV_ND;
+  const k   = 0.55; // cubic bezier "kappa" for smooth arch
+
+  // Left arch: (cx-nw, 0) → (cx, nd)  with smooth tangents
+  const lCP1x = cx - nw + nw * k;
+  const lCP2x = cx - nw * 0.08;
+  // Right arch: (cx, nd) → (cx+nw, 0)
+  const rCP1x = cx + nw * 0.08;
+  const rCP2x = cx + nw - nw * k;
+
+  const fill = [
+    `M 0 0`,
+    `H ${(cx - nw).toFixed(2)}`,
+    `C ${lCP1x.toFixed(2)} 0 ${lCP2x.toFixed(2)} ${nd} ${cx} ${nd}`,
+    `C ${rCP1x.toFixed(2)} ${nd} ${rCP2x.toFixed(2)} 0 ${(cx + nw).toFixed(2)} 0`,
+    `H ${W} V ${NAV_H} H 0 Z`,
+  ].join(' ');
+
+  const border = [
+    `M 0 0.5`,
+    `H ${(cx - nw).toFixed(2)}`,
+    `C ${lCP1x.toFixed(2)} 0.5 ${lCP2x.toFixed(2)} ${nd + 0.5} ${cx} ${nd + 0.5}`,
+    `C ${rCP1x.toFixed(2)} ${nd + 0.5} ${rCP2x.toFixed(2)} 0.5 ${(cx + nw).toFixed(2)} 0.5`,
+    `H ${W}`,
+  ].join(' ');
+
+  return { fill, border, cx };
+}
+
+function applyNavTheme(theme) {
+  const isDark = theme === 'dark';
+  const fill   = isDark ? 'url(#navGradDark)' : 'url(#navGradLight)';
+  const border = isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.07)';
+  const filterId = isDark ? 'url(#navShadow)' : 'url(#navShadowLight)';
+  document.getElementById('nav-bg-path').setAttribute('fill', fill);
+  document.getElementById('nav-bg-path').setAttribute('filter', filterId);
+  document.getElementById('nav-border-path').setAttribute('stroke', border);
+}
+
+function updateNavGeometry() {
+  const outer = document.getElementById('nav-outer');
+  const W = outer.clientWidth || 390;
+  const { fill, border, cx } = buildNavWave(W);
+
+  document.getElementById('nav-bg-path').setAttribute('d', fill);
+  document.getElementById('nav-border-path').setAttribute('d', border);
+
+  // Position FAB wrapper
+  const fw = document.getElementById('fab-wrapper');
+  fw.style.top = `${FAB_TOP}px`;
+
+  // Position glow ellipse at center of notch
+  const glow = document.getElementById('notch-glow');
+  glow.setAttribute('cx', cx);
+  glow.setAttribute('cy', NAV_ND * 0.3);
+}
+
+
+/* ════════════════════════════════════════════════
+   Theme
+════════════════════════════════════════════════ */
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('tradex-theme', theme);
+
+  // Menu icon
+  const icon = document.getElementById('theme-circle-icon');
+  if (icon) icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+  lucide.createIcons();
+
+  applyNavTheme(theme);
+  syncFrame(theme);
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+
+function syncFrame(theme) {
+  try {
+    const f = document.getElementById('page-frame');
+    if (f?.contentDocument?.documentElement) {
+      f.contentDocument.documentElement.setAttribute('data-theme', theme);
+    }
+  } catch(e) {}
+}
+
+
+/* ════════════════════════════════════════════════
+   Navigation
+════════════════════════════════════════════════ */
+const frame = document.getElementById('page-frame');
+
+function navigate(el) {
+  const href = el.dataset.href;
+  if (!href) return;
+
+  frame.src = href;
+
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tab = document.querySelector(`.nav-tab[data-page="${el.dataset.page}"]`);
+  if (tab) tab.classList.add('active');
+
+  frame.onload = () => {
+    syncFrame(document.documentElement.getAttribute('data-theme'));
+    try { lucide.createIcons({ context: frame.contentDocument }); } catch(e) {}
+  };
+}
+
+document.querySelectorAll('.nav-tab').forEach(btn => {
+  btn.addEventListener('click', () => navigate(btn));
+});
+
+function navigateToTrade() {
+  frame.src = 'pages/trade.html';
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  frame.onload = () => {
+    syncFrame(document.documentElement.getAttribute('data-theme'));
+    try { lucide.createIcons({ context: frame.contentDocument }); } catch(e) {}
+  };
+}
+
+
+/* ════════════════════════════════════════════════
+   Menu
+════════════════════════════════════════════════ */
+function openMenu()  { document.getElementById('menu-overlay').classList.add('open'); }
+function closeMenu() { document.getElementById('menu-overlay').classList.remove('open'); }
+
+const PAGE_MAP = {
+  home:         'pages/home.html',
+  balance:      'pages/balance.html',
+  returns:      'pages/returns.html',
+  ipo:          'pages/ipo.html',
+  trade:        'pages/trade.html',
+  'open-account': 'pages/open-account.html',
+};
+function menuNav(key) {
+  closeMenu();
+  const href = PAGE_MAP[key];
+  if (!href) return;
+  frame.src = href;
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tab = document.querySelector(`.nav-tab[data-page="${key}"]`);
+  if (tab) tab.classList.add('active');
+}
+
+function openNotifications() { /* future */ }
+function signOut() { closeMenu(); sessionStorage.removeItem('bdsec-auth'); window.location.href = 'login.html'; }
+
+/* ── Called by inner pages (e.g. open-account success) ── */
+function navigateTo(key) {
+  const href = PAGE_MAP[key];
+  if (!href) return;
+  frame.src = href;
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tab = document.querySelector(`.nav-tab[data-page="${key}"]`);
+  if (tab) tab.classList.add('active');
+}
+
+
+/* ════════════════════════════════════════════════
+   Init
+════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  updateNavGeometry();
+  const theme = localStorage.getItem('tradex-theme') || 'dark';
+  applyTheme(theme);
+  lucide.createIcons();
+});
+
+window.addEventListener('resize', updateNavGeometry);
+</script>
+</body>
+</html>

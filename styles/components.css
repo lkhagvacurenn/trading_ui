@@ -1,0 +1,195 @@
+/* =============================================
+   Reusable Component Styles
+   ============================================= */
+
+/* ── Base resets ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Utility aliases (use in class="...") ── */
+.bg-bg       { background-color: var(--color-bg); }
+.bg-bg-card  { background-color: var(--color-bg-card); }
+.bg-bg-input { background-color: var(--color-bg-input); }
+.border-color{ border-color: var(--color-border); }
+.text-primary-color { color: var(--color-text-primary); }
+.text-secondary-color { color: var(--color-text-secondary); }
+.text-disabled-color { color: var(--color-text-disabled); }
+
+/* ── Card ── */
+.card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+}
+
+.card-sm {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  border: none;
+  outline: none;
+  white-space: nowrap;
+}
+
+.btn:hover  { opacity: 0.88; }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary  { background-color: var(--color-primary);     color: #fff; }
+.btn-sell     { background-color: var(--color-sell);        color: #fff; }
+.btn-buy      { background-color: var(--color-buy);         color: #fff; }
+.btn-ghost    { background-color: var(--color-bg-input);    color: var(--color-text-primary); }
+.btn-outline  {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+.btn-danger   { background-color: var(--color-error);       color: #fff; }
+.btn-success  { background-color: var(--color-success);     color: #fff; }
+
+.btn-sm { padding: 0.3rem 0.65rem; font-size: var(--font-xs); }
+.btn-lg { padding: 0.65rem 1.4rem; font-size: var(--font-base); }
+
+/* ── Input ── */
+.input {
+  width: 100%;
+  background-color: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.input::placeholder { color: var(--color-text-disabled); }
+.input:focus { border-color: var(--color-primary); }
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+.badge-buy     { background-color: rgba(0,192,118,0.15);  color: var(--color-buy); }
+.badge-sell    { background-color: rgba(239,68,68,0.15);  color: var(--color-sell); }
+.badge-warning { background-color: rgba(245,158,11,0.15); color: var(--color-warning); }
+.badge-info    { background-color: rgba(59,130,246,0.15); color: var(--color-info); }
+.badge-success { background-color: rgba(22,163,74,0.15);  color: var(--color-success); }
+.badge-error   { background-color: rgba(220,38,38,0.15);  color: var(--color-error); }
+
+/* ── Price change pill ── */
+.change-up   { color: var(--color-buy);  }
+.change-down { color: var(--color-loss); }
+
+/* ── Sidebar nav link ── */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.nav-link:hover {
+  background-color: var(--color-bg-input);
+  color: var(--color-text-primary);
+}
+.nav-link.active {
+  background-color: rgba(73,73,170,0.12);
+  color: var(--color-primary);
+}
+
+/* ── Table ── */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+table { width: 100%; border-collapse: collapse; }
+thead tr { border-bottom: 1px solid var(--color-border); }
+thead th {
+  text-align: left;
+  padding: 0.65rem 1rem;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--color-text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.1s ease;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background-color: var(--color-bg-input); }
+tbody td {
+  padding: 0.75rem 1rem;
+  font-size: var(--font-sm);
+  white-space: nowrap;
+}
+
+/* ── Stat card ── */
+.stat-card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+.stat-value {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.stat-label {
+  font-size: var(--font-xs);
+  color: var(--color-text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* ── Divider ── */
+.divider { border: none; border-top: 1px solid var(--color-border); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-disabled); }
+
+/* ── Mono numbers ── */
+.mono { font-family: 'JetBrains Mono', monospace; }

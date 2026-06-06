@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Home — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); overflow-x: hidden; }
+    * { box-sizing: border-box; }
+
+    /* Stock selector bar */
+    .selector-bar {
+      display: flex; align-items: center; gap: 10px;
+      margin: 14px 16px 0;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 11px 14px;
+      cursor: pointer;
+    }
+    .selector-bar .symbol { font-weight: 700; font-size: 14px; color: var(--color-text-primary); }
+    .selector-bar .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-disabled); }
+    .selector-bar .name { font-size: 13px; color: var(--color-text-secondary); flex: 1; }
+
+    /* Section header */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px 10px;
+    }
+    .section-title { font-size: 16px; font-weight: 700; }
+    .section-date { font-size: 12px; color: var(--color-text-disabled); font-family: 'JetBrains Mono', monospace; }
+
+    /* Status pill */
+    .status-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: 5px 10px;
+      font-size: 12px; font-weight: 600;
+    }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-buy); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* Stock cards horizontal scroll */
+    .cards-scroll {
+      display: flex; gap: 10px;
+      overflow-x: auto;
+      padding: 0 16px 4px;
+      scrollbar-width: none;
+    }
+    .cards-scroll::-webkit-scrollbar { display: none; }
+
+    .stock-card {
+      flex-shrink: 0;
+      width: 155px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      padding: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+    .stock-card.selected { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary); }
+    .stock-card:hover { border-color: var(--color-primary); }
+
+    .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .ticker-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: white; letter-spacing: -0.3px;
+    }
+    .change-badge {
+      font-size: 10px; font-weight: 600;
+      padding: 3px 7px; border-radius: 20px;
+    }
+    .change-badge.up   { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .change-badge.down { background: rgba(239,68,68,0.15);  color: var(--color-sell); }
+    .change-badge.flat { background: rgba(156,163,175,0.15); color: var(--color-text-disabled); }
+
+    .card-name { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px; line-height: 1.3; }
+    .card-bottom { display: flex; align-items: flex-end; justify-content: space-between; }
+    .card-price-label { font-size: 10px; color: var(--color-text-disabled); margin-bottom: 2px; }
+    .card-price { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+    /* More button */
+    .more-btn {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 4px; padding: 8px 16px;
+      font-size: 12px; font-weight: 600; color: var(--color-primary);
+      background: none; border: none; cursor: pointer; width: 100%;
+    }
+
+    /* Divider */
+    .divider { height: 1px; background: var(--color-border); margin: 0 16px; }
+
+    /* Stock detail section */
+    .detail-section { padding: 16px 16px 0; }
+    .detail-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+    .detail-symbol { font-size: 20px; font-weight: 800; color: var(--color-primary); }
+    .detail-price  { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-left: 8px; }
+    .detail-actions { display: flex; gap: 10px; }
+    .icon-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-secondary);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .icon-btn.active { color: #f59e0b; background: rgba(245,158,11,0.15); }
+    .icon-btn svg { width: 16px; height: 16px; }
+
+    .detail-meta { font-size: 11px; color: var(--color-text-disabled); margin-bottom: 12px; }
+
+    /* Chart type tabs */
+    .chart-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    .chart-tab {
+      padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      border: none; cursor: pointer; transition: all 0.15s ease;
+      background: var(--color-bg-input); color: var(--color-text-secondary);
+    }
+    .chart-tab.active {
+      background: var(--color-primary); color: white;
+    }
+
+    /* Chart container */
+    #main-chart { width: 100%; overflow: hidden; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Open Account Reminder Banner ── -->
+  <div id="open-acct-banner" style="
+    margin: 14px 16px 0;
+    background: linear-gradient(135deg, rgba(73,73,170,0.18) 0%, rgba(91,91,214,0.12) 100%);
+    border: 1px solid rgba(73,73,170,0.35);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  ">
+    <div style="display:flex;align-items:flex-start;gap:10px">
+      <div style="color:var(--color-primary);flex-shrink:0;margin-top:1px">
+        <i data-lucide="info" style="width:16px;height:16px"></i>
+      </div>
+      <p style="margin:0;font-size:13px;color:var(--color-text-secondary);line-height:1.55">
+        Open a securities account to participate in online trading on the stock exchange.
+      </p>
+    </div>
+    <button onclick="openAccountForm()" style="
+      width:100%; padding:11px;
+      background: var(--color-primary);
+      border:none; border-radius:9px;
+      font-size:13px; font-weight:700; color:#fff;
+      cursor:pointer; transition:opacity 0.15s;
+    " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+      Open Account
+    </button>
+  </div>
+
+  <!-- Stock Selector -->
+  <div class="selector-bar" onclick="showSearch()">
+    <i data-lucide="search" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
+    <span class="symbol" id="sel-symbol">AAPL</span>
+    <span class="dot"></span>
+    <span class="name" id="sel-name">Apple Inc.</span>
+    <i data-lucide="chevron-down" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
+  </div>
+
+  <!-- Section Header -->
+  <div class="section-header">
+    <div>
+      <div class="section-title">Markets</div>
+      <div class="section-date">2026.06.06</div>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      Active
+    </div>
+  </div>
+
+  <!-- Stock Cards -->
+  <div class="cards-scroll" id="stock-cards"></div>
+
+  <!-- More button -->
+  <button class="more-btn">
+    View all <i data-lucide="chevron-right" style="width:14px;height:14px"></i>
+  </button>
+
+  <div class="divider"></div>
+
+  <!-- Selected Stock Detail -->
+  <div class="detail-section">
+    <div class="detail-header">
+      <div style="display:flex;align-items:baseline;gap:0">
+        <span class="detail-symbol" id="d-symbol">AAPL</span>
+        <span class="detail-price" id="d-price">$189.84</span>
+      </div>
+      <div class="detail-actions">
+        <button class="icon-btn" title="Add to compare">
+          <i data-lucide="git-compare-arrows"></i>
+        </button>
+        <button class="icon-btn" id="watch-btn" onclick="toggleWatchlist()" title="Watchlist">
+          <i data-lucide="star"></i>
+        </button>
+      </div>
+    </div>
+    <div class="detail-meta" id="d-meta">Last updated: 2026-06-06 14:32:11 &nbsp;·&nbsp; <span id="d-change" style="color:var(--color-buy)">+1.23 (+0.65%)</span></div>
+    <div class="chart-tabs">
+      <button class="chart-tab active" onclick="setChartType('line', this)">Line</button>
+      <button class="chart-tab" onclick="setChartType('candle', this)">Candle</button>
+    </div>
+    <div id="main-chart"></div>
+  </div>
+
+  <div style="height:20px"></div>
+
+  <script src="../../data/static.js"></script>
+  <script src="../scripts/chart.js"></script>
+  <script>
+    // ── Intraday price data (AAPL today) ──
+    const INTRADAY = {
+      AAPL:  [187.2,186.8,186.2,185.8,185.1,184.6,184.0,183.5,183.0,182.8,183.2,183.8,184.5,185.4,186.2,187.0,187.8,188.6,189.1,189.5,190.1,190.4,189.9,189.6,189.8,189.5,189.7,189.6,189.8,189.84],
+      TSLA:  [252.0,251.2,250.8,249.5,248.0,247.2,248.5,249.0,250.2,251.0,251.8,252.5,251.0,249.8,248.5,247.2,247.8,248.2,249.0,249.5,249.0,248.8,248.5,248.2,248.5,248.4,248.3,248.4,248.5,248.42],
+      MSFT:  [410.5,411.2,412.0,411.5,410.8,410.2,411.0,412.5,413.2,413.8,414.5,415.0,414.5,413.8,413.2,413.8,414.2,414.8,415.2,415.5,415.0,414.8,415.2,415.0,415.3,415.2,415.1,415.3,415.2,415.30],
+      NVDA:  [855.0,857.5,860.2,858.0,856.5,854.0,852.8,855.0,858.5,862.0,865.5,868.0,870.5,869.0,867.5,869.0,870.5,872.0,873.5,875.0,876.0,875.5,874.8,875.2,875.5,875.3,875.1,875.4,875.3,875.40],
+      GOOGL: [170.2,170.8,171.2,170.9,170.5,170.0,170.5,171.0,171.5,172.0,171.8,172.2,172.5,172.3,171.8,172.0,172.3,172.5,172.8,173.0,172.8,172.5,172.6,172.7,172.6,172.6,172.6,172.6,172.6,172.63],
+    };
+
+    const CARDS = [
+      { symbol:'AAPL',  name:'Apple Inc.',     price:189.84, change:+1.23,  pct:+0.65 },
+      { symbol:'NVDA',  name:'NVIDIA Corp.',   price:875.40, change:+15.20, pct:+1.77 },
+      { symbol:'TSLA',  name:'Tesla Inc.',     price:248.42, change:-3.17,  pct:-1.26 },
+      { symbol:'MSFT',  name:'Microsoft Corp.',price:415.30, change:+2.55,  pct:+0.62 },
+      { symbol:'GOOGL', name:'Alphabet Inc.',  price:172.63, change:+0.88,  pct:+0.51 },
+    ];
+
+    const AVATAR_COLORS = {
+      AAPL:'linear-gradient(135deg,#4949AA,#7c3aed)',
+      NVDA:'linear-gradient(135deg,#16a34a,#4949AA)',
+      TSLA:'linear-gradient(135deg,#dc2626,#9333ea)',
+      MSFT:'linear-gradient(135deg,#0ea5e9,#4949AA)',
+      GOOGL:'linear-gradient(135deg,#f59e0b,#ef4444)',
+    };
+
+    let selectedSymbol = 'AAPL';
+    let watchlist = new Set(['AAPL', 'NVDA']);
+
+    // ── Render stock cards ──
+    function renderCards() {
+      const container = document.getElementById('stock-cards');
+      container.innerHTML = CARDS.map(s => {
+        const isUp   = s.pct > 0;
+        const isFlat = s.pct === 0;
+        const cls    = isFlat ? 'flat' : isUp ? 'up' : 'down';
+        const sign   = isUp ? '+' : '';
+        const sparkColor = isFlat ? '#9CA3AF' : isUp ? 'var(--color-buy)' : 'var(--color-sell)';
+        const data = INTRADAY[s.symbol] || [];
+        const isSelected = s.symbol === selectedSymbol;
+        return `
+          <div class="stock-card${isSelected?' selected':''}" onclick="selectStock('${s.symbol}')">
+            <div class="card-top">
+              <div class="ticker-avatar" style="background:${AVATAR_COLORS[s.symbol]||'var(--color-primary)'}">
+                ${s.symbol.slice(0,2)}
+              </div>
+              <span class="change-badge ${cls}">${sign}${s.pct.toFixed(2)}%</span>
+            </div>
+            <div class="card-name">${s.name}</div>
+            <div class="card-bottom">
+              <div>
+                <div class="card-price-label">Close</div>
+                <div class="card-price">$${s.price.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
+              </div>
+              <div>${sparkline(data, sparkColor)}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ── Select a stock ──
+    function selectStock(symbol) {
+      selectedSymbol = symbol;
+      const s = CARDS.find(c => c.symbol === symbol);
+      if (!s) return;
+
+      document.getElementById('sel-symbol').textContent = symbol;
+      document.getElementById('sel-name').textContent = s.name;
+      document.getElementById('d-symbol').textContent = symbol;
+      document.getElementById('d-price').textContent = '$' + s.price.toLocaleString('en-US',{minimumFractionDigits:2});
+
+      const sign   = s.change >= 0 ? '+' : '';
+      const color  = s.change >= 0 ? 'var(--color-buy)' : 'var(--color-sell)';
+      document.getElementById('d-change').textContent = `${sign}${s.change.toFixed(2)} (${sign}${s.pct.toFixed(2)}%)`;
+      document.getElementById('d-change').style.color = color;
+
+      // Update watchlist star
+      const wb = document.getElementById('watch-btn');
+      wb.classList.toggle('active', watchlist.has(symbol));
+
+      renderChart(symbol);
+      renderCards();
+    }
+
+    // ── Render main chart ──
+    function renderChart(symbol) {
+      const data  = INTRADAY[symbol] || [];
+      const s     = CARDS.find(c => c.symbol === symbol);
+      const isUp  = s && s.pct >= 0;
+      const color = isUp ? 'var(--color-buy)' : 'var(--color-sell)';
+
+      const mn = Math.min(...data);
+      const mx = Math.max(...data);
+      const mid = ((mx + mn) / 2);
+
+      renderLineChart('main-chart', data, {
+        height: 210,
+        color: isUp ? '#00C076' : '#EF4444',
+        showGrid: true,
+        yLabels: [mx.toFixed(2), mid.toFixed(2), mn.toFixed(2)],
+      });
+    }
+
+    function setChartType(type, btn) {
+      document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      // Candle chart: just re-render line for now (full candle impl goes here)
+      renderChart(selectedSymbol);
+    }
+
+    function toggleWatchlist() {
+      const btn = document.getElementById('watch-btn');
+      if (watchlist.has(selectedSymbol)) {
+        watchlist.delete(selectedSymbol);
+        btn.classList.remove('active');
+      } else {
+        watchlist.add(selectedSymbol);
+        btn.classList.add('active');
+      }
+    }
+
+    function showSearch() {
+      // Future: open search modal
+    }
+
+    // Init
+    renderCards();
+    renderChart('AAPL');
+    document.getElementById('watch-btn').classList.add('active');
+    lucide.createIcons();
+
+    function openAccountForm() {
+      try {
+        window.parent.navigateTo('open-account');
+      } catch(e) {
+        window.location.href = 'open-account.html';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Balance — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; }
+
+    /* ── Hero gradient card ── */
+    .hero-card {
+      margin: 14px 16px 0;
+      background: linear-gradient(135deg, #3a3a8c 0%, #4949AA 40%, #5b5bd6 70%, #7c6fe0 100%);
+      border-radius: 20px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 140px; height: 140px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+    .hero-card::after {
+      content: '';
+      position: absolute; bottom: -30px; right: 40px;
+      width: 90px; height: 90px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+
+    .hero-label { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+    .hero-value {
+      font-size: 30px; font-weight: 800; color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.5px; margin-bottom: 12px;
+    }
+    .hero-sub {
+      font-size: 12px; color: rgba(255,255,255,0.65);
+      margin-bottom: 4px;
+    }
+    .hero-cash {
+      font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 18px;
+    }
+    .hero-hide {
+      position: absolute; top: 20px; right: 20px;
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #fff;
+    }
+    .hero-hide svg { width: 18px; height: 18px; }
+
+    .hero-actions { display: flex; gap: 10px; }
+    .hero-btn {
+      flex: 1; padding: 10px; border-radius: 12px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; font-size: 13px; font-weight: 600;
+      cursor: pointer; text-align: center;
+      transition: background 0.15s ease;
+    }
+    .hero-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── Filter row ── */
+    .filter-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px 10px;
+    }
+    .filter-left { display: flex; align-items: center; gap: 8px; }
+    .filter-dropdown {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .filter-dropdown svg { width: 14px; height: 14px; color: var(--color-text-disabled); }
+    .info-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: none; border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-disabled);
+    }
+    .info-btn svg { width: 14px; height: 14px; }
+    .calendar-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--color-primary);
+      border: none; border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 13px; font-weight: 600; color: #fff; cursor: pointer;
+    }
+    .calendar-btn svg { width: 14px; height: 14px; }
+
+    /* ── Search bar ── */
+    .search-bar {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 16px 10px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+    .search-bar svg { width: 16px; height: 16px; color: var(--color-text-disabled); flex-shrink: 0; }
+    .search-bar input {
+      border: none; background: transparent; outline: none;
+      font-size: 13px; color: var(--color-text-primary); flex: 1;
+      font-family: 'Inter', sans-serif;
+    }
+    .search-bar input::placeholder { color: var(--color-text-disabled); }
+
+    /* ── Holdings list ── */
+    .holdings-card {
+      margin: 0 16px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .holding-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-border);
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+    .holding-item:last-child { border-bottom: none; }
+    .holding-item:hover { background: rgba(255,255,255,0.03); }
+
+    .holding-avatar {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, #2d2d6e, #4949AA);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #fff;
+      letter-spacing: -0.3px; flex-shrink: 0;
+    }
+    .holding-info { flex: 1; min-width: 0; }
+    .holding-top { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .holding-symbol { font-size: 14px; font-weight: 700; }
+    .holding-shares { font-size: 12px; color: var(--color-text-secondary); }
+    .holding-bottom { display: flex; align-items: center; gap: 6px; }
+    .holding-exchange { font-size: 11px; color: var(--color-text-disabled); }
+    .chg-badge {
+      font-size: 11px; font-weight: 600;
+      padding: 2px 6px; border-radius: 20px;
+    }
+    .chg-badge.up   { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .chg-badge.down { background: rgba(239,68,68,0.15);  color: var(--color-sell); }
+    .holding-right { text-align: right; flex-shrink: 0; }
+    .holding-value { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .holding-link {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 11px; color: var(--color-primary); margin-top: 2px;
+    }
+    .holding-link svg { width: 12px; height: 12px; }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Balance Card -->
+  <div class="hero-card">
+    <div class="hero-label">Total Assets</div>
+    <div class="hero-value" id="total-value">$112,680.00</div>
+    <div class="hero-sub">Cash Balance (ACC-9995)</div>
+    <div class="hero-cash" id="cash-val">$24,850.00</div>
+    <button class="hero-hide" onclick="toggleBalance()">
+      <i data-lucide="eye" id="eye-icon"></i>
+    </button>
+    <div class="hero-actions">
+      <button class="hero-btn" onclick="openDeposit()">
+        <i data-lucide="plus-circle" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>
+        Deposit
+      </button>
+      <button class="hero-btn" onclick="openWithdraw()">
+        <i data-lucide="arrow-up-from-line" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>
+        Withdraw
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Row -->
+  <div class="filter-row">
+    <div class="filter-left">
+      <button class="filter-dropdown">
+        Securities
+        <i data-lucide="chevron-down"></i>
+      </button>
+      <button class="info-btn"><i data-lucide="info"></i></button>
+    </div>
+    <button class="calendar-btn">
+      <i data-lucide="calendar"></i>
+      Statement
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <i data-lucide="search"></i>
+    <input type="text" placeholder="Search securities…" oninput="filterHoldings(this.value)" />
+  </div>
+
+  <!-- Holdings List -->
+  <div class="holdings-card" id="holdings-list"></div>
+
+  <div style="height:20px"></div>
+
+  <script src="../../data/static.js"></script>
+  <script>
+    const HOLDINGS = [
+      { symbol:'AAPL',  abbr:'AP', name:'Apple Inc.',     shares:50,   exchange:'NASDAQ', pct:+0.65, value:9492.00 },
+      { symbol:'MSFT',  abbr:'MS', name:'Microsoft Corp.',shares:20,   exchange:'NASDAQ', pct:+0.62, value:8306.00 },
+      { symbol:'NVDA',  abbr:'NV', name:'NVIDIA Corp.',   shares:10,   exchange:'NASDAQ', pct:+1.77, value:8754.00 },
+      { symbol:'TSLA',  abbr:'TS', name:'Tesla Inc.',     shares:30,   exchange:'NASDAQ', pct:-1.26, value:7452.60 },
+      { symbol:'GOOGL', abbr:'GO', name:'Alphabet Inc.',  shares:15,   exchange:'NASDAQ', pct:+0.51, value:2589.45 },
+    ];
+
+    let balanceVisible = true;
+
+    function renderHoldings(data) {
+      const el = document.getElementById('holdings-list');
+      if (!data.length) {
+        el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--color-text-disabled);font-size:13px">No holdings found</div>';
+        return;
+      }
+      el.innerHTML = data.map(h => {
+        const isUp = h.pct >= 0;
+        const sign = h.pct >= 0 ? '+' : '';
+        return `
+          <div class="holding-item">
+            <div class="holding-avatar">${h.abbr}</div>
+            <div class="holding-info">
+              <div class="holding-top">
+                <span class="holding-symbol">${h.symbol}</span>
+                <span class="holding-shares">${h.shares.toLocaleString()} shares</span>
+              </div>
+              <div class="holding-bottom">
+                <span class="holding-exchange">${h.exchange}</span>
+                <span class="chg-badge ${isUp?'up':'down'}">${sign}${h.pct.toFixed(1)}%</span>
+              </div>
+            </div>
+            <div class="holding-right">
+              <div class="holding-value">$${h.value.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
+              <div class="holding-link">Details <i data-lucide="chevron-right"></i></div>
+            </div>
+          </div>`;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function filterHoldings(q) {
+      const filtered = q
+        ? HOLDINGS.filter(h => h.symbol.toLowerCase().includes(q.toLowerCase()) || h.name.toLowerCase().includes(q.toLowerCase()))
+        : HOLDINGS;
+      renderHoldings(filtered);
+    }
+
+    function toggleBalance() {
+      balanceVisible = !balanceVisible;
+      const mask = '••••••';
+      document.getElementById('total-value').textContent = balanceVisible ? '$112,680.00' : mask;
+      document.getElementById('cash-val').textContent    = balanceVisible ? '$24,850.00'  : mask;
+      const icon = document.getElementById('eye-icon');
+      icon.setAttribute('data-lucide', balanceVisible ? 'eye' : 'eye-off');
+      lucide.createIcons();
+    }
+
+    function openDeposit()  { alert('Deposit flow'); }
+    function openWithdraw() { alert('Withdraw flow'); }
+
+    renderHoldings(HOLDINGS);
+    lucide.createIcons();
+  </script>
+</body>
+</html>

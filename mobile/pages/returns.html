@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Returns — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; }
+
+    /* ── Hero gradient card ── */
+    .hero-card {
+      margin: 14px 16px 0;
+      background: linear-gradient(135deg, #3a3a8c 0%, #4949AA 45%, #5b5bd6 75%, #7c6fe0 100%);
+      border-radius: 20px;
+      padding: 20px;
+      position: relative; overflow: hidden;
+    }
+    .hero-card::before {
+      content:''; position:absolute; top:-50px; right:-30px;
+      width:160px; height:160px; background:rgba(255,255,255,0.05); border-radius:50%;
+    }
+    .hero-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .hero-label { font-size:12px; color:rgba(255,255,255,0.7); }
+    .hero-btn-row { display:flex; gap:8px; }
+    .hero-icon-btn {
+      width:34px; height:34px; border-radius:10px;
+      background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:#fff;
+    }
+    .hero-icon-btn svg { width:16px; height:16px; }
+
+    .hero-value {
+      font-size:28px; font-weight:800; color:#fff;
+      font-family:'JetBrains Mono',monospace; letter-spacing:-0.5px;
+      margin-bottom:16px;
+    }
+
+    /* Stats row inside hero */
+    .stats-row {
+      background:rgba(0,0,0,0.2); border-radius:12px;
+      padding:12px 14px;
+    }
+    .stat-line { display:flex; align-items:center; justify-content:space-between; padding:3px 0; }
+    .stat-line-label { font-size:12px; color:rgba(255,255,255,0.65); }
+    .stat-line-value { font-size:13px; font-weight:600; color:#fff; font-family:'JetBrains Mono',monospace; }
+    .stat-line-value.loss { color: var(--color-loss); }
+    .stat-line-value.gain { color: var(--color-growth); }
+
+    /* ── Securities section ── */
+    .section-card {
+      margin: 12px 16px 0;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .section-title-bar {
+      display: flex; align-items: center; padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .section-accent { width: 3px; height: 18px; background: var(--color-primary); border-radius: 2px; margin-right: 10px; }
+    .section-title  { font-size: 14px; font-weight: 700; }
+
+    /* View tabs */
+    .view-tabs { display:flex; padding: 0 16px 0; border-bottom: 1px solid var(--color-border); }
+    .view-tab {
+      display:flex; align-items:center; gap:6px;
+      padding:10px 12px; font-size:12px; font-weight:600;
+      color:var(--color-text-disabled); cursor:pointer;
+      border:none; background:transparent;
+      border-bottom: 2px solid transparent; margin-bottom:-1px;
+      transition: all 0.15s ease;
+    }
+    .view-tab svg { width:14px; height:14px; }
+    .view-tab.active { color:var(--color-primary); border-bottom-color:var(--color-primary); }
+
+    /* Chart type row */
+    .chart-type-row { display:flex; justify-content:flex-end; gap:8px; padding:10px 16px 4px; }
+    .ct-btn {
+      width:28px; height:28px; border-radius:8px;
+      background:none; border:1px solid var(--color-border);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--color-text-disabled);
+      transition: all 0.15s ease;
+    }
+    .ct-btn.active { background:var(--color-primary); border-color:var(--color-primary); color:#fff; }
+    .ct-btn svg { width:14px; height:14px; }
+
+    /* Donut chart area */
+    .donut-area {
+      display:flex; flex-direction:column; align-items:center; padding:8px 16px 16px;
+    }
+    #donut-chart { flex-shrink:0; }
+
+    /* Legend */
+    .legend { width:100%; margin-top:14px; display:flex; flex-direction:column; gap:6px; }
+    .legend-item { display:flex; align-items:center; justify-content:space-between; }
+    .legend-left { display:flex; align-items:center; gap:8px; }
+    .legend-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+    .legend-label { font-size:12px; color:var(--color-text-secondary); }
+    .legend-pct { font-size:12px; font-weight:600; font-family:'JetBrains Mono',monospace; }
+
+    /* Holdings sub-list */
+    .holdings-sub { padding: 0 16px 4px; }
+    .holding-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 0; border-bottom:1px solid var(--color-border);
+    }
+    .holding-row:last-child { border-bottom:none; }
+    .hr-left { display:flex; align-items:center; gap:10px; }
+    .hr-avatar {
+      width:32px; height:32px; border-radius:9px;
+      background:linear-gradient(135deg,#2d2d6e,#4949AA);
+      display:flex; align-items:center; justify-content:center;
+      font-size:10px; font-weight:800; color:#fff;
+    }
+    .hr-symbol { font-size:13px; font-weight:700; }
+    .hr-shares { font-size:11px; color:var(--color-text-disabled); }
+    .hr-right { text-align:right; }
+    .hr-value { font-size:13px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+    .hr-pct { font-size:11px; font-weight:600; margin-top:1px; }
+    .hr-pct.up   { color:var(--color-buy); }
+    .hr-pct.down { color:var(--color-sell); }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Returns Card -->
+  <div class="hero-card">
+    <div class="hero-header">
+      <div class="hero-label">Current Valuation</div>
+      <div class="hero-btn-row">
+        <button class="hero-icon-btn" onclick="refreshData()" title="Refresh">
+          <i data-lucide="refresh-cw"></i>
+        </button>
+        <button class="hero-icon-btn" onclick="toggleVisibility()" title="Toggle">
+          <i data-lucide="eye" id="val-eye"></i>
+        </button>
+      </div>
+    </div>
+    <div class="hero-value" id="hero-val">$112,680.00</div>
+    <div class="stats-row">
+      <div class="stat-line">
+        <span class="stat-line-label">Total Invested</span>
+        <span class="stat-line-value">$87,340.00</span>
+      </div>
+      <div class="stat-line">
+        <span class="stat-line-label">P&amp;L (Amount)</span>
+        <span class="stat-line-value gain">+$25,340.00</span>
+      </div>
+      <div class="stat-line">
+        <span class="stat-line-label">P&amp;L (%)</span>
+        <span class="stat-line-value gain">+29.01%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Securities Info Card -->
+  <div class="section-card">
+    <div class="section-title-bar">
+      <div class="section-accent"></div>
+      <span class="section-title">Portfolio Breakdown</span>
+    </div>
+
+    <!-- View tabs -->
+    <div class="view-tabs">
+      <button class="view-tab active" onclick="switchView('donut', this)">
+        <i data-lucide="pie-chart"></i> Allocation
+      </button>
+      <button class="view-tab" onclick="switchView('pnl', this)">
+        <i data-lucide="trending-up"></i> P&amp;L
+      </button>
+    </div>
+
+    <!-- Donut view -->
+    <div id="view-donut">
+      <div class="chart-type-row">
+        <button class="ct-btn active" title="Donut"><i data-lucide="pie-chart"></i></button>
+        <button class="ct-btn" title="Table"><i data-lucide="table"></i></button>
+      </div>
+      <div class="donut-area">
+        <div id="donut-chart"></div>
+        <div class="legend" id="donut-legend"></div>
+      </div>
+    </div>
+
+    <!-- P&L view (hidden by default) -->
+    <div id="view-pnl" style="display:none;">
+      <div class="holdings-sub" id="pnl-list"></div>
+    </div>
+  </div>
+
+  <div style="height:20px"></div>
+
+  <script src="../../data/static.js"></script>
+  <script src="../scripts/chart.js"></script>
+  <script>
+    const SLICES = [
+      { label:'AAPL',  value:9492,  color:'#F59E0B', shares:50,  pct:+24.7, gain:+1882.00  },
+      { label:'NVDA',  value:8754,  color:'#00C076', shares:10,  pct:+94.3, gain:+4254.00  },
+      { label:'MSFT',  value:8306,  color:'#3B82F6', shares:20,  pct:+34.0, gain:+2106.00  },
+      { label:'TSLA',  value:7453,  color:'#EF4444', shares:30,  pct:+12.9, gain:+851.60   },
+      { label:'GOOGL', value:2589,  color:'#8B5CF6', shares:15,  pct:+23.3, gain:+489.45   },
+      { label:'Cash',  value:75086, color:'#6B7280', shares:0,   pct:0,     gain:0          },
+    ];
+    const total = SLICES.reduce((s, sl) => s + sl.value, 0);
+
+    let visible = true;
+
+    function renderDonutChart() {
+      renderDonut('donut-chart', SLICES, 'Total Value', '$112,680');
+
+      // Legend (exclude cash)
+      const el = document.getElementById('donut-legend');
+      el.innerHTML = SLICES.filter(s => s.label !== 'Cash').map(s => {
+        const pct = ((s.value / total) * 100).toFixed(1);
+        return `<div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:${s.color}"></div>
+            <span class="legend-label">${s.label}</span>
+          </div>
+          <span class="legend-pct">${pct}%</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderPnL() {
+      const el = document.getElementById('pnl-list');
+      el.innerHTML = SLICES.filter(s => s.label !== 'Cash').map(s => {
+        const isUp = s.gain >= 0;
+        const sign = isUp ? '+' : '';
+        return `<div class="holding-row">
+          <div class="hr-left">
+            <div class="hr-avatar">${s.label.slice(0,2)}</div>
+            <div>
+              <div class="hr-symbol">${s.label}</div>
+              <div class="hr-shares">${s.shares} shares</div>
+            </div>
+          </div>
+          <div class="hr-right">
+            <div class="hr-value">${sign}$${Math.abs(s.gain).toFixed(2)}</div>
+            <div class="hr-pct ${isUp?'up':'down'}">${sign}${s.pct.toFixed(1)}%</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function switchView(view, btn) {
+      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('view-donut').style.display = view === 'donut' ? 'block' : 'none';
+      document.getElementById('view-pnl').style.display   = view === 'pnl'   ? 'block' : 'none';
+    }
+
+    function toggleVisibility() {
+      visible = !visible;
+      document.getElementById('hero-val').textContent = visible ? '$112,680.00' : '••••••••';
+      document.getElementById('val-eye').setAttribute('data-lucide', visible ? 'eye' : 'eye-off');
+      lucide.createIcons();
+    }
+
+    function refreshData() {
+      const btn = document.querySelector('[title="Refresh"] svg');
+      btn?.classList.add('animate-spin');
+      setTimeout(() => btn?.classList.remove('animate-spin'), 1000);
+    }
+
+    renderDonutChart();
+    renderPnL();
+    lucide.createIcons();
+  </script>
+</body>
+</html>
