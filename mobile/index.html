@@ -224,40 +224,74 @@
       padding: 13px 20px;
       border-bottom: 1px solid var(--color-border);
     }
-    .menu-ctrl-label { font-size: 14px; color: var(--color-text-secondary); }
-    .theme-toggle-circle {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: var(--color-bg-input); border: 1px solid var(--color-border);
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      color: var(--color-text-primary); transition: background 0.15s;
+    .menu-ctrl-label { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+
+    /* ── Theme switch ── */
+    .theme-switch {
+      width: 68px; height: 32px;
+      background: var(--color-bg-input);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      position: relative; cursor: pointer;
+      display: flex; align-items: center;
+      flex-shrink: 0;
     }
-    .theme-toggle-circle:hover { background: var(--color-primary); color: #fff; }
-    .theme-toggle-circle svg { width: 16px; height: 16px; }
-    .lang-badge {
+    .ts-icons {
+      display: flex; justify-content: space-between; align-items: center;
+      width: 100%; padding: 0 8px;
+      position: relative; z-index: 4; pointer-events: none; /* above knob */
+    }
+    .ts-icon { display: flex; align-items: center; transition: color 0.2s; }
+    .ts-icon svg { width: 13px; height: 13px; }
+    /* Sun icon: active in light, dim in dark */
+    .ts-icon:first-child { color: rgba(255,255,255,0.35); }
+    [data-theme="light"] .ts-icon:first-child { color: #fff; }
+    /* Moon icon: active in dark, dim in light */
+    .ts-icon:last-child { color: #fff; }
+    [data-theme="light"] .ts-icon:last-child { color: rgba(255,255,255,0.35); }
+    .ts-knob {
+      position: absolute;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--color-primary);
+      top: 2px; left: 2px;
+      z-index: 3; /* below icons */
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    [data-theme="dark"] .ts-knob { transform: translateX(36px); }
+
+    /* ── Language pill ── */
+    .lang-pill-btn {
       display: flex; align-items: center; gap: 6px;
-      font-size: 14px; font-weight: 700;
+      background: var(--color-bg-input);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-size: 13px; font-weight: 600;
+      color: var(--color-text-primary);
+      cursor: pointer; transition: border-color 0.15s;
     }
-    .lang-badge svg { width: 16px; height: 16px; color: var(--color-text-disabled); }
+    .lang-pill-btn svg { width: 14px; height: 14px; color: var(--color-text-secondary); }
+    .lang-pill-btn:hover { border-color: var(--color-primary); }
 
     .menu-section-lbl {
-      padding: 14px 20px 6px;
-      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      padding: 16px 20px 8px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
       color: var(--color-text-disabled); text-transform: uppercase;
     }
     .menu-item {
       display: flex; align-items: center; gap: 14px;
-      padding: 13px 20px;
+      padding: 15px 20px;
       border: none; background: transparent; cursor: pointer; width: 100%;
       text-align: left; color: var(--color-text-primary);
       font-size: 15px; font-weight: 500;
       transition: background 0.12s ease;
-      border-radius: 0;
     }
-    .menu-item:hover   { background: var(--color-bg-input); }
-    .menu-item.current { background: rgba(73,73,170,0.1); color: var(--color-primary); }
-    .menu-item svg     { width: 20px; height: 20px; flex-shrink: 0; }
-    .menu-divider      { border: none; border-top: 1px solid var(--color-border); margin: 2px 0; }
-    .menu-signout      { color: var(--color-sell) !important; }
+    .menu-item:hover { background: var(--color-bg-input); }
+    .menu-item svg   { width: 20px; height: 20px; flex-shrink: 0; }
+    .menu-item-label { flex: 1; }
+    .menu-chevron svg { width: 16px !important; height: 16px !important; color: var(--color-text-disabled); }
+    .menu-divider    { border: none; border-top: 1px solid var(--color-border); margin: 4px 0; }
+    .menu-signout    { color: var(--color-sell) !important; }
   </style>
 </head>
 
@@ -377,79 +411,111 @@
 
     <div class="menu-hdr">
       <span class="menu-hdr-title">Menu</span>
-      <button class="menu-close-btn" onclick="closeMenu()">
-        <i data-lucide="x"></i>
-      </button>
+      <button class="menu-close-btn" onclick="closeMenu()"><i data-lucide="x"></i></button>
     </div>
 
-    <!-- Appearance -->
     <div class="menu-control-row">
       <span class="menu-ctrl-label">Appearance</span>
-      <button class="theme-toggle-circle" onclick="toggleTheme()" id="theme-circle-btn" title="Toggle theme">
-        <i data-lucide="sun" id="theme-circle-icon"></i>
-      </button>
+      <div class="theme-switch" onclick="toggleTheme()">
+        <div class="ts-icons">
+          <span class="ts-icon"><i data-lucide="sun"></i></span>
+          <span class="ts-icon"><i data-lucide="moon"></i></span>
+        </div>
+        <div class="ts-knob"></div>
+      </div>
     </div>
 
-    <!-- Language -->
     <div class="menu-control-row">
       <span class="menu-ctrl-label">Language</span>
-      <div class="lang-badge">
-        <i data-lucide="globe"></i> EN
-      </div>
+      <button class="lang-pill-btn" id="lang-pill-btn" onclick="toggleLang()">
+        <i data-lucide="globe"></i><span id="lang-label">English</span>
+      </button>
     </div>
 
     <div class="menu-divider"></div>
 
-    <!-- Profile -->
-    <button class="menu-item" onclick="menuNav('profile')">
-      <i data-lucide="user-circle"></i> My Profile
+    <!-- My Profile -->
+    <button class="menu-item" onclick="closeMenu()" style="padding:16px 20px">
+      <i data-lucide="user-circle"></i>
+      <span class="menu-item-label" style="font-weight:600">My Profile</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
 
     <div class="menu-divider"></div>
 
     <div class="menu-section-lbl">My Section</div>
-    <button class="menu-item" onclick="menuNav('trade')">
-      <i data-lucide="arrow-left-right"></i> Orders
+
+    <button class="menu-item" onclick="menuNav('trade'); closeMenu()">
+      <i data-lucide="history"></i>
+      <span class="menu-item-label">Order History</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="menuNav('balance')">
-      <i data-lucide="credit-card"></i> Balance
+    <button class="menu-item" onclick="menuNav('returns'); closeMenu()">
+      <i data-lucide="pie-chart"></i>
+      <span class="menu-item-label">Returns</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="menuNav('returns')">
-      <i data-lucide="pie-chart"></i> Returns
+    <button class="menu-item" onclick="closeMenu()">
+      <i data-lucide="building-2"></i>
+      <span class="menu-item-label">Bank Account</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="menuNav('deposit')">
-      <i data-lucide="landmark"></i> Deposit
+    <button class="menu-item" onclick="closeMenu()">
+      <i data-lucide="arrow-down-to-line"></i>
+      <span class="menu-item-label">Deposit</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="menuNav('withdraw')">
-      <i data-lucide="banknote"></i> Withdraw
-    </button>
-    <button class="menu-item" onclick="menuNav('open-account')">
-      <i data-lucide="file-text"></i> Open Securities Account
-    </button>
-    <button class="menu-item" onclick="menuNav('bank')">
-      <i data-lucide="building-2"></i> Bank Account
+    <button class="menu-item" onclick="closeMenu()">
+      <i data-lucide="arrow-up-from-line"></i>
+      <span class="menu-item-label">Withdraw</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
 
     <div class="menu-divider"></div>
 
     <div class="menu-section-lbl">General</div>
-    <button class="menu-item" onclick="menuNav('home')">
-      <i data-lucide="home"></i> Home
+
+    <button class="menu-item" onclick="menuNav('home'); closeMenu()">
+      <i data-lucide="home"></i>
+      <span class="menu-item-label">Home</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="menuNav('home')">
-      <i data-lucide="bar-chart-2"></i> Securities
+    <button class="menu-item" onclick="menuNav('balance'); closeMenu()">
+      <i data-lucide="wallet"></i>
+      <span class="menu-item-label">Portfolio</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item current" onclick="menuNav('ipo')">
-      <i data-lucide="trending-up"></i> IPO
+    <button class="menu-item" onclick="menuNav('trade'); closeMenu()">
+      <i data-lucide="arrow-left-right"></i>
+      <span class="menu-item-label">Secondary Trading</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="menuNav('bank')">
-      <i data-lucide="landmark"></i> Bank
+    <button class="menu-item" onclick="menuNav('returns'); closeMenu()">
+      <i data-lucide="trending-up"></i>
+      <span class="menu-item-label">Primary Trading</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
+    </button>
+    <button class="menu-item" onclick="closeMenu()">
+      <i data-lucide="landmark"></i>
+      <span class="menu-item-label">Bonds</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
+    </button>
+    <button class="menu-item" onclick="closeMenu()">
+      <i data-lucide="phone"></i>
+      <span class="menu-item-label">Contact Us</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
+    </button>
+    <button class="menu-item" onclick="closeMenu()">
+      <i data-lucide="info"></i>
+      <span class="menu-item-label">FAQ</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
 
     <div class="menu-divider"></div>
 
     <button class="menu-item menu-signout" onclick="signOut()">
-      <i data-lucide="log-out"></i> Sign Out
+      <i data-lucide="log-out"></i>
+      <span class="menu-item-label">Sign Out</span>
     </button>
 
     <div style="height:30px"></div>
@@ -609,6 +675,7 @@ const PAGE_MAP = {
   ipo:          'pages/ipo.html',
   trade:        'pages/trade.html',
   'open-account': 'pages/open-account.html',
+  kyc:          'pages/kyc.html',
 };
 function menuNav(key) {
   closeMenu();
@@ -621,6 +688,13 @@ function menuNav(key) {
 }
 
 function openNotifications() { /* future */ }
+
+let currentLang = 'en';
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'mn' : 'en';
+  const label = document.getElementById('lang-label');
+  if (label) label.textContent = currentLang === 'en' ? 'English' : 'Монгол';
+}
 function signOut() { closeMenu(); sessionStorage.removeItem('bdsec-auth'); window.location.href = 'login.html'; }
 
 /* ── Called by inner pages (e.g. open-account success) ── */

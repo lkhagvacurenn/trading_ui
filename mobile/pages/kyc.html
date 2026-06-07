@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>KYC Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header { display: flex; align-items: center; padding: 14px 16px 10px; gap: 12px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    .kyc-intro { padding: 0 16px 6px; }
+    .kyc-intro p { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin: 0; }
+
+    /* ── Form basics (shared with Open Account patterns) ── */
+    .form-body { padding: 0 16px; }
+    .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
+    .field-wrap { margin-bottom: 14px; }
+    .inp {
+      width: 100%; background: var(--color-bg-card); border: 1.5px solid var(--color-border);
+      border-radius: 10px; padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
+      outline: none; transition: border-color 0.15s; font-family: 'Inter', sans-serif;
+    }
+    .inp:focus { border-color: var(--color-primary); }
+    .inp::placeholder { color: var(--color-text-disabled); }
+    .inp[readonly] { background: var(--color-bg-input); color: var(--color-text-secondary); cursor: default; }
+    textarea.inp { font-family: 'Inter', sans-serif; }
+    .inp-select {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); opacity: 0.85; cursor: pointer; }
+    [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.35); }
+    .field-row { display: flex; gap: 10px; }
+    .field-row .field-wrap { flex: 1; }
+
+    .btn-primary {
+      width: 100%; padding: 14px; background: var(--color-primary); border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; transition: opacity 0.15s;
+      margin-top: 8px; margin-bottom: 24px;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-home {
+      width: 100%; padding: 14px; background: var(--color-bg-card); border: 1.5px solid var(--color-border);
+      border-radius: 10px; font-size: 15px; font-weight: 700; color: var(--color-text-primary); cursor: pointer;
+    }
+    .btn-row { display: flex; gap: 10px; margin-top: 8px; margin-bottom: 24px; }
+    .btn-row .btn-primary, .btn-row .btn-outline { margin: 0; }
+    .btn-outline {
+      flex: 1; padding: 13px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+      cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
+    .btn-outline svg { width: 16px; height: 16px; }
+
+    /* ── Step progress bar (KYC wizard) ── */
+    .step-bar { display: flex; gap: 6px; padding: 0 16px 18px; }
+    .step-seg { flex: 1; height: 3px; border-radius: 99px; background: var(--color-bg-input); transition: background 0.3s ease; }
+    .step-seg.done { background: var(--color-primary); }
+    .step-seg.active { background: var(--color-primary); opacity: 0.7; }
+    .step-meta { padding: 0 16px 4px; font-size: 11.5px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* ── Locked / auto-filled fields ── */
+    .locked-badge {
+      display: inline-flex; align-items: center; gap: 3px; vertical-align: middle;
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.02em; text-transform: none;
+      color: var(--color-text-disabled); background: var(--color-bg-input);
+      border-radius: 99px; padding: 2px 8px 2px 6px; margin-left: 6px;
+    }
+    .locked-badge svg { width: 10px; height: 10px; }
+
+    /* ── Phone / email OTP verification ── */
+    .verify-field-row { display: flex; gap: 8px; }
+    .verify-field-row .inp { flex: 1; min-width: 0; }
+    .verify-btn {
+      flex-shrink: 0; padding: 0 16px; border-radius: 10px; border: 1.5px solid var(--color-primary);
+      background: transparent; color: var(--color-primary); font-size: 12.5px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .verify-btn:hover { opacity: 0.8; }
+    .verify-status {
+      display: flex; align-items: center; gap: 6px; margin-top: 7px;
+      font-size: 12px; font-weight: 600; color: var(--color-buy);
+    }
+    .verify-status svg { width: 14px; height: 14px; }
+    .verify-hint { display: none; margin-top: 7px; font-size: 12px; font-weight: 600; color: var(--color-sell); }
+
+    /* ── OTP modal grid (reused for phone/email verification) ── */
+    .otp-email { text-align: center; font-size: 14px; font-weight: 600; color: var(--color-primary); margin: 2px 0 22px; }
+    .otp-grid { display: flex; gap: 9px; justify-content: center; margin-bottom: 22px; }
+    .otp-box {
+      width: 42px; height: 50px; background: var(--color-bg-input);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      text-align: center; font-size: 19px; font-weight: 700;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+    }
+    .otp-box:focus { border-color: var(--color-primary); }
+
+    /* ── KYC section headers ── */
+    .kyc-section-hdr { display: flex; align-items: center; gap: 12px; margin: 30px 0 16px; }
+    .kyc-section-hdr.first { margin-top: 6px; }
+    .kyc-section-icon {
+      width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+      background: rgba(73,73,170,0.14); color: var(--color-primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .kyc-section-icon svg { width: 18px; height: 18px; }
+    .kyc-section-title { font-size: 15px; font-weight: 800; }
+    .kyc-section-sub { font-size: 11.5px; color: var(--color-text-secondary); margin-top: 1px; }
+    .kyc-subhdr {
+      font-size: 11.5px; font-weight: 700; color: var(--color-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      margin: 6px 0 12px; padding-top: 16px; border-top: 1px dashed var(--color-border);
+    }
+
+    /* ── Conditional reveal blocks ── */
+    .cond-block { overflow: hidden; }
+    .cond-inner {
+      margin-top: 2px; margin-bottom: 14px; padding: 14px; border-radius: 12px;
+      background: var(--color-bg-input); border: 1px solid var(--color-border);
+    }
+    .cond-inner > .field-wrap:last-child,
+    .cond-inner > .cond-block:last-child { margin-bottom: 0; }
+
+    /* ── Yes / No radio pills ── */
+    .radio-pills { display: flex; gap: 8px; }
+    .radio-pill {
+      flex: 1; padding: 11px; border-radius: 10px; border: 1.5px solid var(--color-border);
+      background: var(--color-bg-card); font-size: 13px; font-weight: 700; color: var(--color-text-secondary);
+      cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .radio-pill.active { border-color: var(--color-primary); color: #fff; background: var(--color-primary); }
+
+    /* ── Multi-select chips ── */
+    .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 9px 14px; border-radius: 99px; border: 1.5px solid var(--color-border);
+      background: var(--color-bg-card); font-size: 12.5px; font-weight: 600; color: var(--color-text-secondary);
+      cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .chip.active { border-color: var(--color-primary); color: var(--color-primary); background: rgba(73,73,170,0.14); }
+
+    /* ── File upload card ── */
+    .upload-card {
+      display: flex; align-items: center; gap: 12px; padding: 13px 14px; margin-bottom: 10px;
+      background: var(--color-bg-card); border: 1.5px dashed var(--color-border); border-radius: 12px;
+      transition: border-color 0.15s;
+    }
+    .upload-card.done { border-style: solid; border-color: var(--color-buy); background: rgba(0,192,118,0.06); }
+    .upload-card-icon {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+      background: var(--color-bg-input); color: var(--color-text-secondary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .upload-card.done .upload-card-icon { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .upload-card-icon svg { width: 17px; height: 17px; }
+    .upload-card-info { flex: 1; min-width: 0; }
+    .upload-card-label { font-size: 12.5px; font-weight: 700; }
+    .upload-card-status { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .upload-card.done .upload-card-status { color: var(--color-buy); }
+    .upload-card-btn {
+      flex-shrink: 0; padding: 8px 14px; border-radius: 8px; background: var(--color-bg-input);
+      border: none; font-size: 12px; font-weight: 700; color: var(--color-text-primary); cursor: pointer;
+    }
+
+    /* ── Repeatable lists ── */
+    .repeat-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+    .repeat-row { padding: 14px; border-radius: 12px; background: var(--color-bg-input); border: 1px solid var(--color-border); }
+    .repeat-row .field-wrap:last-of-type { margin-bottom: 0; }
+    .repeat-remove {
+      display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 10px; padding: 9px;
+      background: none; border: 1px solid var(--color-border); border-radius: 8px;
+      font-size: 12px; font-weight: 700; color: var(--color-sell); cursor: pointer;
+    }
+    .repeat-remove svg { width: 13px; height: 13px; }
+    .repeat-add-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; margin-bottom: 16px;
+      background: transparent; border: 1.5px dashed var(--color-border); border-radius: 10px;
+      font-size: 13px; font-weight: 700; color: var(--color-primary); cursor: pointer;
+    }
+    .repeat-add-btn svg { width: 15px; height: 15px; }
+
+    /* ── Agreements (reused look) ── */
+    .agreement-item {
+      display: flex; align-items: center; justify-content: space-between; padding: 14px 16px;
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 12px;
+      margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s;
+    }
+    .agreement-item:hover { border-color: var(--color-primary); }
+    .agreement-item .ag-left { display: flex; align-items: center; gap: 10px; }
+    .agreement-check {
+      width: 26px; height: 26px; border-radius: 50%; background: var(--color-bg-input);
+      display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled);
+      flex-shrink: 0; transition: background 0.2s ease, color 0.2s ease;
+    }
+    .agreement-check svg { width: 13px; height: 13px; }
+    .agreement-check.read { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .agreement-name { font-size: 13px; font-weight: 600; }
+    .chevron-icon { color: var(--color-text-disabled); }
+    .chevron-icon svg { width: 16px; height: 16px; }
+
+    .agreement-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 280;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: flex-end; justify-content: center;
+    }
+    .agreement-modal-overlay.open { display: flex; }
+    .agreement-modal-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 78vh;
+      padding: 20px 20px 26px; display: flex; flex-direction: column;
+    }
+    .agreement-modal-hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-shrink: 0; }
+    .agreement-modal-title { font-size: 15px; font-weight: 800; }
+    .agreement-modal-close {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; background: var(--color-bg-input);
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary);
+    }
+    .agreement-modal-close svg { width: 16px; height: 16px; }
+    .agreement-modal-body { overflow-y: auto; font-size: 13px; line-height: 1.75; color: var(--color-text-secondary); white-space: pre-line; }
+
+    /* ── Signature ── */
+    .sig-section { margin-top: 8px; margin-bottom: 8px; }
+    .sig-placeholder {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      border: 1.5px dashed var(--color-border); border-radius: 14px; padding: 30px 16px; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .sig-placeholder:hover { border-color: var(--color-primary); background: var(--color-bg-input); }
+    .sig-placeholder-icon {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--color-bg-input);
+      display: flex; align-items: center; justify-content: center; color: var(--color-primary);
+    }
+    .sig-placeholder-icon svg { width: 20px; height: 20px; }
+    .sig-placeholder-text { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
+    #sig-canvas {
+      width: 100%; height: 160px; display: block; background: var(--color-bg-card);
+      border: 1.5px solid var(--color-primary); border-radius: 12px 12px 0 0; touch-action: none; cursor: crosshair;
+    }
+    .sig-pad-actions { display: flex; border: 1.5px solid var(--color-border); border-top: none; border-radius: 0 0 12px 12px; overflow: hidden; }
+    .sig-action-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px;
+      background: var(--color-bg-card); border: none; border-right: 1px solid var(--color-border);
+      font-size: 13px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer;
+    }
+    .sig-action-btn:last-child { border-right: none; }
+    .sig-action-btn svg { width: 14px; height: 14px; }
+    .sig-action-btn.primary { color: var(--color-primary); }
+    .sig-done {
+      display: flex; align-items: center; justify-content: space-between; padding: 14px 16px;
+      background: rgba(0,192,118,0.08); border: 1px solid rgba(0,192,118,0.3); border-radius: 12px;
+    }
+    .sig-done-left { display: flex; align-items: center; gap: 10px; color: var(--color-buy); font-size: 13px; font-weight: 600; }
+    .sig-done-left svg { width: 18px; height: 18px; }
+    .sig-redo-btn { background: none; border: none; color: var(--color-primary); font-size: 12px; font-weight: 700; cursor: pointer; }
+
+    /* ── Success screen ── */
+    #kyc-success {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 64vh; text-align: center; padding: 40px 32px;
+    }
+    .success-icon {
+      width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #00C076, #00e08f);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+      box-shadow: 0 0 0 10px rgba(0,192,118,0.1), 0 0 32px rgba(0,192,118,0.25);
+    }
+    .success-icon svg { width: 36px; height: 36px; color: #fff; }
+    .success-title { font-size: 22px; font-weight: 800; margin-bottom: 14px; }
+    .success-msg { font-size: 14px; color: var(--color-text-secondary); line-height: 1.65; margin-bottom: 32px; }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header" id="kyc-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">KYC Verification</div>
+  </div>
+
+  <div class="kyc-intro" id="kyc-intro">
+    <p>Complete your identity verification below so you can start trading online. The form has been tailored to your account type — please fill in every step accurately.</p>
+  </div>
+
+  <div class="step-bar" id="kyc-step-bar"></div>
+  <div class="step-meta" id="kyc-step-meta"></div>
+
+  <div class="form-body" id="kyc-form-body"></div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div id="kyc-success">
+    <div class="success-icon"><i data-lucide="check"></i></div>
+    <div class="success-title">KYC Submitted!</div>
+    <div class="success-msg">
+      Thank you. Your KYC information has been submitted for review. We will notify you once your verification is complete and your account is ready for online trading.
+    </div>
+    <button class="btn-home" onclick="goHome()">Back to Home</button>
+  </div>
+
+  <!-- ══ OTP VERIFICATION MODAL (phone / email) ══ -->
+  <div id="kyc-otp-modal" class="agreement-modal-overlay">
+    <div class="agreement-modal-card" style="max-height:none">
+      <div class="agreement-modal-hdr">
+        <span id="kyc-otp-title" class="agreement-modal-title">Verify Phone Number</span>
+        <button class="agreement-modal-close" onclick="closeKycOtp()"><i data-lucide="x"></i></button>
+      </div>
+      <p style="font-size:13px;color:var(--color-text-secondary);text-align:center;margin:0 0 4px;line-height:1.6">A 6-digit one-time code was sent to</p>
+      <div class="otp-email" id="kyc-otp-target"></div>
+      <div class="otp-grid" id="kyc-otp-grid">
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
+      </div>
+      <div class="verify-hint" id="kyc-otp-error" style="text-align:center">Please enter all 6 digits.</div>
+      <button class="btn-primary" style="margin:6px 0 10px" onclick="kycVerifyOtp()">Verify Code</button>
+      <button class="btn-outline" style="width:100%;margin-bottom:0" onclick="kycSendOtp(kycOtpFieldId, kycOtpKind, kycOtpLabel)">Resend Code</button>
+    </div>
+  </div>
+
+  <!-- ══ AGREEMENT READER MODAL ══ -->
+  <div id="kyc-agreement-modal" class="agreement-modal-overlay">
+    <div class="agreement-modal-card">
+      <div class="agreement-modal-hdr">
+        <span id="kyc-agreement-title" class="agreement-modal-title"></span>
+        <button class="agreement-modal-close" onclick="closeKycAgreement()"><i data-lucide="x"></i></button>
+      </div>
+      <div id="kyc-agreement-body" class="agreement-modal-body"></div>
+      <button class="btn-primary" style="margin:16px 0 0" onclick="closeKycAgreement()">I've Read This</button>
+    </div>
+  </div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════════════════ */
+const PROVINCES = ['Ulaanbaatar','Darkhan-Uul','Orkhon','Töv','Selenge','Khövsgöl','Arkhangai','Bayan-Ölgii','Bayankhongor','Bulgan','Dornod','Dornogovi','Dundgovi','Govi-Altai','Govisümber','Khentii','Khovd','Ömnögovi','Övörkhangai','Sükhbaatar','Uvs','Zavkhan'];
+const DISTRICTS = ['Bayangol','Bayanzürkh','Chingeltei','Khan-Uul','Nalaikh','Songinokhairkhan','Sükhbaatar','Baganuur','Bagakhangai'];
+const COUNTRIES = ['United States','United Kingdom','China','Japan','South Korea','Russia','Germany','France','Singapore','Canada','Australia','Other'];
+const COUNTRIES_WITH_MN = ['Mongolia', ...COUNTRIES];
+
+const KYC_AGREEMENTS = {
+  brokerage: {
+    name: 'Online Brokerage Agreement',
+    content: `This Online Brokerage Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client") in connection with the provision of online brokerage and trading services.
+
+1. The Client confirms that the personal, financial, and identification information provided in this KYC form is true, accurate, and complete, and agrees to update the Company promptly of any material changes.
+
+2. The Company will use the information provided to verify the Client's identity, assess suitability, and comply with applicable anti-money laundering and counter-terrorism financing regulations.
+
+3. The Client authorizes the Company to place trade orders, settle transactions, and report holdings in accordance with instructions submitted through approved channels.
+
+4. The Client acknowledges that all investment decisions are made at their own discretion and that the Company does not guarantee investment outcomes.
+
+5. The Company may decline, suspend, or terminate brokerage services where verification cannot be completed or where regulatory obligations so require.`
+  },
+  nominee: {
+    name: 'Nominee Account Agreement',
+    content: `This Nominee Account Agreement governs the manner in which the Client's securities may be held through a nominee (omnibus) structure maintained by the Company with the Securities Clearing House and Central Depository.
+
+1. Securities recorded under the nominee account remain beneficially owned by the Client at all times, and the Company will maintain accurate sub-ledger records reflecting the Client's interest.
+
+2. The Client may, at any time and subject to applicable processing fees, request transfer of securities from the nominee account into an individually registered account.
+
+3. The Company shall act with reasonable skill and care in administering the nominee account and will provide the Client with periodic statements of holdings and transaction activity.
+
+4. Corporate actions such as dividends, rights issues, and voting entitlements relating to securities held in the nominee account will be passed through to the Client in line with regulatory requirements and exchange rules.
+
+5. This Agreement remains effective for as long as the Client maintains an account with the Company, unless terminated earlier in accordance with its terms.`
+  }
+};
+const kycReadAgreements = new Set();
+const REPEAT_TEMPLATES = {};
+let _kycUid = 0;
+/* ids of email/phone inputs on the current step that require OTP verification before continuing */
+let kycVerifyFieldIds = [];
+let kycOtpFieldId = null, kycOtpKind = null, kycOtpLabel = null;
+function uid(prefix) { return `${prefix}-${_kycUid++}`; }
+
+/* ════════════════════════════════════════════════════════
+   FIELD RENDER HELPERS
+════════════════════════════════════════════════════════ */
+function sectionHeader(icon, title, subtitle, isFirst) {
+  return `<div class="kyc-section-hdr${isFirst ? ' first' : ''}">
+    <div class="kyc-section-icon"><i data-lucide="${icon}"></i></div>
+    <div>
+      <div class="kyc-section-title">${title}</div>
+      ${subtitle ? `<div class="kyc-section-sub">${subtitle}</div>` : ''}
+    </div>
+  </div>`;
+}
+function subHeader(label) { return `<div class="kyc-subhdr">${label}</div>`; }
+
+const LOCKED_BADGE = ` <span class="locked-badge"><i data-lucide="lock"></i>From your profile</span>`;
+
+function fText(id, label, opts = {}) {
+  const val = opts.value ? ` value="${opts.value}"` : '';
+  const readonly = opts.readonly || opts.locked;
+  const badge = opts.locked ? LOCKED_BADGE : '';
+  return `<div class="field-wrap"><label class="field-label">${label}${badge}</label>
+    <input class="inp" type="${opts.type || 'text'}" id="${id}" placeholder="${opts.placeholder || ''}"${readonly ? ' readonly' : ''}${val} /></div>`;
+}
+function fTextarea(id, label, placeholder = '') {
+  return `<div class="field-wrap"><label class="field-label">${label}</label>
+    <textarea class="inp" id="${id}" rows="3" placeholder="${placeholder}" style="resize:vertical"></textarea></div>`;
+}
+function fSelect(id, label, options, opts = {}) {
+  if (opts.locked && opts.value) {
+    return `<div class="field-wrap"><label class="field-label">${label}${LOCKED_BADGE}</label>
+      <input class="inp" type="text" id="${id}" value="${opts.value}" readonly />
+      <input type="hidden" id="${id}-real" value="${opts.value}" /></div>`;
+  }
+  const optsHtml = options.map(o => `<option${o === opts.value ? ' selected' : ''}>${o}</option>`).join('');
+  return `<div class="field-wrap"><label class="field-label">${label}</label>
+    <select class="inp inp-select" id="${id}" onchange="kycEvalConditionals()"><option value="">Select…</option>${optsHtml}</select></div>`;
+}
+/* Email / mobile phone field with an OTP "Verify" action — id is the input id,
+   kind is 'email' or 'phone' (controls masking + modal copy). */
+function fVerifiable(id, label, kind, opts = {}) {
+  const val = opts.value ? ` value="${opts.value}"` : '';
+  const badge = opts.locked ? LOCKED_BADGE : '';
+  const readonlyAttr = opts.locked ? ' readonly' : '';
+  kycVerifyFieldIds.push(id);
+  return `<div class="field-wrap"><label class="field-label">${label}${badge}</label>
+    <div class="verify-field-row">
+      <input class="inp" type="${opts.type || 'text'}" id="${id}" placeholder="${opts.placeholder || ''}"${readonlyAttr}${val} />
+      <button type="button" class="verify-btn" id="${id}-vbtn" onclick="kycSendOtp('${id}','${kind}','${label}')">Verify</button>
+    </div>
+    <div class="verify-status" id="${id}-vstatus" style="display:none"><i data-lucide="check-circle"></i><span>Verified</span></div>
+    <div class="verify-hint" id="${id}-vhint">Please verify your ${label.toLowerCase()} to continue.</div>
+  </div>`;
+}
+function fRadio(id, label, options = ['Yes', 'No']) {
+  const btns = options.map(o => `<button type="button" class="radio-pill" data-value="${o}" onclick="kycSelectRadio('${id}','${o.replace(/'/g, "\\'")}')">${o}</button>`).join('');
+  return `<div class="field-wrap"><label class="field-label">${label}</label>
+    <div class="radio-pills" id="${id}" data-value="">${btns}</div></div>`;
+}
+function fChips(id, label, options) {
+  const btns = options.map(o => `<button type="button" class="chip" data-value="${o}" onclick="kycToggleChip(this)">${o}</button>`).join('');
+  return `<div class="field-wrap"><label class="field-label">${label}</label>
+    <div class="chip-group" id="${id}">${btns}</div></div>`;
+}
+function fUpload(label) {
+  const id = uid('doc');
+  return `<div class="upload-card" id="${id}-card">
+    <input type="file" id="${id}" accept="image/*,.pdf" style="display:none" onchange="kycFileSelected('${id}')" />
+    <div class="upload-card-icon"><i data-lucide="upload-cloud"></i></div>
+    <div class="upload-card-info">
+      <div class="upload-card-label">${label}</div>
+      <div class="upload-card-status" id="${id}-status">Tap to upload file</div>
+    </div>
+    <button type="button" class="upload-card-btn" onclick="document.getElementById('${id}').click()">Choose</button>
+  </div>`;
+}
+function condBlock(showIfId, showIfValue, innerHtml) {
+  return `<div class="cond-block" data-show-if="${showIfId}=${showIfValue.replace(/"/g, '&quot;')}" style="display:none"><div class="cond-inner">${innerHtml}</div></div>`;
+}
+
+/* ── Interaction handlers ── */
+function kycSelectRadio(groupId, value) {
+  const group = document.getElementById(groupId);
+  if (!group) return;
+  group.dataset.value = value;
+  group.querySelectorAll('.radio-pill').forEach(p => p.classList.toggle('active', p.dataset.value === value));
+  kycEvalConditionals();
+}
+function kycToggleChip(btn) { btn.classList.toggle('active'); }
+function kycFileSelected(id) {
+  const input = document.getElementById(id);
+  const status = document.getElementById(`${id}-status`);
+  const card = document.getElementById(`${id}-card`);
+  if (input.files && input.files[0]) {
+    status.textContent = input.files[0].name;
+    card.classList.add('done');
+  }
+}
+function kycEvalConditionals() {
+  document.querySelectorAll('.cond-block[data-show-if]').forEach(el => {
+    const eq = el.dataset.showIf.indexOf('=');
+    const id = el.dataset.showIf.slice(0, eq);
+    const val = el.dataset.showIf.slice(eq + 1);
+    const target = document.getElementById(id);
+    let cur = '';
+    if (target) cur = target.classList.contains('radio-pills') ? (target.dataset.value || '') : target.value;
+    el.style.display = (cur === val) ? 'block' : 'none';
+  });
+}
+function kycAddRow(containerId) {
+  const container = document.getElementById(containerId);
+  const fn = REPEAT_TEMPLATES[containerId];
+  if (!container || !fn) return;
+  const idx = container.children.length;
+  const row = document.createElement('div');
+  row.className = 'repeat-row';
+  row.innerHTML = fn(idx) + `<button type="button" class="repeat-remove" onclick="this.parentElement.remove()"><i data-lucide="trash-2"></i><span>Remove</span></button>`;
+  container.appendChild(row);
+  lucide.createIcons();
+}
+
+/* ════════════════════════════════════════════════════════
+   PROFILE DETECTION
+════════════════════════════════════════════════════════ */
+function getProfile() {
+  const usertype = (localStorage.getItem('reg-usertype') || 'Individual').trim();
+  const country  = (localStorage.getItem('reg-country')  || 'Mongolia').trim();
+  const dobStr   = localStorage.getItem('oa-dob') || '';
+  let age = 30;
+  if (dobStr) {
+    const dob = new Date(dobStr);
+    if (!isNaN(dob.getTime())) {
+      const today = new Date();
+      age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    }
+  }
+  return {
+    isCorporate: usertype === 'Corporate',
+    isMongolian: country === 'Mongolia',
+    isChild: age < 16,
+    age, dobStr,
+  };
+}
+
+/* ════════════════════════════════════════════════════════
+   SHARED SECTION RENDERERS
+════════════════════════════════════════════════════════ */
+function renderGeneralInfo(profile, isFirst) {
+  kycVerifyFieldIds = [];
+  const givenName = localStorage.getItem('oa-first-name') || '';
+  const surname   = localStorage.getItem('oa-last-name')  || '';
+  const gender    = localStorage.getItem('oa-gender')     || '';
+  const phone     = localStorage.getItem('oa-phone')      || '';
+  const address   = localStorage.getItem('oa-address')    || '';
+
+  let html = sectionHeader('user-circle', 'General Information', null, isFirst);
+  html += `<div class="field-row">${fText(uid('gi-family'), 'Family Name')}${fText('kyc-surname', 'Surname', { value: surname, locked: !!surname })}</div>`;
+  html += fText('kyc-given', 'Given Name', { value: givenName, locked: !!givenName });
+  html += fText('kyc-citizenship', 'Citizenship', { value: profile.isMongolian ? 'Mongolia' : 'Foreign Citizen', readonly: true });
+  html += fSelect('kyc-gender', 'Gender', ['Male', 'Female'], { value: gender, locked: !!gender });
+  html += profile.isMongolian
+    ? fText(uid('gi-regnum'), 'Register Number', { placeholder: 'АА00000000' })
+    : fText(uid('gi-passport'), 'Passport Number', { placeholder: 'Passport number' });
+  html += fText('kyc-dob', 'Date of Birth', { type: 'date', value: profile.dobStr, readonly: !!profile.dobStr });
+  html += fVerifiable(uid('gi-email'), 'Email', 'email', { type: 'email', placeholder: 'name@example.com' });
+  html += fVerifiable('kyc-mobile', 'Mobile Phone', 'phone', { type: 'tel', value: phone, locked: !!phone });
+  html += fText(uid('gi-secphone'), 'Secondary Phone', { type: 'tel' });
+
+  html += subHeader('Address');
+  if (profile.isMongolian) {
+    html += fSelect(uid('gi-province'), 'Province / City', PROVINCES);
+    html += fSelect(uid('gi-district'), 'District / Soum', DISTRICTS);
+    html += fText('kyc-address', 'Address', { value: address, locked: !!address });
+  } else {
+    html += fSelect(uid('gi-country'), 'Country', COUNTRIES);
+    html += fTextarea(uid('gi-address'), 'Address');
+  }
+
+  const tempId = uid('gi-temp');
+  let tempInner;
+  if (profile.isMongolian) {
+    tempInner = fSelect(uid('gi-tprovince'), 'Province / City', PROVINCES) +
+                fSelect(uid('gi-tdistrict'), 'District / Soum', DISTRICTS) +
+                fText(uid('gi-taddress'), 'Address');
+  } else {
+    tempInner = fSelect(uid('gi-tcountry'), 'Country', COUNTRIES) + fTextarea(uid('gi-taddress'), 'Address');
+  }
+  html += fRadio(tempId, 'Do you have a temporary residence?');
+  html += condBlock(tempId, 'Yes', tempInner);
+  return html;
+}
+
+function renderEmployment() {
+  let html = sectionHeader('briefcase', 'Employment');
+  html += fSelect(uid('emp-type'), 'Employment Type', ['Civil Servant', 'State Owned Enterprise', 'Private Sector', 'Foreign Registered Entity', 'International Organization', 'Self Employed', 'Student', 'Unemployed', 'Pensioner', 'Other']);
+  html += fText(uid('emp-employer'), 'Employer Name');
+  html += fText(uid('emp-industry'), 'Industry Type');
+  html += fText(uid('emp-position'), 'Position');
+  html += fText(uid('emp-address'), 'Employer Address');
+  return html;
+}
+
+function renderPepInfo() {
+  let html = sectionHeader('shield-alert', 'PEP Information', 'Politically Exposed Person disclosure');
+  html += fRadio(uid('pep-self'), 'Are you a Politically Exposed Person?');
+  const famId = uid('pep-family');
+  html += fRadio(famId, 'Does a family member relate to a PEP?');
+  const listId = uid('pep-list');
+  REPEAT_TEMPLATES[listId] = (i) => `
+    <div class="field-row">${fText(`${listId}-name-${i}`, 'PEP Full Name')}${fText(`${listId}-rel-${i}`, 'Relationship')}</div>
+    ${fText(`${listId}-pos-${i}`, 'Position')}
+    <div class="field-row">${fText(`${listId}-start-${i}`, 'Start Date', { type: 'date' })}${fText(`${listId}-end-${i}`, 'End Date', { type: 'date' })}</div>`;
+  html += condBlock(famId, 'Yes',
+    `<div class="repeat-list" id="${listId}"></div>
+     <button type="button" class="repeat-add-btn" onclick="kycAddRow('${listId}')"><i data-lucide="plus"></i><span>Add PEP Relation</span></button>`);
+  return html;
+}
+
+function renderFinancialInfo() {
+  let html = sectionHeader('wallet', 'Financial Information');
+  const incomeId = uid('fin-income');
+  html += fSelect(incomeId, 'Monthly Income', ['Less than 1,000,000₮', '1,000,000 – 5,000,000₮', '5,000,000 – 10,000,000₮', '10,000,000 – 20,000,000₮', '20,000,000 – 50,000,000₮', '50,000,000 – 100,000,000₮', 'More than 100,000,000₮', 'Irregular Income']);
+  const irregularInner = fText(uid('fin-last12'), 'Last 12 Months Income') +
+    fChips(uid('fin-sources'), 'Income Sources', ['Salary', 'Business Income', 'Pension', 'Inheritance', 'Other']);
+  html += condBlock(incomeId, 'Irregular Income', irregularInner);
+  return html;
+}
+
+function renderActingOnBehalf(profile) {
+  let html = sectionHeader('user-cog', 'Acting On Behalf Of Another Person');
+  const aobId = uid('aob');
+  html += fRadio(aobId, 'Are you acting on behalf of another person?');
+  let inner = fSelect(uid('aob-citizenship'), 'Citizenship', COUNTRIES_WITH_MN);
+  inner += fText(uid('aob-regnum'), 'Register Number');
+  inner += `<div class="field-row">${fText(uid('aob-surname'), 'Surname')}${fText(uid('aob-given'), 'Given Name')}</div>`;
+  inner += fText(uid('aob-employment'), 'Employment');
+  inner += fText(uid('aob-phone'), 'Phone', { type: 'tel' });
+  inner += fRadio(uid('aob-pep'), 'Is this person a Politically Exposed Person?');
+  html += condBlock(aobId, 'Yes', inner);
+  return html;
+}
+
+function renderEducation() {
+  let html = sectionHeader('graduation-cap', 'Education');
+  html += fSelect(uid('edu-level'), 'Education Level', ['No Formal Education', 'Non-Tertiary', 'Secondary', 'Vocational', 'Bachelor', 'Master', 'PhD']);
+  return html;
+}
+
+function renderEmergencyContact() {
+  let html = sectionHeader('phone-call', 'Emergency Contact');
+  html += fSelect(uid('ec-rel'), 'Relationship', ['Parent', 'Spouse', 'Sibling', 'Child', 'Relative', 'Friend', 'Other']);
+  html += fText(uid('ec-name'), 'Full Name');
+  html += fText(uid('ec-regnum'), 'Register Number');
+  html += fText(uid('ec-address'), 'Address');
+  html += fText(uid('ec-phone'), 'Mobile Phone', { type: 'tel' });
+  return html;
+}
+
+function renderAttorneyInfo() {
+  let html = sectionHeader('scale', 'Attorney Information', 'Only if represented by Power of Attorney');
+  const poaId = uid('poa-rep');
+  html += fRadio(poaId, 'Are you represented by a Power of Attorney (POA)?');
+  const inner = fText(uid('poa-name'), 'Representative Full Name') +
+    fText(uid('poa-regnum'), 'Register Number') +
+    `<div class="field-row">${fText(uid('poa-issue'), 'POA Issue Date', { type: 'date' })}${fText(uid('poa-expiry'), 'POA Expiry Date', { type: 'date' })}</div>` +
+    fText(uid('poa-regno2'), 'POA Registration Number');
+  html += condBlock(poaId, 'Yes', inner);
+  return html;
+}
+
+function renderGuardianInfo() {
+  let html = sectionHeader('users', 'Guardian Information');
+  html += fSelect(uid('g-rel'), 'Relationship', ['Father', 'Mother', 'Guardian', 'Other']);
+  html += fText(uid('g-name'), 'Full Name');
+  html += fText(uid('g-regnum'), 'Register Number');
+  html += fText(uid('g-address'), 'Address');
+  html += fText(uid('g-phone'), 'Mobile Phone', { type: 'tel' });
+  return html;
+}
+
+function renderUploads(docList, subtitle) {
+  let html = sectionHeader('upload-cloud', 'Upload Documents', subtitle || null);
+  docList.forEach(d => { html += fUpload(d); });
+  return html;
+}
+
+function renderAgreements() {
+  let html = sectionHeader('file-text', 'Agreements');
+  Object.keys(KYC_AGREEMENTS).forEach(id => {
+    html += `<div class="agreement-item" onclick="openKycAgreement('${id}')">
+      <div class="ag-left">
+        <div class="agreement-check" id="kac-${id}"><i data-lucide="file-text"></i></div>
+        <span class="agreement-name">${KYC_AGREEMENTS[id].name}</span>
+      </div>
+      <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
+    </div>`;
+  });
+  return html;
+}
+
+function renderSignature(title, opts = {}) {
+  let html = `<div class="kyc-section-hdr"><div class="kyc-section-icon"><i data-lucide="signature"></i></div><div><div class="kyc-section-title">Signature</div></div></div>`;
+  html += `<div class="sig-section">
+    <label class="field-label">${title}</label>
+    <div class="sig-placeholder" id="sig-placeholder" onclick="openSignaturePad()">
+      <div class="sig-placeholder-icon"><i data-lucide="pen-line"></i></div>
+      <div class="sig-placeholder-text">Tap to draw your signature</div>
+    </div>
+    <div class="sig-pad" id="sig-pad" style="display:none">
+      <canvas id="sig-canvas"></canvas>
+      <div class="sig-pad-actions">
+        <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Clear</span></button>
+        <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Done</span></button>
+      </div>
+    </div>
+    <div class="sig-done" id="sig-done" style="display:none">
+      <div class="sig-done-left"><i data-lucide="check-circle"></i><span>Signature captured</span></div>
+      <button class="sig-redo-btn" onclick="redoSignature()">Redo</button>
+    </div>
+  </div>`;
+  if (opts.stamp) {
+    html += `<div style="margin-top:6px"><label class="field-label">Company Stamp <span style="font-weight:400;color:var(--color-text-disabled)">(optional)</span></label>${fUpload('Company stamp image')}</div>`;
+  }
+  return html;
+}
+
+/* ════════════════════════════════════════════════════════
+   COMPANY (CORPORATE / AAN) SECTION RENDERERS
+════════════════════════════════════════════════════════ */
+function renderCompanyInfo() {
+  let html = sectionHeader('building-2', 'Company Information', null, true);
+  html += fText(uid('co-name'), 'Company Name');
+  html += `<div class="field-row">${fText(uid('co-regnum'), 'Registration Number')}${fText(uid('co-tax'), 'Tax Number')}</div>`;
+  html += `<div class="field-row">${fText(uid('co-incorp-date'), 'Date of Incorporation', { type: 'date' })}${fSelect(uid('co-incorp-country'), 'Country of Incorporation', COUNTRIES_WITH_MN)}</div>`;
+  html += fText(uid('co-state-regnum'), 'State Registration Number');
+  html += fSelect(uid('co-legal-type'), 'Legal Entity Type', ['Government Organization', 'State Owned Enterprise', 'Private Company', 'Listed Company', 'Closed Company', 'LLC', 'NGO', 'Non Profit', 'Partnership', 'Cooperative', 'Foreign Registered Company', 'International Organization', 'Other']);
+
+  html += subHeader('Company Address');
+  const locId = uid('co-loc');
+  html += fRadio(locId, 'Is the company registered in Mongolia?');
+  html += condBlock(locId, 'Yes',
+    fSelect(uid('co-province'), 'Province / City', PROVINCES) +
+    fSelect(uid('co-district'), 'District / Soum', DISTRICTS) +
+    fText(uid('co-address'), 'Address'));
+  html += condBlock(locId, 'No',
+    fSelect(uid('co-country'), 'Country', COUNTRIES) +
+    fTextarea(uid('co-faddress'), 'Address'));
+
+  html += subHeader('Contact Information');
+  html += `<div class="field-row">${fText(uid('co-phone'), 'Phone', { type: 'tel' })}${fText(uid('co-secphone'), 'Secondary Phone', { type: 'tel' })}</div>`;
+  html += fText(uid('co-website'), 'Website');
+  html += fText(uid('co-cp-name'), 'Contact Person Name');
+  html += `<div class="field-row">${fText(uid('co-cp-phone'), 'Contact Person Phone', { type: 'tel' })}${fText(uid('co-cp-email'), 'Contact Person Email', { type: 'email' })}</div>`;
+  return html;
+}
+
+function renderFinancialResources() {
+  let html = sectionHeader('landmark', 'Financial Resources');
+  html += fSelect(uid('fr-revenue'), 'Operating Revenue Range', ['Less than 1,000,000,000₮', '1,000,000,000 – 5,000,000,000₮', '5,000,000,000 – 15,000,000,000₮', '15,000,000,000 – 30,000,000,000₮', '30,000,000,000 – 50,000,000,000₮', 'More than 50,000,000,000₮']);
+  html += fChips(uid('fr-sources'), 'Fund Sources', ['Business Income', 'Project Finance', 'State Budget', 'Donations', 'Other']);
+  return html;
+}
+
+function renderComplianceQuestions() {
+  let html = sectionHeader('clipboard-check', 'Corporate Compliance Questions');
+  const regId = uid('cq-regulated');
+  html += fRadio(regId, 'Is the entity regulated by a financial authority?');
+  html += condBlock(regId, 'Yes', fText(uid('cq-reg-name'), 'Regulator Name') + fText(uid('cq-reg-address'), 'Regulator Address'));
+
+  const renamedId = uid('cq-renamed');
+  html += fRadio(renamedId, 'Has the entity merged or been renamed in the last 5 years?');
+  html += condBlock(renamedId, 'Yes', fTextarea(uid('cq-renamed-details'), 'Details'));
+
+  html += fRadio(uid('cq-russia'), 'Has the entity received funds from Russia?');
+
+  const structId = uid('cq-structure');
+  html += fRadio(structId, 'Has the management or shareholder structure changed within the last 6 months?');
+  html += condBlock(structId, 'Yes', fTextarea(uid('cq-structure-details'), 'Details'));
+  return html;
+}
+
+function renderCorporateUploads() {
+  let html = sectionHeader('upload-cloud', 'Upload Documents');
+  const aanId = uid('cu-aan');
+  html += fRadio(aanId, 'Is the company a Domestic AAN or Foreign AAN?', ['Domestic AAN', 'Foreign AAN']);
+
+  html += condBlock(aanId, 'Domestic AAN',
+    fUpload('Authorized Person ID — Front') +
+    fUpload('Authorized Person ID — Back') +
+    fUpload('Authorized Person Selfie') +
+    fUpload('Power of Attorney Certificate') +
+    fUpload('Company Registration Certificate'));
+
+  const apNatId = uid('cu-apnat');
+  html += condBlock(aanId, 'Foreign AAN',
+    fRadio(apNatId, 'Is the Authorized Person a Foreign or Mongolian citizen?', ['Foreign', 'Mongolian']) +
+    condBlock(apNatId, 'Foreign',
+      fUpload('Authorized Person Passport') +
+      fUpload('Authorized Person Selfie') +
+      fUpload('Power of Attorney Certificate') +
+      fUpload('Company Registration Certificate')) +
+    condBlock(apNatId, 'Mongolian',
+      fUpload('Authorized Person ID — Front') +
+      fUpload('Authorized Person ID — Back') +
+      fUpload('Authorized Person Selfie') +
+      fUpload('Power of Attorney Certificate') +
+      fUpload('Company Registration Certificate')));
+  return html;
+}
+
+/* ════════════════════════════════════════════════════════
+   VARIANT ASSEMBLY — each builder returns an array of wizard
+   steps: { title, html, requireVerify }. requireVerify marks
+   the step that must pass the phone/email OTP gate to continue.
+════════════════════════════════════════════════════════ */
+function renderRepeatSection(icon, title, addLabel, makeTemplate) {
+  const listId = uid('rep-list');
+  REPEAT_TEMPLATES[listId] = makeTemplate(listId);
+  return sectionHeader(icon, title) +
+    `<div class="repeat-list" id="${listId}"></div>
+     <button type="button" class="repeat-add-btn" onclick="kycAddRow('${listId}')"><i data-lucide="plus"></i><span>${addLabel}</span></button>`;
+}
+
+function renderAdultSteps(profile) {
+  const docs = profile.isMongolian
+    ? ['ID Card — Front', 'ID Card — Back', 'Selfie Photo']
+    : ['Passport — Front Page', 'Selfie Photo'];
+  return [
+    { title: 'General Information', html: renderGeneralInfo(profile, true), requireVerify: true },
+    { title: 'Employment & PEP', html: renderEmployment() + renderPepInfo() },
+    { title: 'Financial & Representation', html: renderFinancialInfo() + renderActingOnBehalf(profile) },
+    { title: 'Education & Contacts', html: renderEducation() + renderEmergencyContact() + renderAttorneyInfo() },
+    { title: 'Document Upload', html: renderUploads(docs) },
+    { title: 'Agreements & Signature', html: renderAgreements() + renderSignature('Digital Signature') },
+  ];
+}
+
+function renderChildSteps(profile) {
+  const docs = profile.isMongolian
+    ? ['Guardian ID Card — Front', 'Guardian ID Card — Back', 'Guardian Selfie Photo', 'Child Birth Certificate']
+    : ['Guardian Passport — Front Page', 'Guardian Selfie Photo', 'Child Birth Certificate'];
+  return [
+    { title: 'General Information', html: renderGeneralInfo(profile, true), requireVerify: true },
+    { title: 'Education & Emergency Contact', html: renderEducation() + renderEmergencyContact() },
+    { title: 'Guardian Information', html: renderGuardianInfo() },
+    { title: 'Document Upload', html: renderUploads(docs) },
+    { title: 'Agreements & Signature', html: renderAgreements() + renderSignature('Guardian Signature') },
+  ];
+}
+
+function buildCorporateSteps() {
+  const mgmtSection = renderRepeatSection('briefcase', 'Senior Management', 'Add Manager', (mgmtId) => (i) => `
+    ${fText(`${mgmtId}-name-${i}`, 'Full Name')}
+    ${fText(`${mgmtId}-position-${i}`, 'Position')}
+    ${fText(`${mgmtId}-phone-${i}`, 'Phone', { type: 'tel' })}
+    ${fRadio(`${mgmtId}-pep-${i}`, 'Is a Politically Exposed Person?')}`);
+
+  const shSection = renderRepeatSection('users', 'Shareholders', 'Add Shareholder', (shId) => (i) => `
+    ${fSelect(`${shId}-citizenship-${i}`, 'Citizenship', COUNTRIES_WITH_MN)}
+    ${fText(`${shId}-regnum-${i}`, 'Register Number / Passport Number')}
+    ${fText(`${shId}-name-${i}`, 'Full Name')}
+    ${fText(`${shId}-phone-${i}`, 'Phone', { type: 'tel' })}
+    ${fText(`${shId}-employment-${i}`, 'Employment')}
+    ${fRadio(`${shId}-pep-${i}`, 'Is a Politically Exposed Person?')}`);
+
+  const uboSection = renderRepeatSection('eye', 'Ultimate Beneficial Owners (UBO)', 'Add UBO', (uboId) => (i) => `
+    ${fSelect(`${uboId}-citizenship-${i}`, 'Citizenship', COUNTRIES_WITH_MN)}
+    ${fText(`${uboId}-regnum-${i}`, 'Register Number / Passport Number')}
+    ${fText(`${uboId}-name-${i}`, 'Full Name')}
+    ${fText(`${uboId}-employment-${i}`, 'Employment')}
+    ${fText(`${uboId}-phone-${i}`, 'Phone', { type: 'tel' })}
+    ${fRadio(`${uboId}-pep-${i}`, 'Is a Politically Exposed Person?')}`);
+
+  return [
+    { title: 'Company Information', html: renderCompanyInfo() },
+    { title: 'Financial Resources & Management', html: renderFinancialResources() + mgmtSection },
+    { title: 'Shareholders & UBO', html: shSection + uboSection },
+    { title: 'Compliance Questions', html: renderComplianceQuestions() },
+    { title: 'Document Upload', html: renderCorporateUploads() },
+    { title: 'Agreements & Signature', html: renderAgreements() + renderSignature('Authorized Person Signature', { stamp: true }) },
+  ];
+}
+
+/* ════════════════════════════════════════════════════════
+   OTP VERIFICATION (phone / email)
+════════════════════════════════════════════════════════ */
+function kycMaskContact(value, kind) {
+  if (!value) return kind === 'email' ? 'your email' : 'your phone number';
+  if (kind === 'email') {
+    const at = value.indexOf('@');
+    if (at <= 1) return value;
+    return `${value.slice(0, 2)}${'*'.repeat(Math.max(at - 2, 1))}${value.slice(at)}`;
+  }
+  const digits = value.replace(/\s+/g, '');
+  return digits.length > 4 ? `${'*'.repeat(digits.length - 4)}${digits.slice(-4)}` : digits;
+}
+function kycSendOtp(fieldId, kind, label) {
+  const input = document.getElementById(fieldId);
+  if (!input) return;
+  const value = input.value.trim();
+  if (!value) {
+    input.focus();
+    return;
+  }
+  kycOtpFieldId = fieldId;
+  kycOtpKind = kind;
+  kycOtpLabel = label;
+  document.getElementById('kyc-otp-title').textContent = `Verify ${label}`;
+  document.getElementById('kyc-otp-target').textContent = kycMaskContact(value, kind);
+  document.getElementById('kyc-otp-error').style.display = 'none';
+  const boxes = document.querySelectorAll('#kyc-otp-grid .otp-box');
+  boxes.forEach(b => { b.value = ''; });
+  document.getElementById('kyc-otp-modal').classList.add('open');
+  lucide.createIcons();
+  setTimeout(() => boxes[0]?.focus(), 50);
+}
+function closeKycOtp() {
+  document.getElementById('kyc-otp-modal').classList.remove('open');
+}
+function kycOtpAdvance(box) {
+  box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
+  if (box.value && box.nextElementSibling) box.nextElementSibling.focus();
+}
+function kycVerifyOtp() {
+  const boxes = [...document.querySelectorAll('#kyc-otp-grid .otp-box')];
+  const code = boxes.map(b => b.value).join('');
+  if (code.length < 6) {
+    document.getElementById('kyc-otp-error').style.display = 'block';
+    return;
+  }
+  if (kycOtpFieldId) kycMarkVerified(kycOtpFieldId);
+  closeKycOtp();
+}
+function kycMarkVerified(fieldId) {
+  const input = document.getElementById(fieldId);
+  const btn = document.getElementById(`${fieldId}-vbtn`);
+  const status = document.getElementById(`${fieldId}-vstatus`);
+  const hint = document.getElementById(`${fieldId}-vhint`);
+  if (input) input.setAttribute('readonly', 'readonly');
+  if (btn) btn.style.display = 'none';
+  if (status) status.style.display = 'flex';
+  if (hint) hint.style.display = 'none';
+  lucide.createIcons();
+}
+/* Returns true if every email/phone field on the active step is verified; otherwise
+   reveals an inline hint under the first unverified field and scrolls to it. */
+function kycVerifyGateOk() {
+  let firstBad = null;
+  kycVerifyFieldIds.forEach(id => {
+    const status = document.getElementById(`${id}-vstatus`);
+    const hint = document.getElementById(`${id}-vhint`);
+    const ok = !!status && status.style.display === 'flex';
+    if (hint) hint.style.display = ok ? 'none' : 'block';
+    if (!ok && !firstBad) firstBad = id;
+  });
+  if (firstBad) {
+    document.getElementById(firstBad)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    return false;
+  }
+  return true;
+}
+
+/* ════════════════════════════════════════════════════════
+   AGREEMENT MODAL (KYC)
+════════════════════════════════════════════════════════ */
+function openKycAgreement(id) {
+  const ag = KYC_AGREEMENTS[id];
+  if (!ag) return;
+  document.getElementById('kyc-agreement-title').textContent = ag.name;
+  document.getElementById('kyc-agreement-body').textContent = ag.content;
+  const modal = document.getElementById('kyc-agreement-modal');
+  modal.dataset.current = id;
+  modal.classList.add('open');
+  lucide.createIcons();
+}
+function closeKycAgreement() {
+  const modal = document.getElementById('kyc-agreement-modal');
+  const id = modal.dataset.current;
+  modal.classList.remove('open');
+  if (id && !kycReadAgreements.has(id)) {
+    kycReadAgreements.add(id);
+    const icon = document.getElementById(`kac-${id}`);
+    icon.classList.add('read');
+    icon.innerHTML = '<i data-lucide="check"></i>';
+    lucide.createIcons();
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   SIGNATURE CANVAS
+════════════════════════════════════════════════════════ */
+let canvas, ctx, drawing = false, lastX = 0, lastY = 0;
+function initSignatureCanvas() {
+  canvas = document.getElementById('sig-canvas');
+  if (!canvas) return;
+  ctx = canvas.getContext('2d');
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return [src.clientX - rect.left, src.clientY - rect.top];
+  }
+  function draw(e) {
+    const [x, y] = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    [lastX, lastY] = [x, y];
+  }
+  canvas.addEventListener('mousedown', e => { drawing = true; [lastX, lastY] = getPos(e); });
+  canvas.addEventListener('mousemove', e => { if (drawing) draw(e); });
+  canvas.addEventListener('mouseup', () => { drawing = false; });
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e); }, { passive: false });
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if (drawing) draw(e); }, { passive: false });
+  canvas.addEventListener('touchend', () => { drawing = false; });
+  window.addEventListener('resize', resizeCanvas);
+}
+function resizeCanvas() {
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width) return;
+  canvas.width = rect.width * window.devicePixelRatio;
+  canvas.height = rect.height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-text-primary') || '#fff';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+function clearCanvas() { if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); }
+function openSignaturePad() {
+  document.getElementById('sig-placeholder').style.display = 'none';
+  document.getElementById('sig-pad').style.display = 'block';
+  resizeCanvas();
+}
+function saveSignature() {
+  document.getElementById('sig-pad').style.display = 'none';
+  document.getElementById('sig-done').style.display = 'flex';
+  lucide.createIcons();
+}
+function redoSignature() {
+  clearCanvas();
+  document.getElementById('sig-done').style.display = 'none';
+  document.getElementById('sig-pad').style.display = 'block';
+}
+
+/* ════════════════════════════════════════════════════════
+   STEP WIZARD SHELL
+════════════════════════════════════════════════════════ */
+let kycSteps = [];
+let kycCurrentStep = 1;
+
+function renderStepShell(steps) {
+  return steps.map((step, idx) => {
+    const num = idx + 1;
+    const isLast = idx === steps.length - 1;
+    const primaryAction = isLast ? 'submitKyc()' : (step.requireVerify ? `kycContinue(${num + 1})` : `kycGoStep(${num + 1})`);
+    const primaryBtn = `<button type="button" class="btn-primary" onclick="${primaryAction}">${isLast ? 'Submit KYC' : 'Continue'}</button>`;
+    const nav = num === 1 ? primaryBtn : `<div class="btn-row">
+        <button type="button" class="btn-outline" onclick="kycGoStep(${num - 1})"><i data-lucide="arrow-left"></i><span>Back</span></button>
+        ${primaryBtn}
+      </div>`;
+    return `<div class="step-panel${num === 1 ? ' active' : ''}" id="kyc-step-${num}">${step.html}${nav}</div>`;
+  }).join('');
+}
+function renderStepBarHtml(n) {
+  let html = '';
+  for (let i = 0; i < n; i++) html += `<div class="step-seg${i === 0 ? ' active' : ''}" id="kyc-seg-${i}"></div>`;
+  return html;
+}
+function updateKycStepBar() {
+  kycSteps.forEach((_, i) => {
+    const seg = document.getElementById(`kyc-seg-${i}`);
+    const stepNum = i + 1;
+    seg.className = 'step-seg' + (stepNum < kycCurrentStep ? ' done' : stepNum === kycCurrentStep ? ' active' : '');
+  });
+  document.getElementById('kyc-step-meta').textContent = `Step ${kycCurrentStep} of ${kycSteps.length} — ${kycSteps[kycCurrentStep - 1].title}`;
+}
+function kycGoStep(n) {
+  document.getElementById(`kyc-step-${kycCurrentStep}`).classList.remove('active');
+  kycCurrentStep = n;
+  document.getElementById(`kyc-step-${kycCurrentStep}`).classList.add('active');
+  updateKycStepBar();
+  window.scrollTo(0, 0);
+}
+function kycContinue(nextStep) {
+  if (kycSteps[kycCurrentStep - 1].requireVerify && !kycVerifyGateOk()) return;
+  kycGoStep(nextStep);
+}
+
+/* ════════════════════════════════════════════════════════
+   NAVIGATION & SUBMIT
+════════════════════════════════════════════════════════ */
+function goBack() {
+  if (kycCurrentStep > 1) { kycGoStep(kycCurrentStep - 1); return; }
+  try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
+}
+function goHome() {
+  try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
+}
+function submitKyc() {
+  if (!kycVerifyGateOk()) { kycGoStep(1); return; }
+  document.getElementById('kyc-header').style.display = 'none';
+  document.getElementById('kyc-intro').style.display = 'none';
+  document.getElementById('kyc-step-bar').style.display = 'none';
+  document.getElementById('kyc-step-meta').style.display = 'none';
+  document.getElementById('kyc-form-body').style.display = 'none';
+  document.getElementById('kyc-success').style.display = 'flex';
+  localStorage.setItem('bdsec-kyc-done', '1');
+  window.scrollTo(0, 0);
+}
+
+/* ════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════ */
+const profile = getProfile();
+if (profile.isCorporate) {
+  kycSteps = buildCorporateSteps();
+} else if (profile.isChild) {
+  kycSteps = renderChildSteps(profile);
+} else {
+  kycSteps = renderAdultSteps(profile);
+}
+document.getElementById('kyc-step-bar').innerHTML = renderStepBarHtml(kycSteps.length);
+document.getElementById('kyc-form-body').innerHTML = renderStepShell(kycSteps);
+updateKycStepBar();
+initSignatureCanvas();
+lucide.createIcons();
+kycEvalConditionals();
+</script>
+</body>
+</html>

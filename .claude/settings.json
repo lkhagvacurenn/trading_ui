@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -o '\"scrollWidth[^,]*' /tmp/kyctest/dump.html | head -3 *)",
+      "Read(//tmp/kyctest/**)"
+    ]
+  }
+}

@@ -15,247 +15,332 @@
     html, body { height: 100%; margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); overflow-x: hidden; }
 
     /* ── Top bar ── */
-    .top-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 18px;
-      position: sticky; top: 0; z-index: 20;
-      background: var(--color-bg);
-    }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; }
     .lang-btn {
       display: flex; align-items: center; gap: 6px;
-      border: 1px solid var(--color-border);
-      background: transparent;
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 12px; font-weight: 600;
-      color: var(--color-text-secondary);
-      cursor: pointer;
+      border: 1px solid var(--color-border); background: transparent; border-radius: 20px;
+      padding: 6px 12px; font-size: 12px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer;
     }
     .lang-btn svg { width: 14px; height: 14px; }
-    .menu-btn {
-      background: none; border: none;
-      color: var(--color-text-secondary);
-      cursor: pointer; padding: 6px;
-    }
+    .menu-btn { background: none; border: none; color: var(--color-text-secondary); cursor: pointer; padding: 6px; }
     .menu-btn svg { width: 22px; height: 22px; }
 
-    /* ── Logo block ── */
-    .logo-block {
-      display: flex; justify-content: center; align-items: center;
-      padding: 24px 0 28px;
-    }
-    #logo-light { height: 60px; object-fit: contain; mix-blend-mode: multiply; }
-    #logo-dark  { height: 60px; object-fit: contain; mix-blend-mode: lighten; display: none; }
+    /* ── Logo ── */
+    .logo-block { display: flex; justify-content: center; padding: 20px 0 24px; }
+    #logo-light { height: 56px; object-fit: contain; mix-blend-mode: multiply; }
+    #logo-dark  { height: 56px; object-fit: contain; mix-blend-mode: lighten; display: none; }
     [data-theme="dark"] #logo-light { display: none; }
     [data-theme="dark"] #logo-dark  { display: block; }
 
     /* ── Auth toggle ── */
-    .auth-toggle {
-      display: flex;
-      border: 1.5px solid var(--color-border);
-      border-radius: 10px;
-      margin: 0 20px 24px;
-      overflow: hidden;
-    }
-    .auth-toggle-btn {
-      flex: 1; padding: 11px 0;
-      font-size: 14px; font-weight: 700;
-      border: none; background: transparent;
-      color: var(--color-text-disabled);
-      cursor: pointer; transition: all 0.2s ease;
-    }
-    .auth-toggle-btn.active {
-      background: var(--color-primary);
-      color: #fff;
-    }
+    .auth-toggle { display: flex; border: 1.5px solid var(--color-border); border-radius: 10px; margin: 0 20px 24px; overflow: hidden; }
+    .auth-toggle-btn { flex: 1; padding: 11px 0; font-size: 14px; font-weight: 700; border: none; background: transparent; color: var(--color-text-disabled); cursor: pointer; transition: all 0.2s; }
+    .auth-toggle-btn.active { background: var(--color-primary); color: #fff; }
 
-    /* ── Step progress ── */
-    .step-bar {
-      display: flex; gap: 6px;
-      padding: 0 20px 20px;
-    }
-    .step-seg {
-      flex: 1; height: 3px; border-radius: 99px;
-      background: var(--color-bg-input);
-      transition: background 0.3s ease;
-    }
+    /* ── Step bar ── */
+    .step-bar { display: flex; gap: 6px; padding: 0 20px 20px; }
+    .step-seg { flex: 1; height: 3px; border-radius: 99px; background: var(--color-bg-input); transition: background 0.3s; }
     .step-seg.done   { background: var(--color-primary); }
-    .step-seg.active { background: var(--color-primary); opacity: 0.7; }
+    .step-seg.active { background: var(--color-primary); opacity: 0.65; }
 
-    /* ── Form section ── */
+    /* ── Form ── */
     .form-section { padding: 0 20px; }
-    .field-label {
-      font-size: 12px; font-weight: 600;
-      color: var(--color-text-secondary);
-      margin-bottom: 6px; display: block;
+    .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
+    .field-wrap  { margin-bottom: 14px; }
+    .inp-wrap    { position: relative; }
+
+    .field-req {
+      display: none; margin-top: 10px; padding: 12px 14px;
+      background: var(--color-bg-input); border: 1px solid var(--color-border); border-radius: 10px;
     }
-    .field-wrap {
-      position: relative; margin-bottom: 14px;
+    .field-req.open { display: block; }
+    .req-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12.5px; color: var(--color-text-disabled); padding: 3px 0; transition: color 0.15s;
     }
+    .req-item svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--color-text-disabled); transition: color 0.15s; }
+    .req-item.met { color: #00C076; }
+    .req-item.met svg { color: #00C076; }
+
     .field-icon {
       position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-      color: var(--color-text-disabled);
+      color: var(--color-text-disabled); pointer-events: none;
     }
     .field-icon svg { width: 16px; height: 16px; }
     .field-eye {
       position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer;
-      color: var(--color-text-disabled); padding: 4px;
+      background: none; border: none; cursor: pointer; color: var(--color-text-disabled); padding: 4px;
     }
     .field-eye svg { width: 16px; height: 16px; }
 
     .inp {
-      width: 100%;
-      background: var(--color-bg-card);
-      border: 1.5px solid var(--color-border);
-      border-radius: 10px;
-      padding: 13px 16px;
-      font-size: 14px;
-      color: var(--color-text-primary);
-      outline: none;
-      transition: border-color 0.15s ease;
+      width: 100%; background: var(--color-bg-card); border: 1.5px solid var(--color-border);
+      border-radius: 10px; padding: 13px 16px; font-size: 14px;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
       font-family: 'Inter', sans-serif;
     }
     .inp:focus { border-color: var(--color-primary); }
     .inp::placeholder { color: var(--color-text-disabled); }
-    .inp.has-icon  { padding-left: 40px; }
-    .inp.has-eye   { padding-right: 40px; }
-
+    .inp.has-icon { padding-left: 40px; }
+    .inp.has-eye  { padding-right: 40px; }
     .inp-select {
-      appearance: none; -webkit-appearance: none;
+      appearance: none; -webkit-appearance: none; cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 36px;
-      cursor: pointer;
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
     }
 
-    /* Registration number special row */
     .reg-row { display: flex; gap: 8px; }
-    .reg-prefix {
-      display: flex; gap: 4px; flex-shrink: 0;
-    }
+    .reg-prefix { display: flex; gap: 4px; flex-shrink: 0; }
     .reg-char-btn {
-      width: 40px; height: 48px; border-radius: 10px;
-      border: 1.5px solid var(--color-border);
-      background: var(--color-bg-card);
-      font-size: 15px; font-weight: 700;
-      color: var(--color-text-primary);
-      cursor: pointer; transition: all 0.15s ease;
+      width: 40px; height: 48px; border-radius: 10px; border: 1.5px solid var(--color-border);
+      background: var(--color-bg-card); font-size: 15px; font-weight: 700;
+      color: var(--color-text-primary); cursor: pointer; transition: all 0.15s;
     }
-    .reg-char-btn.active {
-      background: var(--color-primary);
-      border-color: var(--color-primary);
-      color: #fff;
-    }
+    .reg-char-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 
-    /* ── Row: checkbox + link ── */
-    .check-row {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px;
-    }
+    .check-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
     .check-left { display: flex; align-items: center; gap: 8px; }
-    .check-left input[type="checkbox"] {
-      width: 16px; height: 16px;
-      accent-color: var(--color-primary);
-      cursor: pointer;
-    }
+    .check-left input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--color-primary); }
     .check-left label { font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
     .forgot-link { font-size: 13px; color: var(--color-primary); font-weight: 600; cursor: pointer; }
 
     .terms-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
-    .terms-row input[type="checkbox"] { margin-top: 2px; width: 16px; height: 16px; accent-color: var(--color-primary); flex-shrink: 0; }
+    .terms-row input { margin-top: 2px; width: 16px; height: 16px; accent-color: var(--color-primary); flex-shrink: 0; }
     .terms-row label { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
     .terms-row label span { color: var(--color-primary); font-weight: 600; cursor: pointer; }
 
     /* ── Buttons ── */
     .btn-primary {
-      width: 100%; padding: 14px;
-      background: var(--color-primary);
-      border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 700;
-      color: #fff; cursor: pointer;
-      transition: opacity 0.15s ease;
-      margin-bottom: 16px;
+      width: 100%; padding: 14px; background: var(--color-primary);
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: opacity 0.15s; margin-bottom: 14px;
     }
     .btn-primary:hover { opacity: 0.88; }
-    .btn-primary:active { opacity: 0.75; }
+    .btn-outline {
+      padding: 13px; background: transparent; border: 1.5px solid var(--color-border);
+      border-radius: 10px; font-size: 14px; font-weight: 700;
+      color: var(--color-text-primary); cursor: pointer; transition: border-color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
+    .btn-outline.btn-icon { display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-outline.btn-icon svg { width: 16px; height: 16px; }
+    .btn-row { display: flex; gap: 10px; margin-bottom: 28px; }
+    .btn-row .btn-outline { flex: 1; }
+    .btn-row .btn-primary { flex: 1; margin-bottom: 0; }
 
     .or-divider {
       display: flex; align-items: center; gap: 12px;
-      margin-bottom: 16px; color: var(--color-text-disabled);
-      font-size: 13px;
+      margin-bottom: 14px; color: var(--color-text-disabled); font-size: 13px;
     }
-    .or-divider::before, .or-divider::after {
-      content: ''; flex: 1;
-      border-top: 1px solid var(--color-border);
-    }
+    .or-divider::before, .or-divider::after { content: ''; flex: 1; border-top: 1px solid var(--color-border); }
 
     .btn-emongolia {
-      width: 100%; padding: 13px;
-      background: transparent;
-      border: 1.5px solid var(--color-border);
-      border-radius: 10px;
-      font-size: 14px; font-weight: 600;
-      color: var(--color-text-primary); cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: border-color 0.15s ease;
-      margin-bottom: 32px;
+      width: 100%; padding: 13px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-size: 14px; font-weight: 600; color: var(--color-text-primary);
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: border-color 0.15s; margin-bottom: 28px;
     }
     .btn-emongolia:hover { border-color: var(--color-primary); }
-    .emongolia-icon {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: linear-gradient(135deg, #e63946, #c1121f);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 900; color: #fff; letter-spacing: -0.5px;
+    .emongolia-logo { width: 22px; height: 22px; object-fit: contain; border-radius: 4px; }
+
+    .back-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 20px 16px; cursor: pointer; color: var(--color-text-secondary);
+    }
+    .back-row:hover { color: var(--color-text-primary); }
+    .back-row svg { width: 18px; height: 18px; }
+    .back-row span { font-size: 14px; font-weight: 600; }
+
+    .section-title {
+      text-align: center; font-size: 13px; font-weight: 800;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 24px; padding: 0 20px;
     }
 
-    /* ── OTP boxes ── */
-    .otp-email {
-      text-align: center; font-size: 14px; font-weight: 600;
-      color: var(--color-primary); margin-bottom: 24px;
-    }
-    .otp-grid {
-      display: flex; gap: 10px; justify-content: center;
-      margin-bottom: 28px;
-    }
+    .otp-email { text-align: center; font-size: 14px; font-weight: 600; color: var(--color-primary); margin-bottom: 24px; }
+    .otp-grid  { display: flex; gap: 10px; justify-content: center; margin-bottom: 28px; }
     .otp-box {
-      width: 46px; height: 54px;
-      background: var(--color-bg-card);
-      border: 1.5px solid var(--color-border);
-      border-radius: 10px;
+      width: 46px; height: 54px; background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
       text-align: center; font-size: 20px; font-weight: 700;
-      color: var(--color-text-primary);
-      outline: none;
-      transition: border-color 0.15s ease;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
     }
     .otp-box:focus { border-color: var(--color-primary); }
 
-    .resend-btn {
-      width: 100%; padding: 13px;
-      background: var(--color-bg-card);
-      border: 1.5px solid var(--color-border);
-      border-radius: 10px;
-      font-size: 14px; font-weight: 600;
-      color: var(--color-text-secondary); cursor: pointer;
-      margin-bottom: 12px;
+    .success-block { display: flex; flex-direction: column; align-items: center; padding: 40px 28px; text-align: center; }
+    .success-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, #00C076, #00e08f);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+      box-shadow: 0 0 0 10px rgba(0,192,118,0.1), 0 0 32px rgba(0,192,118,0.22);
     }
+    .success-circle svg { width: 34px; height: 34px; color: #fff; }
+    .success-title { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+    .success-msg   { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 28px; }
 
-    /* ── Slide panels ── */
+    /* ── Generic success modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 260;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 18px; padding: 36px 26px 30px; max-width: 340px; width: 100%;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .modal-card .success-msg { margin-bottom: 24px; }
+
+    /* ── PIN setup ── */
+    .pin-setup-title { font-size: 17px; font-weight: 800; text-align: center; margin-bottom: 26px; line-height: 1.45; }
+    .pin-block { margin-bottom: 20px; }
+    .pin-block-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .pin-eye { background: none; border: none; color: var(--color-text-disabled); cursor: pointer; padding: 4px; transition: color 0.15s; }
+    .pin-eye svg { width: 16px; height: 16px; }
+    .pin-eye.active { color: var(--color-primary); }
+    .pin-grid { display: flex; gap: 10px; }
+    .pin-box {
+      flex: 1; min-width: 0; height: 54px; background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      text-align: center; font-size: 20px; font-weight: 700; letter-spacing: 2px;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .pin-box:focus { border-color: var(--color-primary); }
+
     .panel { display: none; }
     .panel.active { display: block; }
+
+    /* ══════════════════════════════
+       FACE ID MODAL
+    ══════════════════════════════ */
+    #faceid-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 300;
+      background: var(--color-bg);
+      flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 32px; text-align: center;
+    }
+    #faceid-modal.open { display: flex; }
+
+    .fid-icon-wrap {
+      margin-bottom: 36px;
+      color: var(--color-primary);
+    }
+    .fid-icon-wrap svg { width: 88px; height: 88px; stroke-width: 1.2; }
+    .fid-title {
+      font-size: 22px; font-weight: 800; line-height: 1.4;
+      margin-bottom: 16px; max-width: 300px;
+    }
+    .fid-desc {
+      font-size: 13px; color: var(--color-text-secondary);
+      line-height: 1.7; margin-bottom: 40px; max-width: 300px;
+    }
+    .fid-btn-row { display: flex; gap: 12px; width: 100%; max-width: 320px; }
+    .fid-btn-row .btn-outline { flex: 1; padding: 14px; font-size: 15px; }
+    .fid-btn-row .btn-primary { flex: 1; margin: 0; }
+
+    /* ══════════════════════════════
+       PRE-LOGIN SIDEBAR
+    ══════════════════════════════ */
+    #pre-menu-overlay {
+      position: fixed; inset: 0; z-index: 200; pointer-events: none;
+    }
+    #pre-menu-backdrop {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    #pre-menu-panel {
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 88%; max-width: 360px;
+      background: var(--color-bg-card);
+      transform: translateX(100%);
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      overflow-y: auto; display: flex; flex-direction: column;
+      border-left: 1px solid var(--color-border);
+    }
+    #pre-menu-overlay.open { pointer-events: all; }
+    #pre-menu-overlay.open #pre-menu-backdrop { opacity: 1; }
+    #pre-menu-overlay.open #pre-menu-panel { transform: translateX(0); }
+
+    .pre-menu-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 16px; border-bottom: 1px solid var(--color-border);
+    }
+    .pre-menu-title { font-size: 22px; font-weight: 800; }
+    .pre-menu-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-secondary);
+    }
+    .pre-menu-close svg { width: 18px; height: 18px; }
+
+    .pre-ctrl-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 15px 20px; border-bottom: 1px solid var(--color-border);
+    }
+    .pre-ctrl-lbl { font-size: 15px; font-weight: 500; }
+
+    /* Reuse the same theme switch and lang pill styles from index.html approach */
+    .pm-theme-switch {
+      width: 68px; height: 32px; background: var(--color-bg-input);
+      border: 1px solid var(--color-border); border-radius: 16px;
+      position: relative; cursor: pointer; display: flex; align-items: center; flex-shrink: 0;
+    }
+    .pm-ts-icons {
+      display: flex; justify-content: space-between; align-items: center;
+      width: 100%; padding: 0 8px; position: relative; z-index: 4; pointer-events: none;
+    }
+    .pm-ts-icon { display: flex; align-items: center; }
+    .pm-ts-icon svg { width: 13px; height: 13px; }
+    .pm-ts-icon:first-child { color: rgba(255,255,255,0.35); }
+    [data-theme="light"] .pm-ts-icon:first-child { color: #fff; }
+    .pm-ts-icon:last-child { color: #fff; }
+    [data-theme="light"] .pm-ts-icon:last-child { color: rgba(255,255,255,0.35); }
+    .pm-ts-knob {
+      position: absolute; width: 28px; height: 28px; border-radius: 50%;
+      background: var(--color-primary); top: 2px; left: 2px; z-index: 3;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    [data-theme="dark"] .pm-ts-knob { transform: translateX(36px); }
+
+    .pm-lang-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--color-bg-input); border: 1px solid var(--color-border);
+      border-radius: 20px; padding: 7px 14px; font-size: 13px; font-weight: 600;
+      color: var(--color-text-primary); cursor: pointer; transition: border-color 0.15s;
+    }
+    .pm-lang-btn svg { width: 14px; height: 14px; }
+
+    .pre-menu-divider { border: none; border-top: 1px solid var(--color-border); margin: 4px 0; }
+    .pre-menu-section-lbl {
+      padding: 16px 20px 8px; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.06em; color: var(--color-text-disabled); text-transform: uppercase;
+    }
+    .pre-menu-item {
+      display: flex; align-items: center; gap: 14px; padding: 15px 20px;
+      border: none; background: transparent; cursor: pointer; width: 100%;
+      text-align: left; color: var(--color-text-primary); font-size: 15px; font-weight: 500;
+      transition: background 0.12s;
+    }
+    .pre-menu-item:hover { background: var(--color-bg-input); }
+    .pre-menu-item svg  { width: 20px; height: 20px; flex-shrink: 0; }
+    .pre-menu-item-label { flex: 1; }
+    .pre-menu-chevron svg { width: 16px; height: 16px; color: var(--color-text-disabled); }
   </style>
 </head>
 <body>
 
   <!-- Top bar -->
   <div class="top-bar">
-    <button class="lang-btn">
-      <i data-lucide="globe"></i> English
+    <button class="lang-btn" onclick="toggleLang()">
+      <i data-lucide="globe"></i><span id="lang-text">English</span>
     </button>
-    <button class="menu-btn">
-      <i data-lucide="menu"></i>
-    </button>
+    <button class="menu-btn" onclick="openSidebar()"><i data-lucide="menu"></i></button>
   </div>
 
   <!-- Logo -->
@@ -264,155 +349,402 @@
     <img id="logo-dark"  src="../public/dark.png" alt="BDSec" />
   </div>
 
-  <!-- Auth toggle -->
-  <div class="auth-toggle">
-    <button class="auth-toggle-btn active" id="toggle-login" onclick="switchAuth('login')">Login</button>
-    <button class="auth-toggle-btn" id="toggle-register" onclick="switchAuth('register')">Register</button>
-  </div>
+  <!-- ════ AUTH SECTION ════ -->
+  <div id="auth-section">
 
-  <!-- ══ LOGIN PANEL ══ -->
-  <div class="panel active" id="panel-login">
-    <div class="form-section">
-
-      <!-- Username -->
-      <div class="field-wrap">
-        <span class="field-icon"><i data-lucide="user"></i></span>
-        <input class="inp has-icon" type="text" placeholder="Username" autocomplete="username" />
-      </div>
-
-      <!-- Password -->
-      <div class="field-wrap">
-        <span class="field-icon"><i data-lucide="lock"></i></span>
-        <input class="inp has-icon has-eye" type="password" id="login-pw" placeholder="Password" autocomplete="current-password" />
-        <button class="field-eye" onclick="togglePw('login-pw', this)"><i data-lucide="eye"></i></button>
-      </div>
-
-      <!-- Remember + forgot -->
-      <div class="check-row">
-        <label class="check-left">
-          <input type="checkbox" id="rem" />
-          <label for="rem">Remember device</label>
-        </label>
-        <span class="forgot-link">Forgot password?</span>
-      </div>
-
-      <button class="btn-primary" onclick="doLogin()">Login</button>
-
-      <div class="or-divider">or</div>
-
-      <button class="btn-emongolia">
-        <span class="emongolia-icon">e</span>
-        Login with E-Mongolia
-      </button>
-    </div>
-  </div>
-
-  <!-- ══ REGISTER PANEL ══ -->
-  <div class="panel" id="panel-register">
-
-    <!-- Step progress -->
-    <div class="step-bar" id="reg-step-bar">
-      <div class="step-seg active" id="rseg-0"></div>
-      <div class="step-seg" id="rseg-1"></div>
-      <div class="step-seg" id="rseg-2"></div>
+    <div class="auth-toggle">
+      <button class="auth-toggle-btn active" id="toggle-login"    onclick="switchAuth('login')">Login</button>
+      <button class="auth-toggle-btn"        id="toggle-register" onclick="switchAuth('register')">Register</button>
     </div>
 
-    <!-- Step 1: Country + type -->
-    <div class="panel active form-section" id="reg-step-1">
-      <div class="field-wrap">
-        <label class="field-label">Country</label>
-        <select class="inp inp-select">
-          <option>Mongolia</option>
-          <option>United States</option>
-          <option>Japan</option>
-          <option>South Korea</option>
-          <option>Other</option>
-        </select>
-      </div>
+    <!-- ── LOGIN ── -->
+    <div class="panel active" id="panel-login">
+      <div class="form-section">
 
-      <div class="field-wrap">
-        <label class="field-label">User type</label>
-        <select class="inp inp-select">
-          <option>Individual</option>
-          <option>Corporate</option>
-        </select>
-      </div>
-
-      <button class="btn-primary" onclick="regNext(2)">Continue</button>
-    </div>
-
-    <!-- Step 2: Credentials -->
-    <div class="panel form-section" id="reg-step-2">
-      <label class="field-label">Registration number</label>
-      <div class="reg-row" style="margin-bottom:14px">
-        <div class="reg-prefix">
-          <button class="reg-char-btn active" id="rc-A" onclick="setRegChar('A')">А</button>
-          <button class="reg-char-btn" id="rc-B" onclick="setRegChar('B')">Б</button>
+        <div class="field-wrap">
+          <div class="inp-wrap">
+            <span class="field-icon"><i data-lucide="user"></i></span>
+            <input class="inp has-icon" type="text" placeholder="Username" />
+          </div>
         </div>
-        <input class="inp" type="text" placeholder="Registration number" maxlength="8" style="flex:1" />
+
+        <div class="field-wrap">
+          <div class="inp-wrap">
+            <span class="field-icon"><i data-lucide="lock"></i></span>
+            <input class="inp has-icon has-eye" type="password" id="login-pw" placeholder="Password" />
+            <button class="field-eye" onclick="togglePw('login-pw',this)"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+
+        <div class="check-row">
+          <label class="check-left">
+            <input type="checkbox" id="rem" /><label for="rem">Remember device</label>
+          </label>
+          <span class="forgot-link" onclick="showForgot()">Forgot password?</span>
+        </div>
+
+        <button class="btn-primary" onclick="showFaceID()">Login</button>
+
+        <div class="or-divider">or</div>
+
+        <button class="btn-emongolia" onclick="showFaceID()">
+          <img class="emongolia-logo" src="../public/emongolia.png" alt="E-Mongolia" />
+          Login with E-Mongolia
+        </button>
+
+      </div>
+    </div>
+
+    <!-- ── REGISTER ── -->
+    <div class="panel" id="panel-register">
+      <div class="step-bar" id="reg-step-bar">
+        <div class="step-seg active" id="rseg-0"></div>
+        <div class="step-seg"        id="rseg-1"></div>
+        <div class="step-seg"        id="rseg-2"></div>
       </div>
 
-      <div class="field-wrap">
-        <label class="field-label">Email / Phone number</label>
-        <input class="inp" type="text" placeholder="Email or phone" />
+      <!-- Step 1 -->
+      <div class="panel active form-section" id="reg-step-1">
+        <div class="field-wrap">
+          <label class="field-label">Country</label>
+          <select class="inp inp-select" id="reg-country"><option>Mongolia</option><option>United States</option><option>Japan</option><option>Other</option></select>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">User type</label>
+          <select class="inp inp-select" id="reg-usertype"><option>Individual</option><option>Corporate</option></select>
+        </div>
+        <button class="btn-primary" onclick="regStep1Continue()">Continue</button>
       </div>
 
-      <div class="field-wrap">
-        <label class="field-label">Password</label>
-        <span class="field-icon"><i data-lucide="lock"></i></span>
-        <input class="inp has-icon has-eye" type="password" id="reg-pw" placeholder="Password" />
-        <button class="field-eye" onclick="togglePw('reg-pw', this)"><i data-lucide="eye"></i></button>
+      <!-- Step 2 -->
+      <div class="panel form-section" id="reg-step-2">
+        <div class="field-wrap">
+          <label class="field-label" id="reg-idnum-label">Registration number</label>
+          <div class="reg-row">
+            <div class="reg-prefix" id="reg-idnum-prefix">
+              <button class="reg-char-btn active" id="rc-A" onclick="setRegChar('A')">А</button>
+              <button class="reg-char-btn"        id="rc-B" onclick="setRegChar('B')">Б</button>
+            </div>
+            <input class="inp" type="text" id="reg-idnum-input" placeholder="Registration number" maxlength="8" style="flex:1" />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Email / Phone</label>
+          <input class="inp" type="text" placeholder="Email or phone" />
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Password</label>
+          <div class="inp-wrap">
+            <span class="field-icon"><i data-lucide="lock"></i></span>
+            <input class="inp has-icon has-eye" type="password" id="reg-pw" placeholder="Password"
+              oninput="checkPasswordReq(this.value)"
+              onfocus="document.getElementById('password-req').classList.add('open')"
+              onblur="document.getElementById('password-req').classList.remove('open')" />
+            <button class="field-eye" onclick="togglePw('reg-pw',this)"><i data-lucide="eye"></i></button>
+          </div>
+          <div class="field-req" id="password-req">
+            <div class="req-item" id="preq-len"><i data-lucide="check"></i><span>At least 8 characters</span></div>
+            <div class="req-item" id="preq-upper"><i data-lucide="check"></i><span>At least 1 uppercase letter</span></div>
+            <div class="req-item" id="preq-lower"><i data-lucide="check"></i><span>At least 1 lowercase letter</span></div>
+            <div class="req-item" id="preq-digit"><i data-lucide="check"></i><span>At least 1 digit</span></div>
+            <div class="req-item" id="preq-special"><i data-lucide="check"></i><span>At least 1 special character</span></div>
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Confirm password</label>
+          <div class="inp-wrap">
+            <span class="field-icon"><i data-lucide="lock"></i></span>
+            <input class="inp has-icon has-eye" type="password" id="reg-pw2" placeholder="Re-enter password" />
+            <button class="field-eye" onclick="togglePw('reg-pw2',this)"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+        <div class="terms-row">
+          <input type="checkbox" id="terms" />
+          <label for="terms">I agree to the <span>Terms of Service</span> and <span>Privacy Policy</span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-outline btn-icon" onclick="regNext(1)"><i data-lucide="arrow-left"></i><span>Back</span></button>
+          <button class="btn-primary" onclick="regNext(3)">Continue</button>
+        </div>
+        <div class="or-divider">or</div>
+        <button class="btn-emongolia">
+          <img class="emongolia-logo" src="../public/emongolia.png" alt="E-Mongolia" />
+          Register with E-Mongolia
+        </button>
       </div>
 
-      <div class="field-wrap">
-        <label class="field-label">Confirm password</label>
-        <span class="field-icon"><i data-lucide="lock"></i></span>
-        <input class="inp has-icon has-eye" type="password" id="reg-pw2" placeholder="Re-enter password" />
-        <button class="field-eye" onclick="togglePw('reg-pw2', this)"><i data-lucide="eye"></i></button>
+      <!-- Step 3: OTP -->
+      <div class="panel form-section" id="reg-step-3">
+        <p style="font-size:14px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px;line-height:1.6">A one-time code was sent to your phone / email.</p>
+        <div class="otp-email">blk*******@gmail.com</div>
+        <div class="otp-grid">
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+        </div>
+        <div class="btn-row">
+          <button class="btn-outline btn-icon" onclick="regNext(2)"><i data-lucide="arrow-left"></i><span>Back</span></button>
+          <button class="btn-primary" onclick="verifyRegOtp()">Verify</button>
+        </div>
+        <button class="btn-outline" style="width:100%;margin-bottom:24px">Resend Code</button>
       </div>
 
-      <div class="terms-row">
-        <input type="checkbox" id="terms" />
-        <label for="terms">I agree to the <span>Terms of Service</span> and <span>Privacy Policy</span></label>
+      <!-- Step 4: Username + PIN setup (shown after OTP verification) -->
+      <div class="panel form-section" id="reg-step-4">
+        <h3 class="pin-setup-title">Create your username and PIN code</h3>
+
+        <div class="field-wrap">
+          <label class="field-label">Username</label>
+          <input class="inp" type="text" id="pin-username" placeholder="Choose a username"
+            oninput="checkUsernameReq(this.value)"
+            onfocus="document.getElementById('username-req').classList.add('open')"
+            onblur="document.getElementById('username-req').classList.remove('open')" />
+          <div class="field-req" id="username-req">
+            <div class="req-item" id="ureq-latin"><i data-lucide="check"></i><span>Use Latin letters</span></div>
+            <div class="req-item" id="ureq-len"><i data-lucide="check"></i><span>8-20 characters</span></div>
+            <div class="req-item" id="ureq-letter"><i data-lucide="check"></i><span>At least 1 letter</span></div>
+            <div class="req-item" id="ureq-digit"><i data-lucide="check"></i><span>At least 1 digit</span></div>
+          </div>
+        </div>
+
+        <div class="pin-block">
+          <div class="pin-block-hdr">
+            <span class="field-label" style="margin:0">4-digit PIN code</span>
+            <button class="pin-eye" onclick="togglePinReveal('pin-create')"><i data-lucide="eye"></i></button>
+          </div>
+          <div class="pin-grid" id="pin-create">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+          </div>
+        </div>
+
+        <div class="pin-block">
+          <div class="pin-block-hdr">
+            <span class="field-label" style="margin:0">Confirm PIN code</span>
+            <button class="pin-eye" onclick="togglePinReveal('pin-confirm')"><i data-lucide="eye"></i></button>
+          </div>
+          <div class="pin-grid" id="pin-confirm">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="finishRegister()">Register</button>
+      </div>
+    </div>
+
+  </div><!-- /auth-section -->
+
+
+  <!-- ════ FORGOT PASSWORD ════ -->
+  <div id="forgot-section" style="display:none">
+
+    <div class="panel active" id="fp-1">
+      <div class="back-row" onclick="hideForgot()"><i data-lucide="arrow-left"></i><span>Back to Login</span></div>
+      <div class="section-title">Reset Password</div>
+      <div class="form-section">
+        <div class="field-wrap">
+          <label class="field-label">Username</label>
+          <input class="inp" type="text" placeholder="Registered username" />
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Email / Phone number</label>
+          <input class="inp" type="text" placeholder="Registered email or phone" />
+        </div>
+        <button class="btn-primary" onclick="fpNext(2)">Send Reset Link</button>
+        <div class="or-divider">or</div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="hideForgot()">Login</button>
+          <button class="btn-outline" onclick="hideForgot();switchAuth('register')">Register</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="fp-2">
+      <div class="back-row" onclick="fpNext(1)"><i data-lucide="arrow-left"></i><span>Back</span></div>
+      <div class="section-title">Enter Verification Code</div>
+      <div class="form-section">
+        <p style="font-size:13px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px;line-height:1.6">A 6-digit code was sent to your email / phone.</p>
+        <div class="otp-email">blk*******@gmail.com</div>
+        <div class="otp-grid">
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+        </div>
+        <button class="btn-primary" onclick="fpNext(3)">Continue</button>
+        <button class="btn-outline" style="width:100%;margin-bottom:24px">Resend Code</button>
+      </div>
+    </div>
+
+    <div class="panel" id="fp-3">
+      <div class="back-row" onclick="fpNext(2)"><i data-lucide="arrow-left"></i><span>Back</span></div>
+      <div class="section-title">Set New Password</div>
+      <div class="form-section">
+        <div class="field-wrap">
+          <label class="field-label">New Password</label>
+          <div class="inp-wrap">
+            <span class="field-icon"><i data-lucide="lock"></i></span>
+            <input class="inp has-icon has-eye" type="password" id="fp-pw" placeholder="New password" />
+            <button class="field-eye" onclick="togglePw('fp-pw',this)"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Confirm New Password</label>
+          <div class="inp-wrap">
+            <span class="field-icon"><i data-lucide="lock"></i></span>
+            <input class="inp has-icon has-eye" type="password" id="fp-pw2" placeholder="Re-enter new password" />
+            <button class="field-eye" onclick="togglePw('fp-pw2',this)"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="fpNext(4)">Change Password</button>
+      </div>
+    </div>
+
+    <div class="panel" id="fp-4">
+      <div class="success-block">
+        <div class="success-circle"><i data-lucide="check"></i></div>
+        <div class="success-title">Password Changed!</div>
+        <div class="success-msg">Your password has been successfully updated. You can now log in with your new password.</div>
+        <button class="btn-primary" style="width:100%" onclick="hideForgot()">Back to Login</button>
+      </div>
+    </div>
+
+  </div><!-- /forgot-section -->
+
+
+  <!-- ════ FACE ID MODAL ════ -->
+  <div id="faceid-modal">
+    <div class="fid-icon-wrap">
+      <i data-lucide="scan-face"></i>
+    </div>
+    <div class="fid-title">Would you like to use Face ID for future logins?</div>
+    <div class="fid-desc">By enabling Face ID, you won't need to enter your username and password to log in to the app.</div>
+    <div class="fid-btn-row">
+      <button class="btn-outline" onclick="faceIDDecline()">Decline</button>
+      <button class="btn-primary" style="margin:0;flex:1" onclick="faceIDAllow()">Allow</button>
+    </div>
+  </div>
+
+
+  <!-- ════ OTP VERIFIED MODAL ════ -->
+  <div id="otp-success-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="success-circle"><i data-lucide="check"></i></div>
+      <div class="success-title">Code Verified!</div>
+      <div class="success-msg">Your one-time code has been confirmed. Now let's set up your username and PIN code.</div>
+      <button class="btn-primary" style="width:100%;margin:0" onclick="proceedToPinSetup()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ════ REGISTRATION SUCCESS MODAL ════ -->
+  <div id="register-success-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="success-circle"><i data-lucide="check"></i></div>
+      <div class="success-title">Registration Successful!</div>
+      <div class="success-msg">Your account has been created. Log in with your new username and PIN code to get started.</div>
+      <button class="btn-primary" style="width:100%;margin:0" onclick="closeRegisterSuccess()">Log In</button>
+    </div>
+  </div>
+
+
+  <!-- ════ PRE-LOGIN SIDEBAR ════ -->
+  <div id="pre-menu-overlay">
+    <div id="pre-menu-backdrop" onclick="closeSidebar()"></div>
+    <div id="pre-menu-panel">
+
+      <div class="pre-menu-hdr">
+        <span class="pre-menu-title">Menu</span>
+        <button class="pre-menu-close" onclick="closeSidebar()"><i data-lucide="x"></i></button>
       </div>
 
-      <button class="btn-primary" onclick="regNext(3)">Continue</button>
+      <div class="pre-ctrl-row">
+        <span class="pre-ctrl-lbl">Appearance</span>
+        <div class="pm-theme-switch" onclick="toggleTheme()">
+          <div class="pm-ts-icons">
+            <span class="pm-ts-icon"><i data-lucide="sun"></i></span>
+            <span class="pm-ts-icon"><i data-lucide="moon"></i></span>
+          </div>
+          <div class="pm-ts-knob"></div>
+        </div>
+      </div>
 
-      <div class="or-divider">or</div>
-      <button class="btn-emongolia">
-        <span class="emongolia-icon">e</span>
-        Register with E-Mongolia
+      <div class="pre-ctrl-row">
+        <span class="pre-ctrl-lbl">Language</span>
+        <button class="pm-lang-btn" onclick="toggleLang()">
+          <i data-lucide="globe"></i><span id="sidebar-lang-text">English</span>
+        </button>
+      </div>
+
+      <div class="pre-menu-divider"></div>
+      <div class="pre-menu-section-lbl">Help</div>
+
+      <button class="pre-menu-item" onclick="closeSidebar()">
+        <i data-lucide="landmark"></i>
+        <span class="pre-menu-item-label">Bonds</span>
+        <span class="pre-menu-chevron"><i data-lucide="chevron-right"></i></span>
       </button>
+      <button class="pre-menu-item" onclick="closeSidebar()">
+        <i data-lucide="arrow-left-right"></i>
+        <span class="pre-menu-item-label">Secondary Trading</span>
+        <span class="pre-menu-chevron"><i data-lucide="chevron-right"></i></span>
+      </button>
+      <button class="pre-menu-item" onclick="closeSidebar()">
+        <i data-lucide="trending-up"></i>
+        <span class="pre-menu-item-label">Primary Trading</span>
+        <span class="pre-menu-chevron"><i data-lucide="chevron-right"></i></span>
+      </button>
+      <button class="pre-menu-item" onclick="closeSidebar()">
+        <i data-lucide="phone"></i>
+        <span class="pre-menu-item-label">Contact Us</span>
+        <span class="pre-menu-chevron"><i data-lucide="chevron-right"></i></span>
+      </button>
+      <button class="pre-menu-item" onclick="closeSidebar()">
+        <i data-lucide="info"></i>
+        <span class="pre-menu-item-label">FAQ</span>
+        <span class="pre-menu-chevron"><i data-lucide="chevron-right"></i></span>
+      </button>
+
+      <div class="pre-menu-divider"></div>
+      <div style="height:20px"></div>
     </div>
-
-    <!-- Step 3: OTP -->
-    <div class="panel form-section" id="reg-step-3">
-      <p style="font-size:14px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px;line-height:1.6">
-        A one-time code was sent to your phone number / email. Enter the 6-digit code below.
-      </p>
-      <div class="otp-email">blk*******@gmail.com</div>
-
-      <div class="otp-grid">
-        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
-        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
-        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
-        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
-        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
-        <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
-      </div>
-
-      <button class="btn-primary" onclick="doRegister()">Verify & Register</button>
-      <button class="resend-btn">Resend Code</button>
-    </div>
-
-  </div><!-- /panel-register -->
+  </div>
 
 
 <script>
+/* ── Language ── */
+let lang = 'en';
+function toggleLang() {
+  lang = lang === 'en' ? 'mn' : 'en';
+  const label = lang === 'en' ? 'English' : 'Монгол';
+  document.getElementById('lang-text').textContent = label;
+  const sl = document.getElementById('sidebar-lang-text');
+  if (sl) sl.textContent = label;
+}
+
+/* ── Theme ── */
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('tradex-theme', next);
+}
+
+/* ── Pre-login sidebar ── */
+function openSidebar()  { document.getElementById('pre-menu-overlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('pre-menu-overlay').classList.remove('open'); }
+
 /* ── Auth tab switch ── */
-let currentAuth = 'login';
 function switchAuth(tab) {
-  currentAuth = tab;
   document.getElementById('toggle-login').classList.toggle('active', tab === 'login');
   document.getElementById('toggle-register').classList.toggle('active', tab === 'register');
   document.getElementById('panel-login').classList.toggle('active', tab === 'login');
@@ -429,21 +761,137 @@ function setRegStep(n) {
     const seg = document.getElementById(`rseg-${i-1}`);
     seg.className = 'step-seg' + (i < n ? ' done' : i === n ? ' active' : '');
   });
+  document.getElementById('reg-step-4').classList.remove('active');
 }
-function regNext(n) { setRegStep(n); }
-
-/* ── Registration prefix toggle ── */
+function regNext(n) { setRegStep(n); window.scrollTo(0,0); }
 function setRegChar(c) {
   document.querySelectorAll('.reg-char-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(`rc-${c}`).classList.add('active');
 }
 
+/* ── Step 1 → save country / user type, adapt step 2 labels ── */
+function regStep1Continue() {
+  const country  = document.getElementById('reg-country').value;
+  const usertype = document.getElementById('reg-usertype').value;
+  localStorage.setItem('reg-country', country);
+  localStorage.setItem('reg-usertype', usertype);
+  applyRegStep2Labels();
+  regNext(2);
+}
+function applyRegStep2Labels() {
+  const country  = localStorage.getItem('reg-country')  || 'Mongolia';
+  const usertype = localStorage.getItem('reg-usertype') || 'Individual';
+  const label  = document.getElementById('reg-idnum-label');
+  const prefix = document.getElementById('reg-idnum-prefix');
+  const input  = document.getElementById('reg-idnum-input');
+
+  let text, showPrefix;
+  if (usertype === 'Corporate')    { text = 'Corporate number';    showPrefix = false; }
+  else if (country === 'Mongolia') { text = 'Registration number'; showPrefix = true;  }
+  else                             { text = 'Passport number';     showPrefix = false; }
+
+  label.textContent = text;
+  input.placeholder = text;
+  prefix.style.display = showPrefix ? 'flex' : 'none';
+}
+
+/* ── Live field requirement checklists ── */
+function setReqMet(id, met) {
+  document.getElementById(id).classList.toggle('met', met);
+}
+function checkUsernameReq(v) {
+  setReqMet('ureq-latin',  v.length > 0 && /^[A-Za-z0-9_.]*$/.test(v));
+  setReqMet('ureq-len',    v.length >= 8 && v.length <= 20);
+  setReqMet('ureq-letter', /[A-Za-z]/.test(v));
+  setReqMet('ureq-digit',  /[0-9]/.test(v));
+}
+function checkPasswordReq(v) {
+  setReqMet('preq-len',     v.length >= 8);
+  setReqMet('preq-upper',   /[A-Z]/.test(v));
+  setReqMet('preq-lower',   /[a-z]/.test(v));
+  setReqMet('preq-digit',   /[0-9]/.test(v));
+  setReqMet('preq-special', /[^A-Za-z0-9]/.test(v));
+}
+
+/* ── OTP verify → success modal → PIN setup → register success ── */
+function verifyRegOtp() {
+  document.getElementById('otp-success-modal').classList.add('open');
+  lucide.createIcons();
+}
+function proceedToPinSetup() {
+  document.getElementById('otp-success-modal').classList.remove('open');
+  showPinSetup();
+}
+function showPinSetup() {
+  [1,2,3].forEach(i => {
+    document.getElementById(`reg-step-${i}`).classList.remove('active');
+    document.getElementById(`rseg-${i-1}`).className = 'step-seg done';
+  });
+  document.getElementById('reg-step-4').classList.add('active');
+  window.scrollTo(0,0);
+  lucide.createIcons();
+}
+function togglePinReveal(groupId) {
+  const grid  = document.getElementById(groupId);
+  const btn   = grid.parentElement.querySelector('.pin-eye');
+  const boxes = grid.querySelectorAll('.pin-box');
+  const revealing = boxes[0].type === 'password';
+  boxes.forEach(b => b.type = revealing ? 'text' : 'password');
+  btn.classList.toggle('active', revealing);
+  btn.innerHTML = revealing ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+  lucide.createIcons();
+}
+function pinAdvance(inp) {
+  inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 1);
+  if (inp.value.length === 1) {
+    const next = inp.nextElementSibling;
+    if (next && next.classList.contains('pin-box')) next.focus();
+  }
+}
+function finishRegister() {
+  document.getElementById('register-success-modal').classList.add('open');
+  lucide.createIcons();
+}
+function closeRegisterSuccess() {
+  document.getElementById('register-success-modal').classList.remove('open');
+  setRegStep(1);
+  switchAuth('login');
+}
+
+/* ── Forgot password ── */
+function showForgot() {
+  document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('forgot-section').style.display = 'block';
+  setFpStep(1); window.scrollTo(0,0);
+}
+function hideForgot() {
+  document.getElementById('forgot-section').style.display = 'none';
+  document.getElementById('auth-section').style.display = 'block';
+  switchAuth('login'); window.scrollTo(0,0);
+}
+function setFpStep(n) {
+  [1,2,3,4].forEach(i => document.getElementById(`fp-${i}`).classList.toggle('active', i === n));
+}
+function fpNext(n) { setFpStep(n); window.scrollTo(0,0); }
+
+/* ── Face ID modal ── */
+function showFaceID() {
+  document.getElementById('faceid-modal').classList.add('open');
+  lucide.createIcons();
+}
+function faceIDAllow()   { goHome(); }
+function faceIDDecline() { goHome(); }
+function goHome() {
+  sessionStorage.setItem('bdsec-auth', '1');
+  window.location.href = 'index.html';
+}
+
 /* ── Password visibility ── */
 function togglePw(id, btn) {
   const inp = document.getElementById(id);
-  const isHidden = inp.type === 'password';
-  inp.type = isHidden ? 'text' : 'password';
-  btn.innerHTML = isHidden ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.innerHTML = show ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
   lucide.createIcons();
 }
 
@@ -453,16 +901,6 @@ function otpAdvance(inp) {
     const next = inp.nextElementSibling;
     if (next && next.classList.contains('otp-box')) next.focus();
   }
-}
-
-/* ── Login / Register actions ── */
-function doLogin() {
-  sessionStorage.setItem('bdsec-auth', '1');
-  window.location.href = 'index.html';
-}
-function doRegister() {
-  sessionStorage.setItem('bdsec-auth', '1');
-  window.location.href = 'index.html';
 }
 
 lucide.createIcons();

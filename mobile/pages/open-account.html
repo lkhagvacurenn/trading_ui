@@ -66,6 +66,7 @@
     }
     .inp:focus { border-color: var(--color-primary); }
     .inp::placeholder { color: var(--color-text-disabled); }
+    .inp[readonly] { background: var(--color-bg-input); color: var(--color-text-secondary); cursor: default; }
 
     .inp-select {
       appearance: none; -webkit-appearance: none;
@@ -75,14 +76,13 @@
       padding-right: 36px; cursor: pointer;
     }
 
-    .inp-date {
-      position: relative;
+    /* Native date-picker icon — keep it visible in both themes */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.6); opacity: 0.85; cursor: pointer;
     }
-    .inp-date-icon {
-      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      color: var(--color-text-disabled); pointer-events: none;
+    [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.35);
     }
-    .inp-date-icon svg { width: 16px; height: 16px; }
 
     /* ── Row (two cols) ── */
     .field-row { display: flex; gap: 10px; }
@@ -100,6 +100,47 @@
     }
     .btn-primary:hover { opacity: 0.88; }
 
+    /* ── Back + Continue row ── */
+    .btn-row { display: flex; gap: 10px; margin-bottom: 24px; }
+    .btn-outline {
+      flex: 1; padding: 13px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+      cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
+    .btn-outline svg { width: 16px; height: 16px; }
+    .btn-row .btn-primary,
+    .btn-row .btn-check-payment { flex: 1.3; margin: 0; }
+
+    /* ── Bank logo picker (horizontal scroll) ── */
+    .bank-scroll {
+      display: flex; gap: 12px; overflow-x: auto;
+      padding: 2px 2px 8px; margin: 0 -2px;
+      scrollbar-width: none;
+    }
+    .bank-scroll::-webkit-scrollbar { display: none; }
+    .bank-card {
+      flex-shrink: 0; width: 56px; height: 56px;
+      border-radius: 12px; overflow: hidden;
+      border: 2px solid var(--color-border);
+      cursor: pointer; position: relative;
+      transition: border-color 0.15s, transform 0.1s;
+    }
+    .bank-card:active { transform: scale(0.96); }
+    .bank-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .bank-card.selected { border-color: var(--color-primary); }
+    .bank-card .bank-check {
+      position: absolute; top: -5px; right: -5px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--color-primary); color: #fff;
+      display: none; align-items: center; justify-content: center;
+      border: 2px solid var(--color-bg);
+    }
+    .bank-card.selected .bank-check { display: flex; }
+    .bank-card .bank-check svg { width: 9px; height: 9px; }
+
     /* ── Agreements list ── */
     .agreement-item {
       display: flex; align-items: center; justify-content: space-between;
@@ -114,57 +155,95 @@
     .agreement-item:hover { border-color: var(--color-primary); }
     .agreement-item .ag-left { display: flex; align-items: center; gap: 10px; }
     .agreement-check {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: rgba(0,192,118,0.15);
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--color-bg-input);
       display: flex; align-items: center; justify-content: center;
-      color: var(--color-buy); flex-shrink: 0;
+      color: var(--color-text-disabled); flex-shrink: 0;
+      transition: background 0.2s ease, color 0.2s ease;
     }
-    .agreement-check svg { width: 14px; height: 14px; }
+    .agreement-check svg { width: 13px; height: 13px; }
+    .agreement-check.read { background: rgba(0,192,118,0.15); color: var(--color-buy); }
     .agreement-name { font-size: 13px; font-weight: 600; }
     .chevron-icon { color: var(--color-text-disabled); }
     .chevron-icon svg { width: 16px; height: 16px; }
 
-    /* Signature area */
-    .sig-header {
-      display: flex; align-items: center; justify-content: flex-end;
-      margin-bottom: 8px;
+    /* ── Agreement reader modal ── */
+    .agreement-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 280;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: flex-end; justify-content: center;
     }
-    .sig-draw-btn {
-      display: flex; align-items: center; gap: 6px;
-      border: 1.5px solid var(--color-border);
-      background: transparent; border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 12px; font-weight: 600;
-      color: var(--color-text-secondary);
-      cursor: pointer;
+    .agreement-modal-overlay.open { display: flex; }
+    .agreement-modal-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 78vh;
+      padding: 20px 20px 26px; display: flex; flex-direction: column;
     }
-    .sig-draw-btn svg { width: 14px; height: 14px; }
+    .agreement-modal-hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-shrink: 0; }
+    .agreement-modal-title { font-size: 15px; font-weight: 800; }
+    .agreement-modal-close {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary);
+    }
+    .agreement-modal-close svg { width: 16px; height: 16px; }
+    .agreement-modal-body {
+      overflow-y: auto; font-size: 13px; line-height: 1.75;
+      color: var(--color-text-secondary); white-space: pre-line;
+    }
+
+    /* ── Signature ── */
+    .sig-section { margin-top: 20px; margin-bottom: 8px; }
+    .sig-placeholder {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      border: 1.5px dashed var(--color-border); border-radius: 14px;
+      padding: 30px 16px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .sig-placeholder:hover { border-color: var(--color-primary); background: var(--color-bg-input); }
+    .sig-placeholder-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--color-bg-input); display: flex; align-items: center; justify-content: center;
+      color: var(--color-primary);
+    }
+    .sig-placeholder-icon svg { width: 20px; height: 20px; }
+    .sig-placeholder-text { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
 
     #sig-canvas {
-      width: 100%; height: 160px;
+      width: 100%; height: 160px; display: block;
       background: var(--color-bg-card);
-      border: 1.5px solid var(--color-border);
-      border-radius: 12px;
-      touch-action: none;
-      cursor: crosshair;
+      border: 1.5px solid var(--color-primary);
+      border-radius: 12px 12px 0 0;
+      touch-action: none; cursor: crosshair;
     }
-    .sig-clear-btn {
-      background: none; border: none;
-      color: var(--color-text-disabled); font-size: 12px;
-      cursor: pointer; margin-top: 6px; padding: 4px 0;
+    .sig-pad-actions {
+      display: flex;
+      border: 1.5px solid var(--color-border); border-top: none;
+      border-radius: 0 0 12px 12px; overflow: hidden;
     }
-    .sig-clear-btn svg { width: 13px; height: 13px; vertical-align: middle; margin-right: 3px; }
+    .sig-action-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 12px; background: var(--color-bg-card); border: none;
+      border-right: 1px solid var(--color-border);
+      font-size: 13px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer;
+    }
+    .sig-action-btn:last-child { border-right: none; }
+    .sig-action-btn svg { width: 14px; height: 14px; }
+    .sig-action-btn.primary { color: var(--color-primary); }
+
+    .sig-done {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; background: rgba(0,192,118,0.08);
+      border: 1px solid rgba(0,192,118,0.3); border-radius: 12px;
+    }
+    .sig-done-left { display: flex; align-items: center; gap: 10px; color: var(--color-buy); font-size: 13px; font-weight: 600; }
+    .sig-done-left svg { width: 18px; height: 18px; }
+    .sig-redo-btn { background: none; border: none; color: var(--color-primary); font-size: 12px; font-weight: 700; cursor: pointer; }
 
     /* ── QR & payment step ── */
     .qr-wrapper {
-      background: #fff;
-      border-radius: 16px;
-      padding: 18px;
       margin-bottom: 16px;
       display: flex; align-items: center; justify-content: center;
     }
-    #qr-svg { width: 180px; height: 180px; }
-
     .qr-fee-label {
       text-align: center;
       font-size: 14px; font-weight: 700;
@@ -178,16 +257,14 @@
       margin-bottom: 20px;
     }
     .pay-app-item {
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
     }
     .pay-app-icon {
-      width: 56px; height: 56px; border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 800; color: #fff;
-      border: 1px solid rgba(255,255,255,0.08);
+      width: 64px; height: 64px; border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--color-border);
     }
-    .pay-app-name { font-size: 10px; color: var(--color-text-disabled); text-align: center; }
+    .pay-app-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .btn-check-payment {
       width: 100%; padding: 14px;
@@ -256,25 +333,22 @@
       <div class="field-row">
         <div class="field-wrap">
           <label class="field-label">First Name</label>
-          <input class="inp" type="text" placeholder="First name" />
+          <input class="inp" type="text" id="oa-first-name" placeholder="First name" />
         </div>
         <div class="field-wrap">
           <label class="field-label">Last Name</label>
-          <input class="inp" type="text" placeholder="Last name" />
+          <input class="inp" type="text" id="oa-last-name" placeholder="Last name" />
         </div>
       </div>
 
       <div class="field-wrap">
         <label class="field-label">Date of Birth</label>
-        <div style="position:relative">
-          <input class="inp" type="date" style="padding-right:40px" />
-          <span class="inp-date-icon"><i data-lucide="calendar"></i></span>
-        </div>
+        <input class="inp" type="date" id="oa-dob" />
       </div>
 
       <div class="field-wrap">
         <label class="field-label">Gender</label>
-        <select class="inp inp-select">
+        <select class="inp inp-select" id="oa-gender">
           <option value="">Select gender</option>
           <option>Male</option>
           <option>Female</option>
@@ -283,15 +357,15 @@
 
       <div class="field-wrap">
         <label class="field-label">Phone Number</label>
-        <input class="inp" type="tel" placeholder="+976 ···" />
+        <input class="inp" type="tel" id="oa-phone" placeholder="+976 ···" />
       </div>
 
       <div class="field-wrap">
         <label class="field-label">Home Address</label>
-        <input class="inp" type="text" placeholder="Address" />
+        <input class="inp" type="text" id="oa-address" placeholder="Address" />
       </div>
 
-      <button class="btn-primary" onclick="goStep(2)">Continue</button>
+      <button class="btn-primary" onclick="oaStep1Continue()">Continue</button>
     </div>
   </div>
 
@@ -301,27 +375,33 @@
 
       <div class="field-wrap">
         <label class="field-label">Select Bank</label>
-        <select class="inp inp-select">
-          <option>Khan Bank</option>
-          <option>Golomt Bank</option>
-          <option>Trade and Development Bank</option>
-          <option>Xac Bank</option>
-          <option>State Bank</option>
-          <option>Capitron Bank</option>
+        <div class="bank-scroll" id="bank-scroll"></div>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Currency</label>
+        <select class="inp inp-select" id="acct-currency">
+          <option>MNT — Mongolian Tögrög</option>
+          <option>USD — US Dollar</option>
+          <option>EUR — Euro</option>
+          <option>CNY — Chinese Yuan</option>
         </select>
       </div>
 
       <div class="field-wrap">
         <label class="field-label">Account Number</label>
-        <input class="inp" type="tel" placeholder="Account number" />
+        <input class="inp" type="tel" id="acct-number" placeholder="Enter 8-digit account number" maxlength="8" oninput="handleAcctNumberInput(this)" />
       </div>
 
       <div class="field-wrap">
         <label class="field-label">Account Holder Name</label>
-        <input class="inp" type="text" placeholder="Full name as on account" />
+        <input class="inp" type="text" id="acct-holder" placeholder="Auto-filled from account number" readonly />
       </div>
 
-      <button class="btn-primary" onclick="goStep(3)">Continue</button>
+      <div class="btn-row">
+        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Back</span></button>
+        <button class="btn-primary" onclick="goStep(3)">Continue</button>
+      </div>
     </div>
   </div>
 
@@ -330,44 +410,60 @@
     <div class="form-body">
 
       <!-- Agreements -->
-      <div class="agreement-item">
+      <div class="agreement-item" onclick="openAgreement('acc-open')">
         <div class="ag-left">
-          <div class="agreement-check"><i data-lucide="check"></i></div>
+          <div class="agreement-check" id="ac-acc-open"><i data-lucide="file-text"></i></div>
           <span class="agreement-name">Account Opening Agreement</span>
         </div>
         <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
       </div>
 
-      <div class="agreement-item">
+      <div class="agreement-item" onclick="openAgreement('nominal')">
         <div class="ag-left">
-          <div class="agreement-check"><i data-lucide="check"></i></div>
+          <div class="agreement-check" id="ac-nominal"><i data-lucide="file-text"></i></div>
           <span class="agreement-name">Nominal Account Service Agreement</span>
         </div>
         <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
       </div>
 
-      <div class="agreement-item">
+      <div class="agreement-item" onclick="openAgreement('broker')">
         <div class="ag-left">
-          <div class="agreement-check"><i data-lucide="check"></i></div>
+          <div class="agreement-check" id="ac-broker"><i data-lucide="file-text"></i></div>
           <span class="agreement-name">Online Broker Service Agreement</span>
         </div>
         <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
       </div>
 
       <!-- Signature -->
-      <div style="margin-top:20px;margin-bottom:8px">
-        <div class="sig-header">
-          <button class="sig-draw-btn" onclick="clearCanvas()">
-            <i data-lucide="pencil"></i> Draw Signature
-          </button>
+      <div class="sig-section">
+        <label class="field-label">Signature</label>
+
+        <div class="sig-placeholder" id="sig-placeholder" onclick="openSignaturePad()">
+          <div class="sig-placeholder-icon"><i data-lucide="pen-line"></i></div>
+          <div class="sig-placeholder-text">Tap to draw your signature</div>
         </div>
-        <canvas id="sig-canvas"></canvas>
-        <button class="sig-clear-btn" onclick="clearCanvas()">
-          <i data-lucide="eraser"></i> Clear
-        </button>
+
+        <div class="sig-pad" id="sig-pad" style="display:none">
+          <canvas id="sig-canvas"></canvas>
+          <div class="sig-pad-actions">
+            <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Clear</span></button>
+            <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Done</span></button>
+          </div>
+        </div>
+
+        <div class="sig-done" id="sig-done" style="display:none">
+          <div class="sig-done-left">
+            <i data-lucide="check-circle"></i>
+            <span>Signature captured</span>
+          </div>
+          <button class="sig-redo-btn" onclick="redoSignature()">Redo</button>
+        </div>
       </div>
 
-      <button class="btn-primary" onclick="goStep(4)">Continue</button>
+      <div class="btn-row" style="margin-top:20px">
+        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Back</span></button>
+        <button class="btn-primary" onclick="goStep(4)">Continue</button>
+      </div>
     </div>
   </div>
 
@@ -376,35 +472,7 @@
     <div class="form-body">
 
       <div class="qr-wrapper">
-        <!-- Simple SVG QR placeholder -->
-        <svg id="qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100" height="100" fill="white"/>
-          <!-- Top-left position square -->
-          <rect x="5" y="5" width="28" height="28" rx="3" fill="#000"/><rect x="9" y="9" width="20" height="20" rx="1" fill="white"/><rect x="13" y="13" width="12" height="12" fill="#000"/>
-          <!-- Top-right position square -->
-          <rect x="67" y="5" width="28" height="28" rx="3" fill="#000"/><rect x="71" y="9" width="20" height="20" rx="1" fill="white"/><rect x="75" y="13" width="12" height="12" fill="#000"/>
-          <!-- Bottom-left position square -->
-          <rect x="5" y="67" width="28" height="28" rx="3" fill="#000"/><rect x="9" y="71" width="20" height="20" rx="1" fill="white"/><rect x="13" y="75" width="12" height="12" fill="#000"/>
-          <!-- Data modules (random pattern) -->
-          <rect x="38" y="5" width="5" height="5" fill="#000"/><rect x="46" y="5" width="5" height="5" fill="#000"/><rect x="54" y="5" width="5" height="5" fill="#000"/>
-          <rect x="38" y="13" width="5" height="5" fill="#000"/><rect x="50" y="13" width="5" height="5" fill="#000"/>
-          <rect x="42" y="21" width="5" height="5" fill="#000"/><rect x="54" y="21" width="5" height="5" fill="#000"/>
-          <rect x="5" y="38" width="5" height="5" fill="#000"/><rect x="13" y="38" width="5" height="5" fill="#000"/><rect x="25" y="38" width="5" height="5" fill="#000"/>
-          <rect x="38" y="38" width="5" height="5" fill="#000"/><rect x="50" y="38" width="5" height="5" fill="#000"/><rect x="62" y="38" width="5" height="5" fill="#000"/>
-          <rect x="70" y="38" width="5" height="5" fill="#000"/><rect x="82" y="38" width="5" height="5" fill="#000"/><rect x="90" y="38" width="5" height="5" fill="#000"/>
-          <rect x="5" y="46" width="5" height="5" fill="#000"/><rect x="21" y="46" width="5" height="5" fill="#000"/><rect x="38" y="46" width="5" height="5" fill="#000"/>
-          <rect x="54" y="46" width="5" height="5" fill="#000"/><rect x="70" y="46" width="5" height="5" fill="#000"/><rect x="86" y="46" width="5" height="5" fill="#000"/>
-          <rect x="9" y="54" width="5" height="5" fill="#000"/><rect x="25" y="54" width="5" height="5" fill="#000"/><rect x="42" y="54" width="5" height="5" fill="#000"/>
-          <rect x="62" y="54" width="5" height="5" fill="#000"/><rect x="78" y="54" width="5" height="5" fill="#000"/>
-          <rect x="38" y="62" width="5" height="5" fill="#000"/><rect x="46" y="62" width="5" height="5" fill="#000"/><rect x="62" y="62" width="5" height="5" fill="#000"/>
-          <rect x="74" y="62" width="5" height="5" fill="#000"/><rect x="86" y="62" width="5" height="5" fill="#000"/>
-          <rect x="38" y="70" width="5" height="5" fill="#000"/><rect x="54" y="70" width="5" height="5" fill="#000"/><rect x="66" y="70" width="5" height="5" fill="#000"/>
-          <rect x="78" y="70" width="5" height="5" fill="#000"/><rect x="90" y="70" width="5" height="5" fill="#000"/>
-          <rect x="42" y="78" width="5" height="5" fill="#000"/><rect x="58" y="78" width="5" height="5" fill="#000"/><rect x="70" y="78" width="5" height="5" fill="#000"/>
-          <rect x="38" y="86" width="5" height="5" fill="#000"/><rect x="50" y="86" width="5" height="5" fill="#000"/><rect x="62" y="86" width="5" height="5" fill="#000"/>
-          <rect x="74" y="86" width="5" height="5" fill="#000"/><rect x="86" y="86" width="5" height="5" fill="#000"/>
-          <rect x="90" y="90" width="5" height="5" fill="#000"/>
-        </svg>
+        <img src="../../public/qr.png" alt="Payment QR code" style="width:180px;height:180px;object-fit:contain;border-radius:8px" />
       </div>
 
       <div class="qr-fee-label">Account opening fee: 5,000₮</div>
@@ -414,7 +482,10 @@
         <!-- Populated by JS -->
       </div>
 
-      <button class="btn-check-payment" onclick="checkPayment()">Check Payment</button>
+      <div class="btn-row" style="margin-bottom:14px">
+        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Back</span></button>
+        <button class="btn-check-payment" onclick="checkPayment()">Check Payment</button>
+      </div>
     </div>
   </div>
 
@@ -428,37 +499,124 @@
     <button class="btn-home" onclick="goHome()">Back to Home</button>
   </div>
 
+  <!-- ══ AGREEMENT READER MODAL ══ -->
+  <div id="agreement-modal" class="agreement-modal-overlay">
+    <div class="agreement-modal-card">
+      <div class="agreement-modal-hdr">
+        <span id="agreement-modal-title" class="agreement-modal-title"></span>
+        <button class="agreement-modal-close" onclick="closeAgreement()"><i data-lucide="x"></i></button>
+      </div>
+      <div id="agreement-modal-body" class="agreement-modal-body"></div>
+      <button class="btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">I've Read This</button>
+    </div>
+  </div>
+
 
 <script>
-/* ── Payment apps ── */
-const PAY_APPS = [
-  { name: 'QPay',       color: '#2d6cdf' },
-  { name: 'Socialpay',  color: '#1a6fb0' },
-  { name: 'iPay',       color: '#6c4bb8' },
-  { name: 'Storepay',   color: '#c47c00' },
-  { name: 'Lendpay',    color: '#e05a2b' },
-  { name: 'Nomad',      color: '#2a5298' },
-  { name: 'MBank',      color: '#1b8a4e' },
-  { name: 'MobiFinance',color: '#4b6cb7' },
-  { name: 'Monpay',     color: '#2563eb' },
-  { name: 'Mobicom',    color: '#f59e0b' },
-  { name: 'Arig',       color: '#7c3aed' },
-  { name: 'ARD',        color: '#dc2626' },
-];
+/* ── Bank logo picker (horizontal scroll) ── */
+const bankScroll = document.getElementById('bank-scroll');
+let selectedBankIndex = null;
+for (let i = 1; i <= 12; i++) {
+  const src = `../../public/bank logo/bank${String(i).padStart(2, '0')}.png`;
+  const card = document.createElement('div');
+  card.className = 'bank-card';
+  card.innerHTML = `<img src="${src}" alt="Bank ${i}" /><span class="bank-check"><i data-lucide="check"></i></span>`;
+  card.onclick = () => {
+    document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedBankIndex = i;
+  };
+  bankScroll.appendChild(card);
+}
 
-const grid = document.getElementById('pay-apps-grid');
-PAY_APPS.forEach(app => {
-  const div = document.createElement('div');
-  div.className = 'pay-app-item';
-  div.innerHTML = `
-    <div class="pay-app-icon" style="background:${app.color}">${app.name.substring(0,3).toUpperCase()}</div>
-    <span class="pay-app-name">${app.name}</span>
-  `;
-  div.onclick = () => alert(`Opening ${app.name}…`);
-  grid.appendChild(div);
-});
+/* ── Account number → auto-fill account holder name ── */
+function handleAcctNumberInput(inp) {
+  inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 8);
+  const holder = document.getElementById('acct-holder');
+  holder.value = inp.value.length === 8 ? 'Lkhagvasuren Battsengel' : '';
+}
+
+/* ── Agreements: unread → reader modal → read ── */
+const AGREEMENTS = {
+  'acc-open': {
+    name: 'Account Opening Agreement',
+    content: `This Account Opening Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client").
+
+1. By submitting this application, the Client confirms that all information provided is accurate, complete, and up to date, and agrees to notify the Company promptly of any changes.
+
+2. The Company will open a securities trading account in the Client's name upon successful verification of identity and receipt of the account opening fee.
+
+3. The Client acknowledges that trading in securities involves risk, including the possible loss of principal, and that past performance is not indicative of future results.
+
+4. The Client authorizes the Company to carry out instructions received through the registered account, mobile application, or other approved channels.
+
+5. This Agreement remains in effect until terminated in writing by either party, subject to settlement of any outstanding obligations.`
+  },
+  'nominal': {
+    name: 'Nominal Account Service Agreement',
+    content: `This Nominal Account Service Agreement governs the holding of securities on the Client's behalf through a nominal (omnibus) account maintained by the Company at the Securities Clearing House and Central Depository.
+
+1. Securities purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
+
+2. The Company will maintain accurate sub-records identifying the Client's beneficial interest in any securities held in the nominal account.
+
+3. The Client may request a transfer of securities from the nominal account to an individual account at any time, subject to applicable fees and processing times.
+
+4. The Company shall exercise reasonable care in safeguarding assets held in the nominal account and will provide periodic statements reflecting the Client's holdings.
+
+5. Any corporate actions (dividends, rights issues, voting) relating to securities in the nominal account will be passed through to the Client in accordance with regulatory requirements.`
+  },
+  'broker': {
+    name: 'Online Broker Service Agreement',
+    content: `This Online Broker Service Agreement sets out the terms under which the Company provides electronic trading and brokerage services to the Client through its online and mobile platforms.
+
+1. The Client agrees to keep login credentials, PIN codes, and authentication methods confidential and to notify the Company immediately of any unauthorized access.
+
+2. Orders placed through the platform are executed on a best-efforts basis at prevailing market prices and may be subject to delays, market conditions, or exchange rules beyond the Company's control.
+
+3. The Company may charge brokerage commissions, settlement fees, and other charges as disclosed in its published fee schedule, which may be updated from time to time.
+
+4. The Client is solely responsible for evaluating the merits and risks of any investment decision made through the platform.
+
+5. The Company reserves the right to suspend or restrict access to the platform in cases of suspected fraud, technical failure, or as required by regulators.`
+  }
+};
+const readAgreements = new Set();
+
+function openAgreement(id) {
+  const ag = AGREEMENTS[id];
+  if (!ag) return;
+  document.getElementById('agreement-modal-title').textContent = ag.name;
+  document.getElementById('agreement-modal-body').textContent = ag.content;
+  const modal = document.getElementById('agreement-modal');
+  modal.dataset.current = id;
+  modal.classList.add('open');
+  lucide.createIcons();
+}
+function closeAgreement() {
+  const modal = document.getElementById('agreement-modal');
+  const id = modal.dataset.current;
+  modal.classList.remove('open');
+  if (id && !readAgreements.has(id)) {
+    readAgreements.add(id);
+    const icon = document.getElementById(`ac-${id}`);
+    icon.classList.add('read');
+    icon.innerHTML = '<i data-lucide="check"></i>';
+    lucide.createIcons();
+  }
+}
 
 /* ── Step navigation ── */
+function oaStep1Continue() {
+  localStorage.setItem('oa-first-name', document.getElementById('oa-first-name').value.trim());
+  localStorage.setItem('oa-last-name', document.getElementById('oa-last-name').value.trim());
+  localStorage.setItem('oa-dob', document.getElementById('oa-dob').value);
+  localStorage.setItem('oa-gender', document.getElementById('oa-gender').value);
+  localStorage.setItem('oa-phone', document.getElementById('oa-phone').value.trim());
+  localStorage.setItem('oa-address', document.getElementById('oa-address').value.trim());
+  goStep(2);
+}
+
 let currentStep = 1;
 function goStep(n) {
   document.getElementById(`step-${currentStep}`).classList.remove('active');
@@ -482,6 +640,7 @@ function goBack() {
     currentStep--;
     document.getElementById(`step-${currentStep}`).classList.add('active');
     updateStepBar(currentStep);
+    window.scrollTo(0, 0);
   } else {
     window.history.back();
   }
@@ -492,11 +651,24 @@ function checkPayment() {
   document.getElementById('step-bar').style.display = 'none';
   document.querySelector('.sub-header').style.display = 'none';
   document.getElementById('step-success').style.display = 'flex';
+  localStorage.setItem('bdsec-account-opened', '1');
 }
 
 function goHome() {
   try { window.parent.navigateTo('home'); } catch(e) { window.history.back(); }
 }
+
+/* ── Payment apps (using bank-logo art as stand-in icons) ── */
+const PAY_APPS = ['QPay','Socialpay','iPay','Storepay','Lendpay','Nomad','MBank','MobiFinance','Monpay','Mobicom','Arig','ARD'];
+const grid = document.getElementById('pay-apps-grid');
+PAY_APPS.forEach((name, i) => {
+  const logoSrc = `../../public/bank logo/bank${String((i % 12) + 1).padStart(2, '0')}.png`;
+  const div = document.createElement('div');
+  div.className = 'pay-app-item';
+  div.innerHTML = `<div class="pay-app-icon"><img src="${logoSrc}" alt="${name}" /></div>`;
+  div.onclick = () => alert(`Opening ${name}…`);
+  grid.appendChild(div);
+});
 
 /* ── Signature canvas ── */
 const canvas = document.getElementById('sig-canvas');
@@ -506,6 +678,7 @@ let lastX = 0, lastY = 0;
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
+  if (!rect.width) return;
   canvas.width  = rect.width  * window.devicePixelRatio;
   canvas.height = rect.height * window.devicePixelRatio;
   ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
@@ -514,7 +687,6 @@ function resizeCanvas() {
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 }
-resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
 function getPos(e) {
@@ -541,6 +713,23 @@ function draw(e) {
 
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+/* ── Signature pad: open / save / redo ── */
+function openSignaturePad() {
+  document.getElementById('sig-placeholder').style.display = 'none';
+  document.getElementById('sig-pad').style.display = 'block';
+  resizeCanvas();
+}
+function saveSignature() {
+  document.getElementById('sig-pad').style.display = 'none';
+  document.getElementById('sig-done').style.display = 'flex';
+  lucide.createIcons();
+}
+function redoSignature() {
+  clearCanvas();
+  document.getElementById('sig-done').style.display = 'none';
+  document.getElementById('sig-pad').style.display = 'block';
 }
 
 lucide.createIcons();

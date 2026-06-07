@@ -147,13 +147,13 @@
   ">
     <div style="display:flex;align-items:flex-start;gap:10px">
       <div style="color:var(--color-primary);flex-shrink:0;margin-top:1px">
-        <i data-lucide="info" style="width:16px;height:16px"></i>
+        <i data-lucide="info" id="acct-banner-icon" style="width:16px;height:16px"></i>
       </div>
-      <p style="margin:0;font-size:13px;color:var(--color-text-secondary);line-height:1.55">
+      <p id="acct-banner-text" style="margin:0;font-size:13px;color:var(--color-text-secondary);line-height:1.55">
         Open a securities account to participate in online trading on the stock exchange.
       </p>
     </div>
-    <button onclick="openAccountForm()" style="
+    <button id="acct-banner-btn" onclick="openAccountForm()" style="
       width:100%; padding:11px;
       background: var(--color-primary);
       border:none; border-radius:9px;
@@ -352,6 +352,7 @@
     renderCards();
     renderChart('AAPL');
     document.getElementById('watch-btn').classList.add('active');
+    refreshAccountBanner();
     lucide.createIcons();
 
     function openAccountForm() {
@@ -360,6 +361,35 @@
       } catch(e) {
         window.location.href = 'open-account.html';
       }
+    }
+
+    function completeKycForm() {
+      try {
+        window.parent.navigateTo('kyc');
+      } catch(e) {
+        window.location.href = 'kyc.html';
+      }
+    }
+
+    function refreshAccountBanner() {
+      const banner   = document.getElementById('open-acct-banner');
+      const icon     = document.getElementById('acct-banner-icon');
+      const text     = document.getElementById('acct-banner-text');
+      const btn      = document.getElementById('acct-banner-btn');
+      const accountOpened = localStorage.getItem('bdsec-account-opened') === '1';
+      const kycDone       = localStorage.getItem('bdsec-kyc-done') === '1';
+
+      if (!accountOpened) {
+        return; // default "Open Account" state already in markup
+      }
+      if (!kycDone) {
+        icon.setAttribute('data-lucide', 'shield-alert');
+        text.textContent = 'Complete your KYC verification to start trading online.';
+        btn.textContent = 'Complete KYC';
+        btn.onclick = completeKycForm;
+        return;
+      }
+      banner.style.display = 'none';
     }
   </script>
 </body>

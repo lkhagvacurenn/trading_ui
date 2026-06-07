@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>BDSec</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%; overflow: hidden;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(160deg, #1e1e64 0%, #12124a 50%, #0a0a2e 100%);
+      background: linear-gradient(175deg, #3e3e9e 0%, #2a2a7c 100%);
     }
 
     #splash {
@@ -20,174 +20,152 @@
       position: relative; overflow: hidden;
     }
 
-    /* ── Background candle chart ── */
-    #bg-chart {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 55%;
+    /* ══════════════════════════════
+       LOGO GROUP: icon + text side by side
+    ══════════════════════════════ */
+    #logo-group {
       display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 0;
-      padding: 0 8px;
-      opacity: 0.18;
-    }
-
-    .bg-candle {
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      flex: 1;
-      max-width: 38px;
+      gap: 18px;
     }
-    .bg-candle .wick-top {
-      width: 2px;
-      background: currentColor;
-      border-radius: 1px;
-      transform: scaleY(0);
-      transform-origin: bottom;
-    }
-    .bg-candle .body {
-      width: 60%;
-      border-radius: 2px;
-      transform: scaleY(0);
-      transform-origin: bottom;
-    }
-    .bg-candle .wick-bot {
-      width: 2px;
-      background: currentColor;
-      border-radius: 1px;
-      transform: scaleY(0);
-      transform-origin: top;
-    }
-    .bg-candle.green { color: #00C076; }
-    .bg-candle.red   { color: #EF4444; }
-    .bg-candle .body { background: currentColor; }
 
-    @keyframes growUp {
-      0%   { transform: scaleY(0); }
-      100% { transform: scaleY(1); }
+    /* ── Icon bars ── */
+    #icon-bars {
+      display: flex;
+      align-items: flex-end; /* all bars share the same baseline */
+      gap: 10px;
+      height: 76px;
     }
-    @keyframes growDown {
+
+    /* Each bar grows from its vertical center outward (up AND down) */
+    .bar {
+      width: 13px;
+      border-radius: 3px;
+      transform: scaleY(0);
+      transform-origin: 50% 50%; /* center — grows both up and down */
+      animation: barGrow 0.65s cubic-bezier(0.34, 1.45, 0.64, 1) forwards;
+    }
+
+    @keyframes barGrow {
       0%   { transform: scaleY(0); }
       100% { transform: scaleY(1); }
     }
 
-    /* ── Center logo area ── */
-    #logo-area {
-      position: relative;
-      z-index: 10;
+    /* Bar heights, colors, stagger delays */
+    .b1 { height: 42px; background: #ffffff; animation-delay: 0.05s; }
+    .b2 { height: 28px; background: #ffffff; animation-delay: 0.15s; }
+    .b3 { height: 14px; background: #dc2626; animation-delay: 0.22s; }
+    .b4 { height: 70px; background: #ffffff; animation-delay: 0.28s; }
+    .b5 { height: 52px; background: #ffffff; animation-delay: 0.38s; }
+
+    /* Column 2 stacks a white bar + red bar (looks like the red-accent column in BDSec logo) */
+    .bar-stack {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0;
+      gap: 3px;
     }
 
-    #logo-img {
-      height: 80px;
-      object-fit: contain;
-      mix-blend-mode: lighten;
+    /* ── Text group ── */
+    #text-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       opacity: 0;
-      transform: translateX(50px);
-      animation: slideInLogo 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      animation-delay: 0.95s;
+      transform: translateX(52px);
+      animation: textIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.95s forwards;
     }
 
-    @keyframes slideInLogo {
-      from { opacity: 0; transform: translateX(50px); }
-      to   { opacity: 1; transform: translateX(0); }
+    @keyframes textIn {
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    /* ── Bottom tagline ── */
+    #t-bdsec {
+      font-size: 52px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -1.5px;
+      line-height: 1;
+    }
+
+    #t-securities {
+      font-size: 15px;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.78);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+
+    /* ── Tagline ── */
     #tagline {
       position: absolute;
-      bottom: 14%;
-      left: 0; right: 0;
-      text-align: center;
-      color: rgba(255,255,255,0.45);
-      font-size: 13px;
+      bottom: 11%;
+      font-size: 13.5px;
       font-weight: 400;
-      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.48);
+      letter-spacing: 0.03em;
       opacity: 0;
-      animation: fadeInTag 0.5s ease forwards;
-      animation-delay: 1.8s;
-    }
-    @keyframes fadeInTag {
-      to { opacity: 1; }
+      transform: translateY(20px);
+      animation: tagUp 0.55s ease 1.7s forwards;
     }
 
-    /* ── Fade-out whole splash ── */
-    @keyframes fadeOutSplash {
-      from { opacity: 1; }
-      to   { opacity: 0; }
+    @keyframes tagUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Fade out whole screen ── */
+    @keyframes splashOut {
+      to { opacity: 0; }
     }
     #splash.leaving {
-      animation: fadeOutSplash 0.45s ease forwards;
+      animation: splashOut 0.4s ease forwards;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
 <div id="splash">
 
-  <!-- Background chart candles -->
-  <div id="bg-chart">
-    <!-- Each .bg-candle: wick-top / body / wick-bot heights set by JS -->
+  <!-- Logo: bars icon + BDSec text -->
+  <div id="logo-group">
+
+    <!-- 4-column bar icon matching BDSec logo shape -->
+    <div id="icon-bars">
+      <!-- column 1: medium white bar -->
+      <div class="bar b1"></div>
+
+      <!-- column 2: short white + red accent stacked -->
+      <div class="bar-stack">
+        <div class="bar b2"></div>
+        <div class="bar b3"></div>
+      </div>
+
+      <!-- column 3: tallest white bar -->
+      <div class="bar b4"></div>
+
+      <!-- column 4: medium-tall white bar -->
+      <div class="bar b5"></div>
+    </div>
+
+    <!-- BDSec + Securities text (slides from right) -->
+    <div id="text-group">
+      <div id="t-bdsec">BDSec</div>
+      <div id="t-securities">Securities</div>
+    </div>
+
   </div>
 
-  <!-- Center logo -->
-  <div id="logo-area">
-    <img id="logo-img" src="../public/dark.png" alt="BDSec Securities" />
-  </div>
-
-  <!-- Tagline -->
-  <div id="tagline">БиДиСек ҮЦК-д тавтай морил</div>
+  <!-- Tagline (slides up from bottom) -->
+  <div id="tagline">Welcome to BDSec brokerage</div>
 
 </div>
 
 <script>
-/* ── Candle data: [wickTop, body, wickBot] as % of column height ── */
-const CANDLES = [
-  { pct: 0.42, wt: 0.08, wb: 0.05, up: true  },
-  { pct: 0.55, wt: 0.12, wb: 0.04, up: false },
-  { pct: 0.38, wt: 0.06, wb: 0.03, up: true  },
-  { pct: 0.68, wt: 0.14, wb: 0.07, up: true  },
-  { pct: 0.50, wt: 0.09, wb: 0.05, up: false },
-  { pct: 0.75, wt: 0.16, wb: 0.08, up: true  },
-  { pct: 0.60, wt: 0.10, wb: 0.06, up: false },
-  { pct: 0.45, wt: 0.07, wb: 0.04, up: true  },
-  { pct: 0.82, wt: 0.18, wb: 0.09, up: true  },
-  { pct: 0.52, wt: 0.11, wb: 0.05, up: false },
-  { pct: 0.35, wt: 0.05, wb: 0.03, up: true  },
-  { pct: 0.63, wt: 0.13, wb: 0.06, up: true  },
-];
-
-const container = document.getElementById('bg-chart');
-const containerH = container.offsetHeight || 300;
-
-CANDLES.forEach((c, i) => {
-  const div = document.createElement('div');
-  div.className = `bg-candle ${c.up ? 'green' : 'red'}`;
-
-  const bodyH  = Math.round(containerH * c.pct);
-  const wtH    = Math.round(containerH * c.wt);
-  const wbH    = Math.round(containerH * c.wb);
-  const delay  = (i * 0.06).toFixed(2);
-  const dur    = '0.55s';
-  const ease   = 'cubic-bezier(0.34, 1.20, 0.64, 1)';
-
-  div.innerHTML = `
-    <div class="wick-top"  style="height:${wtH}px;animation:growUp ${dur} ${ease} ${delay}s forwards"></div>
-    <div class="body"       style="height:${bodyH}px;animation:growUp ${dur} ${ease} ${delay}s forwards"></div>
-    <div class="wick-bot"  style="height:${wbH}px;animation:growDown ${dur} ${ease} ${delay}s forwards"></div>
-  `;
-  container.appendChild(div);
-});
-
-/* ── Redirect to login after animation completes ── */
-setTimeout(() => {
-  document.getElementById('splash').classList.add('leaving');
-  setTimeout(() => { window.location.href = 'login.html'; }, 450);
-}, 3200);
+  /* Redirect to login after animation completes */
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('leaving');
+    setTimeout(() => { window.location.href = 'login.html'; }, 420);
+  }, 3500);
 </script>
 </body>
 </html>
