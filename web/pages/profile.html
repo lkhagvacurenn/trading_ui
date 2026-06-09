@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Профайл — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="profile-hero">
+    <div class="profile-avatar" id="profile-initials">ББ</div>
+    <div>
+      <h1 class="web-page-title" style="margin:0" id="profile-name">—</h1>
+      <p style="font-size:13px;color:var(--color-text-disabled);margin:4px 0 0" id="profile-acct">—</p>
+    </div>
+  </div>
+
+  <div class="profile-status-grid" id="status-cards"></div>
+
+  <div class="web-grid-2">
+    <div class="web-card web-card-pad">
+      <div class="web-section-title" style="margin-bottom:12px">Хувийн мэдээлэл</div>
+      <div class="profile-field"><span>И-мэйл</span><strong id="pf-email">—</strong></div>
+      <div class="profile-field"><span>Утас</span><strong id="pf-phone">—</strong></div>
+      <div class="profile-field"><span>Регистр</span><strong id="pf-reg">—</strong></div>
+      <div class="profile-field"><span>Иргэншил</span><strong id="pf-nat">—</strong></div>
+    </div>
+
+    <div class="web-card web-card-pad">
+      <div class="web-section-title" style="margin-bottom:12px">Товч холбоос</div>
+      <div class="profile-links">
+        <button class="profile-link-btn" onclick="go('general')"><i data-lucide="clipboard-list"></i> Дансны мэдээлэл</button>
+        <button class="profile-link-btn" onclick="go('kyc')"><i data-lucide="shield-check"></i> KYC</button>
+        <button class="profile-link-btn" onclick="go('fee')"><i data-lucide="credit-card"></i> Дансны хураамж</button>
+        <button class="profile-link-btn" onclick="go('opening-process')"><i data-lucide="list-checks"></i> Данс нээх явц</button>
+        <button class="profile-link-btn" onclick="go('alerts')"><i data-lucide="bell-ring"></i> Сэрэмжлүүлэг</button>
+        <button class="profile-link-btn" onclick="go('faq')"><i data-lucide="help-circle"></i> FAQ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  function go(key) {
+    try { window.parent.navigateTo(key); } catch (e) {}
+  }
+
+  document.getElementById('profile-name').textContent = USER.name;
+  document.getElementById('profile-acct').textContent = 'Данс: ' + (WALLET?.accountNo || '');
+  document.getElementById('profile-initials').textContent = USER.initials;
+  document.getElementById('pf-email').textContent = PROFILE.email;
+  document.getElementById('pf-phone').textContent = PROFILE.phone;
+  document.getElementById('pf-reg').textContent = PROFILE.registerNo;
+  document.getElementById('pf-nat').textContent = PROFILE.nationality;
+
+  const steps = [
+    { key: 'account', label: 'Данс нээсэн', done: PROFILE.accountOpened, page: 'open-account' },
+    { key: 'kyc', label: 'KYC баталгаажсан', done: PROFILE.kycStatus === 'approved', page: 'kyc' },
+    { key: 'fee', label: 'Хураамж төлсөн', done: PROFILE.feePaid, page: 'fee' },
+  ];
+
+  document.getElementById('status-cards').innerHTML = steps.map(s => `
+    <div class="profile-status-card${s.done ? ' done' : ''}" onclick="go('${s.page}')">
+      <i data-lucide="${s.done ? 'check-circle' : 'circle'}"></i>
+      <span>${s.label}</span>
+      <small>${s.done ? 'Дууссан' : 'Хийгдээгүй'}</small>
+    </div>`).join('');
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Нүүр — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; }
+    .card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .ticker-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:white; }
+    .change-badge { font-size:10px; font-weight:600; padding:3px 7px; border-radius:20px; }
+    .change-badge.up { background:rgba(0,192,118,0.15); color:var(--color-buy); }
+    .change-badge.down { background:rgba(239,68,68,0.15); color:var(--color-sell); }
+    .card-name { font-size:11px; color:var(--color-text-secondary); margin-bottom:6px; line-height:1.35; }
+    .card-price-label { font-size:10px; color:var(--color-text-disabled); }
+    .card-price { font-size:13px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+    .detail-symbol { font-size:20px; font-weight:800; color:var(--color-primary); }
+    .detail-price { font-size:24px; font-weight:800; font-family:'JetBrains Mono',monospace; margin-left:8px; }
+    .icon-btn { width:34px; height:34px; border-radius:50%; background:var(--color-bg-input); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--color-text-secondary); }
+    .icon-btn.active { color:#f59e0b; background:rgba(245,158,11,0.15); }
+    .icon-btn svg { width:16px; height:16px; }
+    .chart-tabs { display:flex; gap:6px; margin-bottom:12px; }
+    .chart-tab { padding:6px 16px; border-radius:20px; font-size:13px; font-weight:600; border:none; cursor:pointer; background:var(--color-bg-input); color:var(--color-text-secondary); }
+    .chart-tab.active { background:var(--color-primary); color:white; }
+    .portfolio-row { display:flex; justify-content:space-between; padding:8px 0; font-size:13px; border-bottom:1px solid var(--color-border); }
+    .portfolio-row:last-child { border-bottom:none; }
+    .quick-btns { display:flex; gap:10px; margin-top:12px; }
+    .ob-mini { font-size:10px; }
+    .ob-mini-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; padding:4px 0; font-family:'JetBrains Mono',monospace; }
+    .ob-mini-h { color:var(--color-text-disabled); font-weight:600; font-size:9px; text-transform:uppercase; padding-bottom:6px; border-bottom:1px solid var(--color-border); margin-bottom:4px; }
+    .filter-chips { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+    .filter-chip { padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid var(--color-border); background:var(--color-bg-input); color:var(--color-text-secondary); cursor:pointer; }
+    .filter-chip.active { background:var(--color-primary); border-color:var(--color-primary); color:#fff; }
+  </style>
+</head>
+<body>
+<div class="web-page">
+
+  <div id="open-acct-banner" class="info-banner">
+    <i data-lucide="info" style="width:16px;height:16px;color:var(--color-primary);flex-shrink:0;margin-top:2px"></i>
+    <p id="acct-banner-text">ҮЦТХТ-ны данс нээж, онлайн арилжаанд оролцоно уу.</p>
+    <button id="acct-banner-btn" class="btn btn-primary btn-sm" onclick="openAccountForm()" style="flex-shrink:0">Данс нээх</button>
+  </div>
+
+  <div class="selector-bar" onclick="openStockModal()">
+    <i data-lucide="search" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
+    <span class="symbol" id="sel-symbol">BDS</span>
+    <span class="dot"></span>
+    <span class="name" id="sel-name">БДСec ХК</span>
+    <i data-lucide="chevron-down" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
+  </div>
+
+  <div class="web-grid-2">
+    <div>
+      <div class="web-section-head">
+        <div>
+          <div class="web-section-title">Өнөөдрийн зах зээл</div>
+          <div class="web-muted" id="market-date">2026.06.09</div>
+        </div>
+        <div class="status-pill"><span class="status-dot"></span> Идэвхтэй</div>
+      </div>
+
+      <div class="filter-chips">
+        <button class="filter-chip active" onclick="setFilter('active', this)">Идэвхтэй</button>
+        <button class="filter-chip" onclick="setFilter('watchlist', this)">Watchlist</button>
+        <button class="filter-chip" onclick="setFilter('gainers', this)">Өсөлттэй</button>
+      </div>
+
+      <div class="stock-cards-grid" id="stock-cards" style="margin-bottom:16px"></div>
+
+      <div class="web-card web-card-pad">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+          <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px">
+            <span class="detail-symbol" id="d-symbol">BDS</span>
+            <span class="detail-price" id="d-price">—</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="icon-btn" title="Харьцуулах"><i data-lucide="git-compare-arrows"></i></button>
+            <button class="icon-btn active" id="watch-btn" onclick="toggleWatchlist()"><i data-lucide="star"></i></button>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--color-text-disabled);margin-bottom:12px">
+          Сүүлд шинэчлэгдсэн: <span id="d-updated">2026-06-09 14:32</span> · <span id="d-change">—</span>
+        </div>
+        <div class="chart-tabs">
+          <button class="chart-tab active" onclick="setChartType('line', this)">Шугам</button>
+          <button class="chart-tab" onclick="setChartType('candle', this)">Лит</button>
+        </div>
+        <div id="main-chart"></div>
+      </div>
+
+      <div class="web-card web-card-pad" style="margin-top:16px">
+        <div class="web-section-title" style="margin-bottom:10px">Захиалгын сан</div>
+        <div class="ob-mini ob-mini-h">
+          <span>Тоо</span><span style="text-align:right;color:var(--color-buy)">Авах</span>
+          <span style="color:var(--color-sell)">Зарах</span><span style="text-align:right">Тоо</span>
+        </div>
+        <div id="ob-mini-body" class="ob-mini"></div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" style="flex:1" onclick="quickTrade('BUY')">Авах</button>
+          <button class="btn btn-outline btn-sm" style="flex:1;color:var(--color-sell);border-color:var(--color-sell)" onclick="quickTrade('SELL')">Зарах</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="web-card web-card-pad" style="margin-bottom:16px">
+        <div class="web-section-title" style="margin-bottom:12px">Портфель</div>
+        <div class="portfolio-row"><span style="color:var(--color-text-secondary)">Нийт үнэлгээ</span><span class="mono" id="pf-total">—</span></div>
+        <div class="portfolio-row"><span style="color:var(--color-text-secondary)">Өнөөдрийн өөрчлөлт</span><span class="mono change-up" id="pf-day">—</span></div>
+        <div class="portfolio-row"><span style="color:var(--color-text-secondary)">Боломжит мөнгө</span><span class="mono" id="pf-cash">—</span></div>
+        <div class="quick-btns">
+          <button class="btn btn-primary" style="flex:1" onclick="goTrade()">Арилжаа хийх</button>
+          <button class="btn btn-outline" style="flex:1" onclick="goBalance()">Хэтэвч</button>
+        </div>
+      </div>
+
+      <div class="web-card">
+        <div class="web-card-pad" style="padding-bottom:8px;border-bottom:1px solid var(--color-border)">
+          <div class="web-section-title">Зах зээлийн хүснэгт</div>
+        </div>
+        <div class="table-wrap" style="border:none;border-radius:0">
+          <table>
+            <thead><tr><th>Тicker</th><th>Үнэ</th><th>Өөрчлөлт</th><th></th></tr></thead>
+            <tbody id="market-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="web-modal-overlay" id="stock-modal">
+  <div class="web-modal web-modal-lg">
+    <h3 class="web-modal-title">Хувьцаа сонгох</h3>
+    <input class="trade-input" type="text" id="stock-search" placeholder="Хайх…" style="margin-bottom:12px" />
+    <div class="stock-search-list" id="stock-list"></div>
+    <div class="web-modal-actions" style="margin-top:12px">
+      <button class="btn btn-outline" onclick="closeModal('stock-modal')">Хаах</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script src="../../mobile/scripts/chart.js"></script>
+<script>
+  const AVATAR_COLORS = {
+    BDS:'linear-gradient(135deg,#4949AA,#7c3aed)', KHAN:'linear-gradient(135deg,#0ea5e9,#4949AA)',
+    APU:'linear-gradient(135deg,#16a34a,#4949AA)', MSM:'linear-gradient(135deg,#f59e0b,#ef4444)',
+    TDB:'linear-gradient(135deg,#6366f1,#4949AA)', SBN:'linear-gradient(135deg,#dc2626,#9333ea)',
+  };
+
+  let selectedSymbol = 'BDS';
+  let watchlist = new Set(WATCHLIST.map(w => w.symbol));
+  let listFilter = 'active';
+
+  function cardStocks() {
+    if (listFilter === 'watchlist') return STOCKS.filter(s => watchlist.has(s.symbol));
+    if (listFilter === 'gainers') return STOCKS.filter(s => s.changePct > 0);
+    return STOCKS.slice(0, 6);
+  }
+
+  function renderCards() {
+    document.getElementById('stock-cards').innerHTML = cardStocks().map(s => {
+      const isUp = s.changePct > 0;
+      const cls = isUp ? 'up' : 'down';
+      const sign = isUp ? '+' : '';
+      const sparkColor = isUp ? 'var(--color-buy)' : 'var(--color-sell)';
+      const data = SPARKLINES[s.symbol] || [];
+      const isSelected = s.symbol === selectedSymbol;
+      return `<div class="stock-card${isSelected?' selected':''}" onclick="selectStock('${s.symbol}')">
+        <div class="card-top">
+          <div class="ticker-avatar" style="background:${AVATAR_COLORS[s.symbol]||AVATAR_COLORS.BDS}">${s.symbol.slice(0,2)}</div>
+          <span class="change-badge ${cls}">${sign}${s.changePct.toFixed(2)}%</span>
+        </div>
+        <div class="card-name">${getStockName(s)}</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div><div class="card-price-label">Хаалт</div><div class="card-price">${fmtMNT(s.price)}</div></div>
+          <div>${sparkline(data, sparkColor)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderMarketTable() {
+    document.getElementById('market-table').innerHTML = STOCKS.map(s => {
+      const sign = s.changePct >= 0 ? '+' : '';
+      const cls = s.changePct >= 0 ? 'change-up' : 'change-down';
+      return `<tr style="cursor:pointer" onclick="selectStock('${s.symbol}')">
+        <td class="font-semibold">${s.symbol}</td>
+        <td class="mono">${fmtMNT(s.price)}</td>
+        <td class="mono ${cls}">${sign}${s.changePct.toFixed(2)}%</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();quickTradeSymbol('${s.symbol}','BUY')">Авах</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderObMini() {
+    const len = Math.max(ORDER_BOOK.buy.length, ORDER_BOOK.sell.length);
+    let html = '';
+    for (let i = 0; i < Math.min(len, 6); i++) {
+      const bid = ORDER_BOOK.sell[i];
+      const ask = ORDER_BOOK.buy[i];
+      html += `<div class="ob-mini-row">
+        <span style="text-align:right;color:var(--color-text-secondary)">${bid ? bid.quantity.toLocaleString('mn-MN') : ''}</span>
+        <span style="text-align:right;color:var(--color-buy);font-weight:600">${bid ? bid.price.toFixed(0) : ''}</span>
+        <span style="color:var(--color-sell);font-weight:600">${ask ? ask.price.toFixed(0) : ''}</span>
+        <span style="text-align:right;color:var(--color-text-secondary)">${ask ? ask.quantity.toLocaleString('mn-MN') : ''}</span>
+      </div>`;
+    }
+    document.getElementById('ob-mini-body').innerHTML = html;
+  }
+
+  function selectStock(symbol) {
+    selectedSymbol = symbol;
+    const s = stockBySymbol(symbol);
+    if (!s) return;
+    document.getElementById('sel-symbol').textContent = symbol;
+    document.getElementById('sel-name').textContent = getStockName(s);
+    document.getElementById('d-symbol').textContent = symbol;
+    document.getElementById('d-price').textContent = fmtMNT(s.price);
+    const ch = document.getElementById('d-change');
+    ch.textContent = fmtChange(s.change, s.changePct);
+    ch.style.color = s.change >= 0 ? 'var(--color-buy)' : 'var(--color-sell)';
+    document.getElementById('watch-btn').classList.toggle('active', watchlist.has(symbol));
+    renderChart(symbol);
+    renderCards();
+  }
+
+  function renderChart(symbol) {
+    const data = INTRADAY[symbol] || SPARKLINES[symbol] || [];
+    const s = stockBySymbol(symbol);
+    const isUp = s && s.changePct >= 0;
+    const mn = Math.min(...data);
+    const mx = Math.max(...data);
+    renderLineChart('main-chart', data, {
+      height: 280,
+      color: isUp ? '#00C076' : '#EF4444',
+      showGrid: true,
+      yLabels: [mx.toFixed(0), ((mx+mn)/2).toFixed(0), mn.toFixed(0)],
+    });
+  }
+
+  function setChartType(type, btn) {
+    document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderChart(selectedSymbol);
+  }
+
+  function setFilter(f, btn) {
+    listFilter = f;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    renderCards();
+  }
+
+  function toggleWatchlist() {
+    if (watchlist.has(selectedSymbol)) watchlist.delete(selectedSymbol);
+    else watchlist.add(selectedSymbol);
+    document.getElementById('watch-btn').classList.toggle('active', watchlist.has(selectedSymbol));
+    if (listFilter === 'watchlist') renderCards();
+  }
+
+  function openStockModal() {
+    openModal('stock-modal');
+    renderStockModalList('stock-list', 'stock-search', selectedSymbol, sym => {
+      selectStock(sym);
+      closeModal('stock-modal');
+    });
+  }
+
+  function goTrade() { try { window.parent.navigateTo('trade'); } catch(e) {} }
+  function goBalance() { try { window.parent.navigateTo('balance'); } catch(e) {} }
+  function openAccountForm() {
+    const btn = document.getElementById('acct-banner-btn');
+    if (btn.textContent.includes('KYC')) { try { window.parent.navigateTo('kyc'); } catch(e) {} return; }
+    try { window.parent.navigateTo('open-account'); } catch(e) {}
+  }
+  function quickTrade(side) { try { window.parent.navigateTo('trade'); } catch(e) {} }
+  function quickTradeSymbol(sym, side) { selectStock(sym); quickTrade(side); }
+
+  function refreshAccountBanner() {
+    const banner = document.getElementById('open-acct-banner');
+    const text = document.getElementById('acct-banner-text');
+    const btn = document.getElementById('acct-banner-btn');
+    if (localStorage.getItem('bdsec-account-opened') !== '1') return;
+    if (localStorage.getItem('bdsec-kyc-done') !== '1') {
+      text.textContent = 'KYC баталгаажуулалтаа дуусгаж онлайн арилжаа эхлүүлнэ үү.';
+      btn.textContent = 'KYC дуусгах';
+      return;
+    }
+    banner.style.display = 'none';
+  }
+
+  document.getElementById('pf-total').textContent = fmtMNT(WALLET.portfolioValue);
+  document.getElementById('pf-cash').textContent = fmtMNT(WALLET.cashBalance);
+  document.getElementById('pf-day').textContent = '+' + fmtMNT(842000);
+
+  renderCards();
+  renderMarketTable();
+  renderObMini();
+  selectStock('BDS');
+  refreshAccountBanner();
+  lucide.createIcons();
+</script>
+</body>
+</html>

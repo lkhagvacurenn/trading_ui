@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ерөнхий мэдээлэл — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="web-wizard">
+    <h1 class="web-page-title">Ерөнхий мэдээлэл</h1>
+    <p style="color:var(--color-text-secondary);margin:-8px 0 20px;font-size:14px">Данс нээхэд шаардлагатай үндсэн мэдээллээ оруулна уу.</p>
+
+    <div class="web-wizard-steps">
+      <div class="web-wizard-step active">1. Хувийн мэдээлэл</div>
+      <div class="web-wizard-step">2. Холбоо барих</div>
+      <div class="web-wizard-step">3. Баталгаажуулах</div>
+    </div>
+
+    <div class="web-form-card">
+      <div class="web-field-row">
+        <div class="web-field"><label>Овог</label><input type="text" placeholder="Овог" /></div>
+        <div class="web-field"><label>Нэр</label><input type="text" placeholder="Нэр" /></div>
+      </div>
+      <div class="web-field-row">
+        <div class="web-field"><label>Регистрийн дугаар</label><input type="text" placeholder="АБ12345678" /></div>
+        <div class="web-field"><label>Төрсөн огноо</label><input type="date" /></div>
+      </div>
+      <div class="web-field-row">
+        <div class="web-field"><label>Иргэншил</label><select><option>Монгол</option><option>Бусад</option></select></div>
+        <div class="web-field"><label>Хүйс</label><select><option>Эрэгтэй</option><option>Эмэгтэй</option></select></div>
+      </div>
+      <div class="web-field"><label>И-мэйл</label><input type="email" placeholder="email@example.com" /></div>
+      <div class="web-field"><label>Утасны дугаар</label><input type="tel" placeholder="+976 ···" /></div>
+      <div class="web-field"><label>Оршин суугаа хаяг</label><textarea rows="3" placeholder="Аймаг, дүүрэг, хаяг"></textarea></div>
+      <div class="web-form-actions">
+        <button class="btn btn-primary" onclick="goNext()">Хадгалах, үргэлжлүүлэх</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function goNext() {
+    localStorage.setItem('bdsec-general-done', '1');
+    try { window.parent.navigateTo('fee'); } catch(e) { alert('Хадгалагдлаа'); }
+  }
+  lucide.createIcons();
+</script>
+</body>
+</html>

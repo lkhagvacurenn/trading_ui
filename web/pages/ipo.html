@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Анхдагч арилжаа — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; }
+    .balance-card { background:linear-gradient(135deg,#3a3a8c 0%,#4949AA 50%,#5b5bd6 100%); border-radius:18px; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; position:relative; overflow:hidden; }
+    .bc-label { font-size:11px; color:rgba(255,255,255,0.65); }
+    .bc-value { font-size:22px; font-weight:800; color:#fff; font-family:'JetBrains Mono',monospace; margin:4px 0; }
+    .bc-btn { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:10px; padding:8px 14px; font-size:12px; font-weight:600; color:#fff; cursor:pointer; }
+    .ipo-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:14px; padding:16px; margin-bottom:12px; }
+    .ipo-company { font-size:14px; font-weight:700; }
+    .ipo-status-badge { font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; }
+    .ipo-status-badge.open { background:rgba(0,192,118,0.15); color:var(--color-buy); }
+    .ipo-status-badge.soon { background:rgba(245,158,11,0.15); color:var(--color-warning); }
+    .ipo-detail-row { display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px; }
+    .ipo-detail-label { color:var(--color-text-disabled); }
+    .ipo-detail-val { font-family:'JetBrains Mono',monospace; font-weight:600; }
+    .ipo-progress-bar { height:4px; background:var(--color-bg-input); border-radius:99px; overflow:hidden; margin:10px 0; }
+    .ipo-progress-fill { height:100%; border-radius:99px; background:var(--color-primary); }
+    .ipo-order-btn { width:100%; padding:10px; border-radius:10px; background:var(--color-primary); border:none; font-size:13px; font-weight:700; color:#fff; cursor:pointer; }
+    .info-note { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:12px; padding:14px 16px; font-size:13px; color:var(--color-text-secondary); line-height:1.55; margin-bottom:16px; display:flex; gap:10px; }
+  </style>
+</head>
+<body>
+<div class="web-page">
+
+  <div class="balance-card">
+    <div>
+      <div class="bc-label">ҮЦТ-ны дансны үлдэгдэл</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.5)">Данс: 9995</div>
+      <div class="bc-value" id="ipo-balance">—</div>
+    </div>
+    <button class="bc-btn" onclick="openDeposit()">Орлого</button>
+  </div>
+
+  <div class="info-note">
+    <i data-lucide="info" style="width:16px;height:16px;color:var(--color-info);flex-shrink:0;margin-top:2px"></i>
+    <span>Анхдагч зах зээлийн захиалга 10:00–17:00 цагийн хооронд шивэгдэнэ. Захиалга өмнө ҮЦТХТ-ны дансандаа мөнгө байршуулсан байх шаардлагатай.</span>
+  </div>
+
+  <div class="web-grid-2">
+    <div>
+  <div class="tabs-bar" style="margin-bottom:16px">
+    <button class="tab-btn active" onclick="switchTab('listed', this)">Идэвхтэй IPO</button>
+    <button class="tab-btn" onclick="switchTab('orders', this)">Миний захиалга</button>
+  </div>
+
+    <div id="tab-listed"></div>
+
+    <div id="tab-orders" style="display:none">
+      <div class="web-card web-card-pad" style="text-align:center;padding:48px 24px">
+        <i data-lucide="file-x" style="width:40px;height:40px;color:var(--color-text-disabled);margin-bottom:12px"></i>
+        <div style="font-weight:600;margin-bottom:6px">IPO захиалга байхгүй</div>
+        <div style="font-size:13px;color:var(--color-text-secondary)">Идэвхтэй IPO-оос захиалга өгнө үү.</div>
+      </div>
+    </div>
+    </div>
+
+    <div class="web-card web-card-pad">
+      <div class="web-section-title" style="margin-bottom:12px">IPO тухай</div>
+      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin:0 0 12px">Анхдагч зах зээл (IPO) нь компаниудын хувьцааг анх удаа олон нийтэд санал болгох зах зээл юм.</p>
+      <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border);font-size:13px">
+        <span style="color:var(--color-text-secondary)">Захиалгын цаг</span><span>10:00 – 17:00</span>
+      </div>
+      <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px">
+        <span style="color:var(--color-text-secondary)">Хамгийн бага захиалга</span><span class="mono">100 хувь</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  function renderIpoList() {
+    document.getElementById('ipo-balance').textContent = fmtMNT(WALLET.cashBalance);
+    document.getElementById('tab-listed').innerHTML = IPO_LIST.map(ipo => {
+      const isOpen = ipo.status === 'open';
+      return `<div class="ipo-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+          <div><div class="ipo-company">${ipo.name}</div><div style="font-size:11px;color:var(--color-text-disabled)">${ipo.symbol}</div></div>
+          <span class="ipo-status-badge ${isOpen ? 'open' : 'soon'}">${isOpen ? 'Идэвхтэй' : 'Удахгүй'}</span>
+        </div>
+        <div class="ipo-detail-row"><span class="ipo-detail-label">Үнэ</span><span class="ipo-detail-val">${fmtMNT(ipo.price)}</span></div>
+        <div class="ipo-detail-row"><span class="ipo-detail-label">Нийт хувь</span><span class="ipo-detail-val">${ipo.total.toLocaleString('mn-MN')}</span></div>
+        <div class="ipo-detail-row"><span class="ipo-detail-label">${isOpen ? 'Хаагдах' : 'Нээгдэх'}</span><span class="ipo-detail-val">${ipo.endDate}</span></div>
+        <div class="ipo-detail-row"><span class="ipo-detail-label">Захиалсан</span><span class="ipo-detail-val ${isOpen ? 'change-up' : ''}">${ipo.subscribed}%</span></div>
+        <div class="ipo-progress-bar"><div class="ipo-progress-fill" style="width:${ipo.subscribed}%;${!isOpen ? 'background:var(--color-warning)' : ''}"></div></div>
+        <button class="ipo-order-btn" ${isOpen ? '' : 'disabled style="background:var(--color-bg-input);color:var(--color-text-secondary);cursor:not-allowed"'}
+          onclick="orderIPO('${ipo.symbol}')">${isOpen ? 'Захиалга өгөх' : 'Одоогоор нээгдээгүй'}</button>
+      </div>`;
+    }).join('');
+  }
+
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-listed').style.display = tab === 'listed' ? 'block' : 'none';
+    document.getElementById('tab-orders').style.display = tab === 'orders' ? 'block' : 'none';
+  }
+  function openDeposit() { try { window.parent.navigateTo('recharge'); } catch(e) {} }
+  function orderIPO(sym) { alert('IPO захиалга: ' + sym); }
+  renderIpoList();
+  lucide.createIcons();
+</script>
+</body>
+</html>

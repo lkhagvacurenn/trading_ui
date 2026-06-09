@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Бонд — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="page-toolbar">
+    <h1 class="web-page-title" style="margin:0">Бондын зах зээл</h1>
+    <div class="page-toolbar-left">
+      <div class="search-input-wrap">
+        <i data-lucide="search" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
+        <input type="text" placeholder="Хайх…" id="search-q" oninput="renderTable()" />
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-pills" style="margin-bottom:16px">
+    <button class="filter-pill active" data-cat="all" onclick="setCat('all',this)">Бүгд</button>
+    <button class="filter-pill" data-cat="I" onclick="setCat('I',this)">I ангилал</button>
+    <button class="filter-pill" data-cat="II" onclick="setCat('II',this)">II ангилал</button>
+    <button class="filter-pill" data-cat="III" onclick="setCat('III',this)">III ангилал</button>
+  </div>
+
+  <div class="web-card" style="overflow:hidden">
+    <table class="data-table">
+      <thead><tr>
+        <th>Код</th><th>Нэр</th><th>Гаргагч</th><th>Купон</th><th>Нэрлэсэн</th><th>Дуусах</th><th>Ангилал</th>
+      </tr></thead>
+      <tbody id="bonds-body"></tbody>
+    </table>
+  </div>
+
+  <div class="web-card web-card-pad" style="margin-top:16px">
+    <div class="web-section-title" style="margin-bottom:8px">Мэдээлэл</div>
+    <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin:0">
+      Бондын арилжаа одоогоор зөвхөн мэдээллийн горимд байна. Онлайн захиалга удахгүй нээгдэнэ.
+    </p>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  let activeCat = 'all';
+
+  function setCat(cat, btn) {
+    activeCat = cat;
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  }
+
+  function renderTable() {
+    const q = (document.getElementById('search-q').value || '').toLowerCase();
+    const list = BONDS.filter(b => {
+      if (activeCat !== 'all' && b.category !== activeCat) return false;
+      if (!q) return true;
+      return b.symbol.toLowerCase().includes(q) || b.name.toLowerCase().includes(q) || b.issuer.toLowerCase().includes(q);
+    });
+
+    document.getElementById('bonds-body').innerHTML = list.map(b => `<tr>
+      <td><strong>${b.symbol}</strong></td>
+      <td>${b.name}</td>
+      <td>${b.issuer}</td>
+      <td class="mono change-up">${b.coupon.toFixed(1)}%</td>
+      <td class="mono">${fmtMNT(b.nominal)}</td>
+      <td>${b.maturity}</td>
+      <td><span class="status-badge ok">${b.category}</span></td>
+    </tr>`).join('');
+  }
+
+  renderTable();
+  lucide.createIcons();
+</script>
+</body>
+</html>

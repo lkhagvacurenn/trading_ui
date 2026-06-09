@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Бүх захиалга — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="page-toolbar">
+    <h1 class="web-page-title" style="margin:0">Бүх захиалга</h1>
+    <div class="search-input-wrap">
+      <i data-lucide="search" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
+      <input type="text" placeholder="Ticker хайх…" id="search-q" oninput="renderOrders()" />
+    </div>
+  </div>
+
+  <div class="filter-pills" style="margin-bottom:16px">
+    <button class="filter-pill active" data-tab="all" onclick="setTab('all',this)">Бүгд</button>
+    <button class="filter-pill" data-tab="active" onclick="setTab('active',this)">Идэвхтэй</button>
+    <button class="filter-pill" data-tab="completed" onclick="setTab('completed',this)">Биелсэн</button>
+    <button class="filter-pill" data-tab="cancelled" onclick="setTab('cancelled',this)">Цуцлагдсан</button>
+    <select class="trade-select" id="side-filter" style="width:auto;margin-left:8px" onchange="renderOrders()">
+      <option value="all">Бүх төрөл</option>
+      <option value="BUY">Авах</option>
+      <option value="SELL">Зарах</option>
+    </select>
+  </div>
+
+  <div class="web-card" style="overflow:hidden">
+    <table class="data-table">
+      <thead><tr>
+        <th>Огноо</th><th>Ticker</th><th>Төрөл</th><th>Тоо</th><th>Үнэ</th><th>Дүн</th><th>Төлөв</th><th></th>
+      </tr></thead>
+      <tbody id="orders-body"></tbody>
+    </table>
+    <div id="orders-empty" class="orders-empty" style="display:none">Захиалга олдсонгүй</div>
+    <div style="display:flex;justify-content:center;gap:8px;padding:16px;border-top:1px solid var(--color-border)" id="pager"></div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  let tab = 'all';
+  let page = 1;
+  const pageSize = 8;
+
+  function statusGroup(s) {
+    const u = s.toUpperCase();
+    if (u === 'PENDING' || u === 'PARTIAL') return 'active';
+    if (u === 'FILLED') return 'completed';
+    if (u === 'CANCELLED') return 'cancelled';
+    return 'active';
+  }
+
+  function statusBadge(s) {
+    const g = statusGroup(s);
+    const map = { active:['Идэвхтэй','pending'], completed:['Биелсэн','ok'], cancelled:['Цуцлагдсан','bad'] };
+    const [lbl, cls] = map[g] || ['—','pending'];
+    return `<span class="status-badge ${cls}">${lbl}</span>`;
+  }
+
+  function setTab(t, btn) {
+    tab = t; page = 1;
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    renderOrders();
+  }
+
+  function filteredOrders() {
+    const q = (document.getElementById('search-q').value || '').toLowerCase();
+    const side = document.getElementById('side-filter').value;
+    return ORDERS.filter(o => {
+      if (tab !== 'all' && statusGroup(o.status) !== tab) return false;
+      if (side !== 'all' && o.type !== side) return false;
+      if (q && !o.symbol.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
+
+  function renderOrders() {
+    const list = filteredOrders();
+    const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+    if (page > totalPages) page = totalPages;
+    const slice = list.slice((page-1)*pageSize, page*pageSize);
+    const body = document.getElementById('orders-body');
+    const empty = document.getElementById('orders-empty');
+
+    if (!slice.length) {
+      body.innerHTML = '';
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      body.innerHTML = slice.map(o => {
+        const total = o.qty * o.price;
+        const sideCls = o.type === 'BUY' ? 'change-up' : 'change-down';
+        const cancelBtn = statusGroup(o.status) === 'active'
+          ? `<button class="btn btn-ghost btn-sm" style="color:var(--color-sell)" onclick="cancelOrder('${o.id}')">Цуцлах</button>` : '';
+        return `<tr>
+          <td style="font-size:12px;color:var(--color-text-secondary)">${o.date}</td>
+          <td class="font-semibold">${o.symbol}</td>
+          <td class="${sideCls}">${o.type === 'BUY' ? 'Авах' : 'Зарах'}</td>
+          <td class="mono">${o.qty.toLocaleString('mn-MN')}</td>
+          <td class="mono">${fmtMNT(o.price)}</td>
+          <td class="mono">${fmtMNT(total)}</td>
+          <td>${statusBadge(o.status)}</td>
+          <td>${cancelBtn}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    document.getElementById('pager').innerHTML = totalPages > 1 ? `
+      <button class="btn btn-outline btn-sm" ${page<=1?'disabled':''} onclick="goPage(${page-1})">←</button>
+      <span style="font-size:12px;padding:0 8px">${page} / ${totalPages}</span>
+      <button class="btn btn-outline btn-sm" ${page>=totalPages?'disabled':''} onclick="goPage(${page+1})">→</button>` : '';
+  }
+
+  function goPage(p) { page = p; renderOrders(); }
+
+  function cancelOrder(id) {
+    if (!confirm('Захиалга цуцлах уу?')) return;
+    const o = ORDERS.find(x => x.id === id);
+    if (o) o.status = 'CANCELLED';
+    showToast('Захиалга цуцлагдлаа', 'success');
+    renderOrders();
+  }
+
+  renderOrders();
+  lucide.createIcons();
+</script>
+</body>
+</html>

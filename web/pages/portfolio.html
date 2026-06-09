@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Багц — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+    .stat-box{background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:12px;padding:14px}
+    .stat-box .lbl{font-size:11px;color:var(--color-text-disabled);margin-bottom:4px}
+    .stat-box .val{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace}
+    @media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<div class="web-page">
+  <div class="page-toolbar">
+    <h1 class="web-page-title" style="margin:0">Миний багц</h1>
+    <div class="page-toolbar-left">
+      <button class="btn btn-outline btn-sm" onclick="goTrade()"><i data-lucide="arrow-left-right" style="width:14px;height:14px"></i> Арилжаа</button>
+      <button class="btn btn-ghost btn-sm" onclick="renderAll()"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i></button>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box"><div class="lbl">Нийт үнэлгээ</div><div class="val" id="s-total">—</div></div>
+    <div class="stat-box"><div class="lbl">Үнэт цаас</div><div class="val" id="s-securities">—</div></div>
+    <div class="stat-box"><div class="lbl">Боломжит мөнгө</div><div class="val" id="s-cash">—</div></div>
+    <div class="stat-box"><div class="lbl">Нийт ашиг</div><div class="val change-up" id="s-pnl">—</div></div>
+  </div>
+
+  <div class="web-grid-2">
+    <div class="web-card">
+      <div class="web-card-pad" style="padding-bottom:8px;border-bottom:1px solid var(--color-border)">
+        <div class="web-section-title">Эзэмшиж буй үнэт цаас</div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr>
+            <th>Ticker</th><th>Тоо</th><th>Дундаж</th><th>Одоо</th><th>Үнэлгээ</th><th>Ашиг</th><th></th>
+          </tr></thead>
+          <tbody id="holdings-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="web-card web-card-pad">
+      <div class="web-section-title" style="margin-bottom:12px">Хуваарилалт</div>
+      <div id="donut-chart" style="display:flex;justify-content:center;margin-bottom:12px"></div>
+      <div id="alloc-list"></div>
+    </div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script src="../../mobile/scripts/chart.js"></script>
+<script>
+  const COLORS = ['#4949AA','#00C076','#F59E0B','#3B82F6','#EF4444','#6B7280'];
+
+  function renderAll() {
+    let secValue = 0, totalGain = 0;
+    const rows = PORTFOLIO.map(p => {
+      const s = stockBySymbol(p.symbol);
+      const value = p.shares * p.currentPrice;
+      const cost = p.shares * p.avgCost;
+      const gain = value - cost;
+      const pct = ((p.currentPrice - p.avgCost) / p.avgCost) * 100;
+      secValue += value;
+      totalGain += gain;
+      const sign = gain >= 0 ? '+' : '';
+      return `<tr>
+        <td class="font-semibold">${p.symbol}<div style="font-size:11px;color:var(--color-text-disabled);font-weight:400">${s ? getStockName(s) : ''}</div></td>
+        <td class="mono">${p.shares.toLocaleString('mn-MN')}</td>
+        <td class="mono">${fmtMNT(p.avgCost)}</td>
+        <td class="mono">${fmtMNT(p.currentPrice)}</td>
+        <td class="mono">${fmtMNT(value)}</td>
+        <td class="mono ${gain>=0?'change-up':'change-down'}">${sign}${fmtMNT(Math.abs(gain))}<div style="font-size:10px">${sign}${pct.toFixed(1)}%</div></td>
+        <td><button class="btn btn-ghost btn-sm" onclick="goTradeSymbol('${p.symbol}')">Арилжаа</button></td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('holdings-table').innerHTML = rows;
+    document.getElementById('s-total').textContent = fmtMNT(WALLET.portfolioValue);
+    document.getElementById('s-securities').textContent = fmtMNT(secValue);
+    document.getElementById('s-cash').textContent = fmtMNT(WALLET.cashBalance);
+    document.getElementById('s-pnl').textContent = '+' + fmtMNT(WALLET.totalPnL);
+
+    const slices = PORTFOLIO.map((p,i) => ({
+      label: p.symbol,
+      value: p.shares * p.currentPrice,
+      color: COLORS[i % COLORS.length],
+    }));
+    slices.push({ label:'Мөнгө', value: WALLET.cashBalance, color:'#6B7280' });
+    const total = slices.reduce((a,b) => a + b.value, 0);
+    renderDonut('donut-chart', slices, 'Нийт', fmtMNT(WALLET.portfolioValue, { decimals: 0 }));
+    document.getElementById('alloc-list').innerHTML = slices.map(s => {
+      const pct = ((s.value/total)*100).toFixed(1);
+      return `<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px;border-bottom:1px solid var(--color-border)">
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${s.color};margin-right:6px"></span>${s.label}</span>
+        <span class="mono">${pct}%</span></div>`;
+    }).join('');
+    lucide.createIcons();
+  }
+
+  function goTrade() { try { window.parent.navigateTo('trade'); } catch(e) {} }
+  function goTradeSymbol(sym) { goTrade(); }
+
+  renderAll();
+</script>
+</body>
+</html>

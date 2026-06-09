@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Хоёрдогч арилжаа — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; }
+    .selector-pill {
+      display:flex; align-items:center; gap:8px;
+      background:var(--color-bg-input); border:1px solid var(--color-border);
+      border-radius:10px; padding:8px 12px; cursor:pointer;
+    }
+    .sel-symbol { font-size:14px; font-weight:700; }
+    .sel-name { font-size:11px; color:var(--color-text-secondary); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .price-big { font-size:20px; font-weight:800; font-family:'JetBrains Mono',monospace; text-align:right; }
+    .price-date { font-size:10px; color:var(--color-text-disabled); text-align:right; }
+    .price-change { font-size:12px; font-weight:600; text-align:right; }
+    .price-change.up { color:var(--color-buy); }
+    .price-change.down { color:var(--color-sell); }
+    .price-steps-table { width:100%; font-size:12px; border-collapse:collapse; }
+    .price-steps-table th, .price-steps-table td { padding:8px 10px; border-bottom:1px solid var(--color-border); text-align:left; }
+    .chart-wrap { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:12px; padding:12px; min-height:360px; }
+  </style>
+</head>
+<body>
+<div class="web-page">
+
+  <!-- Stock header -->
+  <div class="trade-header">
+    <div class="trade-header-left">
+      <div class="selector-pill" onclick="openStockModal()">
+        <i data-lucide="search" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
+        <span class="sel-symbol" id="hdr-symbol">BDS</span>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--color-text-disabled)"></span>
+        <span class="sel-name" id="hdr-name">БДСec ХК</span>
+        <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
+      </div>
+    </div>
+    <div class="trade-header-right">
+      <div>
+        <div class="price-big" id="hdr-price">—</div>
+        <div class="price-date" id="hdr-date">2026-06-09</div>
+        <div class="price-change up" id="hdr-change">+1.23 (+0.65%)</div>
+      </div>
+      <div class="trade-tab-icons">
+        <button class="trade-icon-btn" title="Сэрэмжлүүлэг"><i data-lucide="clock-plus"></i></button>
+        <button class="trade-icon-btn star-active" id="star-btn" onclick="toggleStar()" title="Watchlist"><i data-lucide="star"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="trade-layout">
+    <!-- Left: order book / chart -->
+    <div class="trade-main">
+      <div class="trade-tabs">
+        <div class="trade-tab-list">
+          <button class="trade-tab active" data-tab="book" onclick="switchMainTab('book', this)">Захиалгын сан</button>
+          <button class="trade-tab" data-tab="chart" onclick="switchMainTab('chart', this)">График</button>
+        </div>
+      </div>
+
+      <div id="panel-book">
+        <div class="book-exec-grid">
+          <div class="ob-panel">
+            <div class="ob-book-header">
+              <span>Тоо</span>
+              <span>Авах үнэ</span>
+              <span>Зарах үнэ</span>
+              <span>Тоо</span>
+            </div>
+            <div class="ob-book-body" id="orderbook-body"></div>
+          </div>
+          <div class="exec-panel">
+            <div class="exec-panel-title">Биелсэн арилжаа</div>
+            <div class="exec-cols">
+              <span>Тоо</span><span>Үнэ</span><span>Цаг</span>
+            </div>
+            <div class="exec-body" id="exec-body"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-chart" style="display:none">
+        <div class="chart-wrap">
+          <div id="trade-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: order form -->
+    <div class="trade-form-panel">
+      <h2 class="trade-form-title">Захиалга өгөх</h2>
+
+      <div class="trade-form-row">
+        <select class="trade-select" id="order-type" onchange="onOrderTypeChange()">
+          <option value="limit">Нөхцөлт</option>
+          <option value="market">Зах зээлийн</option>
+        </select>
+        <div class="buy-sell-toggle">
+          <button class="bst-btn active-buy" id="btn-buy" onclick="setSide('BUY')">АВАХ</button>
+          <button class="bst-btn" id="btn-sell" onclick="setSide('SELL')">ЗАРАХ</button>
+        </div>
+      </div>
+
+      <select class="trade-select" id="order-duration" style="width:100%;margin-bottom:10px" onchange="onDurationChange()">
+        <option value="GTC">Захиалга цуцлагдах хүртэл (GTC)</option>
+        <option value="DAY">Өдрийн захиалга (DAY)</option>
+        <option value="GTD">Заасан өдөр (GTD)</option>
+      </select>
+
+      <div class="trade-gtd-wrap" id="gtd-wrap" style="display:none">
+        <label>Захиалга дуусах огноо</label>
+        <input class="trade-input" type="date" id="expire-date" style="margin:0" />
+      </div>
+
+      <div class="trade-balance-row">
+        <span class="label">Боломжит:</span>
+        <div>
+          <span class="value" id="balance-display">—</span>
+          <span class="link" id="recharge-link" onclick="goRecharge()">Данс цэнэглэх</span>
+        </div>
+      </div>
+
+      <input class="trade-input" type="number" min="1" id="qty-input" placeholder="Тоо ширхэг" oninput="updateSummary()" />
+
+      <div id="price-section">
+        <div class="trade-price-row">
+          <button class="trade-pm-btn" onclick="adjustPrice('down')">−</button>
+          <input class="trade-input" type="number" id="price-input" placeholder="Үнэ" oninput="updateSummary()" onblur="validatePrice()" />
+          <button class="trade-pm-btn" onclick="adjustPrice('up')">+</button>
+        </div>
+        <div class="trade-step-row">
+          <span id="step-label">Алхам: $0.01</span>
+          <button class="trade-step-btn" onclick="openPriceSteps()">Үнийн алхам</button>
+        </div>
+      </div>
+
+      <div class="trade-summary">
+        <div class="trade-summary-row"><span>Дүн:</span><span id="sum-total">0₮</span></div>
+        <div class="trade-summary-row"><span style="color:var(--color-primary)">Шимтгэл (<span id="fee-pct">1</span>%):</span><span id="sum-fee">0₮</span></div>
+        <div class="trade-summary-row net"><span>Шимтгэл тооцсон нийт:</span><span id="sum-net">0₮</span></div>
+      </div>
+
+      <button class="trade-submit buy" id="submit-btn" onclick="openConfirm()">АВАХ BDS</button>
+    </div>
+  </div>
+
+  <!-- My orders -->
+  <div class="my-orders-card">
+    <div class="my-orders-head">
+      <h3 class="web-section-title" id="my-orders-title">BDS захиалгууд</h3>
+      <span class="web-muted" style="cursor:pointer" onclick="goAllOrders()">Бүх түүх →</span>
+    </div>
+    <div class="my-orders-tabs">
+      <button class="my-orders-tab active" data-otab="active" onclick="switchOrderTab('active', this)">Идэвхтэй (<span id="cnt-active">0</span>)</button>
+      <button class="my-orders-tab" data-otab="completed" onclick="switchOrderTab('completed', this)">Биелсэн (<span id="cnt-completed">0</span>)</button>
+      <button class="my-orders-tab" data-otab="cancelled" onclick="switchOrderTab('cancelled', this)">Цуцлагдсан (<span id="cnt-cancelled">0</span>)</button>
+    </div>
+    <div class="my-orders-body" id="my-orders-list"></div>
+  </div>
+</div>
+
+<!-- Stock selector modal -->
+<div class="web-modal-overlay" id="stock-modal">
+  <div class="web-modal web-modal-lg">
+    <h3 class="web-modal-title">Хувьцаа сонгох</h3>
+    <input class="trade-input" type="text" id="stock-search" placeholder="Хайх…" oninput="filterStocks()" style="margin-bottom:12px" />
+    <div class="stock-search-list" id="stock-list"></div>
+    <div class="web-modal-actions" style="margin-top:12px">
+      <button class="btn btn-outline" onclick="closeStockModal()">Хаах</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm order modal -->
+<div class="web-modal-overlay" id="confirm-modal">
+  <div class="web-modal">
+    <h3 class="web-modal-title">Захиалга баталгаажуулах</h3>
+    <div class="web-modal-row"><span class="lbl">Хувьцаа:</span><span id="cf-symbol"></span></div>
+    <div class="web-modal-row"><span class="lbl">Төрөл:</span><span id="cf-side"></span></div>
+    <div class="web-modal-row"><span class="lbl">Тоо ширхэг:</span><span id="cf-qty"></span></div>
+    <div class="web-modal-row"><span class="lbl">Үнэ:</span><span id="cf-price"></span></div>
+    <div class="web-modal-row"><span class="lbl">Дүн:</span><span id="cf-total"></span></div>
+    <div class="web-modal-row"><span class="lbl">Шимтгэл:</span><span id="cf-fee"></span></div>
+    <div class="web-modal-row" style="font-weight:800;padding-top:8px;border-top:2px solid var(--color-border)">
+      <span class="lbl">Нийт дүн:</span><span id="cf-net"></span>
+    </div>
+    <div class="web-modal-actions">
+      <button class="btn btn-outline" onclick="closeConfirm()">Цуцлах</button>
+      <button class="btn btn-primary" id="cf-submit" onclick="placeOrder()">Баталгаажуулах</button>
+    </div>
+  </div>
+</div>
+
+<!-- Price steps modal -->
+<div class="web-modal-overlay" id="steps-modal">
+  <div class="web-modal web-modal-lg">
+    <h3 class="web-modal-title">Үнийн алхам</h3>
+    <table class="price-steps-table">
+      <thead><tr><th>Нэгжийн үнэ</th><th>Өөрчлөлтийн хэмжээ</th></tr></thead>
+      <tbody>
+        <tr><td>1000-с доош</td><td>0.01 төгрөг</td></tr>
+        <tr><td>1000–5000</td><td>1 төгрөг</td></tr>
+        <tr><td>5000–10000</td><td>5 төгрөг</td></tr>
+        <tr><td>10000–20000</td><td>10 төгрөг</td></tr>
+        <tr><td>20000–40000</td><td>20 төгрөг</td></tr>
+        <tr><td>40000–50000</td><td>40 төгрөг</td></tr>
+        <tr><td>50000–80000</td><td>50 төгрөг</td></tr>
+        <tr><td>80000-с дээш</td><td>80 төгрөг</td></tr>
+      </tbody>
+    </table>
+    <div class="web-modal-actions"><button class="btn btn-outline" onclick="closePriceSteps()">Хаах</button></div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script src="../../mobile/scripts/chart.js"></script>
+<script>
+  const feePct = typeof FEE_EQUITY !== 'undefined' ? FEE_EQUITY : 1;
+  let selectedStock = STOCKS[0];
+  let orderSide = 'BUY';
+  let orderTab = 'active';
+  let chartRendered = false;
+
+  function getPriceStep(price) {
+    if (price < 1000) return 0.01;
+    if (price < 5000) return 1;
+    if (price < 10000) return 5;
+    if (price < 20000) return 10;
+    if (price < 40000) return 20;
+    if (price < 50000) return 40;
+    if (price < 80000) return 50;
+    return 80;
+  }
+
+  function getHolding(symbol) {
+    return PORTFOLIO.find(p => p.symbol === symbol);
+  }
+
+  function getOrderPrice() {
+    if (document.getElementById('order-type').value === 'market') return selectedStock.price;
+    return parseFloat(document.getElementById('price-input').value) || selectedStock.price;
+  }
+
+  function calculateTotal() {
+    const qty = parseFloat(document.getElementById('qty-input').value) || 0;
+    return qty * getOrderPrice();
+  }
+
+  function calculateNetTotal() {
+    const total = calculateTotal();
+    const fee = total * (feePct / 100);
+    return orderSide === 'BUY' ? total + fee : total - fee;
+  }
+
+  function updateHeader() {
+    const s = selectedStock;
+    document.getElementById('hdr-symbol').textContent = s.symbol;
+    document.getElementById('hdr-name').textContent = s.name.substring(0, 16);
+    document.getElementById('hdr-price').textContent = fmtMNT(s.price);
+    document.getElementById('hdr-date').textContent = '2026-06-09';
+    const ch = document.getElementById('hdr-change');
+    ch.textContent = fmtChange(s.change, s.changePct);
+    ch.className = 'price-change ' + (s.change >= 0 ? 'up' : 'down');
+    document.getElementById('my-orders-title').textContent = s.symbol + ' захиалгууд';
+    document.getElementById('price-input').value = s.price >= 1000 ? Math.round(s.price) : s.price.toFixed(2);
+    updateStepLabel();
+    updateBalanceDisplay();
+    updateSubmitLabel();
+    renderMyOrders();
+    updateOrderCounts();
+  }
+
+  function updateBalanceDisplay() {
+    const el = document.getElementById('balance-display');
+    const link = document.getElementById('recharge-link');
+    if (orderSide === 'BUY') {
+      el.textContent = fmtMNT(WALLET.cashBalance);
+      link.style.display = 'inline';
+    } else {
+      const h = getHolding(selectedStock.symbol);
+      el.textContent = (h ? h.shares : 0) + ' ширхэг';
+      link.style.display = 'none';
+    }
+  }
+
+  function updateStepLabel() {
+    const p = parseFloat(document.getElementById('price-input').value) || selectedStock.price;
+    document.getElementById('step-label').textContent = 'Алхам: ' + getPriceStep(p) + '₮';
+  }
+
+  function updateSummary() {
+    const total = calculateTotal();
+    const fee = total * (feePct / 100);
+    document.getElementById('sum-total').textContent = fmtMNT(total);
+    document.getElementById('sum-fee').textContent = (orderSide === 'BUY' ? '+' : '−') + fmtMNT(fee);
+    document.getElementById('sum-net').textContent = fmtMNT(calculateNetTotal());
+    document.getElementById('fee-pct').textContent = feePct;
+  }
+
+  function updateSubmitLabel() {
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = (orderSide === 'BUY' ? 'АВАХ' : 'ЗАРАХ') + ' ' + selectedStock.symbol;
+    btn.className = 'trade-submit ' + (orderSide === 'BUY' ? 'buy' : 'sell');
+    document.getElementById('cf-submit').className = 'btn ' + (orderSide === 'BUY' ? 'btn-success' : 'btn-danger');
+  }
+
+  function renderOrderBook() {
+    const book = typeof ORDER_BOOK !== 'undefined' ? ORDER_BOOK : { buy: [], sell: [] };
+    const len = Math.max(book.buy.length, book.sell.length);
+    let html = '';
+    for (let i = 0; i < len; i++) {
+      const bid = book.sell[i];
+      const ask = book.buy[i];
+      html += `<div class="ob-book-row">
+        <button class="buy-qty" onclick="fillFromBook('SELL','${bid?.price||''}','${bid?.quantity||''}')">${bid ? bid.quantity.toLocaleString() : ''}</button>
+        <button class="buy-px" onclick="fillFromBook('SELL','${bid?.price||''}','${bid?.quantity||''}')">${bid ? bid.price.toFixed(2) : ''}</button>
+        <button class="sell-px" onclick="fillFromBook('BUY','${ask?.price||''}','${ask?.quantity||''}')">${ask ? ask.price.toFixed(2) : ''}</button>
+        <button class="sell-qty" onclick="fillFromBook('BUY','${ask?.price||''}','${ask?.quantity||''}')">${ask ? ask.quantity.toLocaleString() : ''}</button>
+      </div>`;
+    }
+    document.getElementById('orderbook-body').innerHTML = html || '<div class="exec-empty">Мэдээлэл байхгүй</div>';
+  }
+
+  function renderExecuted() {
+    const trades = typeof EXECUTED_TRADES !== 'undefined' ? EXECUTED_TRADES : [];
+    const el = document.getElementById('exec-body');
+    if (!trades.length) {
+      el.innerHTML = '<div class="exec-empty">Арилжаа байхгүй</div>';
+      return;
+    }
+    el.innerHTML = trades.map(t => `
+      <div class="exec-row">
+        <span>${t.qty.toLocaleString()}</span>
+        <span>${t.price.toFixed(2)}</span>
+        <span>${t.time}</span>
+      </div>`).join('');
+  }
+
+  function fillFromBook(side, price, qty) {
+    if (!price) return;
+    setSide(side);
+    document.getElementById('order-type').value = 'limit';
+    onOrderTypeChange();
+    document.getElementById('price-input').value = parseFloat(price).toFixed(2);
+    if (qty) document.getElementById('qty-input').value = qty;
+    updateSummary();
+    updateStepLabel();
+  }
+
+  function switchMainTab(tab, btn) {
+    document.querySelectorAll('.trade-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-book').style.display = tab === 'book' ? 'block' : 'none';
+    document.getElementById('panel-chart').style.display = tab === 'chart' ? 'block' : 'none';
+    if (tab === 'chart' && !chartRendered) {
+      chartRendered = true;
+      const data = SPARKLINES[selectedStock.symbol] || [184,186,188,187,190,189.84];
+      renderLineChart('trade-chart', data, { height: 340, color: '#00C076', showGrid: true });
+    }
+  }
+
+  function setSide(side) {
+    orderSide = side;
+    document.getElementById('btn-buy').className = 'bst-btn' + (side === 'BUY' ? ' active-buy' : '');
+    document.getElementById('btn-sell').className = 'bst-btn' + (side === 'SELL' ? ' active-sell' : '');
+    updateBalanceDisplay();
+    updateSummary();
+    updateSubmitLabel();
+  }
+
+  function onOrderTypeChange() {
+    const isMarket = document.getElementById('order-type').value === 'market';
+    document.getElementById('price-section').style.display = isMarket ? 'none' : 'block';
+    updateSummary();
+  }
+
+  function onDurationChange() {
+    document.getElementById('gtd-wrap').style.display =
+      document.getElementById('order-duration').value === 'GTD' ? 'block' : 'none';
+  }
+
+  function adjustPrice(dir) {
+    let val = parseFloat(document.getElementById('price-input').value);
+    if (isNaN(val) || val <= 0) val = selectedStock.price;
+    const step = getPriceStep(val);
+    let next = dir === 'up' ? val + step : val - step;
+    if (next < 0) next = 0;
+    const newStep = getPriceStep(next);
+    const rounded = Math.round(next / newStep) * newStep;
+    document.getElementById('price-input').value = newStep >= 1 ? Math.round(rounded) : rounded.toFixed(2);
+    updateStepLabel();
+    updateSummary();
+  }
+
+  function validatePrice() {
+    const inp = document.getElementById('price-input');
+    let val = parseFloat(inp.value);
+    if (isNaN(val) || val <= 0) return;
+    const step = getPriceStep(val);
+    const rounded = Math.round(val / step) * step;
+    inp.value = step >= 1 ? Math.round(rounded) : rounded.toFixed(2);
+    updateStepLabel();
+  }
+
+  function openStockModal() {
+    document.getElementById('stock-modal').classList.add('open');
+    renderStockList();
+    lucide.createIcons();
+  }
+  function closeStockModal() { document.getElementById('stock-modal').classList.remove('open'); }
+
+  function renderStockList(filter) {
+    const q = (filter || '').toLowerCase();
+    const list = STOCKS.filter(s => !q || s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+    document.getElementById('stock-list').innerHTML = list.map(s => `
+      <div class="stock-search-item${s.symbol === selectedStock.symbol ? ' selected' : ''}" onclick="selectStock('${s.symbol}')">
+        <div><strong>${s.symbol}</strong> <span style="font-size:12px;color:var(--color-text-secondary)">${getStockName(s)}</span></div>
+        <span class="mono">${fmtMNT(s.price)}</span>
+      </div>`).join('');
+  }
+  function filterStocks() { renderStockList(document.getElementById('stock-search').value); }
+
+  function selectStock(symbol) {
+    selectedStock = STOCKS.find(s => s.symbol === symbol) || STOCKS[0];
+    chartRendered = false;
+    closeStockModal();
+    updateHeader();
+    renderOrderBook();
+    renderExecuted();
+    updateSummary();
+  }
+
+  function toggleStar() { document.getElementById('star-btn').classList.toggle('star-active'); }
+  function goRecharge() { try { window.parent.navigateTo('balance'); } catch(e) {} }
+
+  function openConfirm() {
+    const qty = document.getElementById('qty-input').value;
+    if (!qty || qty < 1) { alert('Тоо ширхэг оруулна уу'); return; }
+    if (document.getElementById('order-type').value === 'limit' && !document.getElementById('price-input').value) {
+      alert('Үнэ оруулна уу'); return;
+    }
+    const total = calculateTotal();
+    const fee = total * (feePct / 100);
+    document.getElementById('cf-symbol').textContent = selectedStock.symbol;
+    document.getElementById('cf-side').textContent = orderSide === 'BUY' ? 'Худалдан авах' : 'Зарах';
+    document.getElementById('cf-side').style.color = orderSide === 'BUY' ? 'var(--color-buy)' : 'var(--color-sell)';
+    document.getElementById('cf-qty').textContent = qty;
+    document.getElementById('cf-price').textContent = fmtMNT(getOrderPrice());
+    document.getElementById('cf-total').textContent = fmtMNT(total);
+    document.getElementById('cf-fee').textContent = (orderSide === 'BUY' ? '+' : '−') + fmtMNT(fee);
+    document.getElementById('cf-net').textContent = fmtMNT(calculateNetTotal());
+    document.getElementById('confirm-modal').classList.add('open');
+  }
+  function closeConfirm() { document.getElementById('confirm-modal').classList.remove('open'); }
+
+  function placeOrder() {
+    closeConfirm();
+    alert('Захиалга амжилттай илгээгдлээ!');
+    document.getElementById('qty-input').value = '';
+    updateSummary();
+  }
+
+  function openPriceSteps() { document.getElementById('steps-modal').classList.add('open'); }
+  function closePriceSteps() { document.getElementById('steps-modal').classList.remove('open'); }
+
+  function filterOrdersBySymbol() {
+    return ORDERS.filter(o => o.symbol === selectedStock.symbol);
+  }
+
+  function getOrderStatusGroup(status) {
+    const s = status.toUpperCase();
+    if (s === 'PENDING' || s === 'PARTIAL') return 'active';
+    if (s === 'FILLED') return 'completed';
+    if (s === 'CANCELLED') return 'cancelled';
+    return 'active';
+  }
+
+  function updateOrderCounts() {
+    const orders = filterOrdersBySymbol();
+    document.getElementById('cnt-active').textContent = orders.filter(o => getOrderStatusGroup(o.status) === 'active').length;
+    document.getElementById('cnt-completed').textContent = orders.filter(o => getOrderStatusGroup(o.status) === 'completed').length;
+    document.getElementById('cnt-cancelled').textContent = orders.filter(o => getOrderStatusGroup(o.status) === 'cancelled').length;
+  }
+
+  function renderMyOrders() {
+    const orders = filterOrdersBySymbol().filter(o => getOrderStatusGroup(o.status) === orderTab);
+    const el = document.getElementById('my-orders-list');
+    if (!orders.length) {
+      const msgs = { active: 'Идэвхтэй захиалга байхгүй', completed: 'Биелсэн захиалга байхгүй', cancelled: 'Цуцлагдсан захиалга байхгүй' };
+      el.innerHTML = `<div class="orders-empty">${msgs[orderTab]}</div>`;
+      return;
+    }
+    el.innerHTML = orders.map(o => {
+      const total = o.qty * o.price;
+      const fee = total * (feePct / 100);
+      const net = o.type === 'BUY' ? total + fee : total - fee;
+      const isPartial = o.status === 'PARTIAL';
+      return `<div class="order-item">
+        <div class="order-item-left">
+          <div>
+            <span class="order-item-symbol">${o.symbol}</span>
+            <span class="${o.type === 'BUY' ? 'order-badge-buy' : 'order-badge-sell'}">${o.type === 'BUY' ? ' Авах' : ' Зарах'}</span>
+            ${isPartial ? `<span style="font-size:10px;color:#f59e0b"> Хэсэгчлэн (${o.cumQty}/${o.qty})</span>` : ''}
+          </div>
+          <div class="order-item-meta">${o.qty.toLocaleString()} ш × ${fmtMNT(o.price)}</div>
+          <div class="order-item-date">${o.date}</div>
+        </div>
+        <div class="order-item-right">
+          <div class="order-item-total">${fmtMNT(net)}</div>
+          ${orderTab === 'active' ? `<button class="order-cancel-btn" onclick="cancelOrder('${o.id}')">Захиалга цуцлах</button>` :
+            `<span class="${orderTab === 'completed' ? 'order-status-ok' : 'order-status-bad'}">${orderTab === 'completed' ? 'Биелсэн' : 'Цуцлагдсан'}</span>`}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function switchOrderTab(tab, btn) {
+    orderTab = tab;
+    document.querySelectorAll('.my-orders-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderMyOrders();
+  }
+
+  function goAllOrders() { try { window.parent.navigateTo('all-orders'); } catch(e) {} }
+
+  function cancelOrder(id) {
+    if (confirm('Захиалга цуцлах уу?')) {
+      const o = ORDERS.find(x => x.id === id);
+      if (o) o.status = 'CANCELLED';
+      updateOrderCounts();
+      switchOrderTab('active', document.querySelector('.my-orders-tab[data-otab="active"]'));
+    }
+  }
+
+  renderOrderBook();
+  renderExecuted();
+  updateHeader();
+  updateSummary();
+  lucide.createIcons();
+</script>
+</body>
+</html>

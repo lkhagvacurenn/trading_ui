@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TradeX — Online Trading System</title>
+  <title>BDSec — Онлайн арилжаа</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -16,44 +16,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <script>
-    tailwind.config = {
-      darkMode: ['class', '[data-theme="dark"]'],
-      theme: {
-        extend: {
-          colors: {
-            primary:          'var(--color-primary)',
-            'primary-red':    'var(--color-primary-red)',
-            secondary:        'var(--color-secondary)',
-            'gray-brand':     'var(--color-gray-brand)',
-            bg:               'var(--color-bg)',
-            'bg-card':        'var(--color-bg-card)',
-            'bg-input':       'var(--color-bg-input)',
-            border:           'var(--color-border)',
-            'text-primary':   'var(--color-text-primary)',
-            'text-secondary': 'var(--color-text-secondary)',
-            'text-disabled':  'var(--color-text-disabled)',
-            warning:          'var(--color-warning)',
-            error:            'var(--color-error)',
-            success:          'var(--color-success)',
-            info:             'var(--color-info)',
-            buy:              'var(--color-buy)',
-            sell:             'var(--color-sell)',
-            growth:           'var(--color-growth)',
-            loss:             'var(--color-loss)',
-            link:             'var(--color-link)',
-          },
-          fontFamily: {
-            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-            mono: ['JetBrains Mono', 'ui-monospace'],
-          },
-        },
-      },
-    }
-  </script>
-
-  <script>
     (function () {
-      const theme = localStorage.getItem('tradex-theme') || 'light';
+      const theme = localStorage.getItem('tradex-theme') || 'dark';
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
@@ -63,118 +27,170 @@
 
   <div class="flex h-screen">
 
-    <!-- ══ SIDEBAR ══════════════════════════════════ -->
-    <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col border-r border-color transition-all duration-300"
+    <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col border-r border-color"
            style="background:var(--color-bg-card)">
 
-      <!-- Logo -->
       <div class="flex items-center gap-3 px-5 h-14 border-b border-color">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--color-primary)">
-          <i data-lucide="trending-up" class="w-4 h-4 text-white"></i>
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-extrabold tracking-tight"
+             style="background:var(--color-primary)">BD</div>
+        <div>
+          <span class="text-base font-bold tracking-tight block leading-tight">BDSec</span>
+          <span class="text-[10px]" style="color:var(--color-text-disabled)">Онлайн арилжаа</span>
         </div>
-        <span class="text-lg font-bold tracking-tight">TradeX</span>
       </div>
 
-      <!-- Nav -->
       <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
 
-        <p class="text-xs font-semibold px-3 pb-2" style="color:var(--color-text-disabled)">MAIN</p>
+        <p class="nav-section-label">Ерөнхий</p>
 
-        <a href="pages/dashboard.html"  class="nav-link active" data-page="dashboard" data-title="Dashboard">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+        <a href="pages/home.html" class="nav-link active" data-page="home" data-title="Нүүр">
+          <i data-lucide="home" class="w-4 h-4"></i> Нүүр
         </a>
-        <a href="pages/markets.html"    class="nav-link" data-page="markets"   data-title="Markets">
-          <i data-lucide="bar-chart-2"     class="w-4 h-4"></i> Markets
+        <a href="pages/balance.html" class="nav-link" data-page="balance" data-title="Хэтэвч">
+          <i data-lucide="wallet" class="w-4 h-4"></i> Хэтэвч
         </a>
-        <a href="pages/portfolio.html"  class="nav-link" data-page="portfolio" data-title="Portfolio">
-          <i data-lucide="briefcase"       class="w-4 h-4"></i> Portfolio
+        <a href="pages/trade.html" class="nav-link" data-page="trade" data-title="Хоёрдогч арилжаа">
+          <i data-lucide="arrow-left-right" class="w-4 h-4"></i> Хоёрдогч арилжаа
         </a>
-        <a href="pages/orders.html"     class="nav-link" data-page="orders"    data-title="Orders">
-          <i data-lucide="clipboard-list" class="w-4 h-4"></i> Orders
+        <a href="pages/returns.html" class="nav-link" data-page="returns" data-title="Өгөөж">
+          <i data-lucide="pie-chart" class="w-4 h-4"></i> Өгөөж
         </a>
-        <a href="pages/watchlist.html"  class="nav-link" data-page="watchlist" data-title="Watchlist">
-          <i data-lucide="star"            class="w-4 h-4"></i> Watchlist
-        </a>
-        <a href="pages/trade.html"      class="nav-link" data-page="trade"     data-title="Trade">
-          <i data-lucide="zap"             class="w-4 h-4"></i> Trade
+        <a href="pages/ipo.html" class="nav-link" data-page="ipo" data-title="Анхдагч арилжаа">
+          <i data-lucide="trending-up" class="w-4 h-4"></i> Анхдагч арилжаа
         </a>
 
-        <p class="text-xs font-semibold px-3 pt-4 pb-2" style="color:var(--color-text-disabled)">ACCOUNT</p>
+        <p class="nav-section-label">Миний хэсэг</p>
 
-        <a href="pages/wallet.html"     class="nav-link" data-page="wallet"    data-title="Wallet">
-          <i data-lucide="wallet"          class="w-4 h-4"></i> Wallet
+        <a href="pages/portfolio.html" class="nav-link" data-page="portfolio" data-title="Багц">
+          <i data-lucide="briefcase" class="w-4 h-4"></i> Багц
         </a>
-        <a href="pages/settings.html"   class="nav-link" data-page="settings"  data-title="Settings">
-          <i data-lucide="settings"        class="w-4 h-4"></i> Settings
+        <a href="pages/all-orders.html" class="nav-link" data-page="all-orders" data-title="Бүх захиалга">
+          <i data-lucide="list-ordered" class="w-4 h-4"></i> Бүх захиалга
+        </a>
+        <a href="pages/recharge.html" class="nav-link" data-page="recharge" data-title="Данс цэнэглэх">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Данс цэнэглэх
+        </a>
+        <a href="pages/withdrawal.html" class="nav-link" data-page="withdrawal" data-title="Зарлага">
+          <i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Зарлага
+        </a>
+        <a href="pages/history.html" class="nav-link" data-page="history" data-title="Гүйлгээний түүх">
+          <i data-lucide="history" class="w-4 h-4"></i> Гүйлгээний түүх
+        </a>
+
+        <p class="nav-section-label">Данс нээх</p>
+
+        <a href="pages/general.html" class="nav-link" data-page="general" data-title="Ерөнхий мэдээлэл">
+          <i data-lucide="clipboard-list" class="w-4 h-4"></i> Ерөнхий мэдээлэл
+        </a>
+        <a href="pages/fee.html" class="nav-link" data-page="fee" data-title="Дансны хураамж">
+          <i data-lucide="credit-card" class="w-4 h-4"></i> Дансны хураамж
+        </a>
+        <a href="pages/open-account.html" class="nav-link" data-page="open-account" data-title="Данс нээх">
+          <i data-lucide="user-plus" class="w-4 h-4"></i> Данс нээх
+        </a>
+        <a href="pages/opening-process.html" class="nav-link" data-page="opening-process" data-title="Данс нээх явц">
+          <i data-lucide="list-checks" class="w-4 h-4"></i> Данс нээх явц
+        </a>
+        <a href="pages/broker.html" class="nav-link" data-page="broker" data-title="Онлайн харилцагч">
+          <i data-lucide="user-check" class="w-4 h-4"></i> Онлайн харилцагч
+        </a>
+        <a href="pages/kyc.html" class="nav-link" data-page="kyc" data-title="KYC">
+          <i data-lucide="shield-check" class="w-4 h-4"></i> KYC
+        </a>
+
+        <p class="nav-section-label">Бусад</p>
+
+        <a href="pages/stocks.html" class="nav-link" data-page="stocks" data-title="Бүх үнэт цаас">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Бүх үнэт цаас
+        </a>
+        <a href="pages/bonds.html" class="nav-link" data-page="bonds" data-title="Бонд">
+          <i data-lucide="landmark" class="w-4 h-4"></i> Бонд
+        </a>
+        <a href="pages/alerts.html" class="nav-link" data-page="alerts" data-title="Сэрэмжлүүлэг">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i> Сэрэмжлүүлэг
+        </a>
+        <a href="pages/notifications.html" class="nav-link" data-page="notifications" data-title="Мэдэгдэл">
+          <i data-lucide="bell" class="w-4 h-4"></i> Мэдэгдэл
+        </a>
+        <a href="pages/faq.html" class="nav-link" data-page="faq" data-title="FAQ">
+          <i data-lucide="help-circle" class="w-4 h-4"></i> FAQ
+        </a>
+        <a href="pages/about.html" class="nav-link" data-page="about" data-title="Бидний тухай">
+          <i data-lucide="building-2" class="w-4 h-4"></i> Бидний тухай
+        </a>
+        <a href="pages/profile.html" class="nav-link" data-page="profile" data-title="Профайл">
+          <i data-lucide="user" class="w-4 h-4"></i> Профайл
         </a>
       </nav>
 
-      <!-- User strip -->
       <div class="px-4 py-3 border-t border-color">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-               style="background:var(--color-primary)">LB</div>
+        <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" id="sidebar-user" onclick="navigateTo('profile')" title="Профайл">
+          <div id="sidebar-user-initials" class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+               style="background:var(--color-primary)">ББ</div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold truncate">Lkhagvasuren B.</p>
-            <p class="text-xs truncate" style="color:var(--color-text-disabled)">Pro Account</p>
+            <p id="sidebar-user-name" class="text-sm font-semibold truncate">Б.Батбаяр</p>
+            <p id="sidebar-user-acct" class="text-xs truncate mono" style="color:var(--color-text-disabled)">4453728992</p>
           </div>
-          <button onclick="logout()" class="hover:opacity-70 transition-opacity" style="color:var(--color-text-disabled)" title="Sign out">
+          <button onclick="event.stopPropagation(); logout()" class="hover:opacity-70 transition-opacity" style="color:var(--color-text-disabled)" title="Гарах">
             <i data-lucide="log-out" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
     </aside>
 
-    <!-- ══ MAIN ═════════════════════════════════════ -->
     <div class="flex-1 flex flex-col overflow-hidden">
 
-      <!-- Top bar -->
       <header class="h-14 flex items-center justify-between px-5 border-b border-color flex-shrink-0"
               style="background:var(--color-bg-card)">
 
-        <div class="flex items-center gap-3">
-          <h1 id="page-title" class="text-sm font-semibold">Dashboard</h1>
+        <div class="flex items-center gap-6">
+          <h1 id="page-title" class="text-sm font-semibold">Нүүр</h1>
+          <div class="hidden md:flex items-center gap-6 pl-4 border-l border-color">
+            <div class="header-stat">
+              <span class="header-stat-label">Портфель</span>
+              <span class="header-stat-value" id="hdr-portfolio">—</span>
+            </div>
+            <div class="header-stat">
+              <span class="header-stat-label">Боломжит</span>
+              <span class="header-stat-value" id="hdr-available">—</span>
+            </div>
+          </div>
         </div>
 
         <div class="flex items-center gap-4">
-          <!-- Market status -->
           <div class="flex items-center gap-1.5 text-xs font-medium" style="color:var(--color-buy)">
             <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:var(--color-buy)"></span>
-            Market Open
+            Зах зээл нээлттэй
           </div>
 
-          <div class="w-px h-4" style="background:var(--color-border)"></div>
+          <div class="w-px h-4 hidden sm:block" style="background:var(--color-border)"></div>
 
-          <!-- Search -->
-          <button class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs border border-color hover:opacity-70 transition-opacity"
+          <button class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs border border-color hover:opacity-70 transition-opacity"
                   style="background:var(--color-bg-input);color:var(--color-text-secondary)">
             <i data-lucide="search" class="w-3.5 h-3.5"></i>
-            Search symbol…
-            <kbd class="ml-2 text-xs px-1.5 py-0.5 rounded" style="background:var(--color-border)">⌘K</kbd>
+            Хайх…
           </button>
 
-          <!-- Notifications -->
-          <button class="relative hover:opacity-70 transition-opacity" style="color:var(--color-text-secondary)">
+          <button id="hdr-notifications" onclick="navigateTo('notifications')" class="relative hover:opacity-70 transition-opacity" style="color:var(--color-text-secondary)" title="Мэдэгдэл">
             <i data-lucide="bell" class="w-5 h-5"></i>
             <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style="background:var(--color-primary-red)"></span>
           </button>
 
-          <!-- Theme toggle -->
-          <button onclick="toggleTheme()" class="hover:opacity-70 transition-opacity" style="color:var(--color-text-secondary)" title="Toggle theme">
-            <i data-lucide="sun"  class="w-5 h-5" id="icon-sun"></i>
+          <button onclick="toggleTheme()" class="hover:opacity-70 transition-opacity" style="color:var(--color-text-secondary)" title="Горим солих">
+            <i data-lucide="sun" class="w-5 h-5" id="icon-sun"></i>
             <i data-lucide="moon" class="w-5 h-5 hidden" id="icon-moon"></i>
           </button>
         </div>
       </header>
 
-      <!-- Page iframe -->
-      <main class="flex-1 overflow-auto" style="background:var(--color-bg)">
-        <iframe id="page-frame" src="pages/dashboard.html"
+      <main class="flex-1 overflow-hidden" style="background:var(--color-bg)">
+        <iframe id="page-frame" src="pages/home.html"
                 class="w-full h-full border-0" title="Page content"></iframe>
       </main>
     </div>
   </div>
 
+  <script src="../data/static.js"></script>
   <script src="scripts/web.js"></script>
   <script>lucide.createIcons();</script>
 </body>

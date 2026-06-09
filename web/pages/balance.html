@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Хэтэвч — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; }
+    .hero-label { font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:4px; }
+    .hero-value { font-size:32px; font-weight:800; color:#fff; font-family:'JetBrains Mono',monospace; letter-spacing:-0.5px; margin-bottom:12px; }
+    .hero-sub { font-size:12px; color:rgba(255,255,255,0.65); }
+    .hero-cash { font-size:14px; font-weight:600; color:rgba(255,255,255,0.9); font-family:'JetBrains Mono',monospace; margin:4px 0 18px; }
+    .hero-hide { position:absolute; top:20px; right:20px; width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff; }
+    .hero-actions { display:flex; gap:10px; }
+    .hero-btn { flex:1; padding:10px; border-radius:12px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:13px; font-weight:600; cursor:pointer; text-align:center; }
+    .filter-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .filter-dropdown { display:flex; align-items:center; gap:6px; background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:10px; padding:7px 12px; font-size:13px; font-weight:600; cursor:pointer; }
+    .search-bar { display:flex; align-items:center; gap:10px; background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:12px; padding:10px 14px; margin-bottom:12px; }
+    .search-bar input { border:none; background:transparent; outline:none; font-size:13px; color:var(--color-text-primary); flex:1; font-family:'Inter',sans-serif; }
+    .holding-item { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--color-border); cursor:pointer; }
+    .holding-item:last-child { border-bottom:none; }
+    .holding-item:hover { background:rgba(255,255,255,0.02); }
+    .holding-avatar { width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,#2d2d6e,#4949AA); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; flex-shrink:0; }
+    .holding-info { flex:1; min-width:0; }
+    .holding-symbol { font-size:14px; font-weight:700; }
+    .holding-shares { font-size:12px; color:var(--color-text-secondary); margin-left:6px; }
+    .holding-value { font-size:14px; font-weight:700; font-family:'JetBrains Mono',monospace; text-align:right; }
+  </style>
+</head>
+<body>
+<div class="web-page">
+
+  <div class="web-grid-2">
+    <div>
+      <div class="hero-card" style="margin-bottom:16px;position:relative">
+        <div class="hero-label">Нийт хөрөнгө</div>
+        <div class="hero-value" id="total-value">—</div>
+        <div class="hero-sub">Боломжит мөнгө (ACC-<span id="csd-acct">9995</span>)</div>
+        <div class="hero-cash" id="cash-val">—</div>
+        <button class="hero-hide" onclick="toggleBalance()"><i data-lucide="eye" id="eye-icon"></i></button>
+        <div class="hero-actions">
+          <button class="hero-btn" onclick="openDeposit()"><i data-lucide="plus-circle" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i> Орлого</button>
+          <button class="hero-btn" onclick="openWithdraw()"><i data-lucide="arrow-up-from-line" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i> Зарлага</button>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <button class="filter-dropdown">Үнэт цаас <i data-lucide="chevron-down" style="width:14px;height:14px"></i></button>
+        <button class="btn btn-primary btn-sm"><i data-lucide="calendar" style="width:14px;height:14px"></i> Тайлан</button>
+      </div>
+
+      <div class="search-bar">
+        <i data-lucide="search" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
+        <input type="text" placeholder="Үнэт цаас хайх…" oninput="filterHoldings(this.value)" />
+      </div>
+
+      <div class="web-card" id="holdings-list"></div>
+    </div>
+
+    <div>
+      <div class="web-card web-card-pad">
+        <div class="web-section-title" style="margin-bottom:12px">Дансны мэдээлэл</div>
+        <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--color-border);font-size:13px">
+          <span style="color:var(--color-text-secondary)">ҮЦТХТ данс</span><span class="mono" id="acct-main">—</span>
+        </div>
+        <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--color-border);font-size:13px">
+          <span style="color:var(--color-text-secondary)">IPO данс</span><span class="mono" id="acct-ipo">—</span>
+        </div>
+        <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px">
+          <span style="color:var(--color-text-secondary)">Бонд данс</span><span class="mono" id="acct-bond">—</span>
+        </div>
+      </div>
+
+      <div class="web-card web-card-pad" style="margin-top:16px">
+        <div class="web-section-title" style="margin-bottom:12px">Сүүлийн гүйлгээ</div>
+        <div id="txn-list"></div>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin-top:12px" onclick="goHistory()">Бүх гүйлгээ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  let balanceVisible = true;
+  let holdings = [];
+
+  function buildHoldings() {
+    holdings = PORTFOLIO.map(p => {
+      const s = stockBySymbol(p.symbol);
+      const value = p.shares * p.currentPrice;
+      const cost = p.shares * p.avgCost;
+      const pct = ((p.currentPrice - p.avgCost) / p.avgCost) * 100;
+      return {
+        symbol: p.symbol,
+        abbr: p.symbol.slice(0, 2),
+        name: s ? getStockName(s) : p.symbol,
+        shares: p.shares,
+        exchange: 'MSE',
+        pct,
+        value,
+        gain: value - cost,
+      };
+    });
+  }
+
+  function renderHoldings(data) {
+    const el = document.getElementById('holdings-list');
+    if (!data.length) {
+      el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--color-text-disabled);font-size:13px">Олдсонгүй</div>';
+      return;
+    }
+    el.innerHTML = data.map(h => {
+      const isUp = h.pct >= 0;
+      const sign = h.pct >= 0 ? '+' : '';
+      return `<div class="holding-item" onclick="goTrade('${h.symbol}')">
+        <div class="holding-avatar">${h.abbr}</div>
+        <div class="holding-info">
+          <span class="holding-symbol">${h.symbol}</span><span class="holding-shares">${h.shares.toLocaleString('mn-MN')} ширхэг</span>
+          <div style="font-size:11px;color:var(--color-text-disabled);margin-top:2px">${h.name} · <span class="${isUp?'change-up':'change-down'}">${sign}${h.pct.toFixed(1)}%</span></div>
+        </div>
+        <div class="holding-value">${fmtMNT(h.value)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderTxns() {
+    document.getElementById('txn-list').innerHTML = WALLET.transactions.slice(0, 5).map(t => {
+      const positive = t.amount > 0;
+      return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border);font-size:12px">
+        <div><div style="font-weight:600">${t.note}</div><div style="color:var(--color-text-disabled)">${t.date}</div></div>
+        <span class="mono ${positive?'change-up':'change-down'}">${positive?'+':''}${fmtMNT(Math.abs(t.amount))}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function filterHoldings(q) {
+    const filtered = q ? holdings.filter(h =>
+      h.symbol.toLowerCase().includes(q.toLowerCase()) || h.name.toLowerCase().includes(q.toLowerCase())
+    ) : holdings;
+    renderHoldings(filtered);
+  }
+
+  function toggleBalance() {
+    balanceVisible = !balanceVisible;
+    const mask = '••••••';
+    document.getElementById('total-value').textContent = balanceVisible ? fmtMNT(WALLET.portfolioValue) : mask;
+    document.getElementById('cash-val').textContent = balanceVisible ? fmtMNT(WALLET.cashBalance) : mask;
+    document.getElementById('eye-icon').setAttribute('data-lucide', balanceVisible ? 'eye' : 'eye-off');
+    lucide.createIcons();
+  }
+
+  function openDeposit() { try { window.parent.navigateTo('recharge'); } catch(e) {} }
+  function openWithdraw() { try { window.parent.navigateTo('withdrawal'); } catch(e) {} }
+  function goTrade(sym) { try { window.parent.navigateTo('trade'); } catch(e) {} }
+
+  function goHistory() { try { window.parent.navigateTo('history'); } catch(e) {} }
+
+  buildHoldings();
+  document.getElementById('total-value').textContent = fmtMNT(WALLET.portfolioValue);
+  document.getElementById('cash-val').textContent = fmtMNT(WALLET.cashBalance);
+  document.getElementById('csd-acct').textContent = WALLET.csdAccount;
+  document.getElementById('acct-main').textContent = WALLET.accountNo;
+  document.getElementById('acct-ipo').textContent = WALLET.ipoAccount;
+  document.getElementById('acct-bond').textContent = WALLET.bondAccount;
+  renderHoldings(holdings);
+  renderTxns();
+  lucide.createIcons();
+</script>
+</body>
+</html>

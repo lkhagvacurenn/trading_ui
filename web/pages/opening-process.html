@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Данс нээх явц — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}
+    .status-grid{display:grid;gap:12px;max-width:640px}
+    .status-item{display:flex;align-items:center;gap:14px;padding:16px;background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:14px}
+    .status-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .status-icon.ok{background:rgba(0,192,118,0.15);color:var(--color-buy)}
+    .status-icon.pending{background:rgba(245,158,11,0.15);color:var(--color-warning)}
+    .status-icon.wait{background:var(--color-bg-input);color:var(--color-text-disabled)}
+    .status-title{font-size:14px;font-weight:700}
+    .status-desc{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+  </style>
+</head>
+<body>
+<div class="web-page">
+  <div class="web-wizard" style="max-width:720px">
+    <h1 class="web-page-title">Данс нээх явц</h1>
+    <p style="color:var(--color-text-secondary);margin:-8px 0 20px;font-size:14px">Таны данс нээх үйл явцын одоогийн төлөв.</p>
+    <div class="status-grid" id="status-grid"></div>
+    <div style="margin-top:20px;display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="refresh()">Шинэчлэх</button>
+      <button class="btn btn-primary" onclick="goOpen()">Данс нээх форм</button>
+    </div>
+  </div>
+</div>
+<script>
+  const STEPS = [
+    { key:'general', label:'Ерөнхий мэдээлэл', desc:'Хувийн мэдээлэл бөглөсөн эсэх', storage:'bdsec-general-done' },
+    { key:'fee', label:'Дансны хураамж', desc:'5,000₮ төлбөр төлсөн эсэх', storage:'bdsec-fee-paid' },
+    { key:'account', label:'Данс нээх хүсэлт', desc:'Банк, гэрээ, гарын үсэг', storage:'bdsec-account-opened' },
+    { key:'kyc', label:'KYC баталгаажуулалт', desc:'Онлайн арилжааны эрх', storage:'bdsec-kyc-done' },
+  ];
+
+  function render() {
+    document.getElementById('status-grid').innerHTML = STEPS.map(s => {
+      const done = localStorage.getItem(s.storage) === '1';
+      const cls = done ? 'ok' : 'pending';
+      const icon = done ? 'check-circle' : 'clock';
+      const statusText = done ? 'Дууссан' : 'Хүлээгдэж байна';
+      return `<div class="status-item">
+        <div class="status-icon ${cls}"><i data-lucide="${icon}" style="width:20px;height:20px"></i></div>
+        <div style="flex:1"><div class="status-title">${s.label}</div><div class="status-desc">${s.desc}</div></div>
+        <span style="font-size:12px;font-weight:600;color:${done?'var(--color-buy)':'var(--color-warning)'}">${statusText}</span>
+      </div>`;
+    }).join('');
+    lucide.createIcons();
+  }
+  function refresh() { render(); }
+  function goOpen() { try { window.parent.navigateTo('open-account'); } catch(e) {} }
+  render();
+</script>
+</body>
+</html>

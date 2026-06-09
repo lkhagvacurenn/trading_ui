@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Үнийн сэрэмжлүүлэг — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="page-toolbar">
+    <h1 class="web-page-title" style="margin:0">Үнийн сэрэмжлүүлэг</h1>
+    <button class="btn btn-primary btn-sm" onclick="openModal('alert-modal')">
+      <i data-lucide="plus" style="width:14px;height:14px"></i> Шинэ
+    </button>
+  </div>
+
+  <div class="web-card" style="overflow:hidden">
+    <table class="data-table">
+      <thead><tr>
+        <th>Ticker</th><th>Нөхцөл</th><th>Зорилт</th><th>Төлөв</th><th>Сүүлд</th><th></th>
+      </tr></thead>
+      <tbody id="alerts-body"></tbody>
+    </table>
+    <div id="alerts-empty" class="orders-empty" style="display:none">Сэрэмжлүүлэг байхгүй</div>
+  </div>
+</div>
+
+<div class="web-modal-overlay" id="alert-modal">
+  <div class="web-modal">
+    <h3 class="web-modal-title">Шинэ сэрэмжлүүлэг</h3>
+    <div class="web-field"><label>Ticker</label>
+    <select class="trade-select" id="alert-symbol" style="width:100%"></select></div>
+    <div class="web-field"><label>Нөхцөл</label>
+    <select class="trade-select" id="alert-condition" style="width:100%">
+      <option value="ABOVE">Дээш (≥)</option>
+      <option value="BELOW">Доош (≤)</option>
+    </select></div>
+    <div class="web-field"><label>Зорилтот үнэ (₮)</label>
+    <input type="number" class="trade-input" id="alert-price" placeholder="1200" style="width:100%" /></div>
+    <div class="web-modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('alert-modal')">Болих</button>
+      <button class="btn btn-primary" onclick="saveAlert()">Хадгалах</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  let alerts = [...PRICE_ALERTS];
+
+  const COND_LABEL = { ABOVE: '≥ дээш', BELOW: '≤ доош' };
+
+  function renderAlerts() {
+    const body = document.getElementById('alerts-body');
+    const empty = document.getElementById('alerts-empty');
+    if (!alerts.length) {
+      body.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    body.innerHTML = alerts.map(a => `<tr>
+      <td><strong>${a.symbol}</strong></td>
+      <td>${COND_LABEL[a.condition] || a.condition}</td>
+      <td class="mono">${fmtMNT(a.targetValue)}</td>
+      <td>${a.isActive ? '<span class="status-badge ok">Идэвхтэй</span>' : '<span class="status-badge pending">Идэвхгүй</span>'}</td>
+      <td style="font-size:12px;color:var(--color-text-disabled)">${a.lastTriggered || '—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick="toggleAlert('${a.id}')">${a.isActive ? 'Унтраах' : 'Асаах'}</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--color-sell)" onclick="deleteAlert('${a.id}')">Устгах</button>
+      </td>
+    </tr>`).join('');
+  }
+
+  function toggleAlert(id) {
+    const a = alerts.find(x => x.id === id);
+    if (a) { a.isActive = !a.isActive; renderAlerts(); showToast(a.isActive ? 'Сэрэмжлүүлэг идэвхжлээ' : 'Сэрэмжлүүлэг унтарлаа'); }
+  }
+
+  function deleteAlert(id) {
+    alerts = alerts.filter(x => x.id !== id);
+    renderAlerts();
+    showToast('Устгагдлаа');
+  }
+
+  function saveAlert() {
+    const symbol = document.getElementById('alert-symbol').value;
+    const condition = document.getElementById('alert-condition').value;
+    const targetValue = Number(document.getElementById('alert-price').value);
+    if (!symbol || !targetValue) { showToast('Бүх талбарыг бөглөнө үү', 'error'); return; }
+    alerts.unshift({
+      id: 'AL-' + Date.now(),
+      symbol, priceType: 'CLOSING_PRICE', condition, targetValue,
+      isActive: true, lastTriggered: null
+    });
+    closeModal('alert-modal');
+    renderAlerts();
+    showToast('Сэрэмжлүүлэг нэмэгдлээ', 'success');
+  }
+
+  document.getElementById('alert-symbol').innerHTML = STOCKS.map(s =>
+    `<option value="${s.symbol}">${s.symbol} — ${getStockName(s)}</option>`
+  ).join('');
+
+  renderAlerts();
+  lucide.createIcons();
+</script>
+</body>
+</html>

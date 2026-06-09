@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Дансны хураамж — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}
+    .fee-card{max-width:480px;margin:0 auto;text-align:center}
+    .fee-amount{font-size:36px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--color-primary);margin:16px 0}
+    .fee-list{text-align:left;margin:20px 0;padding:16px;background:var(--color-bg-input);border-radius:12px;border:1px solid var(--color-border)}
+    .fee-list li{font-size:13px;color:var(--color-text-secondary);margin-bottom:8px;display:flex;gap:8px;align-items:flex-start}
+  </style>
+</head>
+<body>
+<div class="web-page">
+  <div class="web-wizard fee-card">
+    <div class="web-form-card">
+      <div style="width:56px;height:56px;border-radius:14px;background:rgba(73,73,170,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--color-primary)">
+        <i data-lucide="credit-card" style="width:28px;height:28px"></i>
+      </div>
+      <h1 class="web-page-title" style="margin-bottom:4px">Данс нээх хураамж</h1>
+      <p style="color:var(--color-text-secondary);font-size:14px;margin:0">ҮЦТХТ-ны данс нээх нэг удаагийн төлбөр</p>
+      <div class="fee-amount">5,000₮</div>
+      <ul class="fee-list" style="list-style:none;padding:16px;margin:0">
+        <li><i data-lucide="check" style="width:16px;height:16px;color:var(--color-buy);flex-shrink:0;margin-top:2px"></i> ҮЦТХТ-ны номинал данс нээх</li>
+        <li><i data-lucide="check" style="width:16px;height:16px;color:var(--color-buy);flex-shrink:0;margin-top:2px"></i> Онлайн арилжааны эрх идэвхжүүлэх</li>
+        <li><i data-lucide="check" style="width:16px;height:16px;color:var(--color-buy);flex-shrink:0;margin-top:2px"></i> QPay, SocialPay, MonPay-аар төлөх</li>
+      </ul>
+      <button class="btn btn-primary" style="width:100%" onclick="payFee()">Төлбөр төлөх</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:10px" onclick="goBack()">Буцах</button>
+    </div>
+  </div>
+</div>
+<script src="../scripts/components.js"></script>
+<script>
+  function payFee() {
+    localStorage.setItem('bdsec-fee-paid', '1');
+    try { window.parent.navigateTo('open-account'); } catch(e) { alert('Төлбөр амжилттай'); }
+  }
+  function goBack() { try { window.parent.navigateTo('general'); } catch(e) {} }
+  lucide.createIcons();
+</script>
+</body>
+</html>

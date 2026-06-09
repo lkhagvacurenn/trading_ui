@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="page-toolbar">
+    <h1 class="web-page-title" style="margin:0">Түгээмэл асуулт</h1>
+    <div class="search-input-wrap">
+      <i data-lucide="search" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
+      <input type="text" placeholder="Асуулт хайх…" id="search-q" oninput="renderFaq()" />
+    </div>
+  </div>
+
+  <div class="filter-pills" style="margin-bottom:16px" id="cat-pills"></div>
+
+  <div id="faq-list"></div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  let activeCat = 'all';
+
+  function setCat(cat, btn) {
+    activeCat = cat;
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    renderFaq();
+  }
+
+  function toggleFaq(id) {
+    const el = document.getElementById('faq-' + id);
+    if (el) el.classList.toggle('open');
+  }
+
+  function renderFaq() {
+    const q = (document.getElementById('search-q').value || '').toLowerCase();
+    let list = FAQ_ITEMS.filter(f => {
+      if (activeCat !== 'all' && f.cat !== activeCat) return false;
+      if (!q) return true;
+      return f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q);
+    });
+
+    const container = document.getElementById('faq-list');
+    if (!list.length) {
+      container.innerHTML = '<div class="orders-empty">Асуулт олдсонгүй</div>';
+      return;
+    }
+
+    container.innerHTML = list.map(f => `
+      <div class="faq-item" id="faq-${f.id}">
+        <div class="faq-q" onclick="toggleFaq(${f.id})">
+          <span>${f.q}</span>
+          <i data-lucide="chevron-down" class="faq-chevron"></i>
+        </div>
+        <div class="faq-a">${f.a}</div>
+      </div>`).join('');
+    lucide.createIcons();
+  }
+
+  document.getElementById('cat-pills').innerHTML = FAQ_CATEGORIES.map(c =>
+    `<button class="filter-pill${c.id === 'all' ? ' active' : ''}" onclick="setCat('${c.id}', this)">${c.name}</button>`
+  ).join('');
+
+  renderFaq();
+</script>
+</body>
+</html>

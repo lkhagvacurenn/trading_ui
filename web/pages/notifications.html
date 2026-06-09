@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мэдэгдэл — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="page-toolbar">
+    <h1 class="web-page-title" style="margin:0">Мэдэгдэл</h1>
+    <div class="page-toolbar-left">
+      <button class="btn btn-outline btn-sm" onclick="markAllRead()">Бүгдийг уншсан</button>
+      <button class="btn btn-ghost btn-sm" onclick="goAlerts()">
+        <i data-lucide="bell-ring" style="width:14px;height:14px"></i> Сэрэмжлүүлэг
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-pills" style="margin-bottom:16px">
+    <button class="filter-pill active" data-tab="all" onclick="setTab('all',this)">Бүгд</button>
+    <button class="filter-pill" data-tab="unread" onclick="setTab('unread',this)">Уншаагүй</button>
+    <button class="filter-pill" data-tab="alert" onclick="setTab('alert',this)">Сэрэмжлүүлэг</button>
+    <button class="filter-pill" data-tab="order" onclick="setTab('order',this)">Захиалга</button>
+    <button class="filter-pill" data-tab="system" onclick="setTab('system',this)">Систем</button>
+  </div>
+
+  <div id="notif-list"></div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  let items = NOTIFICATIONS.map(n => ({ ...n }));
+  let activeTab = 'all';
+
+  const ICON_MAP = {
+    alert: 'bell-ring',
+    order: 'list-ordered',
+    system: 'info',
+    account: 'wallet',
+  };
+
+  function goAlerts() {
+    try { window.parent.navigateTo('alerts'); } catch (e) {}
+  }
+
+  function setTab(tab, btn) {
+    activeTab = tab;
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+  }
+
+  function markAllRead() {
+    items.forEach(n => { n.read = true; });
+    renderList();
+    showToast('Бүгд уншсан боллоо');
+  }
+
+  function markRead(id) {
+    const n = items.find(x => x.id === id);
+    if (n) n.read = true;
+    renderList();
+  }
+
+  function renderList() {
+    let list = items;
+    if (activeTab === 'unread') list = list.filter(n => !n.read);
+    else if (activeTab !== 'all') list = list.filter(n => n.type === activeTab);
+
+    const container = document.getElementById('notif-list');
+    if (!list.length) {
+      container.innerHTML = '<div class="orders-empty">Мэдэгдэл байхгүй</div>';
+      return;
+    }
+
+    container.innerHTML = list.map(n => `
+      <div class="notif-item${n.read ? '' : ' unread'}" onclick="markRead('${n.id}')">
+        <div class="notif-icon"><i data-lucide="${ICON_MAP[n.type] || 'bell'}"></i></div>
+        <div class="notif-content">
+          <div class="notif-title">${n.title}${n.read ? '' : ' <span class="notif-dot"></span>'}</div>
+          <div class="notif-body">${n.body}</div>
+          <div class="notif-date">${n.date}</div>
+        </div>
+      </div>`).join('');
+    lucide.createIcons();
+  }
+
+  renderList();
+</script>
+</body>
+</html>

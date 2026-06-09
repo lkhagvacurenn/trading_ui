@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Данс цэнэглэх — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="web-grid-2">
+    <div>
+      <h1 class="web-page-title">Данс цэнэглэх</h1>
+      <p style="color:var(--color-text-secondary);font-size:14px;margin:-8px 0 20px">Номинал данс руу мөнгө шилжүүлнэ.</p>
+
+      <div class="web-form-card amount-form-card">
+        <div style="font-size:12px;color:var(--color-text-disabled);margin-bottom:6px">Боломжит үлдэгдэл</div>
+        <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-bottom:16px" id="avail-bal">—</div>
+
+        <label class="web-field label" style="display:block;font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:6px">Дүн (₮)</label>
+        <input class="trade-input" type="number" id="amount-inp" placeholder="0" oninput="updateAmount()" style="margin-bottom:12px;font-size:20px;text-align:center" />
+
+        <div class="quick-amounts">
+          <button class="quick-amt-btn" onclick="setAmount(100000)">100K</button>
+          <button class="quick-amt-btn" onclick="setAmount(500000)">500K</button>
+          <button class="quick-amt-btn" onclick="setAmount(1000000)">1M</button>
+          <button class="quick-amt-btn" onclick="setAmount(5000000)">5M</button>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:16px;padding:10px;background:var(--color-bg-input);border-radius:10px">
+          <span style="color:var(--color-text-secondary)">Шимтгэл</span>
+          <span class="mono">100₮</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:16px">
+          <span>Нийт төлөх</span>
+          <span class="mono" id="total-pay">100₮</span>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%" onclick="openPayModal()">Төлбөр төлөх</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="web-section-title" style="margin-bottom:12px">Сүүлийн цэнэглэлт</div>
+      <div class="web-card" id="history-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="web-modal-overlay" id="pay-modal">
+  <div class="web-modal">
+    <h3 class="web-modal-title">Төлбөр баталгаажуулах</h3>
+    <div class="web-modal-row"><span class="lbl">Дүн:</span><span id="modal-amt">—</span></div>
+    <div class="web-modal-row"><span class="lbl">Шимтгэл:</span><span>100₮</span></div>
+    <div style="text-align:center;padding:20px 0">
+      <div style="width:160px;height:160px;margin:0 auto;background:var(--color-bg-input);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border)">
+        <i data-lucide="qr-code" style="width:64px;height:64px;color:var(--color-text-disabled)"></i>
+      </div>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-top:12px">QPay, SocialPay, MonPay</p>
+    </div>
+    <div class="web-modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('pay-modal')">Цуцлах</button>
+      <button class="btn btn-primary" onclick="confirmPay()">Төлсөн</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  const FEE = 100;
+
+  function setAmount(n) {
+    document.getElementById('amount-inp').value = n;
+    updateAmount();
+  }
+
+  function updateAmount() {
+    const v = parseFloat(document.getElementById('amount-inp').value) || 0;
+    document.getElementById('total-pay').textContent = fmtMNT(v + FEE);
+  }
+
+  function renderHistory() {
+    document.getElementById('history-list').innerHTML = RECHARGE_HISTORY.map(r => {
+      const cls = r.status === 'COMPLETED' ? 'ok' : r.status === 'PENDING' ? 'pending' : 'bad';
+      const lbl = r.status === 'COMPLETED' ? 'Амжилттай' : r.status === 'PENDING' ? 'Хүлээгдэж байна' : 'Амжилтгүй';
+      return `<div style="display:flex;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--color-border)">
+        <div><div style="font-weight:600">${fmtMNT(r.amount)}</div><div style="font-size:11px;color:var(--color-text-disabled)">${r.date} · ${r.channel}</div></div>
+        <span class="status-badge ${cls}">${lbl}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function openPayModal() {
+    const v = parseFloat(document.getElementById('amount-inp').value);
+    if (!v || v < 1000) { showToast('1000₮-с дээш дүн оруулна уу', 'error'); return; }
+    document.getElementById('modal-amt').textContent = fmtMNT(v);
+    openModal('pay-modal');
+    lucide.createIcons();
+  }
+
+  function confirmPay() {
+    closeModal('pay-modal');
+    showToast('Цэнэглэлт амжилттай!', 'success');
+  }
+
+  document.getElementById('avail-bal').textContent = fmtMNT(WALLET.cashBalance);
+  updateAmount();
+  renderHistory();
+  lucide.createIcons();
+</script>
+</body>
+</html>

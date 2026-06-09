@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Гүйлгээний түүх — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="page-toolbar">
+    <h1 class="web-page-title" style="margin:0">Гүйлгээний түүх</h1>
+    <div class="page-toolbar-left">
+      <div class="filter-pills">
+        <button class="filter-pill active" onclick="setFilter('all',this)">Бүгд</button>
+        <button class="filter-pill" onclick="setFilter('income',this)">Орлого</button>
+        <button class="filter-pill" onclick="setFilter('expense',this)">Зарлага</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="web-card" style="overflow:hidden">
+    <table class="data-table">
+      <thead><tr><th>Огноо</th><th>Тайлбар</th><th>Төрөл</th><th>Дүн</th></tr></thead>
+      <tbody id="txn-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script>
+  let filter = 'all';
+  const TYPE_LABELS = { DEPOSIT:'Орлого', WITHDRAWAL:'Зарлага', BUY:'Худалдан авалт', SELL:'Заралт' };
+
+  function setFilter(f, btn) {
+    filter = f;
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function render() {
+    const rows = WALLET.transactions.filter(t => {
+      if (filter === 'income') return t.amount > 0;
+      if (filter === 'expense') return t.amount < 0;
+      return true;
+    });
+    document.getElementById('txn-body').innerHTML = rows.map(t => {
+      const pos = t.amount > 0;
+      return `<tr>
+        <td style="font-size:12px;color:var(--color-text-secondary)">${t.date}</td>
+        <td><div style="font-weight:600">${t.note}</div><div style="font-size:11px;color:var(--color-text-disabled)">${t.id}</div></td>
+        <td>${TYPE_LABELS[t.type] || t.type}</td>
+        <td class="mono ${pos?'change-up':'change-down'}">${pos?'+':''}${fmtMNT(Math.abs(t.amount))}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  render();
+</script>
+</body>
+</html>

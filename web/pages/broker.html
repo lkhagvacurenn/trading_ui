@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Онлайн харилцагч — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+</head>
+<body>
+<div class="web-page">
+  <div class="web-wizard" style="max-width:720px;margin:0 auto">
+    <h1 class="web-page-title">Онлайн харилцагч</h1>
+    <p style="color:var(--color-text-secondary);margin:-8px 0 20px;font-size:14px">Хоёрдогч зах зээлд арилжаа хийх эрх авах KYC маягтыг бөглөнө үү.</p>
+
+    <div class="info-banner" style="margin-bottom:20px">
+      <i data-lucide="alert-circle" style="width:16px;height:16px;color:var(--color-warning);flex-shrink:0"></i>
+      <p style="margin:0;font-size:13px">Данс амжилттай нээгдсний дараа KYC маягтыг бүрэн бөглөнө. Бүх алхмыг үнэн зөв бөглөх шаардлагатай.</p>
+    </div>
+
+    <div class="web-form-card">
+      <div class="web-field"><label>Брокер компани</label><input type="text" value="BDSec Securities JSC" readonly style="opacity:0.8" /></div>
+      <div class="web-field-row">
+        <div class="web-field"><label>Харилцагчийн төрөл</label><select id="client-type"><option value="individual">Иргэн</option><option value="minor">Хүүхэд</option><option value="corporate">Байгууллага</option></select></div>
+        <div class="web-field"><label>Арилжааны төрөл</label><select><option>Хувьцаа</option><option>Бонд</option><option>Хоёуланг нь</option></select></div>
+      </div>
+      <div class="web-field"><label>Тайлбар</label><textarea rows="3" placeholder="Нэмэлт мэдээлэл (заавал биш)"></textarea></div>
+      <div class="web-form-actions">
+        <button class="btn btn-outline" onclick="goBack()">Буцах</button>
+        <button class="btn btn-primary" onclick="startKyc()">KYC маягт бөглөх</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function startKyc() { try { window.parent.navigateTo('kyc'); } catch(e) {} }
+  function goBack() { try { window.parent.navigateTo('opening-process'); } catch(e) {} }
+  lucide.createIcons();
+</script>
+</body>
+</html>
