@@ -193,3 +193,56 @@ tbody td {
 
 /* ── Mono numbers ── */
 .mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Bottom-sheet modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  display: none; align-items: flex-end; justify-content: center;
+  z-index: 200;
+}
+.modal-overlay.show { display: flex; }
+.modal-sheet {
+  width: 100%; max-width: 480px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border); border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  padding: 10px 16px 20px;
+  max-height: 88vh; overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+}
+.modal-overlay.show .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--color-border); border-radius: 99px; margin: 6px auto 16px; }
+
+/* ── Inline field error ── */
+.field-error { font-size: 11px; color: var(--color-sell); margin-top: 6px; display: none; }
+.field-error.show { display: block; }
+.inp.error { border-color: var(--color-sell); }
+
+/* ── Detail / verify card ── */
+.verify-card {
+  background: var(--color-bg); border: 1px solid var(--color-border);
+  border-radius: 14px; padding: 4px 16px;
+}
+.verify-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0; font-size: 13px; color: var(--color-text-secondary);
+  border-bottom: 1px dashed var(--color-border);
+}
+.verify-row:last-child { border-bottom: none; }
+.verify-row span:last-child { font-weight: 700; color: var(--color-text-primary); text-align: right; }
+.verify-row.total span:last-child { color: var(--color-primary); font-family: 'JetBrains Mono', monospace; font-size: 15px; }
+
+/* ── History status icon (large, leading) ── */
+.hist-icon.status-pending   { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.hist-icon.status-completed { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+.hist-icon.status-cancelled { background: rgba(239,68,68,0.15); color: var(--color-sell); }
+
+/* ── History "Details" link ── */
+.hist-detail-link {
+  display: flex; align-items: center; gap: 2px;
+  font-size: 11px; color: var(--color-primary); margin-top: 4px;
+  cursor: pointer; justify-content: flex-end;
+}
+.hist-detail-link svg { width: 12px; height: 12px; }

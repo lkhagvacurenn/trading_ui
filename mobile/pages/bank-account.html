@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Bank Accounts — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    .form-body { padding: 0 16px; }
+    .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
+    .field-wrap { margin-bottom: 14px; }
+
+    .inp {
+      width: 100%; background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
+      outline: none; transition: border-color 0.15s; font-family: 'Inter', sans-serif;
+    }
+    .inp:focus { border-color: var(--color-primary); }
+    .inp::placeholder { color: var(--color-text-disabled); }
+    .inp.error { border-color: var(--color-sell); }
+    .field-error { font-size: 11px; color: var(--color-sell); margin-top: 6px; display: none; }
+    .field-error.show { display: block; }
+    .bank-scroll.error { outline: 1.5px solid var(--color-sell); border-radius: 12px; }
+
+    .btn-primary {
+      width: 100%; padding: 14px; background: var(--color-primary);
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: opacity 0.15s;
+      margin-top: 8px; margin-bottom: 18px;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-outline {
+      width: 100%; padding: 13px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+      cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-bottom: 18px;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
+    .btn-outline svg { width: 16px; height: 16px; }
+
+    /* ── Bank logo picker (horizontal scroll) ── */
+    .bank-scroll {
+      display: flex; gap: 12px; overflow-x: auto;
+      padding: 2px 2px 8px; margin: 0 -2px;
+      scrollbar-width: none;
+    }
+    .bank-scroll::-webkit-scrollbar { display: none; }
+    .bank-card {
+      flex-shrink: 0; width: 56px; height: 56px;
+      border-radius: 12px; overflow: hidden;
+      border: 2px solid var(--color-border);
+      cursor: pointer; position: relative;
+      transition: border-color 0.15s, transform 0.1s;
+    }
+    .bank-card:active { transform: scale(0.96); }
+    .bank-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .bank-card.selected { border-color: var(--color-primary); }
+    .bank-card .bank-check {
+      position: absolute; top: -5px; right: -5px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--color-primary); color: #fff;
+      display: none; align-items: center; justify-content: center;
+      border: 2px solid var(--color-bg);
+    }
+    .bank-card.selected .bank-check { display: flex; }
+    .bank-card .bank-check svg { width: 9px; height: 9px; }
+
+    /* ── Account list ── */
+    .info-section-title { font-size: 14px; font-weight: 700; margin: 6px 0 10px; }
+    .acct-card {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+    }
+    .acct-logo { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+    .acct-info { flex: 1; min-width: 0; }
+    .acct-bank-name { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .acct-number { font-size: 12px; color: var(--color-text-secondary); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+    .acct-holder { font-size: 11px; color: var(--color-text-disabled); margin-top: 2px; }
+    .default-tag {
+      font-size: 10px; font-weight: 700; color: var(--color-primary);
+      background: rgba(73,73,170,0.12); border-radius: 6px; padding: 2px 6px;
+    }
+    .acct-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .acct-action-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--color-border); background: var(--color-bg-input);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); transition: color 0.15s, border-color 0.15s;
+    }
+    .acct-action-btn:hover { color: var(--color-primary); border-color: var(--color-primary); }
+    .acct-action-btn.danger:hover { color: var(--color-sell); border-color: var(--color-sell); }
+    .acct-action-btn svg { width: 14px; height: 14px; }
+    .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
+
+    /* ── Add account form ── */
+    #add-form { display: none; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--color-text-primary); color: var(--color-bg);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 300;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">Bank Accounts</div>
+  </div>
+
+  <div class="form-body">
+    <div class="info-section-title">Linked Accounts</div>
+    <div id="acct-list"></div>
+
+    <button class="btn-outline" id="add-toggle-btn" onclick="toggleAddForm()">
+      <i data-lucide="plus"></i> Add New Account
+    </button>
+
+    <div id="add-form">
+      <div class="field-wrap">
+        <label class="field-label">Select Bank</label>
+        <div class="bank-scroll" id="bank-scroll"></div>
+        <div class="field-error" id="bank-select-error">Please select a bank</div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">Account Number</label>
+        <input class="inp" id="new-acct-number" placeholder="Enter your account number" inputmode="numeric" oninput="clearFieldError('new-acct-number','number-error')" />
+        <div class="field-error" id="number-error">Please enter a valid account number</div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">Account Holder Name</label>
+        <input class="inp" id="new-acct-holder" placeholder="Name on account" oninput="clearFieldError('new-acct-holder','holder-error')" />
+        <div class="field-error" id="holder-error">Please enter the account holder's name</div>
+      </div>
+      <button class="btn-primary" style="margin-bottom:0" onclick="saveBankAccount()">Save</button>
+    </div>
+  </div>
+
+  <div style="height:24px"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="../scripts/wallet-data.js"></script>
+  <script>
+    function goBack() {
+      try { window.parent.navigateTo('balance'); } catch (e) { window.history.back(); }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    /* ── Bank logo picker ── */
+    const bankScroll = document.getElementById('bank-scroll');
+    let selectedBankIndex = null;
+    for (let i = 1; i <= 12; i++) {
+      const src = `../../public/bank logo/bank${String(i).padStart(2, '0')}.png`;
+      const card = document.createElement('div');
+      card.className = 'bank-card';
+      card.innerHTML = `<img src="${src}" alt="Bank ${i}" /><span class="bank-check"><i data-lucide="check"></i></span>`;
+      card.onclick = () => {
+        document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedBankIndex = i;
+        document.getElementById('bank-select-error').classList.remove('show');
+        bankScroll.classList.remove('error');
+      };
+      bankScroll.appendChild(card);
+    }
+
+    function clearFieldError(inputId, errorId) {
+      document.getElementById(errorId).classList.remove('show');
+      document.getElementById(inputId).classList.remove('error');
+    }
+
+    function toggleAddForm() {
+      const form = document.getElementById('add-form');
+      const open = form.style.display === 'block';
+      form.style.display = open ? 'none' : 'block';
+      document.getElementById('add-toggle-btn').style.display = open ? 'flex' : 'none';
+      document.querySelectorAll('#add-form .field-error').forEach(e => e.classList.remove('show'));
+      document.querySelectorAll('#add-form .inp, #bank-scroll').forEach(e => e.classList.remove('error'));
+      if (!open) form.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function maskAccountNumber(num) {
+      const s = String(num);
+      if (s.length <= 4) return s;
+      return '•••• ' + s.slice(-4);
+    }
+
+    function renderAccounts() {
+      const accounts = getBankAccounts();
+      const el = document.getElementById('acct-list');
+      if (!accounts.length) {
+        el.innerHTML = '<div class="hist-empty">No linked accounts yet</div>';
+        return;
+      }
+      el.innerHTML = accounts.map(a => `
+        <div class="acct-card">
+          <img class="acct-logo" src="../../public/bank logo/${a.logo}" alt="${a.bank}" />
+          <div class="acct-info">
+            <div class="acct-bank-name">${a.bank} ${a.isDefault ? '<span class="default-tag">Default</span>' : ''}</div>
+            <div class="acct-number">${maskAccountNumber(a.number)}</div>
+            <div class="acct-holder">${a.holder}</div>
+          </div>
+          <div class="acct-actions">
+            ${a.isDefault ? '' : `<button class="acct-action-btn" title="Set as default" onclick="setDefaultAccount('${a.id}')"><i data-lucide="star"></i></button>`}
+            <button class="acct-action-btn danger" title="Delete" onclick="deleteAccount('${a.id}')"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>`).join('');
+      lucide.createIcons();
+    }
+
+    function setDefaultAccount(id) {
+      const accounts = getBankAccounts().map(a => ({ ...a, isDefault: a.id === id }));
+      setBankAccounts(accounts);
+      renderAccounts();
+      showToast('Default account updated');
+    }
+
+    function deleteAccount(id) {
+      let accounts = getBankAccounts().filter(a => a.id !== id);
+      if (accounts.length && !accounts.some(a => a.isDefault)) accounts[0].isDefault = true;
+      setBankAccounts(accounts);
+      renderAccounts();
+      showToast('Account deleted');
+    }
+
+    function saveBankAccount() {
+      const number = document.getElementById('new-acct-number').value.trim();
+      const holder = document.getElementById('new-acct-holder').value.trim();
+      let valid = true;
+      if (selectedBankIndex === null) {
+        document.getElementById('bank-select-error').classList.add('show');
+        document.getElementById('bank-scroll').classList.add('error');
+        valid = false;
+      }
+      if (number.length < 6) {
+        document.getElementById('number-error').classList.add('show');
+        document.getElementById('new-acct-number').classList.add('error');
+        valid = false;
+      }
+      if (!holder) {
+        document.getElementById('holder-error').classList.add('show');
+        document.getElementById('new-acct-holder').classList.add('error');
+        valid = false;
+      }
+      if (!valid) return;
+
+      const accounts = getBankAccounts();
+      accounts.push({
+        id: genId('bank'),
+        bank: `Bank ${String(selectedBankIndex).padStart(2, '0')}`,
+        logo: `bank${String(selectedBankIndex).padStart(2, '0')}.png`,
+        number,
+        holder,
+        isDefault: accounts.length === 0,
+      });
+      setBankAccounts(accounts);
+
+      document.getElementById('new-acct-number').value = '';
+      document.getElementById('new-acct-holder').value = '';
+      document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+      selectedBankIndex = null;
+
+      toggleAddForm();
+      renderAccounts();
+      showToast('New account added');
+    }
+
+    renderAccounts();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

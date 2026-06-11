@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Deposit — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    /* ── Form ── */
+    .form-body { padding: 0 16px; }
+    .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
+    .field-wrap { margin-bottom: 14px; }
+    .field-row { display: flex; gap: 10px; }
+    .field-row .field-wrap { flex: 1; }
+
+    .inp {
+      width: 100%; background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
+      outline: none; transition: border-color 0.15s; font-family: 'Inter', sans-serif;
+    }
+    .inp:focus { border-color: var(--color-primary); }
+    .inp::placeholder { color: var(--color-text-disabled); }
+    .inp.error { border-color: var(--color-sell); }
+    .field-error {
+      font-size: 11px; color: var(--color-sell);
+      margin-top: 6px; display: none;
+    }
+    .field-error.show { display: block; }
+
+    .btn-primary {
+      width: 100%; padding: 14px; background: var(--color-primary);
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: opacity 0.15s;
+      margin-top: 8px; margin-bottom: 18px;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+
+    /* ── Account toggle ── */
+    .acct-toggle { display: flex; gap: 8px; }
+    .acct-toggle-btn {
+      flex: 1; padding: 12px; border-radius: 10px;
+      border: 1.5px solid var(--color-border); background: var(--color-bg-card);
+      color: var(--color-text-secondary); font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s ease;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .acct-toggle-btn .acct-check { display: none; width: 15px; height: 15px; flex-shrink: 0; }
+    .acct-toggle-btn.active {
+      border-color: var(--color-primary); color: #fff;
+      background: var(--color-primary);
+    }
+    .acct-toggle-btn.active .acct-check { display: inline-flex; }
+
+    /* ── Amount input ── */
+    .amount-field { position: relative; }
+    .amount-field .inp { padding-right: 44px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; }
+    .amount-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--color-text-secondary); }
+
+    /* ── Charge confirmation modal (bottom sheet) ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      display: none; align-items: flex-end; justify-content: center;
+      z-index: 200;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-sheet {
+      width: 100%; max-width: 480px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: 20px 20px 0 0;
+      padding: 10px 16px 20px;
+      max-height: 88vh; overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.25s ease;
+    }
+    .modal-overlay.show .modal-sheet { transform: translateY(0); }
+    .modal-handle { width: 36px; height: 4px; background: var(--color-border); border-radius: 99px; margin: 6px auto 16px; }
+    .charge-info { text-align: center; margin-bottom: 18px; }
+    .charge-info-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 4px; }
+    .charge-info-amount { font-size: 26px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--color-primary); }
+
+    /* ── Payment channel list ── */
+    .channel-list { border: 1px solid var(--color-border); border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+    .channel-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; cursor: pointer;
+      border-bottom: 1px solid var(--color-border);
+      transition: background 0.12s;
+    }
+    .channel-row:last-child { border-bottom: none; }
+    .channel-row:hover, .channel-row.active { background: var(--color-bg-input); }
+    .channel-row-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--color-bg-input); color: var(--color-text-secondary);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .channel-row.active .channel-row-icon { background: var(--color-primary); color: #fff; }
+    .channel-row-icon svg { width: 17px; height: 17px; }
+    .channel-row-label { flex: 1; font-size: 14px; font-weight: 600; }
+    .channel-row-chevron { width: 16px; height: 16px; color: var(--color-text-disabled); transition: transform 0.15s; flex-shrink: 0; }
+    .channel-row.active .channel-row-chevron { transform: rotate(90deg); }
+
+    .channel-panel { margin-bottom: 14px; }
+
+    /* ── Bank transfer card ── */
+    .transfer-card { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 14px; padding: 16px; }
+    .transfer-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px; padding-bottom: 14px;
+      border-bottom: 1px dashed var(--color-border);
+    }
+    .transfer-bank-logo { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; }
+    .transfer-bank-name { font-size: 14px; font-weight: 700; }
+    .transfer-holder { font-size: 12px; color: var(--color-text-secondary); }
+    .copy-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
+    .copy-label { font-size: 11px; color: var(--color-text-disabled); margin-bottom: 2px; }
+    .copy-value { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .copy-btn {
+      width: 34px; height: 34px; border-radius: 10px;
+      border: 1px solid var(--color-border); background: var(--color-bg-input);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .copy-btn svg { width: 15px; height: 15px; }
+    .transfer-note { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin: 12px 0 0; }
+
+    /* ── Banking app grid ── */
+    .pay-apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 4px; }
+    .pay-app-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+    .pay-app-icon { width: 56px; height: 56px; border-radius: 16px; overflow: hidden; border: 1px solid var(--color-border); }
+    .pay-app-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pay-app-name { font-size: 10px; color: var(--color-text-secondary); text-align: center; }
+
+    /* ── Card form / saved card ── */
+    .saved-card {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: 14px; padding: 14px 16px;
+    }
+    .saved-card-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: var(--color-primary); color: #fff;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .saved-card-icon svg { width: 20px; height: 20px; }
+    .saved-card-number { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .saved-card-name { font-size: 12px; color: var(--color-text-secondary); }
+    .card-remove-btn {
+      margin-left: auto; width: 30px; height: 30px; border-radius: 50%;
+      border: none; background: var(--color-bg-input); color: var(--color-text-secondary);
+      display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+    }
+    .card-remove-btn svg { width: 14px; height: 14px; }
+
+    .btn-check-payment {
+      width: 100%; padding: 14px; background: var(--color-bg-input);
+      border: 1.5px solid var(--color-primary); border-radius: 10px;
+      font-size: 15px; font-weight: 700; color: var(--color-primary);
+      cursor: pointer; margin-bottom: 0; transition: opacity 0.15s;
+    }
+    .btn-check-payment:hover { opacity: 0.85; }
+
+    /* ── History list ── */
+    .info-section-title { font-size: 14px; font-weight: 700; margin: 6px 0 10px; }
+    .hist-card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; }
+    .hist-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--color-border); }
+    .hist-item:last-child { border-bottom: none; }
+    .hist-icon { width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .hist-icon svg { width: 18px; height: 18px; }
+    .hist-icon.deposit { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .hist-info { flex: 1; min-width: 0; }
+    .hist-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'JetBrains Mono', monospace; }
+    .hist-right { text-align: right; flex-shrink: 0; }
+    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+    .hist-amount.deposit { color: var(--color-buy); }
+    .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--color-text-primary); color: var(--color-bg);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 300;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">Deposit</div>
+  </div>
+
+  <div class="form-body">
+
+    <div class="field-wrap">
+      <label class="field-label">Select Account</label>
+      <div class="acct-toggle">
+        <button class="acct-toggle-btn active" data-acct="nominal" onclick="selectDepAccount('nominal')"><i data-lucide="check-circle" class="acct-check"></i>Nominal Account</button>
+        <button class="acct-toggle-btn" data-acct="mcsd" onclick="selectDepAccount('mcsd')"><i data-lucide="check-circle" class="acct-check"></i>MCSD Account</button>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="field-label">Deposit Amount</label>
+      <div class="amount-field">
+        <input class="inp" type="number" id="dep-amount" placeholder="0" min="0" oninput="clearAmountError()" />
+        <span class="amount-suffix">₮</span>
+      </div>
+      <div class="field-error" id="dep-amount-error">Please enter an amount</div>
+    </div>
+
+    <button class="btn-primary" onclick="startCharge()">Charge</button>
+  </div>
+
+  <!-- Deposit history -->
+  <div class="form-body">
+    <div class="info-section-title">Deposit History</div>
+    <div class="hist-card" id="dep-history"></div>
+  </div>
+
+  <div style="height:24px"></div>
+
+  <!-- Charge confirmation modal -->
+  <div class="modal-overlay" id="charge-modal-overlay" onclick="if(event.target===this) closeChargeModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="charge-info">
+        <div class="charge-info-label">Charging <span id="modal-account-label">Nominal</span> Account</div>
+        <div class="charge-info-amount" id="modal-amount">0 ₮</div>
+      </div>
+
+      <label class="field-label">Choose a payment channel</label>
+      <div class="channel-list">
+        <div class="channel-row" data-channel="transfer" onclick="selectChannel('transfer')">
+          <div class="channel-row-icon"><i data-lucide="banknote"></i></div>
+          <span class="channel-row-label">Bank Transfer</span>
+          <i data-lucide="chevron-right" class="channel-row-chevron"></i>
+        </div>
+        <div class="channel-row" data-channel="app" onclick="selectChannel('app')">
+          <div class="channel-row-icon"><i data-lucide="smartphone"></i></div>
+          <span class="channel-row-label">Banking App</span>
+          <i data-lucide="chevron-right" class="channel-row-chevron"></i>
+        </div>
+        <div class="channel-row" data-channel="card" onclick="selectChannel('card')">
+          <div class="channel-row-icon"><i data-lucide="credit-card"></i></div>
+          <span class="channel-row-label" id="card-channel-label">Connect Card</span>
+          <i data-lucide="chevron-right" class="channel-row-chevron"></i>
+        </div>
+      </div>
+
+      <div class="channel-panel" id="channel-panel"></div>
+
+      <button class="btn-check-payment" id="check-payment-btn" onclick="checkPayment()" style="display:none">Verify Payment</button>
+    </div>
+  </div>
+
+  <!-- Deposit detail modal -->
+  <div class="modal-overlay" id="detail-modal-overlay" onclick="if(event.target===this) closeDetailModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="info-section-title">Deposit Details</div>
+      <div class="verify-card" id="detail-content"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../scripts/wallet-data.js"></script>
+  <script>
+    let depAccount = 'nominal';
+    let depChannel = null;
+    let depRef = '';
+
+    function goBack() {
+      try { window.parent.navigateTo('balance'); } catch (e) { window.history.back(); }
+    }
+
+    function selectDepAccount(acct) {
+      depAccount = acct;
+      document.querySelectorAll('.acct-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.acct === acct));
+    }
+
+    function clearAmountError() {
+      document.getElementById('dep-amount-error').classList.remove('show');
+      document.getElementById('dep-amount').classList.remove('error');
+    }
+    function showAmountError(msg) {
+      const errEl = document.getElementById('dep-amount-error');
+      errEl.textContent = msg;
+      errEl.classList.add('show');
+      document.getElementById('dep-amount').classList.add('error');
+    }
+
+    function startCharge() {
+      const amt = parseFloat(document.getElementById('dep-amount').value);
+      if (!amt || amt <= 0) { showAmountError('Please enter an amount'); return; }
+      clearAmountError();
+      depRef = 'DEP-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      openChargeModal(amt);
+    }
+
+    /* ── Modal ── */
+    const ACCOUNT_DISPLAY = { nominal: 'Nominal', mcsd: 'MCSD' };
+
+    function openChargeModal(amount) {
+      document.getElementById('modal-account-label').textContent = ACCOUNT_DISPLAY[depAccount];
+      document.getElementById('modal-amount').textContent = formatMNT(amount);
+
+      depChannel = null;
+      document.querySelectorAll('.channel-row').forEach(c => c.classList.remove('active'));
+      document.getElementById('channel-panel').innerHTML = '';
+      document.getElementById('check-payment-btn').style.display = 'none';
+
+      document.getElementById('charge-modal-overlay').classList.add('show');
+      notifyModalOpen();
+    }
+
+    function closeChargeModal() {
+      document.getElementById('charge-modal-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+
+    function selectChannel(ch) {
+      depChannel = ch;
+      document.querySelectorAll('.channel-row').forEach(c => c.classList.toggle('active', c.dataset.channel === ch));
+      renderChannelPanel();
+      document.getElementById('check-payment-btn').style.display = 'block';
+    }
+
+    function renderChannelPanel() {
+      const panel = document.getElementById('channel-panel');
+      const amount = parseFloat(document.getElementById('dep-amount').value) || 0;
+
+      if (depChannel === 'transfer') {
+        const acc = COMPANY_BANK_ACCOUNT;
+        panel.innerHTML = `
+          <div class="transfer-card">
+            <div class="transfer-row">
+              <img class="transfer-bank-logo" src="../../public/bank logo/${acc.logo}" alt="${acc.bank}" />
+              <div>
+                <div class="transfer-bank-name">${acc.bank}</div>
+                <div class="transfer-holder">${acc.holder}</div>
+              </div>
+            </div>
+            <div class="copy-row">
+              <div><div class="copy-label">Account Number</div><div class="copy-value">${acc.number}</div></div>
+              <button class="copy-btn" onclick="copyText('${acc.number}')"><i data-lucide="copy"></i></button>
+            </div>
+            <div class="copy-row">
+              <div><div class="copy-label">Transfer Amount</div><div class="copy-value">${formatMNT(amount)}</div></div>
+              <button class="copy-btn" onclick="copyText('${amount}')"><i data-lucide="copy"></i></button>
+            </div>
+            <div class="copy-row">
+              <div><div class="copy-label">Reference</div><div class="copy-value">${depRef}</div></div>
+              <button class="copy-btn" onclick="copyText('${depRef}')"><i data-lucide="copy"></i></button>
+            </div>
+            <p class="transfer-note">After transferring to the account above, tap "Verify Payment" below.</p>
+          </div>`;
+      } else if (depChannel === 'app') {
+        panel.innerHTML = `<div class="pay-apps-grid" id="pay-apps-grid"></div>`;
+        const grid = document.getElementById('pay-apps-grid');
+        PAY_APPS.forEach((name, i) => {
+          const logoSrc = `../../public/bank logo/bank${String((i % 12) + 1).padStart(2, '0')}.png`;
+          const div = document.createElement('div');
+          div.className = 'pay-app-item';
+          div.innerHTML = `<div class="pay-app-icon"><img src="${logoSrc}" alt="${name}" /></div><span class="pay-app-name">${name}</span>`;
+          div.onclick = () => showToast(`Opening ${name}…`);
+          grid.appendChild(div);
+        });
+      } else if (depChannel === 'card') {
+        const card = getSavedCard();
+        if (card) {
+          panel.innerHTML = `
+            <div class="saved-card">
+              <div class="saved-card-icon"><i data-lucide="credit-card"></i></div>
+              <div>
+                <div class="saved-card-number">**** **** **** ${card.last4}</div>
+                <div class="saved-card-name">${card.name}</div>
+              </div>
+              <button class="card-remove-btn" onclick="removeCard()"><i data-lucide="x"></i></button>
+            </div>
+            <p class="transfer-note">Tap "Verify Payment" below to pay by card.</p>`;
+        } else {
+          panel.innerHTML = `
+            <div class="card-form">
+              <div class="field-wrap">
+                <label class="field-label">Card Number</label>
+                <input class="inp" id="card-number" maxlength="19" placeholder="0000 0000 0000 0000" oninput="formatCardNumber(this)" />
+              </div>
+              <div class="field-row">
+                <div class="field-wrap">
+                  <label class="field-label">Expiry Date</label>
+                  <input class="inp" id="card-expiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)" />
+                </div>
+                <div class="field-wrap">
+                  <label class="field-label">CVV</label>
+                  <input class="inp" id="card-cvv" placeholder="***" maxlength="3" type="password" />
+                </div>
+              </div>
+              <div class="field-wrap">
+                <label class="field-label">Cardholder Name</label>
+                <input class="inp" id="card-name" placeholder="Name on card" />
+              </div>
+              <button class="btn-primary" style="margin-bottom:0" onclick="connectCard()">Connect Card</button>
+            </div>`;
+        }
+      }
+      lucide.createIcons();
+    }
+
+    function formatCardNumber(inp) {
+      let v = inp.value.replace(/\D/g, '').slice(0, 16);
+      inp.value = v.replace(/(.{4})/g, '$1 ').trim();
+    }
+    function formatExpiry(inp) {
+      let v = inp.value.replace(/\D/g, '').slice(0, 4);
+      if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+      inp.value = v;
+    }
+
+    function connectCard() {
+      const num    = document.getElementById('card-number').value.replace(/\s/g, '');
+      const expiry = document.getElementById('card-expiry').value;
+      const cvv    = document.getElementById('card-cvv').value;
+      const name   = document.getElementById('card-name').value.trim();
+      if (num.length < 12 || expiry.length < 5 || cvv.length < 3 || !name) {
+        showToast('Please fill in your card details');
+        return;
+      }
+      setSavedCard({ last4: num.slice(-4), name, expiry });
+      document.getElementById('card-channel-label').textContent = 'Pay by Card';
+      renderChannelPanel();
+    }
+
+    function removeCard() {
+      setSavedCard(null);
+      document.getElementById('card-channel-label').textContent = 'Connect Card';
+      renderChannelPanel();
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard) navigator.clipboard.writeText(String(text)).catch(() => {});
+      showToast('Copied to clipboard');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    function nowStr() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function checkPayment() {
+      const amount = parseFloat(document.getElementById('dep-amount').value) || 0;
+      if (!depChannel) { showToast('Please choose a payment channel'); return; }
+      if (depChannel === 'card' && !getSavedCard()) { showToast('Please connect a card first'); return; }
+
+      const balances = getBalances();
+      balances[depAccount] = (balances[depAccount] || 0) + amount;
+      setBalances(balances);
+
+      const history = getDepositHistory();
+      history.unshift({
+        id: genId('dep'),
+        date: nowStr(),
+        account: depAccount,
+        amount,
+        channel: depChannel,
+        status: 'completed',
+      });
+      setDepositHistory(history);
+
+      closeChargeModal();
+      showToast('Deposit successful!');
+      document.getElementById('dep-amount').value = '';
+      depChannel = null;
+      renderDepositHistory();
+    }
+
+    function renderDepositHistory() {
+      const list = getDepositHistory().slice().sort((a, b) =>
+        new Date(b.date.replace(' ', 'T')) - new Date(a.date.replace(' ', 'T')));
+      const el = document.getElementById('dep-history');
+      if (!list.length) {
+        el.innerHTML = '<div class="hist-empty">No deposit history yet</div>';
+        return;
+      }
+      el.innerHTML = list.map(d => `
+        <div class="hist-item">
+          ${statusIconLarge(d.status)}
+          <div class="hist-info">
+            <div class="hist-title">${ACCOUNT_LABELS[d.account]} · ${CHANNEL_LABELS[d.channel] || d.channel}</div>
+            <div class="hist-date">${d.date}</div>
+          </div>
+          <div class="hist-right">
+            <div class="hist-amount deposit">+${formatMNT(d.amount)}</div>
+            <div class="hist-detail-link" onclick="showDepositDetail('${d.id}')">Details <i data-lucide="chevron-right"></i></div>
+          </div>
+        </div>`).join('');
+      lucide.createIcons();
+    }
+
+    function showDepositDetail(id) {
+      const d = getDepositHistory().find(x => x.id === id);
+      if (!d) return;
+      document.getElementById('detail-content').innerHTML = renderDepositDetail(d);
+      document.getElementById('detail-modal-overlay').classList.add('show');
+      notifyModalOpen();
+      lucide.createIcons();
+    }
+    function closeDetailModal() {
+      document.getElementById('detail-modal-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+
+    if (getSavedCard()) {
+      document.getElementById('card-channel-label').textContent = 'Pay by Card';
+    }
+    renderDepositHistory();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

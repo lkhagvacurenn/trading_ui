@@ -85,6 +85,16 @@
       background: var(--color-bg); min-height: 0;
       display: block;
     }
+    /* Raised above the bottom nav (incl. FAB) while a page-level modal is open —
+       expand to cover the full area down to the screen bottom so the iframe's
+       fixed-position modal sheet can sit flush against the bottom edge and
+       fully hide the nav bar underneath it. */
+    #page-frame.modal-active {
+      position: absolute;
+      top: 56px; left: 0; right: 0;
+      height: calc(100% - 56px);
+      z-index: 50;
+    }
 
     /* ══════════════════════════════════════════════
        BOTTOM NAV — Wave notch design
@@ -455,17 +465,17 @@
       <span class="menu-item-label">Returns</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="closeMenu()">
+    <button class="menu-item" onclick="menuNav('bank-account'); closeMenu()">
       <i data-lucide="building-2"></i>
       <span class="menu-item-label">Bank Account</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="closeMenu()">
+    <button class="menu-item" onclick="menuNav('deposit'); closeMenu()">
       <i data-lucide="arrow-down-to-line"></i>
       <span class="menu-item-label">Deposit</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="closeMenu()">
+    <button class="menu-item" onclick="menuNav('withdraw'); closeMenu()">
       <i data-lucide="arrow-up-from-line"></i>
       <span class="menu-item-label">Withdraw</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
@@ -676,6 +686,9 @@ const PAGE_MAP = {
   trade:        'pages/trade.html',
   'open-account': 'pages/open-account.html',
   kyc:          'pages/kyc.html',
+  deposit:      'pages/deposit.html',
+  withdraw:     'pages/withdraw.html',
+  'bank-account': 'pages/bank-account.html',
 };
 function menuNav(key) {
   closeMenu();
@@ -719,6 +732,13 @@ window.addEventListener('load', () => {
 });
 
 window.addEventListener('resize', updateNavGeometry);
+
+/* ── Raise the page above the bottom nav while a page-level modal is open ── */
+window.addEventListener('message', (e) => {
+  if (!e.data || !e.data.type) return;
+  if (e.data.type === 'modal-open')  frame.classList.add('modal-active');
+  if (e.data.type === 'modal-close') frame.classList.remove('modal-active');
+});
 </script>
 </body>
 </html>

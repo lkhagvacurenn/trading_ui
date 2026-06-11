@@ -36,23 +36,75 @@
     .section-title { font-size: 16px; font-weight: 700; }
     .section-date { font-size: 12px; color: var(--color-text-disabled); font-family: 'JetBrains Mono', monospace; }
 
-    /* Status pill */
-    .status-pill {
-      display: flex; align-items: center; gap: 5px;
+    /* ── Generic dropdown trigger/menu ── */
+    .dd-trigger {
+      display: flex; align-items: center; gap: 6px;
       background: var(--color-bg-card);
       border: 1px solid var(--color-border);
       border-radius: 20px;
-      padding: 5px 10px;
-      font-size: 12px; font-weight: 600;
+      padding: 6px 12px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      flex-shrink: 0; position: relative;
+      color: var(--color-text-primary);
     }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-buy); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .dd-trigger svg { width: 14px; height: 14px; }
+    .dd-trigger svg.chev { transition: transform 0.15s ease; color: var(--color-text-disabled); }
+    .dd-trigger.open svg.chev { transform: rotate(180deg); }
+
+    .dd-menu {
+      position: absolute; top: calc(100% + 6px); right: 0; z-index: 30;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      min-width: 170px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      overflow: hidden; display: none;
+    }
+    .dd-menu.open { display: block; }
+    .dd-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: background 0.12s ease;
+      color: var(--color-text-primary);
+    }
+    .dd-item svg { width: 16px; height: 16px; color: var(--color-text-secondary); }
+    .dd-item:hover { background: var(--color-bg-input); }
+    .dd-item.active { color: var(--color-primary); }
+    .dd-item.active svg { color: var(--color-primary); }
+
+    /* ── Home balance card ── */
+    .balance-card {
+      margin: 14px 16px 0;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .balance-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .balance-card-label { font-size: 12px; color: var(--color-text-secondary); }
+    .balance-card-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .balance-card-value { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.5px; }
+    .balance-card-actions { display: flex; gap: 10px; margin-top: 12px; }
+    .balance-card-btn {
+      flex: 1; padding: 10px; border-radius: 10px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-input); color: var(--color-text-primary);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background 0.15s ease, opacity 0.15s ease;
+    }
+    .balance-card-btn svg { width: 14px; height: 14px; }
+    .balance-card-btn.primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .balance-card-btn:hover { opacity: 0.85; }
 
     /* Stock cards horizontal scroll */
     .cards-scroll {
       display: flex; gap: 10px;
-      overflow-x: auto;
+      overflow-x: scroll;
       padding: 0 16px 4px;
+      box-sizing: border-box;
+      max-width: 95%;
       scrollbar-width: none;
     }
     .cards-scroll::-webkit-scrollbar { display: none; }
@@ -69,6 +121,7 @@
     }
     .stock-card.selected { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary); }
     .stock-card:hover { border-color: var(--color-primary); }
+    .stock-card.pinned { position: sticky; left: 0; z-index: 2; }
 
     .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .ticker-avatar {
@@ -90,14 +143,6 @@
     .card-price-label { font-size: 10px; color: var(--color-text-disabled); margin-bottom: 2px; }
     .card-price { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
 
-    /* More button */
-    .more-btn {
-      display: flex; align-items: center; justify-content: flex-end;
-      gap: 4px; padding: 8px 16px;
-      font-size: 12px; font-weight: 600; color: var(--color-primary);
-      background: none; border: none; cursor: pointer; width: 100%;
-    }
-
     /* Divider */
     .divider { height: 1px; background: var(--color-border); margin: 0 16px; }
 
@@ -115,23 +160,138 @@
       transition: background 0.15s ease, color 0.15s ease;
     }
     .icon-btn.active { color: #f59e0b; background: rgba(245,158,11,0.15); }
+    .icon-btn.active svg { fill: currentColor; }
     .icon-btn svg { width: 16px; height: 16px; }
 
     .detail-meta { font-size: 11px; color: var(--color-text-disabled); margin-bottom: 12px; }
 
-    /* Chart type tabs */
+    /* Chart type icon buttons */
     .chart-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
     .chart-tab {
-      padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      width: 34px; height: 34px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
       border: none; cursor: pointer; transition: all 0.15s ease;
       background: var(--color-bg-input); color: var(--color-text-secondary);
     }
+    .chart-tab svg { width: 17px; height: 17px; }
     .chart-tab.active {
       background: var(--color-primary); color: white;
     }
 
     /* Chart container */
     #main-chart { width: 100%; overflow: hidden; }
+
+    /* Timeframe filter */
+    .tf-tabs { display: flex; gap: 6px; margin: 12px 0 0; }
+    .tf-tab {
+      flex: 1; padding: 8px 0; border-radius: 10px; border: none;
+      background: var(--color-bg-input); color: var(--color-text-secondary);
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .tf-tab.active { background: var(--color-primary); color: #fff; }
+
+    /* Buy / Sell trade actions */
+    .trade-actions { display: flex; gap: 10px; margin: 14px 0 4px; }
+    .trade-btn {
+      flex: 1; padding: 13px; border: none; border-radius: 12px;
+      font-size: 14px; font-weight: 700; color: #fff; cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+    .trade-btn:hover { opacity: 0.88; }
+    .trade-btn.buy  { background: var(--color-buy); }
+    .trade-btn.sell { background: var(--color-sell); }
+
+    /* ── Company info section ── */
+    .info-section { padding: 18px 16px 0; }
+    .info-section-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .info-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .info-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 14px;
+      border-bottom: 1px dashed var(--color-border);
+      font-size: 13px;
+    }
+    .info-row:last-of-type { border-bottom: none; }
+    .info-label { color: var(--color-text-secondary); }
+    .info-value { font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+    .info-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 14px;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+    }
+    .info-toggle svg { width: 16px; height: 16px; transition: transform 0.2s ease; color: var(--color-text-secondary); }
+    .info-toggle.open svg { transform: rotate(180deg); }
+    .info-extra { display: none; padding: 0 14px 14px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+    .info-extra.open { display: block; }
+
+    /* ── Add alert modal ── */
+    .alert-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 280;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: flex-end; justify-content: center;
+    }
+    .alert-modal-overlay.open { display: flex; }
+    .alert-modal-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: 20px 20px 0 0; width: 100%; max-width: 430px;
+      padding: 20px 16px 26px;
+    }
+    .alert-modal-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .alert-modal-title { font-size: 15px; font-weight: 800; }
+    .alert-modal-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary);
+    }
+    .alert-modal-close svg { width: 16px; height: 16px; }
+
+    .am-label {
+      font-size: 12px; font-weight: 600; color: var(--color-text-secondary);
+      margin-bottom: 6px; display: block;
+    }
+    .am-field { margin-bottom: 14px; }
+    .am-inp {
+      width: 100%;
+      background: var(--color-bg-input);
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      padding: 13px 14px;
+      font-size: 14px;
+      color: var(--color-text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .am-inp:focus { border-color: var(--color-primary); }
+    .am-inp[readonly] { color: var(--color-text-secondary); cursor: default; }
+    .am-inp.am-select {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px; cursor: pointer;
+    }
+    .am-row { display: flex; gap: 10px; }
+    .am-row .am-field { flex: 1; }
+    .am-btn-primary {
+      width: 100%; padding: 14px;
+      background: var(--color-primary);
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer;
+      transition: opacity 0.15s;
+      margin-top: 4px;
+    }
+    .am-btn-primary:hover { opacity: 0.88; }
   </style>
 </head>
 <body>
@@ -164,6 +324,42 @@
     </button>
   </div>
 
+  <!-- Account Balance Card (shown once account is opened & KYC complete) -->
+  <div id="home-balance-card" class="balance-card" style="display:none">
+    <div class="balance-card-top">
+      <span class="balance-card-label">Current Balance</span>
+      <button class="icon-btn" style="width:28px;height:28px" onclick="toggleHomeBalance()">
+        <i data-lucide="eye" id="home-bal-eye"></i>
+      </button>
+    </div>
+    <div class="balance-card-row">
+      <div class="balance-card-value" id="home-bal-value">₮0.00</div>
+      <div class="dd-trigger" id="bal-type-trigger" onclick="toggleBalMenu(event)">
+        <span id="bal-type-label">Nominal</span>
+        <i data-lucide="chevron-down" class="chev"></i>
+        <div class="dd-menu" id="bal-type-menu">
+          <div class="dd-item active" data-bal="nominal" onclick="selectBalType(event,'nominal')">
+            <i data-lucide="wallet"></i> Nominal
+          </div>
+          <div class="dd-item" data-bal="mcsd" onclick="selectBalType(event,'mcsd')">
+            <i data-lucide="landmark"></i> MCSD Account
+          </div>
+          <div class="dd-item" data-bal="assets" onclick="selectBalType(event,'assets')">
+            <i data-lucide="briefcase"></i> Total Assets
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="balance-card-actions">
+      <button class="balance-card-btn primary" onclick="goToBalance('deposit')">
+        <i data-lucide="plus-circle"></i> Deposit
+      </button>
+      <button class="balance-card-btn" onclick="goToBalance('withdraw')">
+        <i data-lucide="arrow-up-from-line"></i> Withdraw
+      </button>
+    </div>
+  </div>
+
   <!-- Stock Selector -->
   <div class="selector-bar" onclick="showSearch()">
     <i data-lucide="search" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
@@ -179,21 +375,17 @@
       <div class="section-title">Markets</div>
       <div class="section-date">2026.06.06</div>
     </div>
-    <div class="status-pill">
-      <div class="status-dot"></div>
-      Active
+    <div class="dd-trigger" id="market-filter-trigger" onclick="toggleFilterMenu(event)">
+      <i data-lucide="star" id="market-filter-icon"></i>
+      <span id="market-filter-label">Watchlist</span>
+      <i data-lucide="chevron-down" class="chev"></i>
+      <div class="dd-menu" id="market-filter-menu"></div>
     </div>
   </div>
 
   <!-- Stock Cards -->
   <div class="cards-scroll" id="stock-cards"></div>
 
-  <!-- More button -->
-  <button class="more-btn">
-    View all <i data-lucide="chevron-right" style="width:14px;height:14px"></i>
-  </button>
-
-  <div class="divider"></div>
 
   <!-- Selected Stock Detail -->
   <div class="detail-section">
@@ -203,25 +395,73 @@
         <span class="detail-price" id="d-price">$189.84</span>
       </div>
       <div class="detail-actions">
-        <button class="icon-btn" title="Add to compare">
-          <i data-lucide="git-compare-arrows"></i>
-        </button>
         <button class="icon-btn" id="watch-btn" onclick="toggleWatchlist()" title="Watchlist">
           <i data-lucide="star"></i>
+        </button>
+        <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Add price alert">
+          <i data-lucide="bell-plus"></i>
         </button>
       </div>
     </div>
     <div class="detail-meta" id="d-meta">Last updated: 2026-06-06 14:32:11 &nbsp;·&nbsp; <span id="d-change" style="color:var(--color-buy)">+1.23 (+0.65%)</span></div>
     <div class="chart-tabs">
-      <button class="chart-tab active" onclick="setChartType('line', this)">Line</button>
-      <button class="chart-tab" onclick="setChartType('candle', this)">Candle</button>
+      <button class="chart-tab active" onclick="setChartType('line', this)" title="Line chart">
+        <i data-lucide="chart-line"></i>
+      </button>
+      <button class="chart-tab" onclick="setChartType('candle', this)" title="Candlestick chart">
+        <i data-lucide="chart-candlestick"></i>
+      </button>
     </div>
     <div id="main-chart"></div>
+    <div class="tf-tabs" id="tf-tabs">
+      <button class="tf-tab active" data-tf="1D" onclick="setTimeframe('1D', this)">1D</button>
+      <button class="tf-tab" data-tf="1W" onclick="setTimeframe('1W', this)">1W</button>
+      <button class="tf-tab" data-tf="1M" onclick="setTimeframe('1M', this)">1M</button>
+      <button class="tf-tab" data-tf="1Y" onclick="setTimeframe('1Y', this)">1Y</button>
+      <button class="tf-tab" data-tf="All" onclick="setTimeframe('All', this)">All</button>
+    </div>
+    <div class="trade-actions">
+      <button class="trade-btn buy" onclick="goToTrade('buy')">Buy</button>
+      <button class="trade-btn sell" onclick="goToTrade('sell')">Sell</button>
+    </div>
+  </div>
+
+  <!-- Company Info -->
+  <div class="info-section">
+    <div class="info-section-title">About <span id="info-symbol">AAPL</span></div>
+    <div class="info-card" id="info-card"></div>
   </div>
 
   <div style="height:20px"></div>
 
-  <script src="../../data/static.js"></script>
+  <!-- Add Price Alert Modal -->
+  <div class="alert-modal-overlay" id="alert-modal">
+    <div class="alert-modal-card">
+      <div class="alert-modal-hdr">
+        <span class="alert-modal-title">Add Price Alert</span>
+        <button class="alert-modal-close" onclick="closeAlertModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="am-field">
+        <label class="am-label">Symbol</label>
+        <input class="am-inp" id="alert-symbol" readonly />
+      </div>
+      <div class="am-row">
+        <div class="am-field">
+          <label class="am-label">Condition</label>
+          <select class="am-inp am-select" id="alert-condition">
+            <option value="above">Price above</option>
+            <option value="below">Price below</option>
+          </select>
+        </div>
+        <div class="am-field">
+          <label class="am-label">Target Price</label>
+          <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
+        </div>
+      </div>
+      <button class="am-btn-primary" onclick="saveAlert()">Create Alert</button>
+    </div>
+  </div>
+
   <script src="../scripts/chart.js"></script>
   <script>
     // ── Intraday price data (AAPL today) ──
@@ -247,24 +487,134 @@
       TSLA:'linear-gradient(135deg,#dc2626,#9333ea)',
       MSFT:'linear-gradient(135deg,#0ea5e9,#4949AA)',
       GOOGL:'linear-gradient(135deg,#f59e0b,#ef4444)',
+      'MNTB-1':'linear-gradient(135deg,#6366f1,#4949AA)',
+      'TDB-BD':'linear-gradient(135deg,#16a34a,#0ea5e9)',
     };
+
+    // ── Bonds (shown under the "Bonds" market filter) ──
+    const BOND_CARDS = [
+      { symbol:'MNTB-1', name:'Mongolia 1Y Bond', price:1000000, change:0, pct:+12.5 },
+      { symbol:'TDB-BD',  name:'TDB Bond 2029',    price:1000000, change:0, pct:+13.8 },
+    ];
+    const BOND_INTRADAY = {
+      'MNTB-1': [1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000.5,1001,1001,1001.5,1002,1002,1002.5,1003,1003],
+      'TDB-BD': [1000,1000.2,1000.4,1000.5,1000.7,1000.9,1001,1001.1,1001.3,1001.4,1001.6,1001.8,1002,1002.1,1002.3,1002.5,1002.6,1002.8,1003,1003.2],
+    };
+
+    // ── Company info shown below the chart ──
+    const COMPANY_INFO = {
+      AAPL:  { isin:'US0378331005', code:'AAPL', shares:'15,550,061,000', marketCap:'$2.95T', pe:'31.24', prevClose:'188.61', open:'188.80', high:'190.40', low:'188.20', high52:'199.62', low52:'164.08' },
+      NVDA:  { isin:'US67066G1040', code:'NVDA', shares:'24,600,000,000', marketCap:'$21.5T', pe:'58.10', prevClose:'860.20', open:'862.00', high:'876.00', low:'854.00', high52:'974.00', low52:'392.30' },
+      TSLA:  { isin:'US88160R1014', code:'TSLA', shares:'3,190,000,000',  marketCap:'$792.5B', pe:'68.40', prevClose:'251.59', open:'252.00', high:'252.50', low:'247.20', high52:'299.29', low52:'138.80' },
+      MSFT:  { isin:'US5949181045', code:'MSFT', shares:'7,430,000,000',  marketCap:'$3.09T', pe:'35.70', prevClose:'412.75', open:'410.50', high:'415.50', low:'410.20', high52:'430.82', low52:'309.45' },
+      GOOGL: { isin:'US02079K3059', code:'GOOGL',shares:'12,460,000,000', marketCap:'$2.15T', pe:'26.90', prevClose:'171.75', open:'170.20', high:'173.00', low:'170.00', high52:'191.75', low52:'130.67' },
+    };
+    const BOND_INFO = {
+      'MNTB-1': { isin:'MNTB-2027-1', issuer:'Government of Mongolia', coupon:'12.5%', maturity:'2027-03-15', nominal:'₮1,000,000', category:'Class I' },
+      'TDB-BD':  { isin:'MN-TDB-2029', issuer:'Trade & Development Bank', coupon:'13.8%', maturity:'2029-01-20', nominal:'₮1,000,000', category:'Class II' },
+    };
+
+    // ── Market filter (replaces the old "Active" status pill) ──
+    const MARKET_FILTERS = [
+      { key:'active',    label:'Active',    icon:'activity' },
+      { key:'watchlist', label:'Watchlist', icon:'star' },
+      { key:'gainers',   label:'Gainers',   icon:'trending-up' },
+      { key:'losers',    label:'Losers',    icon:'trending-down' },
+      { key:'bonds',     label:'Bonds',     icon:'landmark' },
+    ];
+    let currentFilter = 'watchlist';
+
+    // ── Account balances shown on the home balance card ──
+    const ACCOUNT_BALANCES = {
+      nominal: 50000,
+      mcsd:    0,
+      assets:  2000000.45,
+    };
+    let currentBalType = 'nominal';
+    let homeBalanceVisible = true;
+
+    function formatMNT(v) {
+      return '₮' + v.toLocaleString('en-US', { minimumFractionDigits: v % 1 !== 0 ? 2 : 0, maximumFractionDigits: 2 });
+    }
+
+    // ── Lookup helpers (work across stocks and bonds) ──
+    function findCard(symbol) {
+      return CARDS.find(c => c.symbol === symbol) || BOND_CARDS.find(c => c.symbol === symbol);
+    }
+    function findIntraday(symbol) {
+      return INTRADAY[symbol] || BOND_INTRADAY[symbol] || [];
+    }
 
     let selectedSymbol = 'AAPL';
     let watchlist = new Set(['AAPL', 'NVDA']);
+    let currentTimeframe = '1D';
+    const TIMEFRAME_POINTS = { '1D': 0, '1W': 7, '1M': 30, '1Y': 52, 'All': 120 };
+
+    // ── Generate a deterministic price series for a given timeframe ──
+    function generateSeries(symbol, timeframe) {
+      const intraday = findIntraday(symbol);
+      if (timeframe === '1D' || !intraday.length) return intraday;
+
+      const points = TIMEFRAME_POINTS[timeframe];
+      const last = intraday[intraday.length - 1];
+
+      // Simple deterministic pseudo-random sequence seeded by symbol+timeframe
+      let seed = 0;
+      for (const c of symbol + timeframe) seed = (seed * 31 + c.charCodeAt(0)) % 233280;
+      function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+
+      const data = [];
+      let val = last * (0.85 + rand() * 0.2);
+      for (let i = 0; i < points - 1; i++) {
+        val += (rand() - 0.48) * (last * 0.025);
+        data.push(val);
+      }
+      data.push(last);
+      return data;
+    }
 
     // ── Render stock cards ──
     function renderCards() {
       const container = document.getElementById('stock-cards');
-      container.innerHTML = CARDS.map(s => {
+      let list;
+      let priceUnit = '$';
+
+      if (currentFilter === 'bonds') {
+        list = BOND_CARDS.slice();
+        priceUnit = '₮';
+      } else {
+        list = CARDS.filter(s => {
+          if (currentFilter === 'watchlist') return watchlist.has(s.symbol);
+          if (currentFilter === 'gainers')   return s.pct > 0;
+          if (currentFilter === 'losers')    return s.pct < 0;
+          return true; // active
+        });
+        // Pin the globally selected stock as the first, sticky card
+        const selIdx = list.findIndex(s => s.symbol === selectedSymbol);
+        if (selIdx > 0) {
+          list.unshift(list.splice(selIdx, 1)[0]);
+        } else if (selIdx === -1) {
+          const selCard = CARDS.find(c => c.symbol === selectedSymbol);
+          if (selCard) list.unshift(selCard);
+        }
+      }
+
+      if (!list.length) {
+        container.innerHTML = `<div style="padding:24px 16px;color:var(--color-text-disabled);font-size:13px">No items in this view.</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map((s, i) => {
         const isUp   = s.pct > 0;
         const isFlat = s.pct === 0;
         const cls    = isFlat ? 'flat' : isUp ? 'up' : 'down';
         const sign   = isUp ? '+' : '';
         const sparkColor = isFlat ? '#9CA3AF' : isUp ? 'var(--color-buy)' : 'var(--color-sell)';
-        const data = INTRADAY[s.symbol] || [];
+        const data = findIntraday(s.symbol);
         const isSelected = s.symbol === selectedSymbol;
+        const pinned = currentFilter !== 'bonds' && i === 0;
         return `
-          <div class="stock-card${isSelected?' selected':''}" onclick="selectStock('${s.symbol}')">
+          <div class="stock-card${isSelected?' selected':''}${pinned?' pinned':''}" onclick="selectStock('${s.symbol}')">
             <div class="card-top">
               <div class="ticker-avatar" style="background:${AVATAR_COLORS[s.symbol]||'var(--color-primary)'}">
                 ${s.symbol.slice(0,2)}
@@ -275,7 +625,7 @@
             <div class="card-bottom">
               <div>
                 <div class="card-price-label">Close</div>
-                <div class="card-price">$${s.price.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
+                <div class="card-price">${priceUnit}${s.price.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
               </div>
               <div>${sparkline(data, sparkColor)}</div>
             </div>
@@ -283,16 +633,58 @@
       }).join('');
     }
 
+    // ── Market filter dropdown ──
+    function renderFilterMenu() {
+      const menu = document.getElementById('market-filter-menu');
+      menu.innerHTML = MARKET_FILTERS.map(f => `
+        <div class="dd-item${f.key===currentFilter?' active':''}" data-filter="${f.key}" onclick="selectFilter(event,'${f.key}')">
+          <i data-lucide="${f.icon}"></i> ${f.label}
+        </div>`).join('');
+    }
+
+    function toggleFilterMenu(e) {
+      e.stopPropagation();
+      closeAllDropdowns('market-filter-trigger');
+      document.getElementById('market-filter-trigger').classList.toggle('open');
+      document.getElementById('market-filter-menu').classList.toggle('open');
+      lucide.createIcons();
+    }
+
+    function selectFilter(e, key) {
+      e.stopPropagation();
+      currentFilter = key;
+      const f = MARKET_FILTERS.find(m => m.key === key);
+      document.getElementById('market-filter-label').textContent = f.label;
+      document.getElementById('market-filter-icon').setAttribute('data-lucide', f.icon);
+      renderFilterMenu();
+      closeAllDropdowns();
+      renderCards();
+      lucide.createIcons();
+    }
+
+    // ── Close any open dropdowns (optionally keep one open) ──
+    function closeAllDropdowns(except) {
+      document.querySelectorAll('.dd-trigger.open').forEach(t => {
+        if (t.id !== except) t.classList.remove('open');
+      });
+      document.querySelectorAll('.dd-menu.open').forEach(m => {
+        if (!except || m.closest('.dd-trigger').id !== except) m.classList.remove('open');
+      });
+    }
+    document.addEventListener('click', () => closeAllDropdowns());
+
     // ── Select a stock ──
     function selectStock(symbol) {
       selectedSymbol = symbol;
-      const s = CARDS.find(c => c.symbol === symbol);
+      const s = findCard(symbol);
       if (!s) return;
+      const isBond = !!BOND_CARDS.find(c => c.symbol === symbol);
+      const unit = isBond ? '₮' : '$';
 
       document.getElementById('sel-symbol').textContent = symbol;
       document.getElementById('sel-name').textContent = s.name;
       document.getElementById('d-symbol').textContent = symbol;
-      document.getElementById('d-price').textContent = '$' + s.price.toLocaleString('en-US',{minimumFractionDigits:2});
+      document.getElementById('d-price').textContent = unit + s.price.toLocaleString('en-US',{minimumFractionDigits:2});
 
       const sign   = s.change >= 0 ? '+' : '';
       const color  = s.change >= 0 ? 'var(--color-buy)' : 'var(--color-sell)';
@@ -303,14 +695,23 @@
       const wb = document.getElementById('watch-btn');
       wb.classList.toggle('active', watchlist.has(symbol));
 
+      // Update alert form symbol
+      const as = document.getElementById('alert-symbol');
+      if (as) as.value = symbol;
+
+      // Reset timeframe selector to 1D
+      currentTimeframe = '1D';
+      document.querySelectorAll('.tf-tab').forEach(t => t.classList.toggle('active', t.dataset.tf === '1D'));
+
       renderChart(symbol);
+      renderCompanyInfo(symbol);
       renderCards();
     }
 
     // ── Render main chart ──
     function renderChart(symbol) {
-      const data  = INTRADAY[symbol] || [];
-      const s     = CARDS.find(c => c.symbol === symbol);
+      const data  = generateSeries(symbol, currentTimeframe);
+      const s     = findCard(symbol);
       const isUp  = s && s.pct >= 0;
       const color = isUp ? 'var(--color-buy)' : 'var(--color-sell)';
 
@@ -333,6 +734,34 @@
       renderChart(selectedSymbol);
     }
 
+    // ── Chart timeframe filter ──
+    function setTimeframe(tf, btn) {
+      currentTimeframe = tf;
+      document.querySelectorAll('.tf-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      renderChart(selectedSymbol);
+    }
+
+    // ── Buy / Sell → Trade page ──
+    function goToTrade(side) {
+      try {
+        sessionStorage.setItem('bdsec-trade-symbol', selectedSymbol);
+        sessionStorage.setItem('bdsec-trade-side', side);
+        window.parent.navigateTo('trade');
+      } catch(e) {
+        window.location.href = 'trade.html';
+      }
+    }
+
+    // ── Deposit / Withdraw → their own pages ──
+    function goToBalance(action) {
+      try {
+        window.parent.navigateTo(action);
+      } catch(e) {
+        window.location.href = action + '.html';
+      }
+    }
+
     function toggleWatchlist() {
       const btn = document.getElementById('watch-btn');
       if (watchlist.has(selectedSymbol)) {
@@ -342,15 +771,130 @@
         watchlist.add(selectedSymbol);
         btn.classList.add('active');
       }
+      renderCards();
     }
 
     function showSearch() {
       // Future: open search modal
     }
 
+    // ── Company info section ──
+    function renderCompanyInfo(symbol) {
+      document.getElementById('info-symbol').textContent = symbol;
+      const card = document.getElementById('info-card');
+      const bond = BOND_INFO[symbol];
+
+      if (bond) {
+        card.innerHTML = `
+          <div class="info-row"><span class="info-label">Issuer</span><span class="info-value">${bond.issuer}</span></div>
+          <div class="info-row"><span class="info-label">ISIN</span><span class="info-value">${bond.isin}</span></div>
+          <div class="info-row"><span class="info-label">Coupon Rate</span><span class="info-value">${bond.coupon}</span></div>
+          <div class="info-row"><span class="info-label">Maturity</span><span class="info-value">${bond.maturity}</span></div>
+          <div class="info-row"><span class="info-label">Nominal Value</span><span class="info-value">${bond.nominal}</span></div>
+          <div class="info-row"><span class="info-label">Category</span><span class="info-value">${bond.category}</span></div>
+          <div class="info-toggle" onclick="toggleInfoExtra(this)">
+            Financial Report
+            <i data-lucide="chevron-down"></i>
+          </div>
+          <div class="info-extra">No financial report has been published for this bond yet.</div>`;
+        lucide.createIcons();
+        return;
+      }
+
+      const info = COMPANY_INFO[symbol];
+      if (!info) {
+        card.innerHTML = `<div class="info-row"><span class="info-label">No company information available.</span></div>`;
+        return;
+      }
+      card.innerHTML = `
+        <div class="info-row"><span class="info-label">ISIN</span><span class="info-value">${info.isin}</span></div>
+        <div class="info-row"><span class="info-label">Symbol</span><span class="info-value">${info.code}</span></div>
+        <div class="info-row"><span class="info-label">Shares Outstanding</span><span class="info-value">${info.shares}</span></div>
+        <div class="info-row"><span class="info-label">Market Cap</span><span class="info-value">${info.marketCap}</span></div>
+        <div class="info-row"><span class="info-label">P/E Ratio</span><span class="info-value">${info.pe}</span></div>
+        <div class="info-row"><span class="info-label">Previous Close</span><span class="info-value">$${info.prevClose}</span></div>
+        <div class="info-row"><span class="info-label">Open</span><span class="info-value">$${info.open}</span></div>
+        <div class="info-row"><span class="info-label">Day High</span><span class="info-value">$${info.high}</span></div>
+        <div class="info-row"><span class="info-label">Day Low</span><span class="info-value">$${info.low}</span></div>
+        <div class="info-row"><span class="info-label">52-Week High</span><span class="info-value">$${info.high52}</span></div>
+        <div class="info-row"><span class="info-label">52-Week Low</span><span class="info-value">$${info.low52}</span></div>
+        <div class="info-toggle" onclick="toggleInfoExtra(this)">
+          Financial Report
+          <i data-lucide="chevron-down"></i>
+        </div>
+        <div class="info-extra">Quarterly and annual financial statements for ${symbol} will appear here.</div>`;
+      lucide.createIcons();
+    }
+
+    function toggleInfoExtra(el) {
+      el.classList.toggle('open');
+      el.nextElementSibling.classList.toggle('open');
+    }
+
+    // ── Add price alert modal ──
+    function openAlertModal() {
+      document.getElementById('alert-symbol').value = selectedSymbol;
+      document.getElementById('alert-condition').value = 'above';
+      const s = findCard(selectedSymbol);
+      document.getElementById('alert-price').value = s ? s.price : '';
+      document.getElementById('alert-modal').classList.add('open');
+    }
+
+    function closeAlertModal() {
+      document.getElementById('alert-modal').classList.remove('open');
+    }
+
+    function saveAlert() {
+      const condition = document.getElementById('alert-condition').value;
+      const price = document.getElementById('alert-price').value;
+      if (!price) return;
+      const label = condition === 'above' ? 'rises above' : 'falls below';
+      alert(`Alert created: notify when ${selectedSymbol} ${label} ${price}.`);
+      closeAlertModal();
+    }
+
+    // ── Home balance card ──
+    function toggleHomeBalance() {
+      homeBalanceVisible = !homeBalanceVisible;
+      const icon = document.getElementById('home-bal-eye');
+      icon.setAttribute('data-lucide', homeBalanceVisible ? 'eye' : 'eye-off');
+      renderHomeBalance();
+      lucide.createIcons();
+    }
+
+    function renderHomeBalance() {
+      const val = ACCOUNT_BALANCES[currentBalType];
+      document.getElementById('home-bal-value').textContent =
+        homeBalanceVisible ? formatMNT(val) : '••••••';
+    }
+
+    function toggleBalMenu(e) {
+      e.stopPropagation();
+      closeAllDropdowns('bal-type-trigger');
+      document.getElementById('bal-type-trigger').classList.toggle('open');
+      document.getElementById('bal-type-menu').classList.toggle('open');
+    }
+
+    function selectBalType(e, key) {
+      e.stopPropagation();
+      currentBalType = key;
+      document.querySelectorAll('#bal-type-menu .dd-item').forEach(it => {
+        it.classList.toggle('active', it.dataset.bal === key);
+      });
+      const labels = { nominal:'Nominal', mcsd:'MCSD Account', assets:'Total Assets' };
+      document.getElementById('bal-type-label').textContent = labels[key];
+      renderHomeBalance();
+      closeAllDropdowns();
+    }
+
     // Init
+    currentFilter = 'watchlist';
+    renderFilterMenu();
     renderCards();
     renderChart('AAPL');
+    renderCompanyInfo('AAPL');
+    document.getElementById('alert-symbol').value = 'AAPL';
+    renderHomeBalance();
     document.getElementById('watch-btn').classList.add('active');
     refreshAccountBanner();
     lucide.createIcons();
@@ -390,6 +934,7 @@
         return;
       }
       banner.style.display = 'none';
+      document.getElementById('home-balance-card').style.display = 'block';
     }
   </script>
 </body>
