@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>FAQ — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    .form-body { padding: 0 16px; }
+    .info-section-title { font-size: 14px; font-weight: 700; margin: 6px 0 10px; }
+
+    /* ── Category chips ── */
+    .cat-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 14px; margin: 0 -2px; scrollbar-width: none; }
+    .cat-row::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      flex-shrink: 0; padding: 8px 14px; border-radius: 99px;
+      border: 1.5px solid var(--color-border); background: var(--color-bg-card);
+      font-size: 12px; font-weight: 600; color: var(--color-text-secondary);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .cat-chip.active { border-color: var(--color-primary); color: var(--color-primary); background: rgba(124,58,237,0.1); }
+
+    /* ── Accordion ── */
+    .faq-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; margin-bottom: 10px; overflow: hidden;
+    }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 16px; cursor: pointer; font-size: 13px; font-weight: 700;
+    }
+    .faq-q .chev { width: 16px; height: 16px; color: var(--color-text-disabled); flex-shrink: 0; transition: transform 0.2s ease; }
+    .faq-card.open .faq-q .chev { transform: rotate(180deg); color: var(--color-primary); }
+    .faq-a {
+      max-height: 0; overflow: hidden; transition: max-height 0.25s ease;
+      font-size: 12.5px; color: var(--color-text-secondary); line-height: 1.6;
+    }
+    .faq-a-inner { padding: 0 16px 16px; }
+    .faq-card.open .faq-a { max-height: 240px; }
+
+    .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">FAQ</div>
+  </div>
+
+  <div class="form-body">
+    <div class="cat-row" id="cat-row"></div>
+    <div id="faq-list"></div>
+  </div>
+
+  <div style="height:24px"></div>
+
+  <script>
+    function goBack() {
+      try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
+    }
+
+    const FAQS = [
+      { cat: 'Account', q: 'How do I open a trading account?', a: 'Go to the menu and select "Open Account". Fill in your personal details, complete the KYC verification with a valid ID, and submit. Your account is usually approved within 1 business day.' },
+      { cat: 'Account', q: 'How do I complete KYC verification?', a: 'Navigate to the KYC page from your profile menu, upload a clear photo of your government-issued ID and a selfie, then submit for review. Verification typically takes a few hours.' },
+      { cat: 'Deposit', q: 'How long does a deposit take to process?', a: 'Bank transfer deposits are usually credited within 30 minutes during business hours. You can track the status of your deposit on the Deposit page under "Deposit History".' },
+      { cat: 'Deposit', q: 'Is there a minimum deposit amount?', a: 'The minimum deposit amount is 10,000₮. There is no maximum limit, but large deposits may require additional verification.' },
+      { cat: 'Withdraw', q: 'How long does a withdrawal take?', a: 'Withdrawal requests are processed within 1 business day. A small processing fee applies and is shown before you confirm your request.' },
+      { cat: 'Withdraw', q: 'Can I cancel a withdrawal request?', a: 'Yes, as long as the request status is still "Pending" you can cancel it from the Withdrawal History list, and the amount will be returned to your balance immediately.' },
+      { cat: 'Trading', q: 'What are the trading hours?', a: 'The secondary market is open Monday to Friday, 10:00 – 13:00 (UTC+8), excluding public holidays. Primary market (IPO) subscriptions follow their own announced schedules.' },
+      { cat: 'Trading', q: 'What fees apply to trades?', a: 'Brokerage commission is charged on each executed order. The exact rate depends on your account type and is shown in the order confirmation before you submit a trade.' },
+      { cat: 'Security', q: 'Is my account secure?', a: 'We use bank-level encryption and two-factor verification for sensitive actions. Never share your password or one-time codes with anyone, including BDSec staff.' },
+      { cat: 'Security', q: 'I forgot my password, what should I do?', a: 'On the login screen, tap "Forgot password" and follow the steps to reset it via your registered email or phone number.' },
+    ];
+
+    let activeCat = 'All';
+
+    function renderCats() {
+      const cats = ['All', ...new Set(FAQS.map(f => f.cat))];
+      document.getElementById('cat-row').innerHTML = cats.map(c =>
+        `<div class="cat-chip ${c === activeCat ? 'active' : ''}" onclick="selectCat('${c}')">${c}</div>`
+      ).join('');
+    }
+
+    function selectCat(c) {
+      activeCat = c;
+      renderCats();
+      renderFaqs();
+    }
+
+    function renderFaqs() {
+      const items = activeCat === 'All' ? FAQS : FAQS.filter(f => f.cat === activeCat);
+      const el = document.getElementById('faq-list');
+      if (!items.length) {
+        el.innerHTML = '<div class="hist-empty">No questions in this category</div>';
+        return;
+      }
+      el.innerHTML = items.map((f, i) => `
+        <div class="faq-card" id="faq-${i}">
+          <div class="faq-q" onclick="toggleFaq(${i})">
+            <span>${f.q}</span>
+            <i data-lucide="chevron-down" class="chev"></i>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+        </div>`).join('');
+      lucide.createIcons();
+    }
+
+    function toggleFaq(i) {
+      document.getElementById(`faq-${i}`).classList.toggle('open');
+    }
+
+    renderCats();
+    renderFaqs();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

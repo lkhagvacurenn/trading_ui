@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Order History — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    .info-section-title { font-size: 14px; font-weight: 700; margin: 18px 0 10px; }
+
+    /* ── Search bar ── */
+    .search-bar {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 16px 10px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+    .search-bar svg { width: 16px; height: 16px; color: var(--color-text-disabled); flex-shrink: 0; }
+    .search-bar input {
+      border: none; background: transparent; outline: none;
+      font-size: 13px; color: var(--color-text-primary); flex: 1;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .search-bar input::placeholder { color: var(--color-text-disabled); }
+
+    /* ── Filters / sort ── */
+    .hist-toolbar { margin: 0 16px 10px; display: flex; flex-direction: column; gap: 8px; }
+    .hist-filters { display: flex; gap: 8px; }
+    .hist-select {
+      flex: 1;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px; font-weight: 600; color: var(--color-text-primary);
+      font-family: 'IBM Plex Sans', sans-serif;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+      padding-right: 28px; cursor: pointer;
+    }
+    .hist-sort-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px; font-weight: 600; color: var(--color-text-primary);
+      cursor: pointer; white-space: nowrap;
+    }
+    .hist-sort-btn svg { width: 13px; height: 13px; transition: transform 0.15s ease; }
+    .hist-sort-btn.desc svg { transform: rotate(180deg); }
+
+    /* ── History list ── */
+    .hist-card {
+      margin: 0 16px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .hist-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .hist-item:last-child { border-bottom: none; }
+    .hist-icon {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hist-icon svg { width: 18px; height: 18px; }
+    .hist-icon.side-buy  { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .hist-icon.side-sell { background: rgba(239,68,68,0.15); color: var(--color-sell); }
+    .hist-info { flex: 1; min-width: 0; }
+    .hist-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .hist-sub { font-size: 11px; color: var(--color-text-secondary); font-family: 'IBM Plex Mono', monospace; margin-bottom: 2px; }
+    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
+    .hist-right { text-align: right; flex-shrink: 0; }
+    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-bottom: 4px; }
+    .hist-status { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; display: inline-block; }
+    .hist-status.status-pending   { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .hist-status.status-filled    { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .hist-status.status-cancelled { background: rgba(239,68,68,0.15); color: var(--color-sell); }
+    .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
+    .hist-detail-link {
+      display: flex; align-items: center; gap: 2px; justify-content: flex-end;
+      font-size: 11px; font-weight: 700; color: var(--color-primary); cursor: pointer; margin-top: 4px;
+    }
+    .hist-detail-link svg { width: 12px; height: 12px; }
+
+    .hist-pagination {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin: 14px 16px 0;
+    }
+    .page-btn {
+      min-width: 30px; height: 30px; padding: 0 6px;
+      border-radius: 8px; border: 1px solid var(--color-border);
+      background: var(--color-bg-card); color: var(--color-text-primary);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .page-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .page-btn:disabled { opacity: 0.4; cursor: default; }
+    .page-btn svg { width: 14px; height: 14px; }
+
+    /* ── Detail modal ── */
+    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">Order History</div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <i data-lucide="search"></i>
+    <input type="text" id="oh-search" placeholder="Search by symbol…" oninput="renderOrders()" />
+  </div>
+
+  <!-- Filters / sort -->
+  <div class="hist-toolbar">
+    <div class="hist-filters">
+      <select class="hist-select" id="oh-side-filter" onchange="renderOrders()">
+        <option value="all">All Sides</option>
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+      </select>
+      <select class="hist-select" id="oh-status-filter" onchange="renderOrders()">
+        <option value="all">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="filled">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <button class="hist-sort-btn desc" id="oh-sort-btn" onclick="toggleSort()">
+        <i data-lucide="arrow-down"></i> Date
+      </button>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div class="hist-card" id="oh-list"></div>
+  <div class="hist-pagination" id="oh-pagination"></div>
+
+  <!-- Order detail modal -->
+  <div class="modal-overlay" id="detail-modal-overlay" onclick="if(event.target===this) closeDetailModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Order Details</div>
+      <div class="verify-card" id="detail-content"></div>
+    </div>
+  </div>
+
+  <div style="height:20px"></div>
+
+  <script>
+    const ORDER_HISTORY = [
+      { id:'ORD-1042', symbol:'AAPL',  side:'buy',  qty:50,  price:189.84, total:9492.00,  fee:18.98, date:'2026-06-09 09:31', status:'pending',   orderType:'Market', duration:'Day Order' },
+      { id:'ORD-1041', symbol:'NVDA',  side:'buy',  qty:10,  price:862.10, total:8621.00,  fee:17.24, date:'2026-06-08 14:32', status:'filled',    orderType:'Market', duration:'Day Order' },
+      { id:'ORD-1040', symbol:'AAPL',  side:'sell', qty:5,   price:189.75, total:948.75,   fee:1.90,  date:'2026-06-08 14:32', status:'filled',    orderType:'Limit',  duration:'Day Order' },
+      { id:'ORD-1039', symbol:'TSLA',  side:'buy',  qty:30,  price:252.60, total:7578.00,  fee:15.16, date:'2026-06-06 09:31', status:'filled',    orderType:'Market', duration:'Day Order' },
+      { id:'ORD-1038', symbol:'MSFT',  side:'buy',  qty:20,  price:411.80, total:8236.00,  fee:16.47, date:'2026-06-04 10:18', status:'filled',    orderType:'Limit',  duration:'GTC' },
+      { id:'ORD-1037', symbol:'AAPL',  side:'buy',  qty:20,  price:181.20, total:3624.00,  fee:7.25,  date:'2026-06-04 10:18', status:'filled',    orderType:'Market', duration:'Day Order' },
+      { id:'ORD-1036', symbol:'GOOGL', side:'buy',  qty:15,  price:171.25, total:2568.75,  fee:5.14,  date:'2026-06-02 10:05', status:'filled',    orderType:'Market', duration:'Day Order' },
+      { id:'ORD-1035', symbol:'AMZN',  side:'buy',  qty:25,  price:178.40, total:4460.00,  fee:8.92,  date:'2026-05-31 11:20', status:'cancelled', orderType:'Limit',  duration:'Day Order' },
+      { id:'ORD-1034', symbol:'TSLA',  side:'sell', qty:10,  price:191.20, total:1912.00,  fee:3.82,  date:'2026-05-28 13:47', status:'filled',    orderType:'Market', duration:'Day Order' },
+      { id:'ORD-1033', symbol:'AAPL',  side:'buy',  qty:15,  price:185.40, total:2781.00,  fee:5.56,  date:'2026-05-20 11:12', status:'cancelled', orderType:'Limit',  duration:'Day Order' },
+      { id:'ORD-1032', symbol:'NVDA',  side:'sell', qty:4,   price:845.30, total:3381.20,  fee:6.76,  date:'2026-05-18 15:02', status:'filled',    orderType:'Market', duration:'Day Order' },
+      { id:'ORD-1031', symbol:'MSFT',  side:'buy',  qty:8,   price:402.10, total:3216.80,  fee:6.43,  date:'2026-05-15 09:48', status:'pending',   orderType:'Limit',  duration:'GTC' },
+      { id:'ORD-1030', symbol:'AMZN',  side:'sell', qty:12,  price:182.90, total:2194.80,  fee:4.39,  date:'2026-05-12 13:10', status:'filled',    orderType:'Market', duration:'Day Order' },
+    ];
+
+    const HIST_PAGE_SIZE = 5;
+    let ohPage = 1;
+    let ohSortDesc = true;
+
+    function formatUSD(v) {
+      return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderOrders() {
+      let list = ORDER_HISTORY.slice();
+
+      const sideFilter   = document.getElementById('oh-side-filter').value;
+      const statusFilter = document.getElementById('oh-status-filter').value;
+      const q            = document.getElementById('oh-search').value.trim().toLowerCase();
+
+      if (sideFilter !== 'all')   list = list.filter(o => o.side === sideFilter);
+      if (statusFilter !== 'all') list = list.filter(o => o.status === statusFilter);
+      if (q) list = list.filter(o => o.symbol.toLowerCase().includes(q));
+
+      list.sort((a, b) => {
+        const da = new Date(a.date.replace(' ', 'T'));
+        const db = new Date(b.date.replace(' ', 'T'));
+        return ohSortDesc ? db - da : da - db;
+      });
+
+      const totalPages = Math.max(1, Math.ceil(list.length / HIST_PAGE_SIZE));
+      if (ohPage > totalPages) ohPage = totalPages;
+      const pageItems = list.slice((ohPage - 1) * HIST_PAGE_SIZE, ohPage * HIST_PAGE_SIZE);
+
+      const el = document.getElementById('oh-list');
+      if (!pageItems.length) {
+        el.innerHTML = '<div class="hist-empty">No orders found</div>';
+      } else {
+        el.innerHTML = pageItems.map(o => `
+          <div class="hist-item">
+            <div class="hist-icon side-${o.side}"><i data-lucide="${o.side === 'buy' ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
+            <div class="hist-info">
+              <div class="hist-title">${o.side === 'buy' ? 'Buy' : 'Sell'} ${o.symbol}</div>
+              <div class="hist-sub">${o.qty} shares @ ${formatUSD(o.price)}</div>
+              <div class="hist-date">${o.date}</div>
+            </div>
+            <div class="hist-right">
+              <div class="hist-amount">${formatUSD(o.total)}</div>
+              <div class="hist-status status-${o.status}">${o.status === 'filled' ? 'Completed' : o.status.charAt(0).toUpperCase() + o.status.slice(1)}</div>
+              <div class="hist-detail-link" onclick="showOrderDetail('${o.id}')">Details <i data-lucide="chevron-right"></i></div>
+            </div>
+          </div>`).join('');
+      }
+
+      renderPagination(totalPages);
+      lucide.createIcons();
+    }
+
+    function renderPagination(totalPages) {
+      const el = document.getElementById('oh-pagination');
+      if (totalPages <= 1) { el.innerHTML = ''; return; }
+      let html = `<button class="page-btn" onclick="gotoPage(${ohPage - 1})" ${ohPage === 1 ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button>`;
+      for (let p = 1; p <= totalPages; p++) {
+        html += `<button class="page-btn ${p === ohPage ? 'active' : ''}" onclick="gotoPage(${p})">${p}</button>`;
+      }
+      html += `<button class="page-btn" onclick="gotoPage(${ohPage + 1})" ${ohPage === totalPages ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button>`;
+      el.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function gotoPage(p) {
+      ohPage = p;
+      renderOrders();
+    }
+
+    function toggleSort() {
+      ohSortDesc = !ohSortDesc;
+      document.getElementById('oh-sort-btn').classList.toggle('desc', ohSortDesc);
+      renderOrders();
+    }
+
+    function showOrderDetail(id) {
+      const o = ORDER_HISTORY.find(x => x.id === id);
+      if (!o) return;
+      document.getElementById('detail-content').innerHTML = `
+        <div class="verify-row"><span>Order ID</span><span>${o.id}</span></div>
+        <div class="verify-row"><span>Symbol</span><span>${o.symbol}</span></div>
+        <div class="verify-row"><span>Side</span><span>${o.side === 'buy' ? 'Buy' : 'Sell'}</span></div>
+        <div class="verify-row"><span>Order Type</span><span>${o.orderType}</span></div>
+        <div class="verify-row"><span>Duration</span><span>${o.duration}</span></div>
+        <div class="verify-row"><span>Quantity</span><span>${o.qty.toLocaleString()}</span></div>
+        <div class="verify-row"><span>Price</span><span>${formatUSD(o.price)}</span></div>
+        <div class="verify-row"><span>Fee</span><span>${formatUSD(o.fee)}</span></div>
+        <div class="verify-row total"><span>Total</span><span>${formatUSD(o.total + o.fee)}</span></div>
+        <div class="verify-row"><span>Date</span><span>${o.date}</span></div>
+        <div class="verify-row"><span>Status</span><span>${o.status === 'filled' ? 'Completed' : o.status.charAt(0).toUpperCase() + o.status.slice(1)}</span></div>
+      `;
+      document.getElementById('detail-modal-overlay').classList.add('show');
+      notifyModalOpen();
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detail-modal-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+
+    function goBack() {
+      try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
+    }
+
+    function notifyModalOpen() {
+      try { window.parent.postMessage({ type: 'modal-open' }, '*'); } catch (e) {}
+    }
+    function notifyModalClose() {
+      try { window.parent.postMessage({ type: 'modal-close' }, '*'); } catch (e) {}
+    }
+
+    renderOrders();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

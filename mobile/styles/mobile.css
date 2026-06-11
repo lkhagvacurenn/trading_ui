@@ -9,7 +9,7 @@ html { height: 100%; }
 
 body {
   margin: 0;
-  font-family: 'Inter', ui-sans-serif, system-ui;
+  font-family: 'IBM Plex Sans', ui-sans-serif, system-ui;
   background: var(--color-bg);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
@@ -29,7 +29,7 @@ body.no-scroll { overflow: hidden; }
 button, a, [role="button"] { min-height: 36px; }
 
 /* ── Mono numbers ── */
-.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
 
 /* ── Utility: hide scrollbar ── */
 .no-scrollbar { scrollbar-width: none; }

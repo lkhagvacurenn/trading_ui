@@ -8,12 +8,12 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { height: 100%; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
 
     /* ── Sub-page header ── */
     .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
@@ -37,7 +37,7 @@
       width: 100%; background: var(--color-bg-card);
       border: 1.5px solid var(--color-border); border-radius: 10px;
       padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
-      outline: none; transition: border-color 0.15s; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.15s; font-family: 'IBM Plex Sans', sans-serif;
     }
     .inp:focus { border-color: var(--color-primary); }
     .inp::placeholder { color: var(--color-text-disabled); }
@@ -57,24 +57,36 @@
     .btn-primary:hover { opacity: 0.88; }
 
     /* ── Account toggle ── */
-    .acct-toggle { display: flex; gap: 8px; }
+    .acct-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .acct-toggle-btn {
-      flex: 1; padding: 12px; border-radius: 10px;
+      min-height: 58px; padding: 10px 12px; border-radius: 14px;
       border: 1.5px solid var(--color-border); background: var(--color-bg-card);
-      color: var(--color-text-secondary); font-size: 13px; font-weight: 700;
+      color: var(--color-text-primary); font-size: 13px; font-weight: 700;
       cursor: pointer; transition: all 0.15s ease;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
+      display: flex; align-items: center; justify-content: flex-start; gap: 10px;
+      text-align: left;
     }
-    .acct-toggle-btn .acct-check { display: none; width: 15px; height: 15px; flex-shrink: 0; }
+    .acct-toggle-btn .acct-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: var(--color-bg-input); color: var(--color-text-secondary);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .acct-toggle-btn .acct-icon svg { width: 17px; height: 17px; }
+    .acct-toggle-btn .acct-text { flex: 1; min-width: 0; line-height: 1.2; }
+    .acct-toggle-btn .acct-check {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid var(--color-border); flex-shrink: 0;
+    }
     .acct-toggle-btn.active {
-      border-color: var(--color-primary); color: #fff;
-      background: var(--color-primary);
+      border-color: var(--color-primary); color: var(--color-primary);
+      background: rgba(73,73,170,0.12);
     }
-    .acct-toggle-btn.active .acct-check { display: inline-flex; }
+    .acct-toggle-btn.active .acct-icon { background: var(--color-primary); color: #fff; }
+    .acct-toggle-btn.active .acct-check { border: 5px solid var(--color-primary); background: #fff; }
 
     /* ── Amount input ── */
     .amount-field { position: relative; }
-    .amount-field .inp { padding-right: 44px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; }
+    .amount-field .inp { padding-right: 44px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 18px; }
     .amount-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--color-text-secondary); }
 
     /* ── Charge confirmation modal (bottom sheet) ── */
@@ -99,7 +111,7 @@
     .modal-handle { width: 36px; height: 4px; background: var(--color-border); border-radius: 99px; margin: 6px auto 16px; }
     .charge-info { text-align: center; margin-bottom: 18px; }
     .charge-info-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 4px; }
-    .charge-info-amount { font-size: 26px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--color-primary); }
+    .charge-info-amount { font-size: 26px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: var(--color-primary); }
 
     /* ── Payment channel list ── */
     .channel-list { border: 1px solid var(--color-border); border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
@@ -136,7 +148,7 @@
     .transfer-holder { font-size: 12px; color: var(--color-text-secondary); }
     .copy-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
     .copy-label { font-size: 11px; color: var(--color-text-disabled); margin-bottom: 2px; }
-    .copy-value { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .copy-value { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
     .copy-btn {
       width: 34px; height: 34px; border-radius: 10px;
       border: 1px solid var(--color-border); background: var(--color-bg-input);
@@ -165,7 +177,7 @@
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .saved-card-icon svg { width: 20px; height: 20px; }
-    .saved-card-number { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .saved-card-number { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
     .saved-card-name { font-size: 12px; color: var(--color-text-secondary); }
     .card-remove-btn {
       margin-left: auto; width: 30px; height: 30px; border-radius: 50%;
@@ -192,9 +204,9 @@
     .hist-icon.deposit { background: rgba(0,192,118,0.15); color: var(--color-buy); }
     .hist-info { flex: 1; min-width: 0; }
     .hist-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
-    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'JetBrains Mono', monospace; }
+    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
     .hist-right { text-align: right; flex-shrink: 0; }
-    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-bottom: 4px; }
     .hist-amount.deposit { color: var(--color-buy); }
     .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
 
@@ -222,8 +234,16 @@
     <div class="field-wrap">
       <label class="field-label">Select Account</label>
       <div class="acct-toggle">
-        <button class="acct-toggle-btn active" data-acct="nominal" onclick="selectDepAccount('nominal')"><i data-lucide="check-circle" class="acct-check"></i>Nominal Account</button>
-        <button class="acct-toggle-btn" data-acct="mcsd" onclick="selectDepAccount('mcsd')"><i data-lucide="check-circle" class="acct-check"></i>MCSD Account</button>
+        <button class="acct-toggle-btn active" data-acct="nominal" onclick="selectDepAccount('nominal')">
+          <span class="acct-icon"><i data-lucide="wallet"></i></span>
+          <span class="acct-text">Nominal Account</span>
+          <span class="acct-check"></span>
+        </button>
+        <button class="acct-toggle-btn" data-acct="mcsd" onclick="selectDepAccount('mcsd')">
+          <span class="acct-icon"><i data-lucide="landmark"></i></span>
+          <span class="acct-text">MCSD Account</span>
+          <span class="acct-check"></span>
+        </button>
       </div>
     </div>
 
@@ -243,6 +263,7 @@
   <div class="form-body">
     <div class="info-section-title">Deposit History</div>
     <div class="hist-card" id="dep-history"></div>
+    <div class="hist-pagination" id="dep-history-pagination"></div>
   </div>
 
   <div style="height:24px"></div>
@@ -510,15 +531,24 @@
       renderDepositHistory();
     }
 
+    let depHistPage = 1;
+    const DEP_HIST_PAGE_SIZE = 5;
+
     function renderDepositHistory() {
       const list = getDepositHistory().slice().sort((a, b) =>
         new Date(b.date.replace(' ', 'T')) - new Date(a.date.replace(' ', 'T')));
       const el = document.getElementById('dep-history');
       if (!list.length) {
         el.innerHTML = '<div class="hist-empty">No deposit history yet</div>';
+        document.getElementById('dep-history-pagination').innerHTML = '';
         return;
       }
-      el.innerHTML = list.map(d => `
+
+      const totalPages = Math.max(1, Math.ceil(list.length / DEP_HIST_PAGE_SIZE));
+      if (depHistPage > totalPages) depHistPage = totalPages;
+      const pageItems = list.slice((depHistPage - 1) * DEP_HIST_PAGE_SIZE, depHistPage * DEP_HIST_PAGE_SIZE);
+
+      el.innerHTML = pageItems.map(d => `
         <div class="hist-item">
           ${statusIconLarge(d.status)}
           <div class="hist-info">
@@ -530,7 +560,25 @@
             <div class="hist-detail-link" onclick="showDepositDetail('${d.id}')">Details <i data-lucide="chevron-right"></i></div>
           </div>
         </div>`).join('');
+
+      renderDepHistPagination(totalPages);
       lucide.createIcons();
+    }
+
+    function renderDepHistPagination(totalPages) {
+      const el = document.getElementById('dep-history-pagination');
+      if (totalPages <= 1) { el.innerHTML = ''; return; }
+      let html = `<button class="page-btn" onclick="gotoDepHistPage(${depHistPage - 1})" ${depHistPage === 1 ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button>`;
+      for (let p = 1; p <= totalPages; p++) {
+        html += `<button class="page-btn ${p === depHistPage ? 'active' : ''}" onclick="gotoDepHistPage(${p})">${p}</button>`;
+      }
+      html += `<button class="page-btn" onclick="gotoDepHistPage(${depHistPage + 1})" ${depHistPage === totalPages ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button>`;
+      el.innerHTML = html;
+    }
+
+    function gotoDepHistPage(p) {
+      depHistPage = p;
+      renderDepositHistory();
     }
 
     function showDepositDetail(id) {

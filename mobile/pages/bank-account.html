@@ -8,12 +8,12 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { height: 100%; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
 
     /* ── Sub-page header ── */
     .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
@@ -34,7 +34,7 @@
       width: 100%; background: var(--color-bg-card);
       border: 1.5px solid var(--color-border); border-radius: 10px;
       padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
-      outline: none; transition: border-color 0.15s; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.15s; font-family: 'IBM Plex Sans', sans-serif;
     }
     .inp:focus { border-color: var(--color-primary); }
     .inp::placeholder { color: var(--color-text-disabled); }
@@ -62,6 +62,20 @@
     }
     .btn-outline:hover { border-color: var(--color-primary); }
     .btn-outline svg { width: 16px; height: 16px; }
+    .btn-row { display: flex; gap: 10px; margin-bottom: 18px; }
+    .btn-row .btn-outline,
+    .btn-row .btn-primary { width: auto; flex: 1; margin: 0; }
+
+    /* ── Confirm modal body ── */
+    .confirm-modal-body { text-align: center; padding: 4px 8px 18px; }
+    .confirm-modal-icon {
+      width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 12px;
+      background: rgba(239,68,68,0.12); color: var(--color-sell);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .confirm-modal-icon svg { width: 24px; height: 24px; }
+    .confirm-modal-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .confirm-modal-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
 
     /* ── Bank logo picker (horizontal scroll) ── */
     .bank-scroll {
@@ -100,12 +114,8 @@
     .acct-logo { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
     .acct-info { flex: 1; min-width: 0; }
     .acct-bank-name { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-    .acct-number { font-size: 12px; color: var(--color-text-secondary); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+    .acct-number { font-size: 12px; color: var(--color-text-secondary); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
     .acct-holder { font-size: 11px; color: var(--color-text-disabled); margin-top: 2px; }
-    .default-tag {
-      font-size: 10px; font-weight: 700; color: var(--color-primary);
-      background: rgba(73,73,170,0.12); border-radius: 6px; padding: 2px 6px;
-    }
     .acct-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
     .acct-action-btn {
       width: 32px; height: 32px; border-radius: 8px;
@@ -118,8 +128,7 @@
     .acct-action-btn svg { width: 14px; height: 14px; }
     .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
 
-    /* ── Add account form ── */
-    #add-form { display: none; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+    .inp[readonly] { color: var(--color-text-secondary); cursor: default; background: var(--color-bg-input); }
 
     /* ── Toast ── */
     .toast {
@@ -144,11 +153,35 @@
     <div class="info-section-title">Linked Accounts</div>
     <div id="acct-list"></div>
 
-    <button class="btn-outline" id="add-toggle-btn" onclick="toggleAddForm()">
+    <button class="btn-outline" id="add-toggle-btn" onclick="openAddModal()">
       <i data-lucide="plus"></i> Add New Account
     </button>
+  </div>
 
-    <div id="add-form">
+  <div style="height:24px"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- Delete confirmation modal -->
+  <div class="modal-overlay" id="delete-modal-overlay" onclick="if(event.target===this) closeDeleteModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="confirm-modal-body">
+        <div class="confirm-modal-icon"><i data-lucide="trash-2"></i></div>
+        <div class="confirm-modal-title">Remove this bank account?</div>
+        <div class="confirm-modal-text">This action cannot be undone. You'll need to add it again to use it for deposits or withdrawals.</div>
+      </div>
+      <div class="btn-row" style="margin-bottom:0">
+        <button class="btn-outline" onclick="closeDeleteModal()">Keep Account</button>
+        <button class="btn-primary" style="margin:0;background:var(--color-sell)" onclick="confirmDeleteAccount()">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add account modal -->
+  <div class="modal-overlay" id="add-modal-overlay" onclick="if(event.target===this) closeAddModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="info-section-title">Add New Account</div>
       <div class="field-wrap">
         <label class="field-label">Select Bank</label>
         <div class="bank-scroll" id="bank-scroll"></div>
@@ -156,26 +189,24 @@
       </div>
       <div class="field-wrap">
         <label class="field-label">Account Number</label>
-        <input class="inp" id="new-acct-number" placeholder="Enter your account number" inputmode="numeric" oninput="clearFieldError('new-acct-number','number-error')" />
+        <input class="inp" id="new-acct-number" placeholder="Enter your account number" inputmode="numeric" oninput="onAcctNumberInput()" />
         <div class="field-error" id="number-error">Please enter a valid account number</div>
       </div>
       <div class="field-wrap">
         <label class="field-label">Account Holder Name</label>
-        <input class="inp" id="new-acct-holder" placeholder="Name on account" oninput="clearFieldError('new-acct-holder','holder-error')" />
-        <div class="field-error" id="holder-error">Please enter the account holder's name</div>
+        <input class="inp" id="new-acct-holder" placeholder="Auto-filled from account number" readonly />
       </div>
       <button class="btn-primary" style="margin-bottom:0" onclick="saveBankAccount()">Save</button>
     </div>
   </div>
-
-  <div style="height:24px"></div>
-  <div class="toast" id="toast"></div>
 
   <script src="../scripts/wallet-data.js"></script>
   <script>
     function goBack() {
       try { window.parent.navigateTo('balance'); } catch (e) { window.history.back(); }
     }
+
+    const CURRENT_USER_NAME = 'Lkhagvasuren Battsengel';
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -207,14 +238,27 @@
       document.getElementById(inputId).classList.remove('error');
     }
 
-    function toggleAddForm() {
-      const form = document.getElementById('add-form');
-      const open = form.style.display === 'block';
-      form.style.display = open ? 'none' : 'block';
-      document.getElementById('add-toggle-btn').style.display = open ? 'flex' : 'none';
-      document.querySelectorAll('#add-form .field-error').forEach(e => e.classList.remove('show'));
-      document.querySelectorAll('#add-form .inp, #bank-scroll').forEach(e => e.classList.remove('error'));
-      if (!open) form.scrollIntoView({ behavior: 'smooth' });
+    /* ── Account holder name is derived from the account number, not typed by the user ── */
+    function onAcctNumberInput() {
+      clearFieldError('new-acct-number', 'number-error');
+      const number = document.getElementById('new-acct-number').value.trim();
+      document.getElementById('new-acct-holder').value = number ? CURRENT_USER_NAME : '';
+    }
+
+    function openAddModal() {
+      document.getElementById('add-modal-overlay').classList.add('show');
+      notifyModalOpen();
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal-overlay').classList.remove('show');
+      notifyModalClose();
+      document.querySelectorAll('#add-modal-overlay .field-error').forEach(e => e.classList.remove('show'));
+      document.querySelectorAll('#add-modal-overlay .inp, #bank-scroll').forEach(e => e.classList.remove('error'));
+      document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+      selectedBankIndex = null;
+      document.getElementById('new-acct-number').value = '';
+      document.getElementById('new-acct-holder').value = '';
     }
 
     function maskAccountNumber(num) {
@@ -234,31 +278,40 @@
         <div class="acct-card">
           <img class="acct-logo" src="../../public/bank logo/${a.logo}" alt="${a.bank}" />
           <div class="acct-info">
-            <div class="acct-bank-name">${a.bank} ${a.isDefault ? '<span class="default-tag">Default</span>' : ''}</div>
+            <div class="acct-bank-name">${a.bank}</div>
             <div class="acct-number">${maskAccountNumber(a.number)}</div>
             <div class="acct-holder">${a.holder}</div>
           </div>
           <div class="acct-actions">
-            ${a.isDefault ? '' : `<button class="acct-action-btn" title="Set as default" onclick="setDefaultAccount('${a.id}')"><i data-lucide="star"></i></button>`}
             <button class="acct-action-btn danger" title="Delete" onclick="deleteAccount('${a.id}')"><i data-lucide="trash-2"></i></button>
           </div>
         </div>`).join('');
       lucide.createIcons();
     }
 
-    function setDefaultAccount(id) {
-      const accounts = getBankAccounts().map(a => ({ ...a, isDefault: a.id === id }));
-      setBankAccounts(accounts);
-      renderAccounts();
-      showToast('Default account updated');
-    }
+    let deleteTargetId = null;
 
     function deleteAccount(id) {
+      deleteTargetId = id;
+      document.getElementById('delete-modal-overlay').classList.add('show');
+      notifyModalOpen();
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('delete-modal-overlay').classList.remove('show');
+      notifyModalClose();
+      deleteTargetId = null;
+    }
+
+    function confirmDeleteAccount() {
+      const id = deleteTargetId;
+      if (!id) return;
       let accounts = getBankAccounts().filter(a => a.id !== id);
       if (accounts.length && !accounts.some(a => a.isDefault)) accounts[0].isDefault = true;
       setBankAccounts(accounts);
+      closeDeleteModal();
       renderAccounts();
-      showToast('Account deleted');
+      showToast('Account removed');
     }
 
     function saveBankAccount() {
@@ -275,11 +328,6 @@
         document.getElementById('new-acct-number').classList.add('error');
         valid = false;
       }
-      if (!holder) {
-        document.getElementById('holder-error').classList.add('show');
-        document.getElementById('new-acct-holder').classList.add('error');
-        valid = false;
-      }
       if (!valid) return;
 
       const accounts = getBankAccounts();
@@ -293,12 +341,7 @@
       });
       setBankAccounts(accounts);
 
-      document.getElementById('new-acct-number').value = '';
-      document.getElementById('new-acct-holder').value = '';
-      document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
-      selectedBankIndex = null;
-
-      toggleAddForm();
+      closeAddModal();
       renderAccounts();
       showToast('New account added');
     }

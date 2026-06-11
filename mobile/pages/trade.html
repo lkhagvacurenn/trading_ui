@@ -8,11 +8,11 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
-    * { box-sizing:border-box; }
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
     /* ── Stock selector header ── */
     .stock-header {
@@ -33,29 +33,20 @@
     .sel-name  { font-size:11px; color:var(--color-text-secondary); }
 
     .price-info { text-align:right; }
-    .price-big { font-size:18px; font-weight:800; font-family:'JetBrains Mono',monospace; }
+    .price-big { font-size:18px; font-weight:800; font-family:'IBM Plex Mono',monospace; }
     .price-date { font-size:10px; color:var(--color-text-disabled); margin-top:1px; }
     .price-change { font-size:11px; font-weight:600; margin-top:1px; }
     .price-change.up   { color:var(--color-buy); }
     .price-change.down { color:var(--color-sell); }
 
-    /* Action icons row */
-    .header-icons { display:flex; gap:8px; margin-left:8px; }
-    .icon-sq {
-      width:32px; height:32px; border-radius:9px;
-      background:var(--color-bg-input); border:none; cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      color:var(--color-text-secondary);
-    }
-    .icon-sq.star-active { color:#f59e0b; background:rgba(245,158,11,0.12); }
-    .icon-sq svg { width:15px; height:15px; }
-
-    /* ── Content tabs ── */
+    /* ── Content tabs + action icons row ── */
     .content-tabs {
-      display:flex; background:var(--color-bg-card);
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--color-bg-card);
       border-bottom:1px solid var(--color-border);
       padding:0 16px;
     }
+    .ct-tabs-group { display:flex; }
     .ct-tab {
       padding:12px 14px; font-size:14px; font-weight:600;
       color:var(--color-text-disabled); border:none; background:transparent;
@@ -64,9 +55,22 @@
     }
     .ct-tab.active { color:var(--color-primary); border-bottom-color:var(--color-primary); }
 
+    /* Action icons (same style as Home page detail actions) */
+    .detail-actions { display:flex; gap:8px; }
+    .icon-btn {
+      width:32px; height:32px; border-radius:50%;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-secondary);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .icon-btn.active { color: #f59e0b; background: rgba(245,158,11,0.15); }
+    .icon-btn.active svg { fill: currentColor; }
+    .icon-btn svg { width: 15px; height: 15px; }
+
     /* ── Order book ── */
     .orderbook-grid {
-      display:grid; grid-template-columns:1fr 1fr;
+      display:grid; grid-template-columns:1fr;
       gap:8px; padding:12px 16px;
     }
     .ob-panel {
@@ -75,39 +79,41 @@
       border-radius:12px; overflow:hidden;
     }
     .ob-header {
-      display:grid; grid-template-columns:1fr 1fr 1fr;
+      display:grid; grid-template-columns:1fr 1fr 1fr 1fr;
       padding:8px 10px;
       border-bottom:1px solid var(--color-border);
     }
     .ob-header span { font-size:10px; font-weight:700; color:var(--color-text-disabled); text-transform:uppercase; }
+    .ob-header span:nth-child(1) { text-align:left; }
     .ob-header span:nth-child(2) { text-align:center; color:var(--color-buy); }
-    .ob-header span:nth-child(3) { text-align:right; color:var(--color-sell); }
+    .ob-header span:nth-child(3) { text-align:center; color:var(--color-sell); }
+    .ob-header span:nth-child(4) { text-align:right; }
 
     .ob-row {
-      display:grid; grid-template-columns:1fr 1fr 1fr;
-      padding:5px 10px;
+      display:grid; grid-template-columns:1fr 1fr 1fr 1fr;
+      padding:6px 10px;
       border-bottom:1px solid rgba(255,255,255,0.03);
-      position:relative; cursor:pointer;
+      position:relative; cursor:pointer; align-items:center;
     }
     .ob-row:last-child { border-bottom:none; }
     .ob-row:hover { background:rgba(255,255,255,0.03); }
 
-    /* Depth bar */
+    /* Depth bars */
     .ob-row-depth-buy {
       position:absolute; left:0; top:0; bottom:0;
       background:rgba(0,192,118,0.07);
-      pointer-events:none; border-radius:0;
+      pointer-events:none;
     }
     .ob-row-depth-sell {
       position:absolute; right:0; top:0; bottom:0;
       background:rgba(239,68,68,0.07);
-      pointer-events:none; border-radius:0;
+      pointer-events:none;
     }
 
-    .ob-qty   { font-size:11px; color:var(--color-text-secondary); font-family:'JetBrains Mono',monospace; }
-    .ob-price-buy  { font-size:11px; font-weight:600; color:var(--color-buy); text-align:center; font-family:'JetBrains Mono',monospace; }
-    .ob-price-sell { font-size:11px; font-weight:600; color:var(--color-sell); text-align:center; font-family:'JetBrains Mono',monospace; }
-    .ob-qty-right  { font-size:11px; color:var(--color-text-secondary); text-align:right; font-family:'JetBrains Mono',monospace; }
+    .ob-qty       { font-size:11px; color:var(--color-text-secondary); font-family:'IBM Plex Mono',monospace; text-align:left; position:relative; }
+    .ob-price-buy  { font-size:11px; font-weight:600; color:var(--color-buy); text-align:center; font-family:'IBM Plex Mono',monospace; position:relative; }
+    .ob-price-sell { font-size:11px; font-weight:600; color:var(--color-sell); text-align:center; font-family:'IBM Plex Mono',monospace; position:relative; }
+    .ob-qty-right  { font-size:11px; color:var(--color-text-secondary); text-align:right; font-family:'IBM Plex Mono',monospace; position:relative; }
 
     /* Executed orders panel */
     .exec-panel {
@@ -124,7 +130,19 @@
       border-bottom:1px solid var(--color-border);
     }
     .exec-cols span { font-size:10px; color:var(--color-text-disabled); font-weight:600; }
+    .exec-cols span:nth-child(2) { text-align:center; }
     .exec-cols span:last-child { text-align:right; }
+    .exec-row {
+      display:grid; grid-template-columns:1fr 1fr 1fr;
+      padding:6px 12px;
+      border-bottom:1px solid rgba(255,255,255,0.03);
+    }
+    .exec-row:last-child { border-bottom:none; }
+    .exec-row span { font-size:11px; font-family:'IBM Plex Mono',monospace; color:var(--color-text-secondary); }
+    .exec-row span:nth-child(2) { text-align:center; font-weight:700; }
+    .exec-row span.up   { color:var(--color-buy); }
+    .exec-row span.down { color:var(--color-sell); }
+    .exec-row span:last-child { text-align:right; color:var(--color-text-disabled); font-weight:400; }
     .exec-empty { padding:14px 12px; text-align:center; font-size:11px; color:var(--color-text-disabled); }
 
     /* ── Trade form ── */
@@ -135,14 +153,6 @@
 
     /* Order type + Buy/Sell row */
     .form-row { display:flex; gap:8px; }
-
-    .type-select {
-      flex:1; display:flex; align-items:center; justify-content:space-between;
-      background:var(--color-bg-card); border:1px solid var(--color-border);
-      border-radius:10px; padding:10px 12px;
-      font-size:13px; font-weight:600; cursor:pointer;
-    }
-    .type-select svg { width:16px; height:16px; color:var(--color-text-disabled); }
 
     .buy-sell-toggle {
       display:flex; flex:1; background:var(--color-bg-card);
@@ -158,14 +168,45 @@
     .bst-btn.active-buy  { background:var(--color-buy);  color:#fff; }
     .bst-btn.active-sell { background:var(--color-sell); color:#fff; }
 
-    /* GTC selector */
-    .gtc-select {
-      display:flex; align-items:center; justify-content:space-between;
-      background:var(--color-bg-card); border:1px solid var(--color-border);
-      border-radius:10px; padding:10px 14px;
-      font-size:13px; font-weight:500; cursor:pointer;
+    /* ── Generic dropdown trigger/menu ── */
+    .dd-trigger {
+      display:flex; align-items:center; gap:6px;
+      background:var(--color-bg-card);
+      border:1px solid var(--color-border);
+      border-radius:10px;
+      padding:10px 12px;
+      font-size:13px; font-weight:600; cursor:pointer;
+      position:relative; color:var(--color-text-primary);
+      flex:1; justify-content:space-between;
     }
-    .gtc-select svg { width:16px; height:16px; color:var(--color-text-disabled); }
+    .dd-trigger svg { width:16px; height:16px; color:var(--color-text-disabled); flex-shrink:0; }
+    .dd-trigger svg.chev { transition:transform 0.15s ease; }
+    .dd-trigger.open svg.chev { transform:rotate(180deg); }
+    .dd-menu {
+      position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:30;
+      background:var(--color-bg-card);
+      border:1px solid var(--color-border);
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);
+      overflow:hidden; display:none; max-height:240px; overflow-y:auto;
+    }
+    .dd-menu.open { display:block; }
+    .dd-item {
+      display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+      padding:11px 14px;
+      font-size:13px; font-weight:600;
+      cursor:pointer; transition:background 0.12s ease;
+      color:var(--color-text-primary);
+      border-bottom:1px solid var(--color-border);
+    }
+    .dd-item:last-child { border-bottom:none; }
+    .dd-item:hover { background:var(--color-bg-input); }
+    .dd-item.active { color:var(--color-primary); }
+    .dd-item .dd-item-sub { font-size:11px; font-weight:400; color:var(--color-text-disabled); }
+
+    /* GTC date field */
+    .gtc-date-wrap { display:none; }
+    .gtc-date-wrap.show { display:block; }
 
     /* Balance row */
     .balance-row {
@@ -173,7 +214,7 @@
       font-size:12px;
     }
     .bal-label { color:var(--color-text-disabled); }
-    .bal-value { font-family:'JetBrains Mono',monospace; font-weight:600; color:var(--color-text-primary); }
+    .bal-value { font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--color-text-primary); }
     .bal-link  { color:var(--color-link); font-size:11px; cursor:pointer; }
 
     /* Number inputs */
@@ -181,11 +222,12 @@
       width:100%; background:var(--color-bg-card);
       border:1px solid var(--color-border); border-radius:10px;
       padding:12px 14px;
-      font-size:15px; font-weight:600; font-family:'JetBrains Mono',monospace;
+      font-size:15px; font-weight:600; font-family:'IBM Plex Mono',monospace;
       color:var(--color-text-primary); outline:none;
     }
     .num-input::placeholder { color:var(--color-text-disabled); font-size:13px; font-weight:400; }
     .num-input:focus { border-color:var(--color-primary); }
+    .num-input.error { border-color: var(--color-sell); }
 
     /* Price +/- row */
     .price-row { display:flex; gap:6px; align-items:center; }
@@ -210,6 +252,9 @@
       background:none; border:none; cursor:pointer; padding:0;
     }
 
+    /* Order summary */
+    .order-summary { margin-top:2px; }
+
     /* Submit */
     .submit-btn {
       width:100%; padding:14px;
@@ -220,6 +265,126 @@
     .submit-btn:hover { opacity:0.88; }
     .submit-btn.buy-btn  { background:linear-gradient(90deg,#00C076,#00E08F); }
     .submit-btn.sell-btn { background:linear-gradient(90deg,#EF4444,#FF5B5B); }
+
+    /* ── Trading history (this stock) ── */
+    .info-section-title { font-size:14px; font-weight:700; margin:6px 0 10px; }
+    .hist-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:16px; overflow:hidden; }
+    .hist-item { display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid var(--color-border); }
+    .hist-item:last-child { border-bottom:none; }
+    .hist-icon { width:36px; height:36px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .hist-icon svg { width:16px; height:16px; }
+    .hist-icon.side-buy  { background:rgba(0,192,118,0.15); color:var(--color-buy); }
+    .hist-icon.side-sell { background:rgba(239,68,68,0.15); color:var(--color-sell); }
+    .hist-info { flex:1; min-width:0; }
+    .hist-title { font-size:13px; font-weight:700; margin-bottom:2px; }
+    .hist-sub { font-size:11px; color:var(--color-text-secondary); font-family:'IBM Plex Mono',monospace; }
+    .hist-date { font-size:11px; color:var(--color-text-disabled); font-family:'IBM Plex Mono',monospace; margin-top:2px; }
+    .hist-right { text-align:right; flex-shrink:0; }
+    .hist-amount { font-size:13px; font-weight:700; font-family:'IBM Plex Mono',monospace; }
+    .hist-status { font-size:10px; font-weight:700; margin-top:4px; padding:2px 8px; border-radius:99px; display:inline-block; }
+    .hist-status.status-pending   { background:rgba(245,158,11,0.15); color:#f59e0b; }
+    .hist-status.status-filled    { background:rgba(0,192,118,0.15); color:var(--color-buy); }
+    .hist-status.status-cancelled { background:rgba(239,68,68,0.15); color:var(--color-sell); }
+    .hist-empty { padding:32px; text-align:center; color:var(--color-text-disabled); font-size:13px; }
+
+    /* ── Trading history header / tabs ── */
+    .hist-header { display:flex; align-items:center; justify-content:space-between; margin:6px 0 10px; }
+    .hist-header .info-section-title { margin:0; }
+    .view-all-btn {
+      display:flex; align-items:center; gap:2px;
+      font-size:12px; font-weight:700; color:var(--color-primary);
+      background:none; border:none; cursor:pointer; padding:0;
+    }
+    .view-all-btn svg { width:14px; height:14px; }
+    .hist-tabs { display:flex; gap:6px; margin-bottom:10px; }
+    .hist-tab {
+      flex:1; padding:8px; font-size:12px; font-weight:700; text-align:center;
+      border-radius:10px; border:1px solid var(--color-border);
+      background:var(--color-bg-card); color:var(--color-text-disabled);
+      cursor:pointer; transition:all 0.15s ease;
+    }
+    .hist-tab.active { color:#fff; background:var(--color-primary); border-color:var(--color-primary); }
+
+    /* ── Modal title ── */
+    .modal-title { font-size:15px; font-weight:700; margin-bottom:14px; text-align:center; }
+    .btn-row { display:flex; gap:10px; margin-top:6px; }
+    .btn-outline {
+      flex:1; padding:14px; border-radius:12px; border:1.5px solid var(--color-border);
+      background:transparent; color:var(--color-text-primary); font-size:14px; font-weight:700;
+      cursor:pointer; transition:border-color 0.15s;
+    }
+    .btn-outline:hover { border-color:var(--color-primary); }
+    .btn-row .submit-btn { flex:1; margin:0; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--color-text-primary); color: var(--color-bg);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 300;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* ── Add alert modal (same as Home page) ── */
+    .alert-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 280;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: flex-end; justify-content: center;
+    }
+    .alert-modal-overlay.open { display: flex; }
+    .alert-modal-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: 20px 20px 0 0; width: 100%; max-width: 430px;
+      padding: 20px 16px 26px;
+    }
+    .alert-modal-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .alert-modal-title { font-size: 15px; font-weight: 800; }
+    .alert-modal-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary);
+    }
+    .alert-modal-close svg { width: 16px; height: 16px; }
+
+    .am-label {
+      font-size: 12px; font-weight: 600; color: var(--color-text-secondary);
+      margin-bottom: 6px; display: block;
+    }
+    .am-field { margin-bottom: 14px; }
+    .am-inp {
+      width: 100%;
+      background: var(--color-bg-input);
+      border: 1.5px solid var(--color-border);
+      border-radius: 10px;
+      padding: 13px 14px;
+      font-size: 14px;
+      color: var(--color-text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .am-inp:focus { border-color: var(--color-primary); }
+    .am-inp[readonly] { color: var(--color-text-secondary); cursor: default; }
+    .am-inp.am-select {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px; cursor: pointer;
+    }
+    .am-row { display: flex; gap: 10px; }
+    .am-row .am-field { flex: 1; }
+    .am-btn-primary {
+      width: 100%; padding: 14px;
+      background: var(--color-primary);
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer;
+      transition: opacity 0.15s;
+      margin-top: 4px;
+    }
+    .am-btn-primary:hover { opacity: 0.88; }
   </style>
 </head>
 <body>
@@ -233,36 +398,38 @@
       <span class="sel-name">Apple Inc.</span>
       <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div class="price-info">
-        <div class="price-big">$189.84</div>
-        <div class="price-date">2026-06-06</div>
-        <div class="price-change up">+1.23 (+0.65%)</div>
-      </div>
-      <div class="header-icons">
-        <button class="icon-sq" title="Compare"><i data-lucide="git-compare-arrows"></i></button>
-        <button class="icon-sq star-active" id="star-btn" onclick="toggleStar(this)" title="Watchlist">
-          <i data-lucide="star"></i>
-        </button>
-      </div>
+    <div class="price-info">
+      <div class="price-big">$189.84</div>
+      <div class="price-date">2026-06-06</div>
+      <div class="price-change up">+1.23 (+0.65%)</div>
     </div>
   </div>
 
-  <!-- Content Tabs -->
+  <!-- Content Tabs + Actions -->
   <div class="content-tabs">
-    <button class="ct-tab active" onclick="switchTab('book', this)">Order Book</button>
-    <button class="ct-tab" onclick="switchTab('chart', this)">Chart</button>
+    <div class="ct-tabs-group">
+      <button class="ct-tab active" onclick="switchTab('book', this)">Order Book</button>
+      <button class="ct-tab" onclick="switchTab('chart', this)">Chart</button>
+    </div>
+    <div class="detail-actions">
+      <button class="icon-btn active" id="watch-btn" onclick="toggleWatchlist()" title="Watchlist">
+        <i data-lucide="star"></i>
+      </button>
+      <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Add price alert">
+        <i data-lucide="bell-plus"></i>
+      </button>
+    </div>
   </div>
 
   <!-- Order Book Tab -->
   <div id="tab-book">
     <div class="orderbook-grid">
-      <!-- Bids (Buy) + Asks (Sell) combined in one panel -->
-      <div class="ob-panel" style="grid-column:1/-1">
+      <div class="ob-panel">
         <div class="ob-header">
           <span>Qty (Buy)</span>
-          <span style="text-align:center;color:var(--color-buy)">Bid &nbsp; &nbsp; Ask</span>
-          <span style="text-align:right;color:var(--color-sell)">Qty (Sell)</span>
+          <span>Bid</span>
+          <span>Ask</span>
+          <span>Qty (Sell)</span>
         </div>
         <div id="orderbook-rows"></div>
       </div>
@@ -276,7 +443,7 @@
         <span>Price</span>
         <span>Time</span>
       </div>
-      <div class="exec-empty">No trades yet</div>
+      <div id="exec-rows"></div>
     </div>
     <div style="height:10px"></div>
   </div>
@@ -290,10 +457,20 @@
   <div class="trade-form">
     <!-- Order type + Buy/Sell -->
     <div class="form-row">
-      <button class="type-select" onclick="openOrderType()">
+      <div class="dd-trigger" id="order-type-trigger" onclick="toggleDropdown('order-type', event)">
         <span id="order-type-label">Market</span>
-        <i data-lucide="chevrons-up-down"></i>
-      </button>
+        <i data-lucide="chevron-down" class="chev"></i>
+        <div class="dd-menu" id="order-type-menu">
+          <div class="dd-item active" onclick="selectOrderType(event,'market','Market')">
+            <span>Market</span>
+            <span class="dd-item-sub">Execute immediately at best price</span>
+          </div>
+          <div class="dd-item" onclick="selectOrderType(event,'conditional','Conditional')">
+            <span>Conditional</span>
+            <span class="dd-item-sub">Execute only when your price is met</span>
+          </div>
+        </div>
+      </div>
       <div class="buy-sell-toggle">
         <button class="bst-btn active-buy" id="btn-buy"  onclick="setSide('buy')">Buy</button>
         <button class="bst-btn"           id="btn-sell" onclick="setSide('sell')">Sell</button>
@@ -301,10 +478,29 @@
     </div>
 
     <!-- Duration -->
-    <button class="gtc-select" onclick="openDuration()">
-      <span id="duration-label">Good Till Cancelled (GTC)</span>
-      <i data-lucide="chevrons-up-down"></i>
-    </button>
+    <div class="dd-trigger" id="duration-trigger" onclick="toggleDropdown('duration', event)">
+      <span id="duration-label">Day Order</span>
+      <i data-lucide="chevron-down" class="chev"></i>
+      <div class="dd-menu" id="duration-menu">
+        <div class="dd-item active" onclick="selectDuration(event,'day','Day Order')">
+          <span>Day Order</span>
+          <span class="dd-item-sub">Valid until end of today's session</span>
+        </div>
+        <div class="dd-item" onclick="selectDuration(event,'date','Good Till Date')">
+          <span>Good Till Date</span>
+          <span class="dd-item-sub">Valid until a date you specify</span>
+        </div>
+        <div class="dd-item" onclick="selectDuration(event,'gtc','Good Till Cancelled')">
+          <span>Good Till Cancelled</span>
+          <span class="dd-item-sub">Stays active until you cancel it</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GTC specified date -->
+    <div class="gtc-date-wrap" id="gtc-date-wrap">
+      <input class="num-input" type="date" id="gtc-date-input" />
+    </div>
 
     <!-- Balance -->
     <div class="balance-row">
@@ -316,14 +512,16 @@
     </div>
 
     <!-- Quantity -->
-    <input class="num-input" type="number" min="1" id="qty-input" placeholder="Quantity" />
+    <input class="num-input" type="number" min="1" id="qty-input" placeholder="Quantity" oninput="updateOrderSummary(); clearFieldError('qty-input','qty-error')" />
+    <div class="field-error" id="qty-error">Please enter a valid quantity</div>
 
     <!-- Price -->
     <div class="price-row">
       <button class="pm-btn" onclick="adjustPrice(-1)">−</button>
-      <input class="num-input" type="number" id="price-input" placeholder="Price" value="189.84" />
+      <input class="num-input" type="number" id="price-input" placeholder="Price" value="189.84" oninput="updateOrderSummary(); clearFieldError('price-input','price-error')" />
       <button class="pm-btn" onclick="adjustPrice(+1)">+</button>
     </div>
+    <div class="field-error" id="price-error">Please enter a valid price</div>
 
     <!-- Step -->
     <div class="step-row">
@@ -331,11 +529,87 @@
       <button class="step-btn" onclick="setMarketPrice()">Use Market Price</button>
     </div>
 
+    <!-- Order summary -->
+    <div class="verify-card order-summary">
+      <div class="verify-row"><span>Total</span><span id="ord-total">$0.00</span></div>
+      <div class="verify-row"><span>Fee (0.2%)</span><span id="ord-fee">$0.00</span></div>
+      <div class="verify-row total"><span>Total with Fee</span><span id="ord-total-fee">$0.00</span></div>
+    </div>
+
     <!-- Submit -->
     <button class="submit-btn buy-btn" id="submit-btn" onclick="placeOrder()">
       Buy AAPL
     </button>
   </div>
+
+  <!-- Trading History (this stock) -->
+  <div class="trade-form" style="padding-top:0">
+    <div class="hist-header">
+      <div class="info-section-title">Trading History — AAPL</div>
+      <button class="view-all-btn" onclick="viewAllHistory()">
+        View All <i data-lucide="chevron-right"></i>
+      </button>
+    </div>
+    <div class="hist-tabs">
+      <button class="hist-tab active" id="hist-tab-pending"   onclick="switchHistTab('pending', this)">Pending</button>
+      <button class="hist-tab"        id="hist-tab-completed" onclick="switchHistTab('completed', this)">Completed</button>
+      <button class="hist-tab"        id="hist-tab-cancelled" onclick="switchHistTab('cancelled', this)">Cancelled</button>
+    </div>
+    <div class="hist-card" id="trade-history"></div>
+  </div>
+
+  <!-- Verify Order modal -->
+  <div class="modal-overlay" id="verify-modal-overlay" onclick="if(event.target===this) closeVerifyModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Verify Order</div>
+      <div class="verify-card">
+        <div class="verify-row"><span>Side</span><span id="vf-side">Buy</span></div>
+        <div class="verify-row"><span>Symbol</span><span id="vf-symbol">AAPL</span></div>
+        <div class="verify-row"><span>Order Type</span><span id="vf-order-type">Market</span></div>
+        <div class="verify-row"><span>Duration</span><span id="vf-duration">Day Order</span></div>
+        <div class="verify-row"><span>Quantity</span><span id="vf-qty">0</span></div>
+        <div class="verify-row"><span>Price</span><span id="vf-price">$0.00</span></div>
+        <div class="verify-row"><span>Total</span><span id="vf-total">$0.00</span></div>
+        <div class="verify-row"><span>Fee (0.2%)</span><span id="vf-fee">$0.00</span></div>
+        <div class="verify-row total"><span>Total with Fee</span><span id="vf-total-fee">$0.00</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-outline" onclick="closeVerifyModal()">Cancel</button>
+        <button class="submit-btn buy-btn" id="vf-confirm-btn" onclick="confirmOrder()">Confirm Order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Price Alert modal -->
+  <div class="alert-modal-overlay" id="alert-modal">
+    <div class="alert-modal-card">
+      <div class="alert-modal-hdr">
+        <span class="alert-modal-title">Add Price Alert</span>
+        <button class="alert-modal-close" onclick="closeAlertModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="am-field">
+        <label class="am-label">Symbol</label>
+        <input class="am-inp" id="alert-symbol" readonly />
+      </div>
+      <div class="am-row">
+        <div class="am-field">
+          <label class="am-label">Condition</label>
+          <select class="am-inp am-select" id="alert-condition">
+            <option value="above">Price above</option>
+            <option value="below">Price below</option>
+          </select>
+        </div>
+        <div class="am-field">
+          <label class="am-label">Target Price</label>
+          <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
+        </div>
+      </div>
+      <button class="am-btn-primary" onclick="saveAlert()">Create Alert</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
   <div style="height:16px"></div>
 
@@ -362,23 +636,87 @@
     function renderOrderBook() {
       const el = document.getElementById('orderbook-rows');
       el.innerHTML = OB_DATA.map(row => {
-        const buyDepth  = (row.buyQty  / maxBuyQty  * 100).toFixed(0);
-        const sellDepth = (row.sellQty / maxSellQty * 100).toFixed(0);
+        const buyDepth  = (row.buyQty  / maxBuyQty  * 50).toFixed(0);
+        const sellDepth = (row.sellQty / maxSellQty * 50).toFixed(0);
         return `
           <div class="ob-row">
             <div class="ob-row-depth-buy"  style="width:${buyDepth}%"></div>
             <div class="ob-row-depth-sell" style="width:${sellDepth}%"></div>
             <span class="ob-qty">${row.buyQty.toLocaleString()}</span>
             <span class="ob-price-buy">${row.bid.toFixed(2)}</span>
-            <span style="display:none"></span>
-          </div>
-          <div class="ob-row" style="background:rgba(239,68,68,0.02)">
-            <div class="ob-row-depth-sell" style="width:${sellDepth}%"></div>
-            <span class="ob-qty"></span>
-            <span class="ob-price-sell" style="text-align:right;padding-right:4px">${row.ask.toFixed(2)}</span>
+            <span class="ob-price-sell">${row.ask.toFixed(2)}</span>
             <span class="ob-qty-right">${row.sellQty.toLocaleString()}</span>
           </div>`;
       }).join('');
+    }
+
+    // ── Executed orders (sample) ──
+    const EXECUTED_ORDERS = [
+      { qty:50,   price:189.84, time:'14:32:05', dir:'up'   },
+      { qty:120,  price:189.83, time:'14:31:58', dir:'down' },
+      { qty:75,   price:189.85, time:'14:31:42', dir:'up'   },
+      { qty:200,  price:189.84, time:'14:31:30', dir:'down' },
+      { qty:18,   price:189.86, time:'14:31:15', dir:'up'   },
+      { qty:340,  price:189.82, time:'14:30:58', dir:'down' },
+      { qty:60,   price:189.83, time:'14:30:40', dir:'up'   },
+      { qty:95,   price:189.81, time:'14:30:22', dir:'down' },
+      { qty:410,  price:189.85, time:'14:30:05', dir:'up'   },
+      { qty:27,   price:189.84, time:'14:29:51', dir:'down' },
+    ];
+
+    function renderExecutedOrders() {
+      const el = document.getElementById('exec-rows');
+      el.innerHTML = EXECUTED_ORDERS.map(o => `
+        <div class="exec-row">
+          <span>${o.qty.toLocaleString()}</span>
+          <span class="${o.dir}">${o.price.toFixed(2)}</span>
+          <span>${o.time}</span>
+        </div>`).join('');
+    }
+
+    // ── Trading history for this stock (sample) ──
+    const TRADE_HISTORY = [
+      { side:'buy',  qty:50,  price:189.84, total:9492.00,  date:'2026-06-06 09:31', status:'filled'    },
+      { side:'buy',  qty:20,  price:182.10, total:3642.00,  date:'2026-06-02 10:05', status:'filled'    },
+      { side:'sell', qty:10,  price:191.20, total:1912.00,  date:'2026-05-28 13:47', status:'filled'    },
+      { side:'buy',  qty:15,  price:185.40, total:2781.00,  date:'2026-05-20 11:12', status:'cancelled' },
+      { side:'buy',  qty:5,   price:189.50, total:947.50,   date:'2026-06-09 15:02', status:'pending'   },
+    ];
+
+    let currentHistTab = 'pending';
+    function switchHistTab(tab, btn) {
+      currentHistTab = tab;
+      document.querySelectorAll('.hist-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTradeHistory();
+    }
+
+    function viewAllHistory() {
+      try { window.parent.navigateTo('order-history'); } catch (e) {}
+    }
+
+    function renderTradeHistory() {
+      const el = document.getElementById('trade-history');
+      const statusKey = currentHistTab === 'completed' ? 'filled' : currentHistTab;
+      const items = TRADE_HISTORY.filter(t => t.status === statusKey).slice(0, 5);
+      if (!items.length) {
+        el.innerHTML = `<div class="hist-empty">No ${currentHistTab} orders for this stock</div>`;
+        return;
+      }
+      el.innerHTML = items.map(t => `
+        <div class="hist-item">
+          <div class="hist-icon side-${t.side}"><i data-lucide="${t.side === 'buy' ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
+          <div class="hist-info">
+            <div class="hist-title">${t.side === 'buy' ? 'Buy' : 'Sell'} AAPL</div>
+            <div class="hist-sub">${t.qty} shares @ $${t.price.toFixed(2)}</div>
+            <div class="hist-date">${t.date}</div>
+          </div>
+          <div class="hist-right">
+            <div class="hist-amount">$${t.total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+            <div class="hist-status status-${t.status}">${t.status.charAt(0).toUpperCase() + t.status.slice(1)}</div>
+          </div>
+        </div>`).join('');
+      lucide.createIcons();
     }
 
     // ── Tab switch ──
@@ -404,36 +742,181 @@
       sub.textContent = (side==='buy' ? 'Buy' : 'Sell') + ' AAPL';
     }
 
+    // ── Order type / duration dropdowns ──
+    function toggleDropdown(name, e) {
+      e.stopPropagation();
+      const trigger = document.getElementById(`${name}-trigger`);
+      const menu = document.getElementById(`${name}-menu`);
+      const willOpen = !trigger.classList.contains('open');
+      closeAllDropdowns();
+      if (willOpen) { trigger.classList.add('open'); menu.classList.add('open'); }
+    }
+    function closeAllDropdowns() {
+      document.querySelectorAll('.dd-trigger.open').forEach(t => t.classList.remove('open'));
+      document.querySelectorAll('.dd-menu.open').forEach(m => m.classList.remove('open'));
+    }
+    document.addEventListener('click', () => closeAllDropdowns());
+
+    function selectOrderType(e, key, label) {
+      e.stopPropagation();
+      document.getElementById('order-type-label').textContent = label;
+      document.querySelectorAll('#order-type-menu .dd-item').forEach(it => it.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      closeAllDropdowns();
+    }
+
+    function selectDuration(e, key, label) {
+      e.stopPropagation();
+      document.getElementById('duration-label').textContent = label;
+      document.querySelectorAll('#duration-menu .dd-item').forEach(it => it.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      document.getElementById('gtc-date-wrap').classList.toggle('show', key === 'date');
+      closeAllDropdowns();
+    }
+
     // ── Price stepper ──
     const STEP = 0.01;
     function adjustPrice(dir) {
       const inp = document.getElementById('price-input');
       const val = parseFloat(inp.value) || 189.84;
       inp.value = (val + dir * STEP).toFixed(2);
+      updateOrderSummary();
     }
     function setMarketPrice() {
       document.getElementById('price-input').value = '189.84';
+      updateOrderSummary();
+    }
+
+    // ── Order summary ──
+    const FEE_RATE = 0.002;
+    function updateOrderSummary() {
+      const qty = parseFloat(document.getElementById('qty-input').value) || 0;
+      const price = parseFloat(document.getElementById('price-input').value) || 0;
+      const total = qty * price;
+      const fee = total * FEE_RATE;
+      document.getElementById('ord-total').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('ord-fee').textContent = `$${fee.toFixed(2)}`;
+      document.getElementById('ord-total-fee').textContent = `$${(total + fee).toFixed(2)}`;
+    }
+
+    // ── Inline field errors ──
+    function showFieldError(inputId, errId, msg) {
+      document.getElementById(inputId).classList.add('error');
+      const errEl = document.getElementById(errId);
+      errEl.textContent = msg;
+      errEl.classList.add('show');
+    }
+    function clearFieldError(inputId, errId) {
+      document.getElementById(inputId).classList.remove('error');
+      document.getElementById(errId).classList.remove('show');
+    }
+
+    // ── Toast ──
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    // ── Modal open/close notifications ──
+    function notifyModalOpen() {
+      try { window.parent.postMessage({ type: 'modal-open' }, '*'); } catch (e) {}
+    }
+    function notifyModalClose() {
+      try { window.parent.postMessage({ type: 'modal-close' }, '*'); } catch (e) {}
     }
 
     // ── Place order ──
     function placeOrder() {
-      const qty   = document.getElementById('qty-input').value;
-      const price = document.getElementById('price-input').value;
-      if (!qty || qty < 1) { alert('Please enter a valid quantity'); return; }
-      const side  = currentSide.toUpperCase();
-      const total = (parseFloat(qty) * parseFloat(price)).toFixed(2);
-      if (confirm(`${side} ${qty} × AAPL @ $${price} = $${total}\n\nConfirm order?`)) {
-        alert('Order submitted successfully!');
+      const qtyInput   = document.getElementById('qty-input');
+      const priceInput = document.getElementById('price-input');
+      const qty   = parseFloat(qtyInput.value);
+      const price = parseFloat(priceInput.value);
+      let hasError = false;
+
+      if (!qty || qty < 1) {
+        showFieldError('qty-input', 'qty-error', 'Please enter a valid quantity');
+        hasError = true;
+      } else {
+        clearFieldError('qty-input', 'qty-error');
       }
+
+      if (!price || price <= 0) {
+        showFieldError('price-input', 'price-error', 'Please enter a valid price');
+        hasError = true;
+      } else {
+        clearFieldError('price-input', 'price-error');
+      }
+
+      if (hasError) return;
+
+      openVerifyModal(qty, price);
+    }
+
+    // ── Verify Order modal ──
+    function openVerifyModal(qty, price) {
+      const side  = currentSide === 'buy' ? 'Buy' : 'Sell';
+      const total = qty * price;
+      const fee   = total * FEE_RATE;
+
+      document.getElementById('vf-side').textContent = side;
+      document.getElementById('vf-symbol').textContent = 'AAPL';
+      document.getElementById('vf-order-type').textContent = document.getElementById('order-type-label').textContent;
+      document.getElementById('vf-duration').textContent = document.getElementById('duration-label').textContent;
+      document.getElementById('vf-qty').textContent = qty;
+      document.getElementById('vf-price').textContent = `$${price.toFixed(2)}`;
+      document.getElementById('vf-total').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('vf-fee').textContent = `$${fee.toFixed(2)}`;
+      document.getElementById('vf-total-fee').textContent = `$${(total + fee).toFixed(2)}`;
+
+      const confirmBtn = document.getElementById('vf-confirm-btn');
+      confirmBtn.className = 'submit-btn ' + (currentSide === 'buy' ? 'buy-btn' : 'sell-btn');
+      confirmBtn.textContent = `Confirm ${side}`;
+
+      document.getElementById('verify-modal-overlay').classList.add('show');
+      notifyModalOpen();
+    }
+    function closeVerifyModal() {
+      document.getElementById('verify-modal-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+    function confirmOrder() {
+      closeVerifyModal();
+      showToast('Order submitted successfully!');
     }
 
     function toggleStar(btn) { btn.classList.toggle('star-active'); }
+    function toggleWatchlist() { document.getElementById('watch-btn').classList.toggle('active'); }
+
+    // ── Add Price Alert modal (same as Home page) ──
+    function openAlertModal() {
+      document.getElementById('alert-symbol').value = 'AAPL';
+      document.getElementById('alert-condition').value = 'above';
+      document.getElementById('alert-price').value = document.getElementById('price-input').value || '';
+      document.getElementById('alert-modal').classList.add('open');
+    }
+    function closeAlertModal() {
+      document.getElementById('alert-modal').classList.remove('open');
+    }
+    function saveAlert() {
+      const condition = document.getElementById('alert-condition').value;
+      const price = document.getElementById('alert-price').value;
+      if (!price) return;
+      const label = condition === 'above' ? 'rises above' : 'falls below';
+      showToast(`Alert created: notify when AAPL ${label} ${price}.`);
+      closeAlertModal();
+    }
+
     function showSymbolSearch() {}
-    function openOrderType() {}
-    function openDuration() {}
-    function openDeposit() { alert('Deposit flow'); }
+    function openDeposit() {
+      try { window.parent.navigateTo('deposit'); } catch (e) {}
+    }
 
     renderOrderBook();
+    renderExecutedOrders();
+    renderTradeHistory();
+    updateOrderSummary();
     lucide.createIcons();
   </script>
 </body>

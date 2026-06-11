@@ -7,13 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { height: 100%; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
 
     /* ── Sub-page header ── */
     .sub-header {
@@ -62,7 +62,7 @@
       color: var(--color-text-primary);
       outline: none;
       transition: border-color 0.15s;
-      font-family: 'Inter', sans-serif;
+      font-family: 'IBM Plex Sans', sans-serif;
     }
     .inp:focus { border-color: var(--color-primary); }
     .inp::placeholder { color: var(--color-text-disabled); }
@@ -308,6 +308,16 @@
     /* ── Panel visibility ── */
     .step-panel { display: none; }
     .step-panel.active { display: block; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--color-text-primary); color: var(--color-bg);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 300;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
   </style>
 </head>
 <body>
@@ -511,6 +521,7 @@
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
 
 <script>
 /* ── Bank logo picker (horizontal scroll) ── */
@@ -558,7 +569,7 @@ const AGREEMENTS = {
 
 1. Securities purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
 
-2. The Company will maintain accurate sub-records identifying the Client's beneficial interest in any securities held in the nominal account.
+2. The Company will maintain accurate sub-records identifying the Client's beneficial IBM Plex Sansest in any securities held in the nominal account.
 
 3. The Client may request a transfer of securities from the nominal account to an individual account at any time, subject to applicable fees and processing times.
 
@@ -666,7 +677,7 @@ PAY_APPS.forEach((name, i) => {
   const div = document.createElement('div');
   div.className = 'pay-app-item';
   div.innerHTML = `<div class="pay-app-icon"><img src="${logoSrc}" alt="${name}" /></div>`;
-  div.onclick = () => alert(`Opening ${name}…`);
+  div.onclick = () => showToast(`Opening ${name}…`);
   grid.appendChild(div);
 });
 
@@ -730,6 +741,14 @@ function redoSignature() {
   clearCanvas();
   document.getElementById('sig-done').style.display = 'none';
   document.getElementById('sig-pad').style.display = 'block';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
 lucide.createIcons();

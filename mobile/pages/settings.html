@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Settings — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    .form-body { padding: 0 16px; }
+    .info-section-title { font-size: 14px; font-weight: 700; margin: 18px 0 10px; }
+    .info-section-title.first { margin-top: 6px; }
+
+    /* ── Settings card ── */
+    .settings-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; overflow: hidden;
+    }
+    .settings-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; border-bottom: 1px solid var(--color-border);
+      transition: background 0.15s;
+    }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-row.clickable { cursor: pointer; }
+    .settings-row.clickable:hover { background: var(--color-bg-input); }
+    .settings-row-icon {
+      width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+      background: rgba(73,73,170,0.14); color: var(--color-primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .settings-row-icon svg { width: 18px; height: 18px; }
+    .settings-row-text { flex: 1; min-width: 0; }
+    .settings-row-title { font-size: 13.5px; font-weight: 700; }
+    .settings-row-sub { font-size: 11.5px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.4; }
+    .settings-row .chev { width: 16px; height: 16px; color: var(--color-text-disabled); flex-shrink: 0; }
+
+    /* ── Generic toggle switch ── */
+    .toggle-switch {
+      width: 44px; height: 26px; border-radius: 99px; flex-shrink: 0;
+      background: var(--color-bg-input); border: 1px solid var(--color-border);
+      position: relative; cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    .toggle-switch.on { background: var(--color-primary); border-color: var(--color-primary); }
+    .toggle-knob {
+      width: 20px; height: 20px; border-radius: 50%; background: #fff;
+      position: absolute; top: 2px; left: 2px; transition: transform 0.2s;
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(18px); }
+
+    /* ── Theme switch ── */
+    .theme-switch {
+      width: 60px; height: 30px; border-radius: 99px; flex-shrink: 0;
+      background: var(--color-bg-input); border: 1px solid var(--color-border);
+      position: relative; cursor: pointer;
+    }
+    .ts-icons {
+      position: absolute; inset: 0; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 8px;
+    }
+    .ts-icons svg { width: 13px; height: 13px; color: var(--color-text-disabled); }
+    .ts-knob {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary);
+      position: absolute; top: 2px; left: 2px; transition: transform 0.25s;
+      display: flex; align-items: center; justify-content: center; color: #fff;
+    }
+    .ts-knob svg { width: 13px; height: 13px; }
+    .ts-knob .icon-moon { display: none; }
+    [data-theme="dark"] .ts-knob { transform: translateX(30px); }
+    [data-theme="dark"] .ts-knob .icon-sun { display: none; }
+    [data-theme="dark"] .ts-knob .icon-moon { display: block; }
+
+    /* ── Language toggle ── */
+    .lang-toggle {
+      display: flex; background: var(--color-bg-input); border: 1px solid var(--color-border);
+      border-radius: 99px; padding: 2px; flex-shrink: 0;
+    }
+    .lang-opt {
+      border: none; background: none; cursor: pointer; font-size: 12px; font-weight: 700;
+      color: var(--color-text-secondary); padding: 6px 14px; border-radius: 99px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-opt.active { background: var(--color-primary); color: #fff; }
+
+    /* ── Form inputs (modals) ── */
+    .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
+    .field-wrap { margin-bottom: 14px; }
+    .inp {
+      width: 100%; background: var(--color-bg-input); border: 1.5px solid var(--color-border);
+      border-radius: 10px; padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
+      outline: none; transition: border-color 0.15s; font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .inp:focus { border-color: var(--color-primary); }
+    .inp::placeholder { color: var(--color-text-disabled); }
+
+    /* ── Password requirements ── */
+    .field-req {
+      display: none; margin-top: 10px; padding: 12px 14px;
+      background: var(--color-bg-input); border: 1px solid var(--color-border); border-radius: 10px;
+    }
+    .field-req.open { display: block; }
+    .req-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12.5px; color: var(--color-text-disabled); padding: 3px 0; transition: color 0.15s;
+    }
+    .req-item svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--color-text-disabled); transition: color 0.15s; }
+    .req-item.met { color: #00C076; }
+    .req-item.met svg { color: #00C076; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      width: 100%; padding: 14px; border-radius: 12px; border: none;
+      background: var(--color-primary); color: #fff; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.15s; margin-top: 4px;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-outline {
+      padding: 14px; border-radius: 12px; border: 1.5px solid var(--color-border);
+      background: transparent; color: var(--color-text-primary); font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
+    .btn-row { display: flex; gap: 10px; margin-top: 6px; }
+    .btn-row .btn-outline, .btn-row .btn-primary { flex: 1; margin: 0; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 200;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+    .modal-sheet {
+      width: 100%; max-width: 480px; background: var(--color-bg-card);
+      border-radius: 20px 20px 0 0; padding: 14px 16px 22px;
+      transform: translateY(20px); transition: transform 0.2s ease;
+      border: 1px solid var(--color-border); border-bottom: none;
+    }
+    .modal-overlay.show .modal-sheet { transform: translateY(0); }
+    .modal-handle { width: 36px; height: 4px; background: var(--color-border); border-radius: 99px; margin: 6px auto 16px; }
+    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--color-text-primary); color: var(--color-bg);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 300;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">Settings</div>
+  </div>
+
+  <div class="form-body">
+    <div class="info-section-title first">Appearance</div>
+    <div class="settings-card">
+      <div class="settings-row">
+        <div class="settings-row-icon"><i data-lucide="palette"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">Dark Mode</div>
+          <div class="settings-row-sub">Switch between light and dark theme</div>
+        </div>
+        <div class="theme-switch" id="theme-switch" onclick="onToggleTheme()">
+          <div class="ts-icons">
+            <i data-lucide="sun"></i>
+            <i data-lucide="moon"></i>
+          </div>
+          <div class="ts-knob" id="ts-knob">
+            <i data-lucide="sun" class="icon-sun"></i>
+            <i data-lucide="moon" class="icon-moon"></i>
+          </div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-icon"><i data-lucide="languages"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">Language</div>
+          <div class="settings-row-sub">Choose your preferred language</div>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-opt" id="lang-en" onclick="setLang('en')">EN</button>
+          <button class="lang-opt" id="lang-mn" onclick="setLang('mn')">MN</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section-title">Security</div>
+    <div class="settings-card">
+      <div class="settings-row clickable" onclick="openPinModal()">
+        <div class="settings-row-icon"><i data-lucide="key-round"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">Change PIN Code</div>
+          <div class="settings-row-sub">Update your 4-digit security PIN</div>
+        </div>
+        <i data-lucide="chevron-right" class="chev"></i>
+      </div>
+      <div class="settings-row clickable" onclick="openPasswordModal()">
+        <div class="settings-row-icon"><i data-lucide="lock"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">Change Password</div>
+          <div class="settings-row-sub">Update your account password</div>
+        </div>
+        <i data-lucide="chevron-right" class="chev"></i>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-icon"><i data-lucide="fingerprint"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">Biometric Login</div>
+          <div class="settings-row-sub">Use Face ID / fingerprint to sign in</div>
+        </div>
+        <div class="toggle-switch on" id="toggle-biometric" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+
+    <div class="info-section-title">Notifications</div>
+    <div class="settings-card">
+      <div class="settings-row">
+        <div class="settings-row-icon"><i data-lucide="bell"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">Push Notifications</div>
+          <div class="settings-row-sub">Receive alerts on this device</div>
+        </div>
+        <div class="toggle-switch on" id="toggle-push" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-icon"><i data-lucide="mail"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">Email Notifications</div>
+          <div class="settings-row-sub">Account activity and statements</div>
+        </div>
+        <div class="toggle-switch on" id="toggle-email" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-icon"><i data-lucide="message-square"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">SMS Notifications</div>
+          <div class="settings-row-sub">Important security codes and alerts</div>
+        </div>
+        <div class="toggle-switch" id="toggle-sms" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-icon"><i data-lucide="trending-up"></i></div>
+        <div class="settings-row-text">
+          <div class="settings-row-title">Price Alerts</div>
+          <div class="settings-row-sub">Notify me when watchlist prices move</div>
+        </div>
+        <div class="toggle-switch on" id="toggle-price-alerts" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px"></div>
+
+  <!-- Change PIN modal -->
+  <div class="modal-overlay" id="pin-modal-overlay" onclick="if(event.target===this) closePinModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Change PIN Code</div>
+      <div class="field-wrap">
+        <label class="field-label">Current PIN</label>
+        <input class="inp" id="pin-current" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" />
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">New PIN</label>
+        <input class="inp" id="pin-new" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" />
+      </div>
+      <div class="field-wrap" style="margin-bottom:0">
+        <label class="field-label">Confirm New PIN</label>
+        <input class="inp" id="pin-confirm" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" />
+      </div>
+      <div class="btn-row">
+        <button class="btn-outline" onclick="closePinModal()">Cancel</button>
+        <button class="btn-primary" onclick="submitPinChange()">Update PIN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password modal -->
+  <div class="modal-overlay" id="password-modal-overlay" onclick="if(event.target===this) closePasswordModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Change Password</div>
+      <div class="field-wrap">
+        <label class="field-label">Current Password</label>
+        <input class="inp" id="pwd-current" type="password" placeholder="Enter current password" autocomplete="current-password" />
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">New Password</label>
+        <input class="inp" id="pwd-new" type="password" placeholder="Enter new password" autocomplete="new-password"
+          oninput="checkPasswordReq(this.value)"
+          onfocus="document.getElementById('password-req').classList.add('open')"
+          onblur="document.getElementById('password-req').classList.remove('open')" />
+        <div class="field-req" id="password-req">
+          <div class="req-item" id="preq-len"><i data-lucide="check"></i><span>At least 8 characters</span></div>
+          <div class="req-item" id="preq-upper"><i data-lucide="check"></i><span>At least 1 uppercase letter</span></div>
+          <div class="req-item" id="preq-lower"><i data-lucide="check"></i><span>At least 1 lowercase letter</span></div>
+          <div class="req-item" id="preq-digit"><i data-lucide="check"></i><span>At least 1 digit</span></div>
+          <div class="req-item" id="preq-special"><i data-lucide="check"></i><span>At least 1 special character</span></div>
+        </div>
+      </div>
+      <div class="field-wrap" style="margin-bottom:0">
+        <label class="field-label">Confirm New Password</label>
+        <input class="inp" id="pwd-confirm" type="password" placeholder="Re-enter new password" autocomplete="new-password" />
+      </div>
+      <div class="btn-row">
+        <button class="btn-outline" onclick="closePasswordModal()">Cancel</button>
+        <button class="btn-primary" onclick="submitPasswordChange()">Update Password</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function goBack() {
+      try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
+    }
+
+    function notifyModalOpen() {
+      try { window.parent.postMessage({ type: 'modal-open' }, '*'); } catch (e) {}
+    }
+    function notifyModalClose() {
+      try { window.parent.postMessage({ type: 'modal-close' }, '*'); } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    function toggleSwitch(el) {
+      el.classList.toggle('on');
+    }
+
+    /* ── Theme ── */
+    function onToggleTheme() {
+      try { window.parent.toggleTheme(); } catch (e) {}
+    }
+
+    /* ── Language ── */
+    function setLang(lang) {
+      localStorage.setItem('tradex-lang', lang);
+      document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+      document.getElementById('lang-mn').classList.toggle('active', lang === 'mn');
+    }
+    setLang(localStorage.getItem('tradex-lang') === 'mn' ? 'mn' : 'en');
+
+    /* ── Change PIN ── */
+    function openPinModal() {
+      document.getElementById('pin-current').value = '';
+      document.getElementById('pin-new').value = '';
+      document.getElementById('pin-confirm').value = '';
+      document.getElementById('pin-modal-overlay').classList.add('show');
+      notifyModalOpen();
+    }
+    function closePinModal() {
+      document.getElementById('pin-modal-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+    function submitPinChange() {
+      const cur = document.getElementById('pin-current').value.trim();
+      const next = document.getElementById('pin-new').value.trim();
+      const confirm = document.getElementById('pin-confirm').value.trim();
+      if (!/^\d{4}$/.test(cur) || !/^\d{4}$/.test(next)) {
+        showToast('PIN must be 4 digits');
+        return;
+      }
+      if (next !== confirm) {
+        showToast('New PINs do not match');
+        return;
+      }
+      closePinModal();
+      showToast('PIN code updated');
+    }
+
+    /* ── Change Password ── */
+    function openPasswordModal() {
+      document.getElementById('pwd-current').value = '';
+      document.getElementById('pwd-new').value = '';
+      document.getElementById('pwd-confirm').value = '';
+      document.getElementById('password-req').classList.remove('open');
+      checkPasswordReq('');
+      document.getElementById('password-modal-overlay').classList.add('show');
+      notifyModalOpen();
+    }
+    function closePasswordModal() {
+      document.getElementById('password-modal-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+    function setReqMet(id, met) {
+      document.getElementById(id).classList.toggle('met', met);
+    }
+    function checkPasswordReq(v) {
+      setReqMet('preq-len',     v.length >= 8);
+      setReqMet('preq-upper',   /[A-Z]/.test(v));
+      setReqMet('preq-lower',   /[a-z]/.test(v));
+      setReqMet('preq-digit',   /[0-9]/.test(v));
+      setReqMet('preq-special', /[^A-Za-z0-9]/.test(v));
+    }
+
+    function submitPasswordChange() {
+      const cur = document.getElementById('pwd-current').value;
+      const next = document.getElementById('pwd-new').value;
+      const confirm = document.getElementById('pwd-confirm').value;
+      if (!cur || !next) {
+        showToast('Please fill in all fields');
+        return;
+      }
+      const reqsMet = next.length >= 8 && /[A-Z]/.test(next) && /[a-z]/.test(next)
+        && /[0-9]/.test(next) && /[^A-Za-z0-9]/.test(next);
+      if (!reqsMet) {
+        showToast('Password does not meet requirements');
+        return;
+      }
+      if (next !== confirm) {
+        showToast('New passwords do not match');
+        return;
+      }
+      closePasswordModal();
+      showToast('Password updated');
+    }
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>

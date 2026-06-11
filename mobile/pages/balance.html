@@ -8,11 +8,20 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
     * { box-sizing:border-box; }
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
 
     /* ── Hero gradient card ── */
     .hero-card {
@@ -48,7 +57,7 @@
     .hero-label { font-size: 12px; color: rgba(255,255,255,0.7); }
     .hero-value {
       font-size: 28px; font-weight: 800; color: #fff;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'IBM Plex Mono', monospace;
       letter-spacing: -0.5px; margin-bottom: 8px;
       position: relative; z-index: 1;
     }
@@ -58,7 +67,7 @@
     }
     .hero-sub-item { flex: 1; }
     .hero-sub-label { font-size: 11px; color: rgba(255,255,255,0.65); margin-bottom: 4px; line-height: 1.3; }
-    .hero-sub-value { font-size: 14px; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; }
+    .hero-sub-value { font-size: 14px; font-weight: 700; color: #fff; font-family: 'IBM Plex Mono', monospace; }
 
     .hero-hide {
       width: 36px; height: 36px; border-radius: 10px;
@@ -151,7 +160,7 @@
     .search-bar input {
       border: none; background: transparent; outline: none;
       font-size: 13px; color: var(--color-text-primary); flex: 1;
-      font-family: 'Inter', sans-serif;
+      font-family: 'IBM Plex Sans', sans-serif;
     }
     .search-bar input::placeholder { color: var(--color-text-disabled); }
 
@@ -193,12 +202,63 @@
     .chg-badge.up   { background: rgba(0,192,118,0.15); color: var(--color-buy); }
     .chg-badge.down { background: rgba(239,68,68,0.15);  color: var(--color-sell); }
     .holding-right { text-align: right; flex-shrink: 0; }
-    .holding-value { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .holding-value { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
     .holding-link {
       display: flex; align-items: center; gap: 2px;
       font-size: 11px; color: var(--color-primary); margin-top: 2px;
     }
     .holding-link svg { width: 12px; height: 12px; }
+    .security-summary {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 12px;
+    }
+    .security-detail-page { display: none; min-height: 100%; }
+    .security-detail-body { padding: 0 16px 24px; }
+    .security-hero {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .security-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .security-identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .security-identity .holding-avatar { width: 46px; height: 46px; border-radius: 14px; }
+    .security-name { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .security-price { text-align: right; flex-shrink: 0; }
+    .security-price-value { font-size: 18px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .security-price-change { display: inline-flex; margin-top: 4px; }
+    .security-stat {
+      background: var(--color-bg-input);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 10px;
+    }
+    .security-stat-label { font-size: 10px; color: var(--color-text-disabled); margin-bottom: 4px; }
+    .security-stat-value { font-size: 13px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .trade-history-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .trade-history-title { font-size: 14px; font-weight: 800; margin: 16px 0 10px; }
+    .trade-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px; border-bottom: 1px solid var(--color-border);
+    }
+    .trade-row:last-child { border-bottom: none; }
+    .trade-side {
+      width: 42px; height: 24px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #fff;
+    }
+    .trade-side.buy { background: var(--color-buy); }
+    .trade-side.sell { background: var(--color-sell); }
+    .trade-main { flex: 1; min-width: 0; }
+    .trade-title { font-size: 12px; font-weight: 700; }
+    .trade-date { font-size: 10px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
+    .trade-amount { text-align: right; font-size: 12px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
 
     /* ── Account history (Nominal / ҮЦТХТ) ── */
     .hist-toolbar { margin: 0 16px 10px; display: flex; flex-direction: column; gap: 8px; }
@@ -210,7 +270,7 @@
       border-radius: 10px;
       padding: 8px 10px;
       font-size: 12px; font-weight: 600; color: var(--color-text-primary);
-      font-family: 'Inter', sans-serif;
+      font-family: 'IBM Plex Sans', sans-serif;
       appearance: none; -webkit-appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 8px center;
@@ -250,9 +310,9 @@
     .hist-icon.withdraw { background: rgba(239,68,68,0.15); color: var(--color-sell); }
     .hist-info { flex: 1; min-width: 0; }
     .hist-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
-    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'JetBrains Mono', monospace; }
+    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
     .hist-right { text-align: right; flex-shrink: 0; }
-    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-bottom: 4px; }
     .hist-amount.deposit  { color: var(--color-buy); }
     .hist-amount.withdraw { color: var(--color-sell); }
     .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
@@ -266,13 +326,14 @@
       border-radius: 8px; border: 1px solid var(--color-border);
       background: var(--color-bg-card); color: var(--color-text-primary);
       font-size: 12px; font-weight: 600; cursor: pointer;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'IBM Plex Mono', monospace;
     }
     .page-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
     .page-btn:disabled { opacity: 0.4; cursor: default; }
   </style>
 </head>
 <body>
+<div id="balance-main-view">
 
   <!-- Hero Balance Card -->
   <div class="hero-card">
@@ -376,6 +437,16 @@
   </div>
 
   <div style="height:20px"></div>
+</div>
+
+  <!-- Securities detail page -->
+  <div class="security-detail-page" id="security-detail-view">
+    <div class="sub-header">
+      <button class="back-btn" onclick="closeSecurityDetail()"><i data-lucide="chevron-left"></i></button>
+      <div class="sub-title" id="security-detail-title">Security</div>
+    </div>
+    <div class="security-detail-body" id="security-detail-content"></div>
+  </div>
 
   <!-- Transaction detail modal -->
   <div class="modal-overlay" id="detail-modal-overlay" onclick="if(event.target===this) closeDetailModal()">
@@ -414,7 +485,7 @@
         const isUp = h.pct >= 0;
         const sign = h.pct >= 0 ? '+' : '';
         return `
-          <div class="holding-item">
+          <div class="holding-item" onclick="showSecurityDetail('${h.symbol}')">
             <div class="holding-avatar">${h.abbr}</div>
             <div class="holding-info">
               <div class="holding-top">
@@ -505,6 +576,7 @@
 
       const isSecurities = key === 'securities';
       document.getElementById('securities-search').style.display = isSecurities ? 'flex' : 'none';
+      document.getElementById('securities-filters').style.display = isSecurities ? 'flex' : 'none';
       document.getElementById('holdings-list').style.display     = isSecurities ? 'block' : 'none';
       document.getElementById('history-section').style.display   = isSecurities ? 'none' : 'block';
 
@@ -515,6 +587,80 @@
     }
 
     /* ── Account history (Nominal / ҮЦТХТ): search, filter, sort, paginate ── */
+    const SECURITY_TRADE_HISTORY = [
+      { symbol:'AAPL', side:'buy',  qty:20, price:181.20, date:'2026-06-04 10:18' },
+      { symbol:'AAPL', side:'sell', qty:5,  price:189.75, date:'2026-06-08 14:32' },
+      { symbol:'AAPL', side:'buy',  qty:35, price:176.40, date:'2026-05-22 11:05' },
+      { symbol:'MSFT', side:'buy',  qty:20, price:411.80, date:'2026-05-29 15:16' },
+      { symbol:'NVDA', side:'buy',  qty:10, price:862.10, date:'2026-06-03 12:44' },
+      { symbol:'TSLA', side:'buy',  qty:30, price:252.60, date:'2026-05-31 10:40' },
+      { symbol:'GOOGL', side:'buy', qty:15, price:171.25, date:'2026-05-27 13:21' },
+    ];
+
+    function formatUSD(v) {
+      return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function showSecurityDetail(symbol) {
+      const holding = HOLDINGS.find(h => h.symbol === symbol);
+      if (!holding) return;
+      const trades = SECURITY_TRADE_HISTORY.filter(t => t.symbol === symbol)
+        .sort((a, b) => new Date(b.date.replace(' ', 'T')) - new Date(a.date.replace(' ', 'T')));
+      const isUp = holding.pct >= 0;
+
+      document.getElementById('security-detail-title').textContent = holding.symbol;
+      document.getElementById('security-detail-content').innerHTML = `
+        <div class="security-hero">
+          <div class="security-hero-top">
+            <div class="security-identity">
+              <div class="holding-avatar">${holding.abbr}</div>
+              <div>
+                <div class="holding-symbol">${holding.symbol}</div>
+                <div class="security-name">${holding.name}</div>
+              </div>
+            </div>
+            <div class="security-price">
+              <div class="security-price-value">${formatUSD(holding.value)}</div>
+              <span class="chg-badge ${isUp ? 'up' : 'down'} security-price-change">${isUp ? '+' : ''}${holding.pct.toFixed(2)}%</span>
+            </div>
+          </div>
+          <div class="security-summary">
+            <div class="security-stat">
+              <div class="security-stat-label">Shares</div>
+              <div class="security-stat-value">${holding.shares.toLocaleString()}</div>
+            </div>
+            <div class="security-stat">
+              <div class="security-stat-label">Exchange</div>
+              <div class="security-stat-value">${holding.exchange}</div>
+            </div>
+          </div>
+        </div>
+        <div class="trade-history-title">Trading History</div>
+        <div class="trade-history-card">
+          ${trades.length ? trades.map(t => `
+            <div class="trade-row">
+              <div class="trade-side ${t.side}">${t.side.toUpperCase()}</div>
+              <div class="trade-main">
+                <div class="trade-title">${t.qty.toLocaleString()} shares at ${formatUSD(t.price)}</div>
+                <div class="trade-date">${t.date}</div>
+              </div>
+              <div class="trade-amount">${formatUSD(t.qty * t.price)}</div>
+            </div>
+          `).join('') : '<div class="hist-empty">No buy/sell history for this security</div>'}
+        </div>
+      `;
+      document.getElementById('balance-main-view').style.display = 'none';
+      document.getElementById('security-detail-view').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    function closeSecurityDetail() {
+      document.getElementById('security-detail-view').style.display = 'none';
+      document.getElementById('balance-main-view').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function getCombinedHistory(account) {
       const deposits    = getDepositHistory().filter(d => d.account === account).map(d => ({ ...d, type: 'deposit' }));
       const withdrawals = getWithdrawHistory().filter(w => w.account === account).map(w => ({ ...w, type: 'withdraw' }));

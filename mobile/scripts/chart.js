@@ -56,7 +56,7 @@ function renderLineChart(id, data, opts = {}) {
   yLabels.forEach((label, i) => {
     yLabelEls += `<text x="${W - 2}" y="${(yPositions[i] + 4).toFixed(1)}"
       text-anchor="end" font-size="10" fill="var(--color-text-disabled)"
-      font-family="JetBrains Mono, monospace">${label}</text>`;
+      font-family="IBM Plex Mono, monospace">${label}</text>`;
   });
 
   el.innerHTML = `
@@ -118,18 +118,21 @@ function renderDonut(id, slices, centerLabel, centerValue) {
 
   let accAngle = -90; // start at top
   let circles = '';
+  const gapDeg = 2.5; // gap between slices, acts as a border
 
-  slices.forEach(sl => {
+  slices.forEach((sl, i) => {
     const pct = sl.value / total;
-    const dash = pct * circ;
+    const angleDeg = pct * 360;
+    const drawDeg = Math.max(angleDeg - gapDeg, 0);
+    const dash = (drawDeg / 360) * circ;
     const gap = circ - dash;
     circles += `
       <circle r="${r}" cx="${cx}" cy="${cy}" fill="none"
               stroke="${sl.color}" stroke-width="${strokeW}"
               stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}"
-              stroke-linecap="butt"
-              transform="rotate(${accAngle.toFixed(2)} ${cx} ${cy})"/>`;
-    accAngle += pct * 360;
+              stroke-linecap="round"
+              transform="rotate(${(accAngle + gapDeg / 2).toFixed(2)} ${cx} ${cy})"/>`;
+    accAngle += angleDeg;
   });
 
   el.innerHTML = `
@@ -141,10 +144,10 @@ function renderDonut(id, slices, centerLabel, centerValue) {
       <!-- Center text -->
       <text x="${cx}" y="${cy - 8}" text-anchor="middle"
             font-size="10" fill="var(--color-text-disabled)"
-            font-family="Inter, sans-serif">${centerLabel}</text>
+            font-family="IBM Plex Sans, sans-serif">${centerLabel}</text>
       <text x="${cx}" y="${cy + 10}" text-anchor="middle"
             font-size="12" font-weight="700" fill="var(--color-text-primary)"
-            font-family="JetBrains Mono, monospace">${centerValue}</text>
+            font-family="IBM Plex Mono, monospace">${centerValue}</text>
     </svg>
   `;
 }

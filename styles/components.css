@@ -172,7 +172,7 @@ tbody td {
   font-size: var(--font-2xl);
   font-weight: 700;
   letter-spacing: -0.02em;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
 }
 .stat-label {
   font-size: var(--font-xs);
@@ -192,7 +192,7 @@ tbody td {
 ::-webkit-scrollbar-thumb:hover { background: var(--color-text-disabled); }
 
 /* ── Mono numbers ── */
-.mono { font-family: 'JetBrains Mono', monospace; }
+.mono { font-family: 'IBM Plex Mono', monospace; }
 
 /* ── Bottom-sheet modal ── */
 .modal-overlay {
@@ -232,7 +232,7 @@ tbody td {
 }
 .verify-row:last-child { border-bottom: none; }
 .verify-row span:last-child { font-weight: 700; color: var(--color-text-primary); text-align: right; }
-.verify-row.total span:last-child { color: var(--color-primary); font-family: 'JetBrains Mono', monospace; font-size: 15px; }
+.verify-row.total span:last-child { color: var(--color-primary); font-family: 'IBM Plex Mono', monospace; font-size: 15px; }
 
 /* ── History status icon (large, leading) ── */
 .hist-icon.status-pending   { background: rgba(245,158,11,0.15); color: #f59e0b; }
@@ -246,3 +246,19 @@ tbody td {
   cursor: pointer; justify-content: flex-end;
 }
 .hist-detail-link svg { width: 12px; height: 12px; }
+
+/* ── History pagination ── */
+.hist-pagination {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin: 14px 16px 0;
+}
+.page-btn {
+  min-width: 30px; height: 30px; padding: 0 6px;
+  border-radius: 8px; border: 1px solid var(--color-border);
+  background: var(--color-bg-card); color: var(--color-text-primary);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.page-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.page-btn:disabled { opacity: 0.4; cursor: default; }
+.page-btn svg { width: 14px; height: 14px; }

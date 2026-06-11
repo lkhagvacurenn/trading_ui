@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="../styles/components.css" />
   <link rel="stylesheet" href="styles/mobile.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <script>
     (function () {
@@ -27,7 +27,7 @@
   <style>
     /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Inter', sans-serif; }
+    html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'IBM Plex Sans', sans-serif; }
 
     /* ── App shell ── */
     #app {
@@ -105,6 +105,12 @@
       height: 72px;
       /* Extra top padding so FAB has room to extend above */
       padding-bottom: env(safe-area-inset-bottom, 0px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+    }
+    #app.modal-open #nav-outer {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
     }
 
     /* SVG nav background — covers the 72px nav area */
@@ -174,7 +180,7 @@
     .nav-tab svg { width: 22px; height: 22px; }
     .nav-tab span {
       font-size: 10px; font-weight: 600;
-      font-family: 'Inter', sans-serif;
+      font-family: 'IBM Plex Sans', sans-serif;
       letter-spacing: 0.01em;
     }
     .nav-tab.active { color: var(--color-primary); }
@@ -229,59 +235,6 @@
     }
     .menu-close-btn svg { width: 18px; height: 18px; }
 
-    .menu-control-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 20px;
-      border-bottom: 1px solid var(--color-border);
-    }
-    .menu-ctrl-label { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
-
-    /* ── Theme switch ── */
-    .theme-switch {
-      width: 68px; height: 32px;
-      background: var(--color-bg-input);
-      border: 1px solid var(--color-border);
-      border-radius: 16px;
-      position: relative; cursor: pointer;
-      display: flex; align-items: center;
-      flex-shrink: 0;
-    }
-    .ts-icons {
-      display: flex; justify-content: space-between; align-items: center;
-      width: 100%; padding: 0 8px;
-      position: relative; z-index: 4; pointer-events: none; /* above knob */
-    }
-    .ts-icon { display: flex; align-items: center; transition: color 0.2s; }
-    .ts-icon svg { width: 13px; height: 13px; }
-    /* Sun icon: active in light, dim in dark */
-    .ts-icon:first-child { color: rgba(255,255,255,0.35); }
-    [data-theme="light"] .ts-icon:first-child { color: #fff; }
-    /* Moon icon: active in dark, dim in light */
-    .ts-icon:last-child { color: #fff; }
-    [data-theme="light"] .ts-icon:last-child { color: rgba(255,255,255,0.35); }
-    .ts-knob {
-      position: absolute;
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--color-primary);
-      top: 2px; left: 2px;
-      z-index: 3; /* below icons */
-      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    [data-theme="dark"] .ts-knob { transform: translateX(36px); }
-
-    /* ── Language pill ── */
-    .lang-pill-btn {
-      display: flex; align-items: center; gap: 6px;
-      background: var(--color-bg-input);
-      border: 1px solid var(--color-border);
-      border-radius: 20px;
-      padding: 7px 14px;
-      font-size: 13px; font-weight: 600;
-      color: var(--color-text-primary);
-      cursor: pointer; transition: border-color 0.15s;
-    }
-    .lang-pill-btn svg { width: 14px; height: 14px; color: var(--color-text-secondary); }
-    .lang-pill-btn:hover { border-color: var(--color-primary); }
 
     .menu-section-lbl {
       padding: 16px 20px 8px;
@@ -399,9 +352,9 @@
       <div id="nav-center-space"></div>
 
       <button class="nav-tab"
-              data-page="returns" data-href="pages/returns.html" data-title="Returns">
+              data-page="returns" data-href="pages/returns.html" data-title="Portfolio">
         <i data-lucide="pie-chart"></i>
-        <span>Returns</span>
+        <span>Portfolio</span>
       </button>
 
       <button class="nav-tab"
@@ -424,26 +377,6 @@
       <button class="menu-close-btn" onclick="closeMenu()"><i data-lucide="x"></i></button>
     </div>
 
-    <div class="menu-control-row">
-      <span class="menu-ctrl-label">Appearance</span>
-      <div class="theme-switch" onclick="toggleTheme()">
-        <div class="ts-icons">
-          <span class="ts-icon"><i data-lucide="sun"></i></span>
-          <span class="ts-icon"><i data-lucide="moon"></i></span>
-        </div>
-        <div class="ts-knob"></div>
-      </div>
-    </div>
-
-    <div class="menu-control-row">
-      <span class="menu-ctrl-label">Language</span>
-      <button class="lang-pill-btn" id="lang-pill-btn" onclick="toggleLang()">
-        <i data-lucide="globe"></i><span id="lang-label">English</span>
-      </button>
-    </div>
-
-    <div class="menu-divider"></div>
-
     <!-- My Profile -->
     <button class="menu-item" onclick="closeMenu()" style="padding:16px 20px">
       <i data-lucide="user-circle"></i>
@@ -455,14 +388,14 @@
 
     <div class="menu-section-lbl">My Section</div>
 
-    <button class="menu-item" onclick="menuNav('trade'); closeMenu()">
+    <button class="menu-item" onclick="menuNav('order-history'); closeMenu()">
       <i data-lucide="history"></i>
       <span class="menu-item-label">Order History</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('returns'); closeMenu()">
       <i data-lucide="pie-chart"></i>
-      <span class="menu-item-label">Returns</span>
+      <span class="menu-item-label">Portfolio</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('bank-account'); closeMenu()">
@@ -510,14 +443,19 @@
       <span class="menu-item-label">Bonds</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="closeMenu()">
+    <button class="menu-item" onclick="menuNav('contact'); closeMenu()">
       <i data-lucide="phone"></i>
       <span class="menu-item-label">Contact Us</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="closeMenu()">
+    <button class="menu-item" onclick="menuNav('faq'); closeMenu()">
       <i data-lucide="info"></i>
       <span class="menu-item-label">FAQ</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
+    </button>
+    <button class="menu-item" onclick="menuNav('settings'); closeMenu()">
+      <i data-lucide="settings"></i>
+      <span class="menu-item-label">Settings</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
 
@@ -642,9 +580,15 @@ function syncFrame(theme) {
 ════════════════════════════════════════════════ */
 const frame = document.getElementById('page-frame');
 
+function clearModalState() {
+  frame.classList.remove('modal-active');
+  document.getElementById('app').classList.remove('modal-open');
+}
+
 function navigate(el) {
   const href = el.dataset.href;
   if (!href) return;
+  clearModalState();
 
   frame.src = href;
 
@@ -663,6 +607,7 @@ document.querySelectorAll('.nav-tab').forEach(btn => {
 });
 
 function navigateToTrade() {
+  clearModalState();
   frame.src = 'pages/trade.html';
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   frame.onload = () => {
@@ -689,31 +634,32 @@ const PAGE_MAP = {
   deposit:      'pages/deposit.html',
   withdraw:     'pages/withdraw.html',
   'bank-account': 'pages/bank-account.html',
+  contact:      'pages/contact.html',
+  faq:          'pages/faq.html',
+  notifications: 'pages/notifications.html',
+  settings:     'pages/settings.html',
+  'order-history': 'pages/order-history.html',
 };
 function menuNav(key) {
   closeMenu();
   const href = PAGE_MAP[key];
   if (!href) return;
+  clearModalState();
   frame.src = href;
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   const tab = document.querySelector(`.nav-tab[data-page="${key}"]`);
   if (tab) tab.classList.add('active');
 }
 
-function openNotifications() { /* future */ }
+function openNotifications() { navigateTo('notifications'); }
 
-let currentLang = 'en';
-function toggleLang() {
-  currentLang = currentLang === 'en' ? 'mn' : 'en';
-  const label = document.getElementById('lang-label');
-  if (label) label.textContent = currentLang === 'en' ? 'English' : 'Монгол';
-}
 function signOut() { closeMenu(); sessionStorage.removeItem('bdsec-auth'); window.location.href = 'login.html'; }
 
 /* ── Called by inner pages (e.g. open-account success) ── */
 function navigateTo(key) {
   const href = PAGE_MAP[key];
   if (!href) return;
+  clearModalState();
   frame.src = href;
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   const tab = document.querySelector(`.nav-tab[data-page="${key}"]`);
@@ -736,8 +682,11 @@ window.addEventListener('resize', updateNavGeometry);
 /* ── Raise the page above the bottom nav while a page-level modal is open ── */
 window.addEventListener('message', (e) => {
   if (!e.data || !e.data.type) return;
-  if (e.data.type === 'modal-open')  frame.classList.add('modal-active');
-  if (e.data.type === 'modal-close') frame.classList.remove('modal-active');
+  if (e.data.type === 'modal-open') {
+    frame.classList.add('modal-active');
+    document.getElementById('app').classList.add('modal-open');
+  }
+  if (e.data.type === 'modal-close') clearModalState();
 });
 </script>
 </body>

@@ -8,10 +8,10 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
     * { box-sizing:border-box; }
 
     /* ── Account balance card ── */
@@ -31,7 +31,7 @@
     .bc-left .bc-acct  { font-size:11px; color:rgba(255,255,255,0.5); }
     .bc-left .bc-value {
       font-size:22px; font-weight:800; color:#fff;
-      font-family:'JetBrains Mono',monospace; letter-spacing:-0.3px; margin: 3px 0;
+      font-family:'IBM Plex Mono',monospace; letter-spacing:-0.3px; margin: 3px 0;
     }
     .bc-btn {
       background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25);
@@ -96,7 +96,7 @@
     .ipo-status-badge.closed { background:rgba(156,163,175,0.15); color:var(--color-text-disabled); }
     .ipo-detail-row { display:flex; justify-content:space-between; margin-bottom:6px; }
     .ipo-detail-label { font-size:12px; color:var(--color-text-disabled); }
-    .ipo-detail-val   { font-size:12px; font-weight:600; font-family:'JetBrains Mono',monospace; }
+    .ipo-detail-val   { font-size:12px; font-weight:600; font-family:'IBM Plex Mono',monospace; }
     .ipo-progress-bar {
       height:4px; background:var(--color-bg-input); border-radius:99px;
       overflow:hidden; margin:10px 0;
@@ -113,6 +113,16 @@
     /* My orders empty */
     .orders-empty { padding:60px 24px; text-align:center; }
     .orders-empty-msg { font-size:13px; color:var(--color-text-secondary); line-height:1.6; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--color-text-primary); color: var(--color-bg);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 300;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
   </style>
 </head>
 <body>
@@ -212,6 +222,8 @@
 
   <div style="height:20px"></div>
 
+  <div class="toast" id="toast"></div>
+
   <script>
     function switchTab(tab, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -219,8 +231,19 @@
       document.getElementById('tab-listed').style.display = tab === 'listed' ? 'block' : 'none';
       document.getElementById('tab-orders').style.display = tab === 'orders' ? 'block' : 'none';
     }
-    function openDeposit() { alert('Deposit flow'); }
-    function orderIPO(sym) { alert(`IPO order: ${sym}`); }
+    function openDeposit() {
+      try { window.parent.navigateTo('deposit'); } catch (e) {}
+    }
+    function orderIPO(sym) {
+      showToast(`IPO order placed for ${sym}`);
+    }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => t.classList.remove('show'), 1800);
+    }
   </script>
   <script>lucide.createIcons();</script>
 </body>

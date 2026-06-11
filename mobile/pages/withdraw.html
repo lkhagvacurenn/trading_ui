@@ -8,12 +8,12 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { height: 100%; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
 
     /* ── Sub-page header ── */
     .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
@@ -34,7 +34,7 @@
       width: 100%; background: var(--color-bg-card);
       border: 1.5px solid var(--color-border); border-radius: 10px;
       padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
-      outline: none; transition: border-color 0.15s; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.15s; font-family: 'IBM Plex Sans', sans-serif;
     }
     .inp:focus { border-color: var(--color-primary); }
     .inp::placeholder { color: var(--color-text-disabled); }
@@ -61,20 +61,32 @@
     .btn-row .btn-primary { flex: 1.3; margin: 0; }
 
     /* ── Account toggle ── */
-    .acct-toggle { display: flex; gap: 8px; }
+    .acct-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .acct-toggle-btn {
-      flex: 1; padding: 12px; border-radius: 10px;
+      min-height: 58px; padding: 10px 12px; border-radius: 14px;
       border: 1.5px solid var(--color-border); background: var(--color-bg-card);
-      color: var(--color-text-secondary); font-size: 13px; font-weight: 700;
+      color: var(--color-text-primary); font-size: 13px; font-weight: 700;
       cursor: pointer; transition: all 0.15s ease;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
+      display: flex; align-items: center; justify-content: flex-start; gap: 10px;
+      text-align: left;
     }
-    .acct-toggle-btn .acct-check { display: none; width: 15px; height: 15px; flex-shrink: 0; }
+    .acct-toggle-btn .acct-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: var(--color-bg-input); color: var(--color-text-secondary);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .acct-toggle-btn .acct-icon svg { width: 17px; height: 17px; }
+    .acct-toggle-btn .acct-text { flex: 1; min-width: 0; line-height: 1.2; }
+    .acct-toggle-btn .acct-check {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid var(--color-border); flex-shrink: 0;
+    }
     .acct-toggle-btn.active {
-      border-color: var(--color-primary); color: #fff;
-      background: var(--color-primary);
+      border-color: var(--color-primary); color: var(--color-primary);
+      background: rgba(73,73,170,0.12);
     }
-    .acct-toggle-btn.active .acct-check { display: inline-flex; }
+    .acct-toggle-btn.active .acct-icon { background: var(--color-primary); color: #fff; }
+    .acct-toggle-btn.active .acct-check { border: 5px solid var(--color-primary); background: #fff; }
     .balance-hint { font-size: 11px; color: var(--color-text-disabled); margin-top: 6px; }
 
     /* ── Generic dropdown trigger/menu ── */
@@ -116,7 +128,7 @@
 
     /* ── Amount input ── */
     .amount-field { position: relative; }
-    .amount-field .inp { padding-right: 90px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; }
+    .amount-field .inp { padding-right: 90px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 18px; }
     .amount-suffix { position: absolute; right: 70px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--color-text-secondary); font-size: 14px; }
     .amount-max-btn {
       position: absolute; right: 6px; top: 6px; bottom: 6px;
@@ -124,13 +136,6 @@
       background: var(--color-bg-input); color: var(--color-primary);
       font-size: 11px; font-weight: 700; cursor: pointer;
     }
-
-    /* ── Fee note ── */
-    .wd-fee-note {
-      font-size: 11px; color: var(--color-text-disabled);
-      margin: -8px 0 16px; text-align: right;
-    }
-    .wd-fee-note span { font-weight: 700; color: var(--color-text-secondary); font-family: 'JetBrains Mono', monospace; }
 
     /* ── Verify card ── */
     .info-section-title { font-size: 14px; font-weight: 700; margin: 6px 0 10px; }
@@ -145,7 +150,7 @@
     }
     .verify-row:last-child { border-bottom: none; }
     .verify-row span:last-child { font-weight: 700; color: var(--color-text-primary); text-align: right; }
-    .verify-row.total span:last-child { color: var(--color-primary); font-family: 'JetBrains Mono', monospace; font-size: 15px; }
+    .verify-row.total span:last-child { color: var(--color-primary); font-family: 'IBM Plex Mono', monospace; font-size: 15px; }
 
     /* ── History list ── */
     .hist-card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; }
@@ -156,8 +161,8 @@
     .hist-icon.withdraw { background: rgba(239,68,68,0.15); color: var(--color-sell); }
     .hist-info { flex: 1; min-width: 0; }
     .hist-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
-    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'JetBrains Mono', monospace; }
-    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
+    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
     .hist-amount.withdraw { color: var(--color-sell); }
     .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
 
@@ -232,8 +237,16 @@
     <div class="field-wrap">
       <label class="field-label">Select Account</label>
       <div class="acct-toggle">
-        <button class="acct-toggle-btn active" data-acct="nominal" onclick="selectWdAccount('nominal')"><i data-lucide="check-circle" class="acct-check"></i>Nominal Account</button>
-        <button class="acct-toggle-btn" data-acct="mcsd" onclick="selectWdAccount('mcsd')"><i data-lucide="check-circle" class="acct-check"></i>MCSD Account</button>
+        <button class="acct-toggle-btn active" data-acct="nominal" onclick="selectWdAccount('nominal')">
+          <span class="acct-icon"><i data-lucide="wallet"></i></span>
+          <span class="acct-text">Nominal Account</span>
+          <span class="acct-check"></span>
+        </button>
+        <button class="acct-toggle-btn" data-acct="mcsd" onclick="selectWdAccount('mcsd')">
+          <span class="acct-icon"><i data-lucide="landmark"></i></span>
+          <span class="acct-text">MCSD Account</span>
+          <span class="acct-check"></span>
+        </button>
       </div>
       <div class="balance-hint" id="wd-balance-hint"></div>
     </div>
@@ -258,32 +271,14 @@
       <div class="field-error" id="wd-amount-error">Please enter an amount</div>
     </div>
 
-    <div class="wd-fee-note">Withdrawal fee: <span id="wd-fee-val"></span></div>
-
     <button class="btn-primary" onclick="goVerify()">Submit Withdrawal Request</button>
-  </div>
-
-  <!-- Verify view -->
-  <div class="form-body" id="verify-view" style="display:none">
-    <div class="info-section-title">Verify Your Request</div>
-    <div class="verify-card">
-      <div class="verify-row"><span>Account</span><span id="v-account"></span></div>
-      <div class="verify-row"><span>Receiving Account</span><span id="v-bank"></span></div>
-      <div class="verify-row"><span>Account Number</span><span id="v-bank-num"></span></div>
-      <div class="verify-row"><span>Amount</span><span id="v-amount"></span></div>
-      <div class="verify-row"><span>Fee</span><span id="v-fee"></span></div>
-      <div class="verify-row total"><span>Total Deduction</span><span id="v-total"></span></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-outline" onclick="cancelVerify()">Back</button>
-      <button class="btn-primary" onclick="submitWithdraw()">Confirm</button>
-    </div>
   </div>
 
   <!-- Withdraw history -->
   <div class="form-body">
     <div class="info-section-title">Withdrawal History</div>
     <div class="hist-card" id="wd-history"></div>
+    <div class="hist-pagination" id="wd-history-pagination"></div>
   </div>
 
   <div style="height:24px"></div>
@@ -301,6 +296,26 @@
       <div class="btn-row" style="margin-bottom:0">
         <button class="btn-outline" onclick="closeCancelModal()">Keep Request</button>
         <button class="btn-primary" style="margin:0;background:var(--color-sell)" onclick="confirmCancelWithdraw()">Cancel Request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verify request modal -->
+  <div class="modal-overlay" id="verify-modal-overlay" onclick="if(event.target===this) cancelVerify()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="info-section-title">Verify Your Request</div>
+      <div class="verify-card">
+        <div class="verify-row"><span>Account</span><span id="v-account"></span></div>
+        <div class="verify-row"><span>Receiving Account</span><span id="v-bank"></span></div>
+        <div class="verify-row"><span>Account Number</span><span id="v-bank-num"></span></div>
+        <div class="verify-row"><span>Amount</span><span id="v-amount"></span></div>
+        <div class="verify-row"><span>Fee</span><span id="v-fee"></span></div>
+        <div class="verify-row total"><span>Total Deduction</span><span id="v-total"></span></div>
+      </div>
+      <div class="btn-row" style="margin-bottom:0">
+        <button class="btn-outline" onclick="cancelVerify()">Back</button>
+        <button class="btn-primary" style="margin:0" onclick="submitWithdraw()">Confirm</button>
       </div>
     </div>
   </div>
@@ -433,7 +448,8 @@
       updateWdSummary();
     }
     function updateWdSummary() {
-      document.getElementById('wd-fee-val').textContent = formatMNT(WITHDRAW_FEE);
+      const feeEl = document.getElementById('wd-fee-val');
+      if (feeEl) feeEl.textContent = formatMNT(WITHDRAW_FEE);
     }
 
     /* ── Verify flow ── */
@@ -459,14 +475,13 @@
       document.getElementById('v-fee').textContent = formatMNT(WITHDRAW_FEE);
       document.getElementById('v-total').textContent = formatMNT(amount);
 
-      document.getElementById('form-view').style.display = 'none';
-      document.getElementById('verify-view').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('verify-modal-overlay').classList.add('show');
+      notifyModalOpen();
     }
 
     function cancelVerify() {
-      document.getElementById('verify-view').style.display = 'none';
-      document.getElementById('form-view').style.display = 'block';
+      document.getElementById('verify-modal-overlay').classList.remove('show');
+      notifyModalClose();
     }
 
     function submitWithdraw() {
@@ -499,8 +514,8 @@
       setWithdrawHistory(history);
 
       document.getElementById('wd-amount').value = '';
-      document.getElementById('verify-view').style.display = 'none';
-      document.getElementById('form-view').style.display = 'block';
+      document.getElementById('verify-modal-overlay').classList.remove('show');
+      notifyModalClose();
       updateBalanceHint();
       updateWdSummary();
       renderHistory();
@@ -508,15 +523,24 @@
     }
 
     /* ── History ── */
+    let wdHistPage = 1;
+    const WD_HIST_PAGE_SIZE = 5;
+
     function renderHistory() {
       const history = getWithdrawHistory().slice().sort((a, b) =>
         new Date(b.date.replace(' ', 'T')) - new Date(a.date.replace(' ', 'T')));
       const el = document.getElementById('wd-history');
       if (!history.length) {
         el.innerHTML = '<div class="hist-empty">No withdrawal history yet</div>';
+        document.getElementById('wd-history-pagination').innerHTML = '';
         return;
       }
-      el.innerHTML = history.map(h => {
+
+      const totalPages = Math.max(1, Math.ceil(history.length / WD_HIST_PAGE_SIZE));
+      if (wdHistPage > totalPages) wdHistPage = totalPages;
+      const pageItems = history.slice((wdHistPage - 1) * WD_HIST_PAGE_SIZE, wdHistPage * WD_HIST_PAGE_SIZE);
+
+      el.innerHTML = pageItems.map(h => {
         const actions = h.status === 'pending' ? `
           <div class="hist-actions">
             <button class="hist-action-btn" title="Edit" onclick="editWithdraw('${h.id}')"><i data-lucide="pencil"></i></button>
@@ -536,7 +560,25 @@
           </div>
         </div>`;
       }).join('');
+
+      renderWdHistPagination(totalPages);
       lucide.createIcons();
+    }
+
+    function renderWdHistPagination(totalPages) {
+      const el = document.getElementById('wd-history-pagination');
+      if (totalPages <= 1) { el.innerHTML = ''; return; }
+      let html = `<button class="page-btn" onclick="gotoWdHistPage(${wdHistPage - 1})" ${wdHistPage === 1 ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button>`;
+      for (let p = 1; p <= totalPages; p++) {
+        html += `<button class="page-btn ${p === wdHistPage ? 'active' : ''}" onclick="gotoWdHistPage(${p})">${p}</button>`;
+      }
+      html += `<button class="page-btn" onclick="gotoWdHistPage(${wdHistPage + 1})" ${wdHistPage === totalPages ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button>`;
+      el.innerHTML = html;
+    }
+
+    function gotoWdHistPage(p) {
+      wdHistPage = p;
+      renderHistory();
     }
 
     function showWithdrawDetail(id) {
