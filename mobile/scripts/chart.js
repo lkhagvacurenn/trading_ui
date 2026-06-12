@@ -79,6 +79,88 @@ function renderLineChart(id, data, opts = {}) {
 
 
 /**
+ * Renders a candlestick chart into a container div from a price series.
+ * Each point in `data` is treated as a close; OHLC for each candle is
+ * synthesized from neighboring closes so it works with the same series
+ * used by renderLineChart.
+ * @param {string} id      - container element ID
+ * @param {number[]} data  - array of price values (closes)
+ * @param {object} opts    - { upColor, downColor, height, showGrid, yLabels }
+ */
+function renderCandleChart(id, data, opts = {}) {
+  const el = document.getElementById(id);
+  if (!el || data.length < 2) return;
+
+  const W = el.clientWidth || 375;
+  const H = opts.height || 220;
+  const upColor = opts.upColor || '#00C076';
+  const downColor = opts.downColor || '#EF4444';
+  const pad = { top: 8, right: 56, bottom: 8, left: 0 };
+
+  const candles = data.map((v, i) => {
+    const prev = data[i - 1] !== undefined ? data[i - 1] : v;
+    const open = prev;
+    const close = v;
+    const high = Math.max(open, close) * 1.004;
+    const low = Math.min(open, close) * 0.996;
+    return { open, close, high, low };
+  });
+
+  const allVals = candles.flatMap(c => [c.high, c.low]);
+  const min = Math.min(...allVals) - (Math.max(...allVals) - Math.min(...allVals)) * 0.06;
+  const max = Math.max(...allVals) + (Math.max(...allVals) - Math.min(...allVals)) * 0.04;
+  const range = max - min || 1;
+
+  const innerW = W - pad.left - pad.right;
+  const innerH = H - pad.top - pad.bottom;
+  const slot = innerW / candles.length;
+  const bodyW = Math.max(2, slot * 0.6);
+
+  const y = v => pad.top + innerH - ((v - min) / range) * innerH;
+
+  let candleEls = '';
+  candles.forEach((c, i) => {
+    const x = pad.left + i * slot + slot / 2;
+    const isUp = c.close >= c.open;
+    const color = isUp ? upColor : downColor;
+    const bodyTop = y(Math.max(c.open, c.close));
+    const bodyBottom = y(Math.min(c.open, c.close));
+    const bodyH = Math.max(1, bodyBottom - bodyTop);
+    candleEls += `
+      <line x1="${x.toFixed(1)}" y1="${y(c.high).toFixed(1)}" x2="${x.toFixed(1)}" y2="${y(c.low).toFixed(1)}" stroke="${color}" stroke-width="1"/>
+      <rect x="${(x - bodyW / 2).toFixed(1)}" y="${bodyTop.toFixed(1)}" width="${bodyW.toFixed(1)}" height="${bodyH.toFixed(1)}" fill="${color}"/>
+    `;
+  });
+
+  const yLabels = opts.yLabels || [max.toFixed(2), ((max + min) / 2).toFixed(2), min.toFixed(2)];
+  const yPositions = [pad.top + 4, pad.top + innerH * 0.5, pad.top + innerH - 4];
+
+  let gridLines = '';
+  if (opts.showGrid !== false) {
+    yPositions.forEach(yp => {
+      gridLines += `<line x1="${pad.left}" y1="${yp.toFixed(1)}" x2="${pad.left + innerW}" y2="${yp.toFixed(1)}"
+                         stroke="var(--color-border)" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>`;
+    });
+  }
+
+  let yLabelEls = '';
+  yLabels.forEach((label, i) => {
+    yLabelEls += `<text x="${W - 2}" y="${(yPositions[i] + 4).toFixed(1)}"
+      text-anchor="end" font-size="10" fill="var(--color-text-disabled)"
+      font-family="IBM Plex Mono, monospace">${label}</text>`;
+  });
+
+  el.innerHTML = `
+    <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      ${gridLines}
+      ${candleEls}
+      ${yLabelEls}
+    </svg>
+  `;
+}
+
+
+/**
  * Returns SVG markup for a small sparkline (stock card).
  * @param {number[]} data
  * @param {string} color

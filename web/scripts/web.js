@@ -43,6 +43,17 @@ function toggleTheme() {
   applyTheme(cur === 'light' ? 'dark' : 'light');
 }
 
+function applyLang(lang) {
+  localStorage.setItem('tradex-lang', lang);
+  const label = document.getElementById('lang-label');
+  if (label) label.textContent = lang.toUpperCase();
+}
+
+function toggleLang() {
+  const cur = localStorage.getItem('tradex-lang') || 'mn';
+  applyLang(cur === 'mn' ? 'en' : 'mn');
+}
+
 function syncFrameTheme(theme) {
   try {
     const frame = document.getElementById('page-frame');
@@ -79,6 +90,7 @@ function fmtHeader(n) {
 }
 
 applyTheme(localStorage.getItem('tradex-theme') || 'dark');
+applyLang(localStorage.getItem('tradex-lang') || 'en');
 
 if (typeof WALLET !== 'undefined') {
   const pEl = document.getElementById('hdr-portfolio');
@@ -116,9 +128,19 @@ document.querySelectorAll('.nav-link').forEach(link => {
 });
 
 function logout() {
-  if (confirm('BDSec-ээс гарах уу?')) {
-    window.location.href = '../mobile/login.html';
-  }
+  document.getElementById('signout-modal')?.classList.add('show');
 }
+
+function closeSignoutModal() {
+  document.getElementById('signout-modal')?.classList.remove('show');
+}
+
+function confirmSignout() {
+  sessionStorage.removeItem('bdsec-auth');
+  window.location.href = 'login.html';
+}
+
+window.closeSignoutModal = closeSignoutModal;
+window.confirmSignout = confirmSignout;
 
 window.navigateTo = navigateTo;

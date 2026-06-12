@@ -4,14 +4,744 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Данс нээх — BDSec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
   <link rel="stylesheet" href="../styles/web.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
-  <style>html,body{margin:0;height:100%;overflow:hidden;background:var(--color-bg)}</style>
+  <style>
+    body { margin:0; font-family:'Manrope', sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    * { box-sizing:border-box; }
+
+    /* ── Split layout ── */
+    .oa-wrap { display:flex; gap:32px; align-items:flex-start; }
+    .oa-overview { flex:0 0 340px; position:sticky; top:0; }
+    .oa-overview-title { font-size:22px; font-weight:800; margin:0 0 8px; }
+    .oa-overview-sub { font-size:13px; color:var(--color-text-secondary); margin:0 0 24px; line-height:1.65; }
+
+    /* ── Top-level sections (Open Account / KYC / Tripartite) ── */
+    .oa-section { border-radius:14px; margin-bottom:4px; }
+    .oa-section-hdr {
+      display:flex; gap:14px; align-items:center; padding:12px; border-radius:14px;
+      cursor:pointer; transition:background .15s;
+    }
+    .oa-section-hdr:hover { background:var(--color-bg-input); }
+    .oa-section.active .oa-section-hdr { background:var(--color-bg-input); }
+    .oa-section-num {
+      width:36px; height:36px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:800; transition:all .2s;
+      background:var(--color-bg-input); color:var(--color-text-disabled); border:2px solid var(--color-border);
+    }
+    .oa-section.active .oa-section-num { background:var(--color-primary); color:#fff; border-color:var(--color-primary); }
+    .oa-section.done .oa-section-num { background:var(--color-buy); color:#fff; border-color:var(--color-buy); }
+    .oa-section-num svg { width:16px; height:16px; }
+    .oa-section-info strong { display:block; font-size:14.5px; font-weight:700; margin-bottom:2px; }
+    .oa-section-info span { font-size:12.5px; color:var(--color-text-secondary); line-height:1.5; }
+
+    .oa-form-card { flex:1; min-width:0; }
+    .oa-form-inner { max-width:640px; margin:0 auto; }
+
+    /* ── Form step progress bar (like mobile wizard) ── */
+    .step-bar { display:flex; gap:6px; margin-bottom:10px; }
+    .step-seg { flex:1; height:3px; border-radius:99px; background:var(--color-bg-input); transition:background .3s ease; }
+    .step-seg.done { background:var(--color-primary); }
+    .step-seg.active { background:var(--color-primary); opacity:.7; }
+    .step-meta {
+      font-size:11.5px; font-weight:700; color:var(--color-text-secondary);
+      text-transform:uppercase; letter-spacing:.05em; margin-bottom:20px;
+    }
+
+    /* ── Embedded KYC / Tripartite forms ── */
+    .oa-iframe-wrap { margin:-20px; border-radius:inherit; overflow:hidden; }
+    .oa-iframe-wrap iframe { width:100%; height:1700px; border:0; display:block; }
+    .oa-section-content { display:none; }
+    .oa-section-content.active { display:block; }
+
+    /* ── Form fields (from mobile open-account) ── */
+    .field-label { font-size:12px; font-weight:600; color:var(--color-text-secondary); margin-bottom:6px; display:block; }
+    .field-wrap { margin-bottom:14px; }
+    .inp {
+      width:100%; background:var(--color-bg-input); border:1.5px solid var(--color-border);
+      border-radius:10px; padding:13px 14px; font-size:14px; color:var(--color-text-primary);
+      outline:none; transition:border-color .15s; font-family:'Manrope', sans-serif;
+    }
+    .inp:focus { border-color:var(--color-primary); }
+    .inp::placeholder { color:var(--color-text-disabled); }
+    .inp[readonly] { background:var(--color-bg-card); color:var(--color-text-secondary); cursor:default; }
+    .inp-select {
+      appearance:none; -webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 12px center; padding-right:36px; cursor:pointer;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.6); opacity:.85; cursor:pointer; }
+    [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.35); }
+
+    .field-row { display:flex; gap:10px; }
+    .field-row .field-wrap { flex:1; }
+
+    .btn-row { display:flex; gap:10px; margin-top:6px; }
+    .btn-row .btn { flex:1; }
+    .btn-row .btn-primary { flex:1.3; }
+
+    /* ── Bank logo picker ── */
+    .bank-scroll { display:flex; gap:12px; overflow-x:auto; padding:2px 2px 8px; margin:0 -2px; scrollbar-width:none; }
+    .bank-scroll::-webkit-scrollbar { display:none; }
+    .bank-card {
+      flex-shrink:0; width:56px; height:56px; border-radius:12px; overflow:hidden;
+      border:2px solid var(--color-border); cursor:pointer; position:relative; transition:border-color .15s, transform .1s;
+    }
+    .bank-card:active { transform:scale(0.96); }
+    .bank-card img { width:100%; height:100%; object-fit:cover; display:block; }
+    .bank-card.selected { border-color:var(--color-primary); }
+    .bank-card .bank-check {
+      position:absolute; top:-5px; right:-5px; width:16px; height:16px; border-radius:50%;
+      background:var(--color-primary); color:#fff; display:none; align-items:center; justify-content:center;
+      border:2px solid var(--color-bg);
+    }
+    .bank-card.selected .bank-check { display:flex; }
+    .bank-card .bank-check svg { width:9px; height:9px; }
+
+    /* ── Agreements ── */
+    .agreement-item {
+      display:flex; align-items:center; justify-content:space-between; padding:14px 16px;
+      background:var(--color-bg-input); border:1px solid var(--color-border); border-radius:12px;
+      margin-bottom:10px; cursor:pointer; transition:border-color .15s;
+    }
+    .agreement-item:hover { border-color:var(--color-primary); }
+    .agreement-item .ag-left { display:flex; align-items:center; gap:10px; }
+    .agreement-check {
+      width:26px; height:26px; border-radius:50%; background:var(--color-bg-card);
+      display:flex; align-items:center; justify-content:center; color:var(--color-text-disabled);
+      flex-shrink:0; transition:background .2s ease, color .2s ease;
+    }
+    .agreement-check svg { width:13px; height:13px; }
+    .agreement-check.read { background:rgba(0,192,118,0.15); color:var(--color-buy); }
+    .agreement-name { font-size:13px; font-weight:600; }
+    .chevron-icon { color:var(--color-text-disabled); }
+    .chevron-icon svg { width:16px; height:16px; }
+
+    /* ── Agreement reader modal ── */
+    .agreement-modal-overlay {
+      display:none; position:fixed; inset:0; z-index:280;
+      background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      align-items:center; justify-content:center; padding:24px;
+    }
+    .agreement-modal-overlay.open { display:flex; }
+    .agreement-modal-card {
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:18px; width:100%; max-width:480px; max-height:78vh;
+      padding:24px 24px 28px; display:flex; flex-direction:column;
+    }
+    .agreement-modal-hdr { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; flex-shrink:0; }
+    .agreement-modal-title { font-size:15px; font-weight:800; }
+    .agreement-modal-close {
+      width:32px; height:32px; border-radius:50%; flex-shrink:0; background:var(--color-bg-input);
+      border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--color-text-secondary);
+    }
+    .agreement-modal-close svg { width:16px; height:16px; }
+    .agreement-modal-body { overflow-y:auto; font-size:13px; line-height:1.75; color:var(--color-text-secondary); white-space:pre-line; }
+
+    /* ── Signature ── */
+    .sig-section { margin-top:6px; margin-bottom:8px; }
+    .sig-placeholder {
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+      border:1.5px dashed var(--color-border); border-radius:14px; padding:30px 16px; cursor:pointer;
+      transition:border-color .15s, background .15s;
+    }
+    .sig-placeholder:hover { border-color:var(--color-primary); background:var(--color-bg-input); }
+    .sig-placeholder-icon {
+      width:44px; height:44px; border-radius:50%; background:var(--color-bg-input);
+      display:flex; align-items:center; justify-content:center; color:var(--color-primary);
+    }
+    .sig-placeholder-icon svg { width:20px; height:20px; }
+    .sig-placeholder-text { font-size:13px; font-weight:600; color:var(--color-text-secondary); }
+    #sig-canvas {
+      width:100%; height:160px; display:block; background:var(--color-bg-input);
+      border:1.5px solid var(--color-primary); border-radius:12px 12px 0 0; touch-action:none; cursor:crosshair;
+    }
+    .sig-pad-actions { display:flex; border:1.5px solid var(--color-border); border-top:none; border-radius:0 0 12px 12px; overflow:hidden; }
+    .sig-action-btn {
+      flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:12px;
+      background:var(--color-bg-input); border:none; border-right:1px solid var(--color-border);
+      font-size:13px; font-weight:600; color:var(--color-text-secondary); cursor:pointer;
+    }
+    .sig-action-btn:last-child { border-right:none; }
+    .sig-action-btn svg { width:14px; height:14px; }
+    .sig-action-btn.primary { color:var(--color-primary); }
+    .sig-done {
+      display:flex; align-items:center; justify-content:space-between; padding:14px 16px;
+      background:rgba(0,192,118,0.08); border:1px solid rgba(0,192,118,0.3); border-radius:12px;
+    }
+    .sig-done-left { display:flex; align-items:center; gap:10px; color:var(--color-buy); font-size:13px; font-weight:600; }
+    .sig-done-left svg { width:18px; height:18px; }
+    .sig-redo-btn { background:none; border:none; color:var(--color-primary); font-size:12px; font-weight:700; cursor:pointer; }
+
+    /* ── QR & payment ── */
+    .qr-wrapper { margin-bottom:16px; display:flex; align-items:center; justify-content:center; }
+    .qr-fee-label { text-align:center; font-size:14px; font-weight:700; color:var(--color-text-secondary); margin-bottom:20px; }
+    .pay-apps-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-bottom:20px; }
+    .pay-app-item { display:flex; align-items:center; justify-content:center; cursor:pointer; }
+    .pay-app-icon { width:64px; height:64px; border-radius:16px; overflow:hidden; border:1px solid var(--color-border); }
+    .pay-app-icon img { width:100%; height:100%; object-fit:cover; display:block; }
+    .btn-check-payment {
+      width:100%; padding:14px; background:var(--color-bg-input); border:1.5px solid var(--color-border);
+      border-radius:10px; font-size:15px; font-weight:700; color:var(--color-text-primary);
+      cursor:pointer; transition:border-color .15s;
+    }
+    .btn-check-payment:hover { border-color:var(--color-primary); }
+
+    /* ── Success ── */
+    #step-success {
+      display:none; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:40px 16px;
+    }
+    .success-icon {
+      width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg, #00C076, #00e08f);
+      display:flex; align-items:center; justify-content:center; margin-bottom:24px;
+      box-shadow:0 0 0 10px rgba(0,192,118,0.1), 0 0 32px rgba(0,192,118,0.25);
+    }
+    .success-icon svg { width:36px; height:36px; color:#fff; }
+    .success-title { font-size:22px; font-weight:800; margin-bottom:14px; }
+    .success-msg { font-size:14px; color:var(--color-text-secondary); line-height:1.65; margin-bottom:28px; }
+
+    .step-panel { display:none; }
+    .step-panel.active { display:block; }
+
+    @media (max-width: 980px) {
+      .oa-wrap { flex-direction:column; }
+      .oa-overview { flex:1; position:static; width:100%; }
+      .oa-form-card { max-width:100%; }
+    }
+  </style>
 </head>
 <body>
-<div class="web-embed-page">
-  <iframe class="web-form-iframe" src="../../mobile/pages/open-account.html" title="Данс нээх"></iframe>
+<div class="web-page">
+
+  <div class="oa-wrap">
+
+    <!-- ════ LEFT — steps overview ════ -->
+    <div class="oa-overview">
+      <h1 class="oa-overview-title">Become an Online Trader</h1>
+      <p class="oa-overview-sub">Complete the three sections below to verify your identity, open your BDSec securities account and start trading the Mongolian markets.</p>
+
+      <!-- ── Section 1: Open Account ── -->
+      <div class="oa-section active" data-section="account">
+        <div class="oa-section-hdr">
+          <div class="oa-section-num"><i data-lucide="user-round"></i></div>
+          <div class="oa-section-info">
+            <strong>Open Account</strong>
+            <span>Personal details, bank account, agreements &amp; payment.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Section 2: KYC ── -->
+      <div class="oa-section" data-section="kyc">
+        <div class="oa-section-hdr">
+          <div class="oa-section-num"><i data-lucide="shield-check"></i></div>
+          <div class="oa-section-info">
+            <strong>KYC Verification</strong>
+            <span>Identity, employment, financial &amp; compliance details.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Section 3: Tripartite Agreement ── -->
+      <div class="oa-section" data-section="tripartite">
+        <div class="oa-section-hdr">
+          <div class="oa-section-num"><i data-lucide="repeat"></i></div>
+          <div class="oa-section-info">
+            <strong>Tripartite Agreement</strong>
+            <span>Link your bank, brokerage &amp; MCSD accounts.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ RIGHT — active section content ════ -->
+    <div class="oa-form-card web-card web-card-pad">
+
+    <!-- ══ SECTION 1: Open Account ══ -->
+    <div class="oa-section-content active" id="account-content">
+    <div class="oa-form-inner">
+
+      <div class="step-bar" id="oa-step-bar">
+        <div class="step-seg active" id="oa-seg-0"></div>
+        <div class="step-seg" id="oa-seg-1"></div>
+        <div class="step-seg" id="oa-seg-2"></div>
+        <div class="step-seg" id="oa-seg-3"></div>
+      </div>
+      <div class="step-meta" id="oa-step-meta">Step 1 of 4 — Personal Information</div>
+
+      <!-- ══ STEP 1: Personal info ══ -->
+      <div class="step-panel active" id="step-1">
+        <div class="web-section-title" style="margin-bottom:18px">Personal Information</div>
+
+        <div class="field-row">
+          <div class="field-wrap">
+            <label class="field-label">First Name</label>
+            <input class="inp" type="text" id="oa-first-name" placeholder="First name" />
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Last Name</label>
+            <input class="inp" type="text" id="oa-last-name" placeholder="Last name" />
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label class="field-label">Date of Birth</label>
+          <input class="inp" type="date" id="oa-dob" />
+        </div>
+
+        <div class="field-wrap">
+          <label class="field-label">Gender</label>
+          <select class="inp inp-select" id="oa-gender">
+            <option value="">Select gender</option>
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+        </div>
+
+        <div class="field-wrap">
+          <label class="field-label">Phone Number</label>
+          <input class="inp" type="tel" id="oa-phone" placeholder="+976 ···" />
+        </div>
+
+        <div class="field-wrap">
+          <label class="field-label">Home Address</label>
+          <input class="inp" type="text" id="oa-address" placeholder="Address" />
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="oaStep1Continue()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ══ STEP 2: Bank account ══ -->
+      <div class="step-panel" id="step-2">
+        <div class="web-section-title" style="margin-bottom:18px">Bank Account</div>
+
+        <div class="field-wrap">
+          <label class="field-label">Select Bank</label>
+          <div class="bank-scroll" id="bank-scroll"></div>
+        </div>
+
+        <div class="field-wrap">
+          <label class="field-label">Currency</label>
+          <select class="inp inp-select" id="acct-currency">
+            <option>MNT — Mongolian Tögrög</option>
+            <option>USD — US Dollar</option>
+            <option>EUR — Euro</option>
+            <option>CNY — Chinese Yuan</option>
+          </select>
+        </div>
+
+        <div class="field-wrap">
+          <label class="field-label">Account Number</label>
+          <input class="inp" type="tel" id="acct-number" placeholder="Enter 8-digit account number" maxlength="8" oninput="handleAcctNumberInput(this)" />
+        </div>
+
+        <div class="field-wrap">
+          <label class="field-label">Account Holder Name</label>
+          <input class="inp" type="text" id="acct-holder" placeholder="Account holder name" readonly />
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goStep(1)"><i data-lucide="arrow-left"></i><span>Back</span></button>
+          <button class="btn btn-primary" onclick="goStep(3)">Continue</button>
+        </div>
+      </div>
+
+      <!-- ══ STEP 3: Agreements & Signature ══ -->
+      <div class="step-panel" id="step-3">
+        <div class="web-section-title" style="margin-bottom:18px">Agreements &amp; Signature</div>
+
+        <div class="agreement-item" onclick="openAgreement('acc-open')">
+          <div class="ag-left">
+            <div class="agreement-check" id="ac-acc-open"><i data-lucide="file-text"></i></div>
+            <span class="agreement-name">Account Opening Agreement</span>
+          </div>
+          <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
+        </div>
+
+        <div class="agreement-item" onclick="openAgreement('nominal')">
+          <div class="ag-left">
+            <div class="agreement-check" id="ac-nominal"><i data-lucide="file-text"></i></div>
+            <span class="agreement-name">Nominal Account Service Agreement</span>
+          </div>
+          <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
+        </div>
+
+        <div class="agreement-item" onclick="openAgreement('broker')">
+          <div class="ag-left">
+            <div class="agreement-check" id="ac-broker"><i data-lucide="file-text"></i></div>
+            <span class="agreement-name">Online Broker Service Agreement</span>
+          </div>
+          <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
+        </div>
+
+        <div class="sig-section">
+          <label class="field-label">Signature</label>
+
+          <div class="sig-placeholder" id="sig-placeholder" onclick="openSignaturePad()">
+            <div class="sig-placeholder-icon"><i data-lucide="pen-line"></i></div>
+            <div class="sig-placeholder-text">Click to draw your signature</div>
+          </div>
+
+          <div class="sig-pad" id="sig-pad" style="display:none">
+            <canvas id="sig-canvas"></canvas>
+            <div class="sig-pad-actions">
+              <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Clear</span></button>
+              <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Done</span></button>
+            </div>
+          </div>
+
+          <div class="sig-done" id="sig-done" style="display:none">
+            <div class="sig-done-left">
+              <i data-lucide="check-circle"></i>
+              <span>Signature captured</span>
+            </div>
+            <button class="sig-redo-btn" onclick="redoSignature()">Redo</button>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:20px">
+          <button class="btn btn-outline" onclick="goStep(2)"><i data-lucide="arrow-left"></i><span>Back</span></button>
+          <button class="btn btn-primary" onclick="goStep(4)">Continue</button>
+        </div>
+      </div>
+
+      <!-- ══ STEP 4: Payment ══ -->
+      <div class="step-panel" id="step-4">
+        <div class="web-section-title" style="margin-bottom:18px">Payment</div>
+
+        <div class="qr-wrapper">
+          <img src="../../public/qr.png" alt="Payment QR code" style="width:180px;height:180px;object-fit:contain;border-radius:8px" />
+        </div>
+
+        <div class="qr-fee-label">Account opening fee: 5,000₮</div>
+
+        <div class="pay-apps-grid" id="pay-apps-grid"></div>
+
+        <div class="btn-row" style="margin-bottom:0">
+          <button class="btn btn-outline" onclick="goStep(3)"><i data-lucide="arrow-left"></i><span>Back</span></button>
+          <button class="btn-check-payment" style="flex:1.3" onclick="checkPayment()">Check Payment</button>
+        </div>
+      </div>
+
+      <!-- ══ SUCCESS ══ -->
+      <div id="step-success">
+        <div class="success-icon"><i data-lucide="check"></i></div>
+        <div class="success-title">Payment Successful!</div>
+        <div class="success-msg">
+          Your account opening request has been submitted. Since you do not yet have a securities account, we will proceed with the opening process.
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="goSection('kyc')">Continue to KYC Verification</button>
+      </div>
+
+    </div>
+    </div>
+
+    <!-- ══ SECTION 2: KYC Verification (embedded) ══ -->
+    <div class="oa-section-content" id="kyc-content">
+      <div class="oa-iframe-wrap">
+        <iframe id="kyc-iframe" title="KYC Verification"></iframe>
+      </div>
+    </div>
+
+    <!-- ══ SECTION 3: Tripartite Agreement (embedded) ══ -->
+    <div class="oa-section-content" id="tripartite-content">
+      <div class="oa-iframe-wrap">
+        <iframe id="tripartite-iframe" title="Tripartite Agreement"></iframe>
+      </div>
+    </div>
+
+    </div>
+  </div>
 </div>
+
+<!-- ══ AGREEMENT READER MODAL ══ -->
+<div id="agreement-modal" class="agreement-modal-overlay">
+  <div class="agreement-modal-card">
+    <div class="agreement-modal-hdr">
+      <span id="agreement-modal-title" class="agreement-modal-title"></span>
+      <button class="agreement-modal-close" onclick="closeAgreement()"><i data-lucide="x"></i></button>
+    </div>
+    <div id="agreement-modal-body" class="agreement-modal-body"></div>
+    <button class="btn btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">I've Read This</button>
+  </div>
+</div>
+
+<script src="../../data/static.js"></script>
+<script src="../scripts/components.js"></script>
+<script src="../../mobile/scripts/wallet-data.js"></script>
+<script>
+/* ── Bank logo picker ── */
+const bankScroll = document.getElementById('bank-scroll');
+let selectedBankIndex = null;
+for (let i = 1; i <= 12; i++) {
+  const src = `../../public/bank logo/bank${String(i).padStart(2, '0')}.png`;
+  const card = document.createElement('div');
+  card.className = 'bank-card';
+  card.innerHTML = `<img src="${src}" alt="Bank ${i}" /><span class="bank-check"><i data-lucide="check"></i></span>`;
+  card.onclick = () => {
+    document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedBankIndex = i;
+  };
+  bankScroll.appendChild(card);
+}
+
+/* ── Account number → auto-fill account holder name ── */
+function handleAcctNumberInput(inp) {
+  inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 8);
+  const holder = document.getElementById('acct-holder');
+  holder.value = inp.value.length === 8 ? 'Lkhagvasuren Battsengel' : '';
+}
+
+/* ── Agreements: unread → reader modal → read ── */
+const AGREEMENTS = {
+  'acc-open': {
+    name: 'Account Opening Agreement',
+    content: `This Account Opening Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client").
+
+1. By submitting this application, the Client confirms that all information provided is accurate, complete, and up to date, and agrees to notify the Company promptly of any changes.
+
+2. The Company will open a securities trading account in the Client's name upon successful verification of identity and receipt of the account opening fee.
+
+3. The Client acknowledges that trading in securities involves risk, including the possible loss of principal, and that past performance is not indicative of future results.
+
+4. The Client authorizes the Company to carry out instructions received through the registered account, mobile application, or other approved channels.
+
+5. This Agreement remains in effect until terminated in writing by either party, subject to settlement of any outstanding obligations.`
+  },
+  'nominal': {
+    name: 'Nominal Account Service Agreement',
+    content: `This Nominal Account Service Agreement governs the holding of securities on the Client's behalf through a nominal (omnibus) account maintained by the Company at the Securities Clearing House and Central Depository.
+
+1. Securities purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
+
+2. The Company will maintain accurate sub-records identifying the Client's beneficial Interest in any securities held in the nominal account.
+
+3. The Client may request a transfer of securities from the nominal account to an individual account at any time, subject to applicable fees and processing times.
+
+4. The Company shall exercise reasonable care in safeguarding assets held in the nominal account and will provide periodic statements reflecting the Client's holdings.
+
+5. Any corporate actions (dividends, rights issues, voting) relating to securities in the nominal account will be passed through to the Client in accordance with regulatory requirements.`
+  },
+  'broker': {
+    name: 'Online Broker Service Agreement',
+    content: `This Online Broker Service Agreement sets out the terms under which the Company provides electronic trading and brokerage services to the Client through its online and mobile platforms.
+
+1. The Client agrees to keep login credentials, PIN codes, and authentication methods confidential and to notify the Company immediately of any unauthorized access.
+
+2. Orders placed through the platform are executed on a best-efforts basis at prevailing market prices and may be subject to delays, market conditions, or exchange rules beyond the Company's control.
+
+3. The Company may charge brokerage commissions, settlement fees, and other charges as disclosed in its published fee schedule, which may be updated from time to time.
+
+4. The Client is solely responsible for evaluating the merits and risks of any investment decision made through the platform.
+
+5. The Company reserves the right to suspend or restrict access to the platform in cases of suspected fraud, technical failure, or as required by regulators.`
+  }
+};
+const readAgreements = new Set();
+
+function openAgreement(id) {
+  const ag = AGREEMENTS[id];
+  if (!ag) return;
+  document.getElementById('agreement-modal-title').textContent = ag.name;
+  document.getElementById('agreement-modal-body').textContent = ag.content;
+  const modal = document.getElementById('agreement-modal');
+  modal.dataset.current = id;
+  modal.classList.add('open');
+  lucide.createIcons();
+}
+function closeAgreement() {
+  const modal = document.getElementById('agreement-modal');
+  const id = modal.dataset.current;
+  modal.classList.remove('open');
+  if (id && !readAgreements.has(id)) {
+    readAgreements.add(id);
+    const icon = document.getElementById(`ac-${id}`);
+    icon.classList.add('read');
+    icon.innerHTML = '<i data-lucide="check"></i>';
+    lucide.createIcons();
+  }
+}
+
+/* ── Step navigation ── */
+function oaStep1Continue() {
+  localStorage.setItem('oa-first-name', document.getElementById('oa-first-name').value.trim());
+  localStorage.setItem('oa-last-name', document.getElementById('oa-last-name').value.trim());
+  localStorage.setItem('oa-dob', document.getElementById('oa-dob').value);
+  localStorage.setItem('oa-gender', document.getElementById('oa-gender').value);
+  localStorage.setItem('oa-phone', document.getElementById('oa-phone').value.trim());
+  localStorage.setItem('oa-address', document.getElementById('oa-address').value.trim());
+  goStep(2);
+}
+
+let currentStep = 1;
+const TOTAL_STEPS = 4;
+const OA_STEP_TITLES = ['Personal Information', 'Bank Account', 'Agreements & Signature', 'Payment'];
+
+function goStep(n) {
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  currentStep = n;
+  document.getElementById(`step-${n}`).classList.add('active');
+  updateOverview();
+}
+
+function updateOverview() {
+  for (let i = 0; i < TOTAL_STEPS; i++) {
+    const seg = document.getElementById(`oa-seg-${i}`);
+    const stepNum = i + 1;
+    seg.className = 'step-seg' + (stepNum < currentStep ? ' done' : stepNum === currentStep ? ' active' : '');
+  }
+  document.getElementById('oa-step-meta').textContent = `Step ${currentStep} of ${TOTAL_STEPS} — ${OA_STEP_TITLES[currentStep - 1]}`;
+}
+
+function checkPayment() {
+  for (let i = 1; i <= TOTAL_STEPS; i++) document.getElementById(`step-${i}`).classList.remove('active');
+  document.getElementById('step-success').style.display = 'flex';
+  document.getElementById('oa-step-bar').style.display = 'none';
+  document.getElementById('oa-step-meta').style.display = 'none';
+  localStorage.setItem('bdsec-account-opened', '1');
+  localStorage.setItem('bdsec-account-opened-date', new Date().toISOString().slice(0, 10));
+  refreshSectionStatus();
+}
+
+/* ── Section navigation (Open Account / KYC / Tripartite Agreement) ── */
+let currentSection = 'account';
+let kycLoaded = false, tripartiteLoaded = false;
+
+function goSection(name) {
+  if (name === currentSection) return;
+  document.querySelectorAll('.oa-section').forEach(s => s.classList.toggle('active', s.dataset.section === name));
+  document.querySelectorAll('.oa-section-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`${name}-content`).classList.add('active');
+  currentSection = name;
+  if (name === 'kyc' && !kycLoaded) {
+    document.getElementById('kyc-iframe').src = '../../mobile/pages/kyc.html';
+    kycLoaded = true;
+  }
+  if (name === 'tripartite' && !tripartiteLoaded) {
+    document.getElementById('tripartite-iframe').src = '../../mobile/pages/tripartite.html';
+    tripartiteLoaded = true;
+  }
+}
+
+document.querySelectorAll('.oa-section-hdr').forEach(hdr => {
+  hdr.addEventListener('click', () => goSection(hdr.parentElement.dataset.section));
+});
+
+/* Proxy so the embedded KYC / Tripartite pages (which call window.parent.navigateTo)
+   can reach the outer app shell or jump between sections of this combined flow. */
+function navigateTo(page) {
+  if (page === 'account' || page === 'kyc' || page === 'tripartite') { goSection(page); return; }
+  try { window.parent.navigateTo(page); } catch (e) {}
+}
+
+const SECTION_ICONS = { account: 'user-round', kyc: 'shield-check', tripartite: 'repeat' };
+
+function refreshSectionStatus() {
+  let tripartiteDone = false;
+  try { const t = getTripartiteAgreement(); tripartiteDone = !!(t && t.signed); } catch (e) {}
+  const doneMap = {
+    account: localStorage.getItem('bdsec-account-opened') === '1',
+    kyc: localStorage.getItem('bdsec-kyc-done') === '1',
+    tripartite: tripartiteDone,
+  };
+  Object.keys(doneMap).forEach(name => {
+    const section = document.querySelector(`.oa-section[data-section="${name}"]`);
+    const done = doneMap[name];
+    section.classList.toggle('done', done);
+    const num = section.querySelector('.oa-section-num');
+    num.innerHTML = done ? '<i data-lucide="check"></i>' : `<i data-lucide="${SECTION_ICONS[name]}"></i>`;
+  });
+  lucide.createIcons();
+}
+
+/* ── Payment apps ── */
+const OA_PAY_APPS = ['QPay','Socialpay','iPay','Storepay','Lendpay','Nomad','MBank','MobiFinance','Monpay','Mobicom','Arig','ARD'];
+const grid = document.getElementById('pay-apps-grid');
+OA_PAY_APPS.forEach((name, i) => {
+  const logoSrc = `../../public/bank logo/bank${String((i % 12) + 1).padStart(2, '0')}.png`;
+  const div = document.createElement('div');
+  div.className = 'pay-app-item';
+  div.innerHTML = `<div class="pay-app-icon"><img src="${logoSrc}" alt="${name}" /></div>`;
+  div.onclick = () => showToast(`Opening ${name}…`);
+  grid.appendChild(div);
+});
+
+/* ── Signature canvas ── */
+const canvas = document.getElementById('sig-canvas');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+let lastX = 0, lastY = 0;
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width) return;
+  canvas.width  = rect.width  * window.devicePixelRatio;
+  canvas.height = rect.height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-text-primary') || '#fff';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return [src.clientX - rect.left, src.clientY - rect.top];
+}
+
+canvas.addEventListener('mousedown',  e => { drawing = true; [lastX, lastY] = getPos(e); });
+canvas.addEventListener('mousemove',  e => { if (!drawing) return; draw(e); });
+canvas.addEventListener('mouseup',    () => { drawing = false; });
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e); }, { passive: false });
+canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; draw(e); }, { passive: false });
+canvas.addEventListener('touchend',   () => { drawing = false; });
+
+function draw(e) {
+  const [x, y] = getPos(e);
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  [lastX, lastY] = [x, y];
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+/* ── Signature pad: open / save / redo ── */
+function openSignaturePad() {
+  document.getElementById('sig-placeholder').style.display = 'none';
+  document.getElementById('sig-pad').style.display = 'block';
+  resizeCanvas();
+}
+function saveSignature() {
+  document.getElementById('sig-pad').style.display = 'none';
+  document.getElementById('sig-done').style.display = 'flex';
+  try { setSignature(canvas.toDataURL()); } catch (e) {}
+  lucide.createIcons();
+}
+function redoSignature() {
+  clearCanvas();
+  document.getElementById('sig-done').style.display = 'none';
+  document.getElementById('sig-pad').style.display = 'block';
+}
+
+updateOverview();
+refreshSectionStatus();
+lucide.createIcons();
+</script>
 </body>
 </html>

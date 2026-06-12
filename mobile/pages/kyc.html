@@ -315,7 +315,7 @@
     <div class="success-msg">
       Thank you. Your KYC information has been submitted for review. We will notify you once your verification is complete and your account is ready for online trading.
     </div>
-    <button class="btn-home" onclick="goHome()">Back to Home</button>
+    <button class="btn-home" id="kyc-success-btn" onclick="goHome()">Back to Home</button>
   </div>
 
   <!-- ══ OTP VERIFICATION MODAL (phone / email) ══ -->
@@ -1104,6 +1104,9 @@ function goBack() {
 function goHome() {
   try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
 }
+/* True when embedded inside the combined Open Account / KYC / Tripartite flow
+   (web/pages/open-account.html), as opposed to opened standalone from the menu. */
+const kycEmbeddedInFlow = (function () { try { return window.parent !== window.top; } catch (e) { return false; } })();
 function submitKyc() {
   if (!kycVerifyGateOk()) { kycGoStep(1); return; }
   document.getElementById('kyc-header').style.display = 'none';
@@ -1114,6 +1117,11 @@ function submitKyc() {
   document.getElementById('kyc-success').style.display = 'flex';
   localStorage.setItem('bdsec-kyc-done', '1');
   localStorage.setItem('bdsec-kyc-done-date', new Date().toISOString().slice(0, 10));
+  if (kycEmbeddedInFlow) {
+    const btn = document.getElementById('kyc-success-btn');
+    btn.textContent = 'Continue to Tripartite Agreement';
+    btn.onclick = () => { try { window.parent.navigateTo('tripartite'); } catch (e) {} };
+  }
   window.scrollTo(0, 0);
 }
 

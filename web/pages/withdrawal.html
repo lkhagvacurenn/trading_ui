@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
   <link rel="stylesheet" href="../styles/web.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
-  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+  <style>body{margin:0;font-family:'Manrope', sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
 </head>
 <body>
 <div class="web-page">
@@ -22,7 +22,7 @@
 
       <div class="web-form-card">
         <div style="font-size:12px;color:var(--color-text-disabled);margin-bottom:4px">Боломжит зарлага</div>
-        <div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;margin-bottom:16px" id="avail-w">—</div>
+        <div style="font-size:20px;font-weight:800;font-family:'IBM Plex Mono', monospace;margin-bottom:16px" id="avail-w">—</div>
 
         <div class="web-field"><label>Банк сонгох</label>
           <div class="bank-grid" id="bank-grid"></div>
@@ -87,7 +87,7 @@
       const cancel = w.status === 'PENDING' ? `<button class="btn btn-ghost btn-sm" style="color:var(--color-sell);margin-top:4px" onclick="cancelWd('${w.id}')">Цуцлах</button>` : '';
       return `<div style="padding:14px 16px;border-bottom:1px solid var(--color-border)">
         <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div><div style="font-weight:700;font-family:'JetBrains Mono',monospace">${fmtMNT(w.amount)}</div>
+          <div><div style="font-weight:700;font-family:'IBM Plex Mono', monospace">${fmtMNT(w.amount)}</div>
           <div style="font-size:11px;color:var(--color-text-disabled);margin-top:2px">${w.bank} ${w.account} · ${w.date}</div></div>
           <span class="status-badge ${cls}">${lbl}</span>
         </div>${cancel}</div>`;

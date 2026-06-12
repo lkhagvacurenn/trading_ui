@@ -9,36 +9,70 @@
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
   <link rel="stylesheet" href="../styles/web.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin:0; font-family:'Inter',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    body { margin:0; font-family:'Manrope', sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
     * { box-sizing:border-box; }
+
+    .ticker-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:white; flex-shrink:0; }
     .card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-    .ticker-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:white; }
-    .change-badge { font-size:10px; font-weight:600; padding:3px 7px; border-radius:20px; }
+    .change-badge { font-size:10px; font-weight:600; padding:3px 7px; border-radius:20px; white-space:nowrap; }
     .change-badge.up { background:rgba(0,192,118,0.15); color:var(--color-buy); }
     .change-badge.down { background:rgba(239,68,68,0.15); color:var(--color-sell); }
-    .card-name { font-size:11px; color:var(--color-text-secondary); margin-bottom:6px; line-height:1.35; }
+    .change-badge.flat { background:rgba(156,163,175,0.15); color:var(--color-text-disabled); }
+    .card-name { font-size:11px; color:var(--color-text-secondary); margin-bottom:6px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .card-price-label { font-size:10px; color:var(--color-text-disabled); }
-    .card-price { font-size:13px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+    .card-price { font-size:13px; font-weight:700; font-family:'IBM Plex Mono', monospace; }
+
     .detail-symbol { font-size:20px; font-weight:800; color:var(--color-primary); }
-    .detail-price { font-size:24px; font-weight:800; font-family:'JetBrains Mono',monospace; margin-left:8px; }
-    .icon-btn { width:34px; height:34px; border-radius:50%; background:var(--color-bg-input); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--color-text-secondary); }
+    .detail-price { font-size:24px; font-weight:800; font-family:'IBM Plex Mono', monospace; margin-left:8px; }
+    .icon-btn { width:34px; height:34px; border-radius:50%; background:var(--color-bg-input); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--color-text-secondary); transition:opacity .15s; }
+    .icon-btn:hover { opacity:.8; }
     .icon-btn.active { color:#f59e0b; background:rgba(245,158,11,0.15); }
     .icon-btn svg { width:16px; height:16px; }
+
+    /* Chart type icon buttons */
     .chart-tabs { display:flex; gap:6px; margin-bottom:12px; }
-    .chart-tab { padding:6px 16px; border-radius:20px; font-size:13px; font-weight:600; border:none; cursor:pointer; background:var(--color-bg-input); color:var(--color-text-secondary); }
+    .chart-tab { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; transition:all .15s ease; background:var(--color-bg-input); color:var(--color-text-secondary); }
+    .chart-tab svg { width:17px; height:17px; }
     .chart-tab.active { background:var(--color-primary); color:white; }
-    .portfolio-row { display:flex; justify-content:space-between; padding:8px 0; font-size:13px; border-bottom:1px solid var(--color-border); }
-    .portfolio-row:last-child { border-bottom:none; }
-    .quick-btns { display:flex; gap:10px; margin-top:12px; }
-    .ob-mini { font-size:10px; }
-    .ob-mini-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; padding:4px 0; font-family:'JetBrains Mono',monospace; }
-    .ob-mini-h { color:var(--color-text-disabled); font-weight:600; font-size:9px; text-transform:uppercase; padding-bottom:6px; border-bottom:1px solid var(--color-border); margin-bottom:4px; }
-    .filter-chips { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
-    .filter-chip { padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid var(--color-border); background:var(--color-bg-input); color:var(--color-text-secondary); cursor:pointer; }
-    .filter-chip.active { background:var(--color-primary); border-color:var(--color-primary); color:#fff; }
+
+    /* ── Trade buy/sell ── */
+    .home-trade-actions { display:flex; gap:10px; margin-top:14px; }
+    .home-trade-btn { flex:1; padding:12px; border:none; border-radius:10px; font-size:14px; font-weight:700; color:#fff; cursor:pointer; transition:opacity .15s; }
+    .home-trade-btn:hover { opacity:.88; }
+    .home-trade-btn.buy { background:var(--color-buy); }
+    .home-trade-btn.sell { background:var(--color-sell); }
+
+    /* ── Order book ── */
+    .ob-mini { font-size:11px; }
+    .ob-mini-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; padding:6px 0; font-family:'IBM Plex Mono', monospace; }
+    .ob-mini-h { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; color:var(--color-text-disabled); font-weight:600; font-size:9px; text-transform:uppercase; padding-bottom:6px; border-bottom:1px solid var(--color-border); margin-bottom:4px; }
+
+    /* ── Add price alert modal ── */
+    .am-label { font-size:12px; font-weight:600; color:var(--color-text-secondary); margin-bottom:6px; display:block; }
+    .am-field { margin-bottom:14px; }
+    .am-inp {
+      width:100%; background:var(--color-bg-input); border:1.5px solid var(--color-border);
+      border-radius:10px; padding:11px 14px; font-size:14px; color:var(--color-text-primary);
+      outline:none; transition:border-color .15s; font-family:'Manrope', sans-serif;
+    }
+    .am-inp:focus { border-color:var(--color-primary); }
+    .am-inp[readonly] { color:var(--color-text-secondary); cursor:default; }
+    .am-inp.am-select {
+      appearance:none; -webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 12px center; padding-right:36px; cursor:pointer;
+    }
+    .am-row { display:flex; gap:10px; }
+    .am-row .am-field { flex:1; }
+
+    /* ── Chart row right column: order book + executed orders fill chart height ── */
+    .web-grid-chart-right { display:flex; flex-direction:column; gap:16px; align-self:stretch; }
+    .web-grid-chart-right .web-card { display:flex; flex-direction:column; }
+    .web-grid-chart-right .web-card:last-child { flex:1; min-height:0; }
+    .web-grid-chart-right .ob-mini-list { flex:1; overflow:auto; }
   </style>
 </head>
 <body>
@@ -50,90 +84,121 @@
     <button id="acct-banner-btn" class="btn btn-primary btn-sm" onclick="openAccountForm()" style="flex-shrink:0">Данс нээх</button>
   </div>
 
-  <div class="selector-bar" onclick="openStockModal()">
-    <i data-lucide="search" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
-    <span class="symbol" id="sel-symbol">BDS</span>
-    <span class="dot"></span>
-    <span class="name" id="sel-name">БДСec ХК</span>
-    <i data-lucide="chevron-down" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
+  <!-- Market overview -->
+  <div class="market-stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Advancers</div>
+      <div class="stat-value up"><i data-lucide="trending-up"></i><span id="stat-advancers">—</span></div>
+      <div class="stat-sub" id="stat-advancers-sub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Decliners</div>
+      <div class="stat-value down"><i data-lucide="trending-down"></i><span id="stat-decliners">—</span></div>
+      <div class="stat-sub" id="stat-decliners-sub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Volume</div>
+      <div class="stat-value"><span id="stat-volume">—</span></div>
+      <div class="stat-sub" id="stat-volume-sub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Most Active</div>
+      <div class="stat-value"><span id="stat-active">—</span></div>
+      <div class="stat-sub" id="stat-active-sub">—</div>
+    </div>
   </div>
 
-  <div class="web-grid-2">
+  <!-- Market filter + horizontal-scroll stock cards -->
+  <div class="web-section-head">
     <div>
-      <div class="web-section-head">
-        <div>
-          <div class="web-section-title">Өнөөдрийн зах зээл</div>
-          <div class="web-muted" id="market-date">2026.06.09</div>
+      <div class="web-section-title">Markets</div>
+      <div class="web-muted" id="market-date">2026.06.12</div>
+    </div>
+    <div class="dd-trigger" id="market-filter-trigger" onclick="toggleFilterMenu(event)">
+      <i data-lucide="activity" id="market-filter-icon"></i>
+      <span id="market-filter-label">Active</span>
+      <i data-lucide="chevron-down" class="chev"></i>
+      <div class="dd-menu" id="market-filter-menu"></div>
+    </div>
+  </div>
+  <div class="cards-scroll" id="stock-cards"></div>
+
+  <!-- Chart + Order book — same row on wide screens -->
+  <div class="web-grid-chart">
+    <div class="web-card web-card-pad">
+      <div class="selector-bar" onclick="openStockModal()" style="margin-bottom:14px;max-width:100%">
+        <i data-lucide="search" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
+        <span class="symbol" id="sel-symbol">BDS</span>
+        <span class="dot"></span>
+        <span class="name" id="sel-name">БДСec ХК</span>
+        <i data-lucide="chevron-down" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+        <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px">
+          <span class="detail-symbol" id="d-symbol">BDS</span>
+          <span class="detail-price" id="d-price">—</span>
         </div>
-        <div class="status-pill"><span class="status-dot"></span> Идэвхтэй</div>
+        <div style="display:flex;gap:8px">
+          <button class="icon-btn" id="watch-btn" onclick="toggleWatchlist()" title="Watchlist"><i data-lucide="star"></i></button>
+          <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Add price alert"><i data-lucide="bell-plus"></i></button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-disabled);margin-bottom:12px">
+        Сүүлд шинэчлэгдсэн: <span id="d-updated">2026-06-12 14:32</span> · <span id="d-change">—</span>
       </div>
 
-      <div class="filter-chips">
-        <button class="filter-chip active" onclick="setFilter('active', this)">Идэвхтэй</button>
-        <button class="filter-chip" onclick="setFilter('watchlist', this)">Watchlist</button>
-        <button class="filter-chip" onclick="setFilter('gainers', this)">Өсөлттэй</button>
+      <div class="chart-tabs">
+        <button class="chart-tab active" onclick="setChartType('line', this)" title="Line chart"><i data-lucide="chart-line"></i></button>
+        <button class="chart-tab" onclick="setChartType('candle', this)" title="Candlestick chart"><i data-lucide="chart-candlestick"></i></button>
+      </div>
+      <div id="main-chart"></div>
+      <div class="tf-tabs" id="tf-tabs">
+        <button class="tf-tab active" data-tf="1W" onclick="setTimeframe('1W', this)">1W</button>
+        <button class="tf-tab" data-tf="1M" onclick="setTimeframe('1M', this)">1M</button>
+        <button class="tf-tab" data-tf="3M" onclick="setTimeframe('3M', this)">3M</button>
+        <button class="tf-tab" data-tf="6M" onclick="setTimeframe('6M', this)">6M</button>
+        <button class="tf-tab" data-tf="1Y" onclick="setTimeframe('1Y', this)">1Y</button>
+        <button class="tf-tab" data-tf="All" onclick="setTimeframe('All', this)">All</button>
       </div>
 
-      <div class="stock-cards-grid" id="stock-cards" style="margin-bottom:16px"></div>
+      <div class="home-trade-actions">
+        <button class="home-trade-btn buy" onclick="quickTrade('BUY')">Авах</button>
+        <button class="home-trade-btn sell" onclick="quickTrade('SELL')">Зарах</button>
+      </div>
+    </div>
 
+    <div class="web-grid-chart-right">
       <div class="web-card web-card-pad">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
-          <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px">
-            <span class="detail-symbol" id="d-symbol">BDS</span>
-            <span class="detail-price" id="d-price">—</span>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="icon-btn" title="Харьцуулах"><i data-lucide="git-compare-arrows"></i></button>
-            <button class="icon-btn active" id="watch-btn" onclick="toggleWatchlist()"><i data-lucide="star"></i></button>
-          </div>
-        </div>
-        <div style="font-size:11px;color:var(--color-text-disabled);margin-bottom:12px">
-          Сүүлд шинэчлэгдсэн: <span id="d-updated">2026-06-09 14:32</span> · <span id="d-change">—</span>
-        </div>
-        <div class="chart-tabs">
-          <button class="chart-tab active" onclick="setChartType('line', this)">Шугам</button>
-          <button class="chart-tab" onclick="setChartType('candle', this)">Лит</button>
-        </div>
-        <div id="main-chart"></div>
-      </div>
-
-      <div class="web-card web-card-pad" style="margin-top:16px">
         <div class="web-section-title" style="margin-bottom:10px">Захиалгын сан</div>
         <div class="ob-mini ob-mini-h">
           <span>Тоо</span><span style="text-align:right;color:var(--color-buy)">Авах</span>
           <span style="color:var(--color-sell)">Зарах</span><span style="text-align:right">Тоо</span>
         </div>
         <div id="ob-mini-body" class="ob-mini"></div>
-        <div style="margin-top:12px;display:flex;gap:8px">
-          <button class="btn btn-primary btn-sm" style="flex:1" onclick="quickTrade('BUY')">Авах</button>
-          <button class="btn btn-outline btn-sm" style="flex:1;color:var(--color-sell);border-color:var(--color-sell)" onclick="quickTrade('SELL')">Зарах</button>
+      </div>
+
+      <div class="web-card web-card-pad">
+        <div class="web-section-title" style="margin-bottom:10px">Гүйцэтгэсэн захиалга</div>
+        <div class="ob-mini ob-mini-h">
+          <span>Ticker</span><span>Төрөл</span>
+          <span style="text-align:right">Тоо</span><span style="text-align:right">Үнэ</span>
         </div>
+        <div id="executed-orders-body" class="ob-mini ob-mini-list"></div>
       </div>
     </div>
+  </div>
 
-    <div>
-      <div class="web-card web-card-pad" style="margin-bottom:16px">
-        <div class="web-section-title" style="margin-bottom:12px">Портфель</div>
-        <div class="portfolio-row"><span style="color:var(--color-text-secondary)">Нийт үнэлгээ</span><span class="mono" id="pf-total">—</span></div>
-        <div class="portfolio-row"><span style="color:var(--color-text-secondary)">Өнөөдрийн өөрчлөлт</span><span class="mono change-up" id="pf-day">—</span></div>
-        <div class="portfolio-row"><span style="color:var(--color-text-secondary)">Боломжит мөнгө</span><span class="mono" id="pf-cash">—</span></div>
-        <div class="quick-btns">
-          <button class="btn btn-primary" style="flex:1" onclick="goTrade()">Арилжаа хийх</button>
-          <button class="btn btn-outline" style="flex:1" onclick="goBalance()">Хэтэвч</button>
-        </div>
-      </div>
-
-      <div class="web-card">
-        <div class="web-card-pad" style="padding-bottom:8px;border-bottom:1px solid var(--color-border)">
-          <div class="web-section-title">Зах зээлийн хүснэгт</div>
-        </div>
-        <div class="table-wrap" style="border:none;border-radius:0">
-          <table>
-            <thead><tr><th>Тicker</th><th>Үнэ</th><th>Өөрчлөлт</th><th></th></tr></thead>
-            <tbody id="market-table"></tbody>
-          </table>
-        </div>
-      </div>
+  <!-- Market table -->
+  <div class="web-card">
+    <div class="web-card-pad" style="padding-bottom:8px;border-bottom:1px solid var(--color-border)">
+      <div class="web-section-title">Зах зээлийн хүснэгт</div>
+    </div>
+    <div class="table-wrap" style="border:none;border-radius:0">
+      <table>
+        <thead><tr><th>Ticker</th><th>Үнэ</th><th>Өөрчлөлт</th><th></th></tr></thead>
+        <tbody id="market-table"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -149,48 +214,227 @@
   </div>
 </div>
 
+<div class="web-modal-overlay" id="alert-modal">
+  <div class="web-modal">
+    <h3 class="web-modal-title">Add Price Alert</h3>
+    <div class="am-field">
+      <label class="am-label">Symbol</label>
+      <input class="am-inp" id="alert-symbol" readonly />
+    </div>
+    <div class="am-field">
+      <label class="am-label">Price Type</label>
+      <select class="am-inp am-select" id="alert-price-type">
+        <option value="open">Opening Price</option>
+        <option value="close">Closing Price</option>
+        <option value="high">High Price</option>
+        <option value="low">Low Price</option>
+        <option value="last" selected>Last Traded Price</option>
+      </select>
+    </div>
+    <div class="am-row">
+      <div class="am-field">
+        <label class="am-label">Condition</label>
+        <select class="am-inp am-select" id="alert-condition">
+          <option value="gt">Greater than</option>
+          <option value="lt">Less than</option>
+          <option value="eq">Equal to</option>
+          <option value="gte" selected>Greater than or equal to</option>
+          <option value="lte">Less than or equal to</option>
+        </select>
+      </div>
+      <div class="am-field">
+        <label class="am-label">Target Value</label>
+        <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
+      </div>
+    </div>
+    <div class="web-modal-actions" style="margin-top:0">
+      <button class="btn btn-outline" onclick="closeAlertModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAlert()">Create Alert</button>
+    </div>
+  </div>
+</div>
+
 <script src="../../data/static.js"></script>
 <script src="../scripts/components.js"></script>
 <script src="../../mobile/scripts/chart.js"></script>
+<script src="../../mobile/scripts/wallet-data.js"></script>
 <script>
   const AVATAR_COLORS = {
     BDS:'linear-gradient(135deg,#4949AA,#7c3aed)', KHAN:'linear-gradient(135deg,#0ea5e9,#4949AA)',
     APU:'linear-gradient(135deg,#16a34a,#4949AA)', MSM:'linear-gradient(135deg,#f59e0b,#ef4444)',
     TDB:'linear-gradient(135deg,#6366f1,#4949AA)', SBN:'linear-gradient(135deg,#dc2626,#9333ea)',
+    MNDL:'linear-gradient(135deg,#8b5cf6,#0ea5e9)', GOLO:'linear-gradient(135deg,#16a34a,#0ea5e9)',
+    'MNTB-1':'linear-gradient(135deg,#6366f1,#4949AA)', 'KHAN-BD':'linear-gradient(135deg,#0ea5e9,#4949AA)',
+    'TDB-BD':'linear-gradient(135deg,#16a34a,#0ea5e9)', 'GOLO-BD':'linear-gradient(135deg,#16a34a,#4949AA)',
+    'APU-BD':'linear-gradient(135deg,#f59e0b,#ef4444)',
   };
+
+  const MARKET_FILTERS = [
+    { key:'active',    label:'Active',    icon:'activity' },
+    { key:'watchlist', label:'Watchlist', icon:'star' },
+    { key:'gainers',   label:'Gainers',   icon:'trending-up' },
+    { key:'losers',    label:'Losers',    icon:'trending-down' },
+    { key:'bonds',     label:'Bonds',     icon:'landmark' },
+  ];
+
+  const TIMEFRAME_POINTS = { '1W':7, '1M':22, '3M':66, '6M':132, '1Y':252, 'All':400 };
 
   let selectedSymbol = 'BDS';
   let watchlist = new Set(WATCHLIST.map(w => w.symbol));
-  let listFilter = 'active';
+  let currentFilter = 'active';
+  let chartType = 'line';
+  let currentTimeframe = '1W';
 
-  function cardStocks() {
-    if (listFilter === 'watchlist') return STOCKS.filter(s => watchlist.has(s.symbol));
-    if (listFilter === 'gainers') return STOCKS.filter(s => s.changePct > 0);
-    return STOCKS.slice(0, 6);
+  /* ── Lookup helpers (work across stocks and bonds) ── */
+  function findCard(symbol) {
+    const s = stockBySymbol(symbol);
+    if (s) return { symbol:s.symbol, name:getStockName(s), price:s.price, change:s.change, changePct:s.changePct, isBond:false };
+    const b = BONDS.find(x => x.symbol === symbol);
+    if (b) return { symbol:b.symbol, name:b.name, price:b.nominal, change:0, changePct:0, isBond:true, coupon:b.coupon };
+    return null;
+  }
+
+  function findIntraday(symbol) {
+    if (INTRADAY[symbol]) return INTRADAY[symbol];
+    if (SPARKLINES[symbol]) return SPARKLINES[symbol];
+    const b = BONDS.find(x => x.symbol === symbol);
+    if (b) return Array.from({ length: 20 }, (_, i) => b.nominal * (1 + (b.coupon / 100) * (i / 190)));
+    return [];
+  }
+
+  /* ── Deterministic series generator for longer timeframes ── */
+  function generateSeries(symbol, timeframe) {
+    const intraday = findIntraday(symbol);
+    if (timeframe === '1W' || !intraday.length) return intraday;
+
+    const points = TIMEFRAME_POINTS[timeframe];
+    const last = intraday[intraday.length - 1];
+
+    let seed = 0;
+    for (const c of symbol + timeframe) seed = (seed * 31 + c.charCodeAt(0)) % 233280;
+    function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+
+    const data = [];
+    let val = last * (0.85 + rand() * 0.2);
+    for (let i = 0; i < points - 1; i++) {
+      val += (rand() - 0.48) * (last * 0.02);
+      data.push(val);
+    }
+    data.push(last);
+    return data;
+  }
+
+  /* ── Cards (Active / Watchlist / Gainers / Losers / Bonds) ── */
+  function filteredList() {
+    if (currentFilter === 'bonds') return BONDS.map(b => findCard(b.symbol));
+
+    let list = STOCKS.map(s => findCard(s.symbol));
+    if (currentFilter === 'watchlist') list = list.filter(s => watchlist.has(s.symbol));
+    else if (currentFilter === 'gainers') list = list.filter(s => s.changePct > 0);
+    else if (currentFilter === 'losers') list = list.filter(s => s.changePct < 0);
+
+    const idx = list.findIndex(s => s.symbol === selectedSymbol);
+    if (idx > 0) list.unshift(list.splice(idx, 1)[0]);
+    else if (idx === -1) {
+      const sel = findCard(selectedSymbol);
+      if (sel && !sel.isBond) list.unshift(sel);
+    }
+    return list;
   }
 
   function renderCards() {
-    document.getElementById('stock-cards').innerHTML = cardStocks().map(s => {
+    const list = filteredList();
+    const container = document.getElementById('stock-cards');
+    if (!list.length) {
+      container.innerHTML = `<div style="padding:20px;color:var(--color-text-disabled);font-size:13px">No items in this view.</div>`;
+      return;
+    }
+    container.innerHTML = list.map((s, i) => {
       const isUp = s.changePct > 0;
-      const cls = isUp ? 'up' : 'down';
+      const cls = s.isBond ? 'flat' : (isUp ? 'up' : 'down');
       const sign = isUp ? '+' : '';
-      const sparkColor = isUp ? 'var(--color-buy)' : 'var(--color-sell)';
-      const data = SPARKLINES[s.symbol] || [];
+      const sparkColor = s.isBond ? '#9CA3AF' : (isUp ? 'var(--color-buy)' : 'var(--color-sell)');
+      const data = findIntraday(s.symbol);
       const isSelected = s.symbol === selectedSymbol;
-      return `<div class="stock-card${isSelected?' selected':''}" onclick="selectStock('${s.symbol}')">
+      const pinned = currentFilter !== 'bonds' && i === 0 && isSelected;
+      const badge = s.isBond ? `${s.coupon.toFixed(1)}% coupon` : `${sign}${s.changePct.toFixed(2)}%`;
+      return `<div class="stock-card${isSelected ? ' selected' : ''}${pinned ? ' pinned' : ''}" onclick="selectStock('${s.symbol}')">
         <div class="card-top">
-          <div class="ticker-avatar" style="background:${AVATAR_COLORS[s.symbol]||AVATAR_COLORS.BDS}">${s.symbol.slice(0,2)}</div>
-          <span class="change-badge ${cls}">${sign}${s.changePct.toFixed(2)}%</span>
+          <div class="ticker-avatar" style="background:${AVATAR_COLORS[s.symbol] || AVATAR_COLORS.BDS}">${s.symbol.slice(0, 2)}</div>
+          <span class="change-badge ${cls}">${badge}</span>
         </div>
-        <div class="card-name">${getStockName(s)}</div>
+        <div class="card-name">${s.name}</div>
         <div style="display:flex;justify-content:space-between;align-items:flex-end">
-          <div><div class="card-price-label">Хаалт</div><div class="card-price">${fmtMNT(s.price)}</div></div>
+          <div><div class="card-price-label">${s.isBond ? 'Nominal' : 'Хаалт'}</div><div class="card-price">${fmtMNT(s.price)}</div></div>
           <div>${sparkline(data, sparkColor)}</div>
         </div>
       </div>`;
     }).join('');
   }
 
+  /* ── Market filter dropdown ── */
+  function renderFilterMenu() {
+    const menu = document.getElementById('market-filter-menu');
+    menu.innerHTML = MARKET_FILTERS.map(f => `
+      <div class="dd-item${f.key === currentFilter ? ' active' : ''}" onclick="selectFilter(event,'${f.key}')">
+        <i data-lucide="${f.icon}"></i> ${f.label}
+      </div>`).join('');
+    lucide.createIcons();
+  }
+
+  function toggleFilterMenu(e) {
+    e.stopPropagation();
+    document.getElementById('market-filter-trigger').classList.toggle('open');
+    document.getElementById('market-filter-menu').classList.toggle('open');
+  }
+
+  function selectFilter(e, key) {
+    e.stopPropagation();
+    currentFilter = key;
+    const f = MARKET_FILTERS.find(m => m.key === key);
+    document.getElementById('market-filter-label').textContent = f.label;
+    document.getElementById('market-filter-icon').setAttribute('data-lucide', f.icon);
+    renderFilterMenu();
+    document.getElementById('market-filter-trigger').classList.remove('open');
+    document.getElementById('market-filter-menu').classList.remove('open');
+    renderCards();
+    lucide.createIcons();
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('market-filter-trigger')?.classList.remove('open');
+    document.getElementById('market-filter-menu')?.classList.remove('open');
+  });
+
+  /* ── Market overview stats ── */
+  function parseVolume(v) {
+    const num = parseFloat(v);
+    if (String(v).includes('M')) return num * 1e6;
+    if (String(v).includes('K')) return num * 1e3;
+    return num;
+  }
+  function formatVolume(n) {
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
+    return String(Math.round(n));
+  }
+  function renderMarketStats() {
+    const advancers = STOCKS.filter(s => s.changePct > 0);
+    const decliners = STOCKS.filter(s => s.changePct < 0);
+    const totalVol = STOCKS.reduce((sum, s) => sum + parseVolume(s.volume), 0);
+    const mostActive = STOCKS.reduce((a, b) => parseVolume(a.volume) > parseVolume(b.volume) ? a : b);
+
+    document.getElementById('stat-advancers').textContent = advancers.length;
+    document.getElementById('stat-advancers-sub').textContent = advancers.map(s => s.symbol).join(', ') || '—';
+    document.getElementById('stat-decliners').textContent = decliners.length;
+    document.getElementById('stat-decliners-sub').textContent = decliners.map(s => s.symbol).join(', ') || '—';
+    document.getElementById('stat-volume').textContent = formatVolume(totalVol);
+    document.getElementById('stat-volume-sub').textContent = STOCKS.length + ' securities traded';
+    document.getElementById('stat-active').textContent = mostActive.symbol;
+    document.getElementById('stat-active-sub').textContent = mostActive.volume + ' vol';
+  }
+
+  /* ── Market table ── */
   function renderMarketTable() {
     document.getElementById('market-table').innerHTML = STOCKS.map(s => {
       const sign = s.changePct >= 0 ? '+' : '';
@@ -204,10 +448,23 @@
     }).join('');
   }
 
+  /* ── Executed orders ── */
+  function renderExecutedOrders() {
+    const filled = ORDERS.filter(o => o.status === 'FILLED').slice().reverse();
+    document.getElementById('executed-orders-body').innerHTML = filled.map(o => `
+      <div class="ob-mini-row">
+        <span style="font-weight:600">${o.symbol}</span>
+        <span style="color:${o.type === 'BUY' ? 'var(--color-buy)' : 'var(--color-sell)'};font-weight:600">${o.type === 'BUY' ? 'Авах' : 'Зарах'}</span>
+        <span style="text-align:right;color:var(--color-text-secondary)">${o.qty.toLocaleString('mn-MN')}</span>
+        <span style="text-align:right;color:var(--color-text-secondary)">${fmtMNT(o.price)}</span>
+      </div>`).join('');
+  }
+
+  /* ── Order book ── */
   function renderObMini() {
     const len = Math.max(ORDER_BOOK.buy.length, ORDER_BOOK.sell.length);
     let html = '';
-    for (let i = 0; i < Math.min(len, 6); i++) {
+    for (let i = 0; i < Math.min(len, 8); i++) {
       const bid = ORDER_BOOK.sell[i];
       const ask = ORDER_BOOK.buy[i];
       html += `<div class="ob-mini-row">
@@ -220,56 +477,76 @@
     document.getElementById('ob-mini-body').innerHTML = html;
   }
 
+  /* ── Stock / bond selection ── */
   function selectStock(symbol) {
     selectedSymbol = symbol;
-    const s = stockBySymbol(symbol);
+    const s = findCard(symbol);
     if (!s) return;
+
     document.getElementById('sel-symbol').textContent = symbol;
-    document.getElementById('sel-name').textContent = getStockName(s);
+    document.getElementById('sel-name').textContent = s.name;
     document.getElementById('d-symbol').textContent = symbol;
     document.getElementById('d-price').textContent = fmtMNT(s.price);
+
     const ch = document.getElementById('d-change');
-    ch.textContent = fmtChange(s.change, s.changePct);
-    ch.style.color = s.change >= 0 ? 'var(--color-buy)' : 'var(--color-sell)';
+    if (s.isBond) {
+      ch.textContent = `${s.coupon.toFixed(1)}% жилийн купон`;
+      ch.style.color = 'var(--color-text-secondary)';
+    } else {
+      ch.textContent = fmtChange(s.change, s.changePct);
+      ch.style.color = s.change >= 0 ? 'var(--color-buy)' : 'var(--color-sell)';
+    }
+
     document.getElementById('watch-btn').classList.toggle('active', watchlist.has(symbol));
+    const as = document.getElementById('alert-symbol');
+    if (as) as.value = symbol;
+
     renderChart(symbol);
     renderCards();
   }
 
+  /* ── Chart ── */
   function renderChart(symbol) {
-    const data = INTRADAY[symbol] || SPARKLINES[symbol] || [];
-    const s = stockBySymbol(symbol);
+    const data = generateSeries(symbol, currentTimeframe);
+    const s = findCard(symbol);
     const isUp = s && s.changePct >= 0;
     const mn = Math.min(...data);
     const mx = Math.max(...data);
-    renderLineChart('main-chart', data, {
-      height: 280,
-      color: isUp ? '#00C076' : '#EF4444',
+    const opts = {
+      height: 320,
       showGrid: true,
-      yLabels: [mx.toFixed(0), ((mx+mn)/2).toFixed(0), mn.toFixed(0)],
-    });
+      yLabels: [mx.toFixed(0), ((mx + mn) / 2).toFixed(0), mn.toFixed(0)],
+    };
+    if (chartType === 'candle') {
+      renderCandleChart('main-chart', data, { ...opts, upColor: '#00C076', downColor: '#EF4444' });
+    } else {
+      renderLineChart('main-chart', data, { ...opts, color: isUp ? '#00C076' : '#EF4444' });
+    }
   }
 
   function setChartType(type, btn) {
+    chartType = type;
     document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     renderChart(selectedSymbol);
   }
 
-  function setFilter(f, btn) {
-    listFilter = f;
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  function setTimeframe(tf, btn) {
+    currentTimeframe = tf;
+    document.querySelectorAll('.tf-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    renderCards();
+    renderChart(selectedSymbol);
   }
 
+  /* ── Watchlist ── */
   function toggleWatchlist() {
     if (watchlist.has(selectedSymbol)) watchlist.delete(selectedSymbol);
     else watchlist.add(selectedSymbol);
     document.getElementById('watch-btn').classList.toggle('active', watchlist.has(selectedSymbol));
-    if (listFilter === 'watchlist') renderCards();
+    if (currentFilter === 'watchlist') renderCards();
   }
 
+  /* ── Search modal ── */
   function openStockModal() {
     openModal('stock-modal');
     renderStockModalList('stock-list', 'stock-search', selectedSymbol, sym => {
@@ -278,14 +555,40 @@
     });
   }
 
+  /* ── Price alert modal ── */
+  function openAlertModal() {
+    document.getElementById('alert-symbol').value = selectedSymbol;
+    document.getElementById('alert-price-type').value = 'last';
+    document.getElementById('alert-condition').value = 'gte';
+    const s = findCard(selectedSymbol);
+    document.getElementById('alert-price').value = s ? s.price : '';
+    openModal('alert-modal');
+  }
+  function closeAlertModal() { closeModal('alert-modal'); }
+  function saveAlert() {
+    const priceType = document.getElementById('alert-price-type').value;
+    const condition = document.getElementById('alert-condition').value;
+    const target = document.getElementById('alert-price').value;
+    if (!target) return;
+    addPriceAlert({ symbol: selectedSymbol, priceType, condition, target: Number(target), active: true });
+    closeAlertModal();
+    showToast(`Alert created: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
+  }
+
+  /* ── Navigation helpers ── */
   function goTrade() { try { window.parent.navigateTo('trade'); } catch(e) {} }
-  function goBalance() { try { window.parent.navigateTo('balance'); } catch(e) {} }
   function openAccountForm() {
     const btn = document.getElementById('acct-banner-btn');
     if (btn.textContent.includes('KYC')) { try { window.parent.navigateTo('kyc'); } catch(e) {} return; }
     try { window.parent.navigateTo('open-account'); } catch(e) {}
   }
-  function quickTrade(side) { try { window.parent.navigateTo('trade'); } catch(e) {} }
+  function quickTrade(side) {
+    try {
+      sessionStorage.setItem('bdsec-trade-symbol', selectedSymbol);
+      sessionStorage.setItem('bdsec-trade-side', side);
+      window.parent.navigateTo('trade');
+    } catch(e) {}
+  }
   function quickTradeSymbol(sym, side) { selectStock(sym); quickTrade(side); }
 
   function refreshAccountBanner() {
@@ -301,13 +604,12 @@
     banner.style.display = 'none';
   }
 
-  document.getElementById('pf-total').textContent = fmtMNT(WALLET.portfolioValue);
-  document.getElementById('pf-cash').textContent = fmtMNT(WALLET.cashBalance);
-  document.getElementById('pf-day').textContent = '+' + fmtMNT(842000);
-
+  renderMarketStats();
+  renderFilterMenu();
   renderCards();
   renderMarketTable();
   renderObMini();
+  renderExecutedOrders();
   selectStock('BDS');
   refreshAccountBanner();
   lucide.createIcons();

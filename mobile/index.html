@@ -42,13 +42,19 @@
       flex-direction: column;
       height: 100%;
       max-width: 430px;
-      max-height: 900px;
       width: 100%;
       margin: 0 auto;
       background: var(--color-bg);
       position: relative;
       overflow: hidden;
-      box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ── Desktop "phone frame" presentation only (not on real mobile devices) ── */
+    @media (min-width: 431px) {
+      #app {
+        height: min(100%, 900px);
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+      }
     }
 
     /* ── Header ── */
@@ -436,7 +442,6 @@
 
     <div class="menu-divider"></div>
 
-    <div class="menu-section-lbl">General</div>
 
     <button class="menu-item" onclick="menuNav('balance'); closeMenu()">
       <i data-lucide="wallet"></i>

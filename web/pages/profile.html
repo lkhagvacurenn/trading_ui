@@ -9,33 +9,102 @@
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
   <link rel="stylesheet" href="../styles/web.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
-  <style>body{margin:0;font-family:'Inter',sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+  <style>body{margin:0;font-family:'Manrope', sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
 </head>
 <body>
-<div class="web-page">
-  <div class="profile-hero">
+<div class="web-page" style="max-width:640px">
+
+  <div class="profile-card">
     <div class="profile-avatar" id="profile-initials">ББ</div>
-    <div>
-      <h1 class="web-page-title" style="margin:0" id="profile-name">—</h1>
-      <p style="font-size:13px;color:var(--color-text-disabled);margin:4px 0 0" id="profile-acct">—</p>
+    <div class="profile-name" id="profile-name">—</div>
+    <div class="profile-username" id="profile-acct">—</div>
+    <div class="status-pill" id="profile-status-pill"></div>
+    <div class="status-pill-sub" id="profile-status-sub"></div>
+  </div>
+
+  <div id="status-steps"></div>
+
+  <div class="accordion-item" id="acc-personal">
+    <div class="accordion-header" onclick="toggleAccordion('acc-personal')">
+      <div class="accordion-icon"><i data-lucide="user"></i></div>
+      <div class="accordion-title">Хувийн мэдээлэл</div>
+      <div class="accordion-chevron"><i data-lucide="chevron-right"></i></div>
+    </div>
+    <div class="accordion-body">
+      <div class="info-card">
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">И-мэйл</div>
+            <div class="info-row-value" id="pf-email">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">Утас</div>
+            <div class="info-row-value" id="pf-phone">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">Регистр</div>
+            <div class="info-row-value mono" id="pf-reg">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">Иргэншил</div>
+            <div class="info-row-value" id="pf-nat">—</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="profile-status-grid" id="status-cards"></div>
-
-  <div class="web-grid-2">
-    <div class="web-card web-card-pad">
-      <div class="web-section-title" style="margin-bottom:12px">Хувийн мэдээлэл</div>
-      <div class="profile-field"><span>И-мэйл</span><strong id="pf-email">—</strong></div>
-      <div class="profile-field"><span>Утас</span><strong id="pf-phone">—</strong></div>
-      <div class="profile-field"><span>Регистр</span><strong id="pf-reg">—</strong></div>
-      <div class="profile-field"><span>Иргэншил</span><strong id="pf-nat">—</strong></div>
+  <div class="accordion-item" id="acc-accounts">
+    <div class="accordion-header" onclick="toggleAccordion('acc-accounts')">
+      <div class="accordion-icon"><i data-lucide="landmark"></i></div>
+      <div class="accordion-title">Дансны мэдээлэл</div>
+      <div class="accordion-chevron"><i data-lucide="chevron-right"></i></div>
     </div>
+    <div class="accordion-body">
+      <div class="info-card">
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">ҮЦТХ-ийн данс</div>
+            <div class="info-row-value mono" id="pf-acct-main">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">Анхдагч арилжааны данс</div>
+            <div class="info-row-value mono" id="pf-acct-ipo">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">Бондын данс</div>
+            <div class="info-row-value mono" id="pf-acct-bond">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">ҮЦТХТ-ийн дансны дугаар</div>
+            <div class="info-row-value mono" id="pf-acct-csd">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <div class="web-card web-card-pad">
-      <div class="web-section-title" style="margin-bottom:12px">Товч холбоос</div>
+  <div class="accordion-item" id="acc-links">
+    <div class="accordion-header" onclick="toggleAccordion('acc-links')">
+      <div class="accordion-icon"><i data-lucide="link"></i></div>
+      <div class="accordion-title">Товч холбоос</div>
+      <div class="accordion-chevron"><i data-lucide="chevron-right"></i></div>
+    </div>
+    <div class="accordion-body">
       <div class="profile-links">
         <button class="profile-link-btn" onclick="go('general')"><i data-lucide="clipboard-list"></i> Дансны мэдээлэл</button>
         <button class="profile-link-btn" onclick="go('kyc')"><i data-lucide="shield-check"></i> KYC</button>
@@ -46,6 +115,7 @@
       </div>
     </div>
   </div>
+
 </div>
 
 <script src="../../data/static.js"></script>
@@ -55,25 +125,49 @@
     try { window.parent.navigateTo(key); } catch (e) {}
   }
 
+  function toggleAccordion(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
   document.getElementById('profile-name').textContent = USER.name;
-  document.getElementById('profile-acct').textContent = 'Данс: ' + (WALLET?.accountNo || '');
+  document.getElementById('profile-acct').textContent = WALLET?.accountNo || '';
   document.getElementById('profile-initials').textContent = USER.initials;
   document.getElementById('pf-email').textContent = PROFILE.email;
   document.getElementById('pf-phone').textContent = PROFILE.phone;
   document.getElementById('pf-reg').textContent = PROFILE.registerNo;
   document.getElementById('pf-nat').textContent = PROFILE.nationality;
+  document.getElementById('pf-acct-main').textContent = WALLET?.accountNo || '—';
+  document.getElementById('pf-acct-ipo').textContent = WALLET?.ipoAccount || '—';
+  document.getElementById('pf-acct-bond').textContent = WALLET?.bondAccount || '—';
+  document.getElementById('pf-acct-csd').textContent = WALLET?.csdAccount || '—';
 
   const steps = [
-    { key: 'account', label: 'Данс нээсэн', done: PROFILE.accountOpened, page: 'open-account' },
-    { key: 'kyc', label: 'KYC баталгаажсан', done: PROFILE.kycStatus === 'approved', page: 'kyc' },
-    { key: 'fee', label: 'Хураамж төлсөн', done: PROFILE.feePaid, page: 'fee' },
+    { key: 'account', title: 'Данс нээсэн', done: PROFILE.accountOpened, page: 'open-account' },
+    { key: 'kyc', title: 'KYC баталгаажсан', done: PROFILE.kycStatus === 'approved', page: 'kyc' },
+    { key: 'fee', title: 'Хураамж төлсөн', done: PROFILE.feePaid, page: 'fee' },
   ];
+  const doneCount = steps.filter(s => s.done).length;
 
-  document.getElementById('status-cards').innerHTML = steps.map(s => `
-    <div class="profile-status-card${s.done ? ' done' : ''}" onclick="go('${s.page}')">
-      <i data-lucide="${s.done ? 'check-circle' : 'circle'}"></i>
-      <span>${s.label}</span>
-      <small>${s.done ? 'Дууссан' : 'Хийгдээгүй'}</small>
+  const pillEl = document.getElementById('profile-status-pill');
+  const pillSubEl = document.getElementById('profile-status-sub');
+  if (doneCount === steps.length) {
+    pillEl.className = 'status-pill online';
+    pillEl.innerHTML = '<i data-lucide="check-circle"></i> Баталгаажсан харилцагч';
+    pillSubEl.textContent = 'Бүх шаардлага хангагдсан';
+  } else {
+    pillEl.className = 'status-pill pending';
+    pillEl.innerHTML = '<i data-lucide="clock"></i> Бүртгэл дуусаагүй';
+    pillSubEl.textContent = doneCount + ' / ' + steps.length + ' алхам дууссан';
+  }
+
+  document.getElementById('status-steps').innerHTML = steps.map(s => `
+    <div class="status-step${s.done ? ' done' : ''}" onclick="go('${s.page}')">
+      <div class="status-step-icon"><i data-lucide="${s.done ? 'check' : 'circle'}"></i></div>
+      <div class="status-step-info">
+        <div class="status-step-title">${s.title}</div>
+        <div class="status-step-sub${s.done ? '' : ' pending'}">${s.done ? 'Дууссан' : 'Хийгдээгүй'}</div>
+      </div>
+      ${s.done ? '' : '<div class="chevron-icon"><i data-lucide="chevron-right"></i></div>'}
     </div>`).join('');
 
   lucide.createIcons();

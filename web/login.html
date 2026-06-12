@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDSec — Sign In</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: var(--color-bg); color: var(--color-text-primary);
+      display: flex; min-height: 100vh;
+    }
+
+    /* ══════════════════════════════
+       LEFT — branding panel
+    ══════════════════════════════ */
+    .auth-left {
+      flex: 1.1; position: relative; overflow: hidden;
+      background: var(--gradient-hero);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 64px 72px; color: #fff;
+    }
+    .auth-left::before, .auth-left::after {
+      content: ''; position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .auth-left::before { width: 420px; height: 420px; top: -140px; right: -120px; }
+    .auth-left::after { width: 320px; height: 320px; bottom: -120px; left: -80px; background: rgba(255,255,255,0.05); }
+
+    .al-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 56px; position: relative; z-index: 1; }
+    .al-logo img { height: 34px; object-fit: contain; }
+    .al-logo span { font-size: 19px; font-weight: 800; letter-spacing: 0.02em; }
+
+    .al-title { font-size: 38px; font-weight: 800; line-height: 1.25; margin: 0 0 16px; position: relative; z-index: 1; max-width: 480px; }
+    .al-sub { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.78); margin: 0 0 44px; max-width: 440px; position: relative; z-index: 1; }
+
+    .al-features { display: flex; flex-direction: column; gap: 18px; position: relative; z-index: 1; }
+    .al-feature { display: flex; align-items: flex-start; gap: 14px; }
+    .al-feature-icon {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .al-feature-icon svg { width: 19px; height: 19px; }
+    .al-feature-text strong { display: block; font-size: 14.5px; font-weight: 700; margin-bottom: 2px; }
+    .al-feature-text span { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+
+    .al-stats { display: flex; gap: 36px; margin-top: 48px; position: relative; z-index: 1; }
+    .al-stat strong { display: block; font-size: 22px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .al-stat span { font-size: 12px; color: rgba(255,255,255,0.65); }
+
+    /* ══════════════════════════════
+       RIGHT — auth form
+    ══════════════════════════════ */
+    .auth-right {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 24px; position: relative;
+    }
+    .auth-topbar {
+      position: absolute; top: 28px; right: 32px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .lang-btn, .theme-btn {
+      display: flex; align-items: center; gap: 6px;
+      border: 1px solid var(--color-border); background: var(--color-bg-card); border-radius: 20px;
+      padding: 7px 13px; font-size: 12px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer;
+    }
+    .lang-btn svg, .theme-btn svg { width: 14px; height: 14px; }
+    .theme-btn { padding: 7px; }
+
+    .auth-card { width: 100%; max-width: 420px; }
+    .auth-card-logo { display: flex; justify-content: center; margin-bottom: 24px; }
+    .auth-card-logo img { height: 40px; object-fit: contain; }
+    [data-theme="dark"] .auth-card-logo #ac-logo-light { display: none; }
+    [data-theme="light"] .auth-card-logo #ac-logo-dark,
+    :root .auth-card-logo #ac-logo-dark { display: none; }
+    [data-theme="dark"] .auth-card-logo #ac-logo-dark { display: block; }
+
+    .auth-heading { font-size: 24px; font-weight: 800; margin: 0 0 6px; }
+    .auth-subheading { font-size: 13.5px; color: var(--color-text-secondary); margin: 0 0 28px; line-height: 1.6; }
+
+    /* ── Auth toggle ── */
+    .auth-toggle { display: flex; border: 1.5px solid var(--color-border); border-radius: 10px; margin-bottom: 28px; overflow: hidden; }
+    .auth-toggle-btn { flex: 1; padding: 11px 0; font-size: 14px; font-weight: 700; border: none; background: transparent; color: var(--color-text-disabled); cursor: pointer; transition: all 0.2s; }
+    .auth-toggle-btn.active { background: var(--color-primary); color: #fff; }
+
+    /* ── Step bar ── */
+    .step-bar { display: flex; gap: 6px; margin-bottom: 24px; }
+    .step-seg { flex: 1; height: 3px; border-radius: 99px; background: var(--color-bg-input); transition: background 0.3s; }
+    .step-seg.done   { background: var(--color-primary); }
+    .step-seg.active { background: var(--color-primary); opacity: 0.65; }
+
+    /* ── Fields ── */
+    .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
+    .field-wrap  { margin-bottom: 16px; }
+    .inp-wrap    { position: relative; }
+
+    .field-req {
+      display: none; margin-top: 10px; padding: 12px 14px;
+      background: var(--color-bg-input); border: 1px solid var(--color-border); border-radius: 10px;
+    }
+    .field-req.open { display: block; }
+    .req-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12.5px; color: var(--color-text-disabled); padding: 3px 0; transition: color 0.15s;
+    }
+    .req-item svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--color-text-disabled); transition: color 0.15s; }
+    .req-item.met { color: #00C076; }
+    .req-item.met svg { color: #00C076; }
+
+    .field-icon {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      color: var(--color-text-disabled); pointer-events: none;
+    }
+    .field-icon svg { width: 16px; height: 16px; }
+    .field-eye {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--color-text-disabled); padding: 4px;
+    }
+    .field-eye svg { width: 16px; height: 16px; }
+
+    .inp {
+      width: 100%; background: var(--color-bg-card); border: 1.5px solid var(--color-border);
+      border-radius: 10px; padding: 13px 16px; font-size: 14px;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .inp:focus { border-color: var(--color-primary); }
+    .inp::placeholder { color: var(--color-text-disabled); }
+    .inp.has-icon { padding-left: 40px; }
+    .inp.has-eye  { padding-right: 40px; }
+    .inp-select {
+      appearance: none; -webkit-appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+    }
+
+    .reg-row { display: flex; gap: 8px; }
+    .reg-prefix { display: flex; gap: 4px; flex-shrink: 0; }
+    .reg-char-btn {
+      width: 40px; height: 48px; border-radius: 10px; border: 1.5px solid var(--color-border);
+      background: var(--color-bg-card); font-size: 15px; font-weight: 700;
+      color: var(--color-text-primary); cursor: pointer; transition: all 0.15s;
+    }
+    .reg-char-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+
+    .check-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .check-left { display: flex; align-items: center; gap: 8px; }
+    .check-left input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--color-primary); }
+    .check-left label { font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
+    .forgot-link { font-size: 13px; color: var(--color-primary); font-weight: 600; cursor: pointer; }
+
+    .terms-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 24px; }
+    .terms-row input { margin-top: 2px; width: 16px; height: 16px; accent-color: var(--color-primary); flex-shrink: 0; }
+    .terms-row label { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+    .terms-row label span { color: var(--color-primary); font-weight: 600; cursor: pointer; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      width: 100%; padding: 14px; background: var(--color-primary);
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: opacity 0.15s; margin-bottom: 16px;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-outline {
+      padding: 13px; background: transparent; border: 1.5px solid var(--color-border);
+      border-radius: 10px; font-size: 14px; font-weight: 700;
+      color: var(--color-text-primary); cursor: pointer; transition: border-color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
+    .btn-outline.btn-icon { display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-outline.btn-icon svg { width: 16px; height: 16px; }
+    .btn-row { display: flex; gap: 10px; margin-bottom: 28px; }
+    .btn-row .btn-outline { flex: 1; }
+    .btn-row .btn-primary { flex: 1; margin-bottom: 0; }
+
+    .or-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px; color: var(--color-text-disabled); font-size: 13px;
+    }
+    .or-divider::before, .or-divider::after { content: ''; flex: 1; border-top: 1px solid var(--color-border); }
+
+    .btn-emongolia {
+      width: 100%; padding: 13px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-size: 14px; font-weight: 600; color: var(--color-text-primary);
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: border-color 0.15s; margin-bottom: 8px;
+    }
+    .btn-emongolia:hover { border-color: var(--color-primary); }
+    .emongolia-logo { width: 22px; height: 22px; object-fit: contain; border-radius: 4px; }
+
+    .back-row {
+      display: flex; align-items: center; gap: 10px;
+      padding-bottom: 20px; cursor: pointer; color: var(--color-text-secondary);
+    }
+    .back-row:hover { color: var(--color-text-primary); }
+    .back-row svg { width: 18px; height: 18px; }
+    .back-row span { font-size: 14px; font-weight: 600; }
+
+    .otp-email { text-align: center; font-size: 14px; font-weight: 600; color: var(--color-primary); margin-bottom: 24px; }
+    .otp-grid  { display: flex; gap: 10px; justify-content: center; margin-bottom: 28px; }
+    .otp-box {
+      width: 48px; height: 56px; background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      text-align: center; font-size: 20px; font-weight: 700;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+    }
+    .otp-box:focus { border-color: var(--color-primary); }
+
+    .success-block { display: flex; flex-direction: column; align-items: center; padding: 12px 0 0; text-align: center; }
+    .success-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, #00C076, #00e08f);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+      box-shadow: 0 0 0 10px rgba(0,192,118,0.1), 0 0 32px rgba(0,192,118,0.22);
+    }
+    .success-circle svg { width: 34px; height: 34px; color: #fff; }
+    .success-title { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+    .success-msg   { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 24px; }
+
+    /* ── PIN setup ── */
+    .pin-setup-title { font-size: 18px; font-weight: 800; text-align: center; margin: 0 0 26px; line-height: 1.45; }
+    .pin-block { margin-bottom: 20px; }
+    .pin-block-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .pin-eye { background: none; border: none; color: var(--color-text-disabled); cursor: pointer; padding: 4px; transition: color 0.15s; }
+    .pin-eye svg { width: 16px; height: 16px; }
+    .pin-eye.active { color: var(--color-primary); }
+    .pin-grid { display: flex; gap: 10px; }
+    .pin-box {
+      flex: 1; min-width: 0; height: 56px; background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      text-align: center; font-size: 20px; font-weight: 700; letter-spacing: 2px;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .pin-box:focus { border-color: var(--color-primary); }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ══════════════════════════════
+       POPUP MODALS (centered — no bottom sheets on web)
+    ══════════════════════════════ */
+    .auth-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .auth-modal-overlay.open { display: flex; }
+    .auth-modal {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 18px; padding: 36px 32px; max-width: 380px; width: 100%;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .auth-modal .success-msg { margin-bottom: 24px; }
+    .am-icon-wrap {
+      width: 72px; height: 72px; border-radius: 50%; margin-bottom: 20px;
+      background: rgba(73,73,170,0.12); color: var(--color-primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .am-icon-wrap svg { width: 34px; height: 34px; }
+    .am-title { font-size: 19px; font-weight: 800; margin-bottom: 10px; }
+    .am-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 24px; }
+    .am-btn-row { display: flex; gap: 10px; width: 100%; }
+    .am-btn-row .btn-outline, .am-btn-row .btn-primary { flex: 1; margin: 0; }
+
+    /* ══════════════════════════════
+       Responsive
+    ══════════════════════════════ */
+    @media (max-width: 980px) {
+      .auth-left { display: none; }
+      .auth-right { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════ LEFT — branding ════ -->
+  <div class="auth-left">
+    <div class="al-logo">
+      <img src="../public/dark.png" alt="BDSec" />
+      <span>BDSec Investments</span>
+    </div>
+
+    <h1 class="al-title">Trade Mongolian markets with confidence</h1>
+    <p class="al-sub">Real-time stock and bond prices, secure portfolio management, and seamless deposits — all in one platform built for Mongolian investors.</p>
+
+    <div class="al-features">
+      <div class="al-feature">
+        <div class="al-feature-icon"><i data-lucide="line-chart"></i></div>
+        <div class="al-feature-text">
+          <strong>Real-time market data</strong>
+          <span>Live prices, charts, and order books for MSE-listed securities.</span>
+        </div>
+      </div>
+      <div class="al-feature">
+        <div class="al-feature-icon"><i data-lucide="shield-check"></i></div>
+        <div class="al-feature-text">
+          <strong>Secure & regulated</strong>
+          <span>Your funds and data are protected with bank-grade security.</span>
+        </div>
+      </div>
+      <div class="al-feature">
+        <div class="al-feature-icon"><i data-lucide="landmark"></i></div>
+        <div class="al-feature-text">
+          <strong>Bonds & IPO access</strong>
+          <span>Participate in government bonds and new public offerings.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="al-stats">
+      <div class="al-stat"><strong>20+</strong><span>Years of experience</span></div>
+      <div class="al-stat"><strong>50K+</strong><span>Active investors</span></div>
+      <div class="al-stat"><strong>120+</strong><span>Listed securities</span></div>
+    </div>
+  </div>
+
+  <!-- ════ RIGHT — auth form ════ -->
+  <div class="auth-right">
+    <div class="auth-topbar">
+      <button class="lang-btn" onclick="toggleLang()">
+        <i data-lucide="globe"></i><span id="lang-text">English</span>
+      </button>
+      <button class="theme-btn" onclick="toggleTheme()">
+        <i data-lucide="sun" id="theme-icon-sun"></i>
+        <i data-lucide="moon" id="theme-icon-moon" style="display:none"></i>
+      </button>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-card-logo">
+        <img id="ac-logo-light" src="../public/logo.png" alt="BDSec" />
+        <img id="ac-logo-dark" src="../public/dark.png" alt="BDSec" />
+      </div>
+
+      <!-- ════ AUTH SECTION ════ -->
+      <div id="auth-section">
+
+        <h2 class="auth-heading" id="auth-heading">Welcome back</h2>
+        <p class="auth-subheading" id="auth-subheading">Sign in to access your portfolio, place orders, and manage your account.</p>
+
+        <div class="auth-toggle">
+          <button class="auth-toggle-btn active" id="toggle-login"    onclick="switchAuth('login')">Sign In</button>
+          <button class="auth-toggle-btn"        id="toggle-register" onclick="switchAuth('register')">Sign Up</button>
+        </div>
+
+        <!-- ── LOGIN ── -->
+        <div class="panel active" id="panel-login">
+
+          <div class="field-wrap">
+            <label class="field-label">Username</label>
+            <div class="inp-wrap">
+              <span class="field-icon"><i data-lucide="user"></i></span>
+              <input class="inp has-icon" type="text" placeholder="Username" />
+            </div>
+          </div>
+
+          <div class="field-wrap">
+            <label class="field-label">Password</label>
+            <div class="inp-wrap">
+              <span class="field-icon"><i data-lucide="lock"></i></span>
+              <input class="inp has-icon has-eye" type="password" id="login-pw" placeholder="Password" />
+              <button class="field-eye" onclick="togglePw('login-pw',this)"><i data-lucide="eye"></i></button>
+            </div>
+          </div>
+
+          <div class="check-row">
+            <span class="check-left">
+              <input type="checkbox" id="rem" /><label for="rem">Remember device</label>
+            </span>
+            <span class="forgot-link" onclick="showForgot()">Forgot password?</span>
+          </div>
+
+          <button class="btn-primary" onclick="showFaceID()">Sign In</button>
+
+          <div class="or-divider">or</div>
+
+          <button class="btn-emongolia" onclick="showFaceID()">
+            <img class="emongolia-logo" src="../public/emongolia.png" alt="E-Mongolia" />
+            Continue with E-Mongolia
+          </button>
+        </div>
+
+        <!-- ── REGISTER ── -->
+        <div class="panel" id="panel-register">
+          <div class="step-bar" id="reg-step-bar">
+            <div class="step-seg active" id="rseg-0"></div>
+            <div class="step-seg"        id="rseg-1"></div>
+            <div class="step-seg"        id="rseg-2"></div>
+          </div>
+
+          <!-- Step 1 -->
+          <div class="panel active" id="reg-step-1">
+            <div class="field-wrap">
+              <label class="field-label">Country</label>
+              <select class="inp inp-select" id="reg-country"><option>Mongolia</option><option>United States</option><option>Japan</option><option>Other</option></select>
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">User type</label>
+              <select class="inp inp-select" id="reg-usertype"><option>Individual</option><option>Corporate</option></select>
+            </div>
+            <button class="btn-primary" onclick="regStep1Continue()">Continue</button>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="panel" id="reg-step-2">
+            <div class="field-wrap">
+              <label class="field-label" id="reg-idnum-label">Registration number</label>
+              <div class="reg-row">
+                <div class="reg-prefix" id="reg-idnum-prefix">
+                  <button class="reg-char-btn active" id="rc-A" onclick="setRegChar('A')">А</button>
+                  <button class="reg-char-btn"        id="rc-B" onclick="setRegChar('B')">Б</button>
+                </div>
+                <input class="inp" type="text" id="reg-idnum-input" placeholder="Registration number" maxlength="8" style="flex:1" />
+              </div>
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">Email / Phone</label>
+              <input class="inp" type="text" placeholder="Email or phone" />
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">Password</label>
+              <div class="inp-wrap">
+                <span class="field-icon"><i data-lucide="lock"></i></span>
+                <input class="inp has-icon has-eye" type="password" id="reg-pw" placeholder="Password"
+                  oninput="checkPasswordReq(this.value)"
+                  onfocus="document.getElementById('password-req').classList.add('open')"
+                  onblur="document.getElementById('password-req').classList.remove('open')" />
+                <button class="field-eye" onclick="togglePw('reg-pw',this)"><i data-lucide="eye"></i></button>
+              </div>
+              <div class="field-req" id="password-req">
+                <div class="req-item" id="preq-len"><i data-lucide="check"></i><span>At least 8 characters</span></div>
+                <div class="req-item" id="preq-upper"><i data-lucide="check"></i><span>At least 1 uppercase letter</span></div>
+                <div class="req-item" id="preq-lower"><i data-lucide="check"></i><span>At least 1 lowercase letter</span></div>
+                <div class="req-item" id="preq-digit"><i data-lucide="check"></i><span>At least 1 digit</span></div>
+                <div class="req-item" id="preq-special"><i data-lucide="check"></i><span>At least 1 special character</span></div>
+              </div>
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">Confirm password</label>
+              <div class="inp-wrap">
+                <span class="field-icon"><i data-lucide="lock"></i></span>
+                <input class="inp has-icon has-eye" type="password" id="reg-pw2" placeholder="Re-enter password" />
+                <button class="field-eye" onclick="togglePw('reg-pw2',this)"><i data-lucide="eye"></i></button>
+              </div>
+            </div>
+            <div class="terms-row">
+              <input type="checkbox" id="terms" />
+              <label for="terms">I agree to the <span>Terms of Service</span> and <span>Privacy Policy</span></label>
+            </div>
+            <div class="btn-row">
+              <button class="btn-outline btn-icon" onclick="regNext(1)"><i data-lucide="arrow-left"></i><span>Back</span></button>
+              <button class="btn-primary" onclick="regNext(3)">Continue</button>
+            </div>
+            <div class="or-divider">or</div>
+            <button class="btn-emongolia">
+              <img class="emongolia-logo" src="../public/emongolia.png" alt="E-Mongolia" />
+              Register with E-Mongolia
+            </button>
+          </div>
+
+          <!-- Step 3: OTP -->
+          <div class="panel" id="reg-step-3">
+            <p style="font-size:14px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px;line-height:1.6">A one-time code was sent to your phone / email.</p>
+            <div class="otp-email">blk*******@gmail.com</div>
+            <div class="otp-grid">
+              <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+              <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+              <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+              <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+              <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+              <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+            </div>
+            <div class="btn-row">
+              <button class="btn-outline btn-icon" onclick="regNext(2)"><i data-lucide="arrow-left"></i><span>Back</span></button>
+              <button class="btn-primary" onclick="verifyRegOtp()">Verify</button>
+            </div>
+            <button class="btn-outline" style="width:100%">Resend Code</button>
+          </div>
+
+          <!-- Step 4: Username + PIN setup (shown after OTP verification) -->
+          <div class="panel" id="reg-step-4">
+            <h3 class="pin-setup-title">Create your username and PIN code</h3>
+
+            <div class="field-wrap">
+              <label class="field-label">Username</label>
+              <input class="inp" type="text" id="pin-username" placeholder="Choose a username"
+                oninput="checkUsernameReq(this.value)"
+                onfocus="document.getElementById('username-req').classList.add('open')"
+                onblur="document.getElementById('username-req').classList.remove('open')" />
+              <div class="field-req" id="username-req">
+                <div class="req-item" id="ureq-latin"><i data-lucide="check"></i><span>Use Latin letters</span></div>
+                <div class="req-item" id="ureq-len"><i data-lucide="check"></i><span>8-20 characters</span></div>
+                <div class="req-item" id="ureq-letter"><i data-lucide="check"></i><span>At least 1 letter</span></div>
+                <div class="req-item" id="ureq-digit"><i data-lucide="check"></i><span>At least 1 digit</span></div>
+              </div>
+            </div>
+
+            <div class="pin-block">
+              <div class="pin-block-hdr">
+                <span class="field-label" style="margin:0">4-digit PIN code</span>
+                <button class="pin-eye" onclick="togglePinReveal('pin-create')"><i data-lucide="eye"></i></button>
+              </div>
+              <div class="pin-grid" id="pin-create">
+                <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+                <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+                <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+                <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+              </div>
+            </div>
+
+            <div class="pin-block">
+              <div class="pin-block-hdr">
+                <span class="field-label" style="margin:0">Confirm PIN code</span>
+                <button class="pin-eye" onclick="togglePinReveal('pin-confirm')"><i data-lucide="eye"></i></button>
+              </div>
+              <div class="pin-grid" id="pin-confirm">
+                <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+                <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+                <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+                <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+              </div>
+            </div>
+
+            <button class="btn-primary" onclick="finishRegister()">Create Account</button>
+          </div>
+        </div>
+
+      </div><!-- /auth-section -->
+
+
+      <!-- ════ FORGOT PASSWORD ════ -->
+      <div id="forgot-section" style="display:none">
+
+        <div class="panel active" id="fp-1">
+          <div class="back-row" onclick="hideForgot()"><i data-lucide="arrow-left"></i><span>Back to Sign In</span></div>
+          <h2 class="auth-heading">Reset password</h2>
+          <p class="auth-subheading">Enter your account details and we'll send you a verification code.</p>
+          <div class="field-wrap">
+            <label class="field-label">Username</label>
+            <input class="inp" type="text" placeholder="Registered username" />
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Email / Phone number</label>
+            <input class="inp" type="text" placeholder="Registered email or phone" />
+          </div>
+          <button class="btn-primary" onclick="fpNext(2)">Send Reset Link</button>
+          <div class="or-divider">or</div>
+          <div class="btn-row">
+            <button class="btn-outline" onclick="hideForgot()">Sign In</button>
+            <button class="btn-outline" onclick="hideForgot();switchAuth('register')">Sign Up</button>
+          </div>
+        </div>
+
+        <div class="panel" id="fp-2">
+          <div class="back-row" onclick="fpNext(1)"><i data-lucide="arrow-left"></i><span>Back</span></div>
+          <h2 class="auth-heading">Enter verification code</h2>
+          <p class="auth-subheading">A 6-digit code was sent to your email / phone.</p>
+          <div class="otp-email">blk*******@gmail.com</div>
+          <div class="otp-grid">
+            <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+            <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+            <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+            <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+            <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+            <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
+          </div>
+          <button class="btn-primary" onclick="fpNext(3)">Continue</button>
+          <button class="btn-outline" style="width:100%">Resend Code</button>
+        </div>
+
+        <div class="panel" id="fp-3">
+          <div class="back-row" onclick="fpNext(2)"><i data-lucide="arrow-left"></i><span>Back</span></div>
+          <h2 class="auth-heading">Set new password</h2>
+          <p class="auth-subheading">Choose a strong password for your account.</p>
+          <div class="field-wrap">
+            <label class="field-label">New Password</label>
+            <div class="inp-wrap">
+              <span class="field-icon"><i data-lucide="lock"></i></span>
+              <input class="inp has-icon has-eye" type="password" id="fp-pw" placeholder="New password" />
+              <button class="field-eye" onclick="togglePw('fp-pw',this)"><i data-lucide="eye"></i></button>
+            </div>
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Confirm New Password</label>
+            <div class="inp-wrap">
+              <span class="field-icon"><i data-lucide="lock"></i></span>
+              <input class="inp has-icon has-eye" type="password" id="fp-pw2" placeholder="Re-enter new password" />
+              <button class="field-eye" onclick="togglePw('fp-pw2',this)"><i data-lucide="eye"></i></button>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="fpNext(4)">Change Password</button>
+        </div>
+
+        <div class="panel" id="fp-4">
+          <div class="success-block">
+            <div class="success-circle"><i data-lucide="check"></i></div>
+            <div class="success-title">Password Changed!</div>
+            <div class="success-msg">Your password has been successfully updated. You can now sign in with your new password.</div>
+            <button class="btn-primary" style="width:100%;margin:0" onclick="hideForgot()">Back to Sign In</button>
+          </div>
+        </div>
+
+      </div><!-- /forgot-section -->
+
+    </div><!-- /auth-card -->
+  </div><!-- /auth-right -->
+
+
+  <!-- ════ FACE ID POPUP ════ -->
+  <div class="auth-modal-overlay" id="faceid-modal">
+    <div class="auth-modal">
+      <div class="am-icon-wrap"><i data-lucide="scan-face"></i></div>
+      <div class="am-title">Enable Face ID for faster sign-in?</div>
+      <div class="am-desc">With Face ID enabled, you won't need to enter your username and password next time you sign in on this device.</div>
+      <div class="am-btn-row">
+        <button class="btn-outline" onclick="faceIDDecline()">Not now</button>
+        <button class="btn-primary" onclick="faceIDAllow()">Enable</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ OTP VERIFIED POPUP ════ -->
+  <div class="auth-modal-overlay" id="otp-success-modal">
+    <div class="auth-modal">
+      <div class="success-circle"><i data-lucide="check"></i></div>
+      <div class="success-title">Code Verified!</div>
+      <div class="success-msg">Your one-time code has been confirmed. Now let's set up your username and PIN code.</div>
+      <button class="btn-primary" style="width:100%;margin:0" onclick="proceedToPinSetup()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ════ REGISTRATION SUCCESS POPUP ════ -->
+  <div class="auth-modal-overlay" id="register-success-modal">
+    <div class="auth-modal">
+      <div class="success-circle"><i data-lucide="check"></i></div>
+      <div class="success-title">Registration Successful!</div>
+      <div class="success-msg">Your account has been created. Sign in with your new username and PIN code to get started.</div>
+      <button class="btn-primary" style="width:100%;margin:0" onclick="closeRegisterSuccess()">Sign In</button>
+    </div>
+  </div>
+
+
+<script>
+/* ── Language (matches mobile/web localStorage key) ── */
+function toggleLang() {
+  const cur = localStorage.getItem('tradex-lang') || 'en';
+  const next = cur === 'en' ? 'mn' : 'en';
+  localStorage.setItem('tradex-lang', next);
+  applyLang(next);
+}
+function applyLang(lang) {
+  document.getElementById('lang-text').textContent = lang === 'en' ? 'English' : 'Монгол';
+}
+applyLang(localStorage.getItem('tradex-lang') || 'en');
+
+/* ── Theme ── */
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('tradex-theme', next);
+  applyThemeIcon(next);
+}
+function applyThemeIcon(theme) {
+  document.getElementById('theme-icon-sun').style.display = theme === 'dark' ? 'block' : 'none';
+  document.getElementById('theme-icon-moon').style.display = theme === 'dark' ? 'none' : 'block';
+}
+applyThemeIcon(document.documentElement.getAttribute('data-theme') || 'dark');
+
+/* ── Auth tab switch ── */
+function switchAuth(tab) {
+  document.getElementById('toggle-login').classList.toggle('active', tab === 'login');
+  document.getElementById('toggle-register').classList.toggle('active', tab === 'register');
+  document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+  document.getElementById('panel-register').classList.toggle('active', tab === 'register');
+  document.getElementById('auth-heading').textContent = tab === 'login' ? 'Welcome back' : 'Create your account';
+  document.getElementById('auth-subheading').textContent = tab === 'login'
+    ? 'Sign in to access your portfolio, place orders, and manage your account.'
+    : 'Open a BDSec account in minutes and start trading the Mongolian markets.';
+  if (tab === 'register') setRegStep(1);
+}
+
+/* ── Register steps ── */
+let regStep = 1;
+function setRegStep(n) {
+  regStep = n;
+  [1,2,3].forEach(i => {
+    document.getElementById(`reg-step-${i}`).classList.toggle('active', i === n);
+    const seg = document.getElementById(`rseg-${i-1}`);
+    seg.className = 'step-seg' + (i < n ? ' done' : i === n ? ' active' : '');
+  });
+  document.getElementById('reg-step-4').classList.remove('active');
+}
+function regNext(n) { setRegStep(n); }
+function setRegChar(c) {
+  document.querySelectorAll('.reg-char-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`rc-${c}`).classList.add('active');
+}
+
+/* ── Step 1 → save country / user type, adapt step 2 labels (persisted like mobile) ── */
+function regStep1Continue() {
+  const country  = document.getElementById('reg-country').value;
+  const usertype = document.getElementById('reg-usertype').value;
+  localStorage.setItem('reg-country', country);
+  localStorage.setItem('reg-usertype', usertype);
+  applyRegStep2Labels();
+  regNext(2);
+}
+function applyRegStep2Labels() {
+  const country  = localStorage.getItem('reg-country')  || 'Mongolia';
+  const usertype = localStorage.getItem('reg-usertype') || 'Individual';
+  const label  = document.getElementById('reg-idnum-label');
+  const prefix = document.getElementById('reg-idnum-prefix');
+  const input  = document.getElementById('reg-idnum-input');
+
+  let text, showPrefix;
+  if (usertype === 'Corporate')    { text = 'Corporate number';    showPrefix = false; }
+  else if (country === 'Mongolia') { text = 'Registration number'; showPrefix = true;  }
+  else                              { text = 'Passport number';     showPrefix = false; }
+
+  label.textContent = text;
+  input.placeholder = text;
+  prefix.style.display = showPrefix ? 'flex' : 'none';
+}
+
+/* ── Live field requirement checklists ── */
+function setReqMet(id, met) {
+  document.getElementById(id).classList.toggle('met', met);
+}
+function checkUsernameReq(v) {
+  setReqMet('ureq-latin',  v.length > 0 && /^[A-Za-z0-9_.]*$/.test(v));
+  setReqMet('ureq-len',    v.length >= 8 && v.length <= 20);
+  setReqMet('ureq-letter', /[A-Za-z]/.test(v));
+  setReqMet('ureq-digit',  /[0-9]/.test(v));
+}
+function checkPasswordReq(v) {
+  setReqMet('preq-len',     v.length >= 8);
+  setReqMet('preq-upper',   /[A-Z]/.test(v));
+  setReqMet('preq-lower',   /[a-z]/.test(v));
+  setReqMet('preq-digit',   /[0-9]/.test(v));
+  setReqMet('preq-special', /[^A-Za-z0-9]/.test(v));
+}
+
+/* ── OTP verify → success popup → PIN setup → register success ── */
+function verifyRegOtp() {
+  document.getElementById('otp-success-modal').classList.add('open');
+  lucide.createIcons();
+}
+function proceedToPinSetup() {
+  document.getElementById('otp-success-modal').classList.remove('open');
+  showPinSetup();
+}
+function showPinSetup() {
+  [1,2,3].forEach(i => {
+    document.getElementById(`reg-step-${i}`).classList.remove('active');
+    document.getElementById(`rseg-${i-1}`).className = 'step-seg done';
+  });
+  document.getElementById('reg-step-4').classList.add('active');
+  lucide.createIcons();
+}
+function togglePinReveal(groupId) {
+  const grid  = document.getElementById(groupId);
+  const btn   = grid.parentElement.querySelector('.pin-eye');
+  const boxes = grid.querySelectorAll('.pin-box');
+  const revealing = boxes[0].type === 'password';
+  boxes.forEach(b => b.type = revealing ? 'text' : 'password');
+  btn.classList.toggle('active', revealing);
+  btn.innerHTML = revealing ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+  lucide.createIcons();
+}
+function pinAdvance(inp) {
+  inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 1);
+  if (inp.value.length === 1) {
+    const next = inp.nextElementSibling;
+    if (next && next.classList.contains('pin-box')) next.focus();
+  }
+}
+function finishRegister() {
+  document.getElementById('register-success-modal').classList.add('open');
+  lucide.createIcons();
+}
+function closeRegisterSuccess() {
+  document.getElementById('register-success-modal').classList.remove('open');
+  setRegStep(1);
+  switchAuth('login');
+}
+
+/* ── Forgot password ── */
+function showForgot() {
+  document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('forgot-section').style.display = 'block';
+  setFpStep(1);
+}
+function hideForgot() {
+  document.getElementById('forgot-section').style.display = 'none';
+  document.getElementById('auth-section').style.display = 'block';
+  switchAuth('login');
+}
+function setFpStep(n) {
+  [1,2,3,4].forEach(i => document.getElementById(`fp-${i}`).classList.toggle('active', i === n));
+}
+function fpNext(n) { setFpStep(n); }
+
+/* ── Face ID popup ── */
+function showFaceID() {
+  document.getElementById('faceid-modal').classList.add('open');
+  lucide.createIcons();
+}
+function faceIDAllow()   { goHome(); }
+function faceIDDecline() { goHome(); }
+function goHome() {
+  sessionStorage.setItem('bdsec-auth', '1');
+  window.location.href = 'index.html';
+}
+
+/* ── Password visibility ── */
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.innerHTML = show ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+  lucide.createIcons();
+}
+
+/* ── OTP auto-advance ── */
+function otpAdvance(inp) {
+  if (inp.value.length === 1) {
+    const next = inp.nextElementSibling;
+    if (next && next.classList.contains('otp-box')) next.focus();
+  }
+}
+
+lucide.createIcons();
+</script>
+</body>
+</html>
