@@ -7,13 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { height: 100%; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+    body { margin: 0; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
 
     /* ── Sub-page header ── */
     .sub-header { display: flex; align-items: center; padding: 14px 16px 10px; gap: 12px; }
@@ -36,12 +36,12 @@
     .inp {
       width: 100%; background: var(--color-bg-card); border: 1.5px solid var(--color-border);
       border-radius: 10px; padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
-      outline: none; transition: border-color 0.15s; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.15s; font-family: 'Manrope', sans-serif;
     }
     .inp:focus { border-color: var(--color-primary); }
     .inp::placeholder { color: var(--color-text-disabled); }
     .inp[readonly] { background: var(--color-bg-input); color: var(--color-text-secondary); cursor: default; }
-    textarea.inp { font-family: 'Inter', sans-serif; }
+    textarea.inp { font-family: 'Manrope', sans-serif; }
     .inp-select {
       appearance: none; -webkit-appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -382,7 +382,7 @@ const KYC_AGREEMENTS = {
     name: 'Nominee Account Agreement',
     content: `This Nominee Account Agreement governs the manner in which the Client's securities may be held through a nominee (omnibus) structure maintained by the Company with the Securities Clearing House and Central Depository.
 
-1. Securities recorded under the nominee account remain beneficially owned by the Client at all times, and the Company will maintain accurate sub-ledger records reflecting the Client's IBM Plex Sansest.
+1. Securities recorded under the nominee account remain beneficially owned by the Client at all times, and the Company will maintain accurate sub-ledger records reflecting the Client's Interest.
 
 2. The Client may, at any time and subject to applicable processing fees, request transfer of securities from the nominee account into an individually registered account.
 
@@ -480,7 +480,7 @@ function condBlock(showIfId, showIfValue, innerHtml) {
   return `<div class="cond-block" data-show-if="${showIfId}=${showIfValue.replace(/"/g, '&quot;')}" style="display:none"><div class="cond-inner">${innerHtml}</div></div>`;
 }
 
-/* ── IBM Plex Sansaction handlers ── */
+/* ── Transaction handlers ── */
 function kycSelectRadio(groupId, value) {
   const group = document.getElementById(groupId);
   if (!group) return;
@@ -596,7 +596,7 @@ function renderGeneralInfo(profile, isFirst) {
 
 function renderEmployment() {
   let html = sectionHeader('briefcase', 'Employment');
-  html += fSelect(uid('emp-type'), 'Employment Type', ['Civil Servant', 'State Owned Enterprise', 'Private Sector', 'Foreign Registered Entity', 'IBM Plex Sansnational Organization', 'Self Employed', 'Student', 'Unemployed', 'Pensioner', 'Other']);
+  html += fSelect(uid('emp-type'), 'Employment Type', ['Civil Servant', 'State Owned Enterprise', 'Private Sector', 'Foreign Registered Entity', 'Transnational Organization', 'Self Employed', 'Student', 'Unemployed', 'Pensioner', 'Other']);
   html += fText(uid('emp-employer'), 'Employer Name');
   html += fText(uid('emp-industry'), 'Industry Type');
   html += fText(uid('emp-position'), 'Position');
@@ -737,7 +737,7 @@ function renderCompanyInfo() {
   html += `<div class="field-row">${fText(uid('co-regnum'), 'Registration Number')}${fText(uid('co-tax'), 'Tax Number')}</div>`;
   html += `<div class="field-row">${fText(uid('co-incorp-date'), 'Date of Incorporation', { type: 'date' })}${fSelect(uid('co-incorp-country'), 'Country of Incorporation', COUNTRIES_WITH_MN)}</div>`;
   html += fText(uid('co-state-regnum'), 'State Registration Number');
-  html += fSelect(uid('co-legal-type'), 'Legal Entity Type', ['Government Organization', 'State Owned Enterprise', 'Private Company', 'Listed Company', 'Closed Company', 'LLC', 'NGO', 'Non Profit', 'Partnership', 'Cooperative', 'Foreign Registered Company', 'IBM Plex Sansnational Organization', 'Other']);
+  html += fSelect(uid('co-legal-type'), 'Legal Entity Type', ['Government Organization', 'State Owned Enterprise', 'Private Company', 'Listed Company', 'Closed Company', 'LLC', 'NGO', 'Non Profit', 'Partnership', 'Cooperative', 'Foreign Registered Company', 'Transnational Organization', 'Other']);
 
   html += subHeader('Company Address');
   const locId = uid('co-loc');
