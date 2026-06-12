@@ -8,10 +8,10 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); overflow-x: hidden; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); overflow-x: hidden; }
     * { box-sizing: border-box; }
 
     /* Stock selector bar */
@@ -269,7 +269,7 @@
       color: var(--color-text-primary);
       outline: none;
       transition: border-color 0.15s;
-      font-family: 'IBM Plex Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
     .am-inp:focus { border-color: var(--color-primary); }
     .am-inp[readonly] { color: var(--color-text-secondary); cursor: default; }
@@ -457,16 +457,29 @@
         <label class="am-label">Symbol</label>
         <input class="am-inp" id="alert-symbol" readonly />
       </div>
+      <div class="am-field">
+        <label class="am-label">Price Type</label>
+        <select class="am-inp am-select" id="alert-price-type">
+          <option value="open">Opening Price</option>
+          <option value="close">Closing Price</option>
+          <option value="high">High Price</option>
+          <option value="low">Low Price</option>
+          <option value="last" selected>Last Traded Price</option>
+        </select>
+      </div>
       <div class="am-row">
         <div class="am-field">
           <label class="am-label">Condition</label>
           <select class="am-inp am-select" id="alert-condition">
-            <option value="above">Price above</option>
-            <option value="below">Price below</option>
+            <option value="gt">Greater than</option>
+            <option value="lt">Less than</option>
+            <option value="eq">Equal to</option>
+            <option value="gte" selected>Greater than or equal to</option>
+            <option value="lte">Less than or equal to</option>
           </select>
         </div>
         <div class="am-field">
-          <label class="am-label">Target Price</label>
+          <label class="am-label">Target Value</label>
           <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
         </div>
       </div>
@@ -477,6 +490,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="../scripts/chart.js"></script>
+  <script src="../scripts/wallet-data.js"></script>
   <script>
     // ── Intraday price data (AAPL today) ──
     const INTRADAY = {
@@ -848,7 +862,8 @@
     // ── Add price alert modal ──
     function openAlertModal() {
       document.getElementById('alert-symbol').value = selectedSymbol;
-      document.getElementById('alert-condition').value = 'above';
+      document.getElementById('alert-price-type').value = 'last';
+      document.getElementById('alert-condition').value = 'gte';
       const s = findCard(selectedSymbol);
       document.getElementById('alert-price').value = s ? s.price : '';
       document.getElementById('alert-modal').classList.add('open');
@@ -859,12 +874,13 @@
     }
 
     function saveAlert() {
+      const priceType = document.getElementById('alert-price-type').value;
       const condition = document.getElementById('alert-condition').value;
-      const price = document.getElementById('alert-price').value;
-      if (!price) return;
-      const label = condition === 'above' ? 'rises above' : 'falls below';
+      const target = document.getElementById('alert-price').value;
+      if (!target) return;
+      addPriceAlert({ symbol: selectedSymbol, priceType, condition, target: Number(target), active: true });
       closeAlertModal();
-      showToast(`Alert created: notify when ${selectedSymbol} ${label} ${price}.`);
+      showToast(`Alert created: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
     }
 
     function showToast(msg) {

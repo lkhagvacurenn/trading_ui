@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
   <link rel="stylesheet" href="../../styles/components.css" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
     body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
@@ -70,14 +70,18 @@
 
     /* ── Order book ── */
     .orderbook-grid {
-      display:grid; grid-template-columns:1fr;
+      display:flex; align-items:stretch;
       gap:8px; padding:12px 16px;
     }
     .ob-panel {
+      flex:6 1 0%; min-width:0;
+      display:flex; flex-direction:column;
+      max-height:320px;
       background:var(--color-bg-card);
       border:1px solid var(--color-border);
       border-radius:12px; overflow:hidden;
     }
+    #orderbook-rows { flex:1; overflow-y:auto; }
     .ob-header {
       display:grid; grid-template-columns:1fr 1fr 1fr 1fr;
       padding:8px 10px;
@@ -117,28 +121,34 @@
 
     /* Executed orders panel */
     .exec-panel {
-      margin:0 16px; background:var(--color-bg-card);
+      flex:4 1 0%; min-width:0;
+      display:flex; flex-direction:column;
+      max-height:320px;
+      background:var(--color-bg-card);
       border:1px solid var(--color-border); border-radius:12px; overflow:hidden;
     }
+    #exec-rows { flex:1; overflow-y:auto; }
     .exec-header {
       padding:10px 12px; border-bottom:1px solid var(--color-border);
       font-size:12px; font-weight:700; color:var(--color-text-secondary);
     }
     .exec-cols {
-      display:grid; grid-template-columns:1fr 1fr 1fr;
-      padding:7px 12px;
+      display:grid; grid-template-columns:0.8fr 1fr 1.3fr;
+      column-gap:4px;
+      padding:7px 10px;
       border-bottom:1px solid var(--color-border);
     }
     .exec-cols span { font-size:10px; color:var(--color-text-disabled); font-weight:600; }
     .exec-cols span:nth-child(2) { text-align:center; }
     .exec-cols span:last-child { text-align:right; }
     .exec-row {
-      display:grid; grid-template-columns:1fr 1fr 1fr;
-      padding:6px 12px;
+      display:grid; grid-template-columns:0.8fr 1fr 1.3fr;
+      column-gap:4px;
+      padding:6px 10px;
       border-bottom:1px solid rgba(255,255,255,0.03);
     }
     .exec-row:last-child { border-bottom:none; }
-    .exec-row span { font-size:11px; font-family:'IBM Plex Mono',monospace; color:var(--color-text-secondary); }
+    .exec-row span { font-size:10px; font-family:'IBM Plex Mono',monospace; color:var(--color-text-secondary); }
     .exec-row span:nth-child(2) { text-align:center; font-weight:700; }
     .exec-row span.up   { color:var(--color-buy); }
     .exec-row span.down { color:var(--color-sell); }
@@ -362,7 +372,7 @@
       color: var(--color-text-primary);
       outline: none;
       transition: border-color 0.15s;
-      font-family: 'IBM Plex Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
     .am-inp:focus { border-color: var(--color-primary); }
     .am-inp[readonly] { color: var(--color-text-secondary); cursor: default; }
@@ -433,17 +443,17 @@
         </div>
         <div id="orderbook-rows"></div>
       </div>
-    </div>
 
-    <!-- Executed Orders -->
-    <div class="exec-panel">
-      <div class="exec-header">Executed Orders</div>
-      <div class="exec-cols">
-        <span>Qty</span>
-        <span>Price</span>
-        <span>Time</span>
+      <!-- Executed Orders -->
+      <div class="exec-panel">
+        <div class="exec-header">Executed Orders</div>
+        <div class="exec-cols">
+          <span>Qty</span>
+          <span>Price</span>
+          <span>Time</span>
+        </div>
+        <div id="exec-rows"></div>
       </div>
-      <div id="exec-rows"></div>
     </div>
     <div style="height:10px"></div>
   </div>
@@ -592,16 +602,29 @@
         <label class="am-label">Symbol</label>
         <input class="am-inp" id="alert-symbol" readonly />
       </div>
+      <div class="am-field">
+        <label class="am-label">Price Type</label>
+        <select class="am-inp am-select" id="alert-price-type">
+          <option value="open">Opening Price</option>
+          <option value="close">Closing Price</option>
+          <option value="high">High Price</option>
+          <option value="low">Low Price</option>
+          <option value="last" selected>Last Traded Price</option>
+        </select>
+      </div>
       <div class="am-row">
         <div class="am-field">
           <label class="am-label">Condition</label>
           <select class="am-inp am-select" id="alert-condition">
-            <option value="above">Price above</option>
-            <option value="below">Price below</option>
+            <option value="gt">Greater than</option>
+            <option value="lt">Less than</option>
+            <option value="eq">Equal to</option>
+            <option value="gte" selected>Greater than or equal to</option>
+            <option value="lte">Less than or equal to</option>
           </select>
         </div>
         <div class="am-field">
-          <label class="am-label">Target Price</label>
+          <label class="am-label">Target Value</label>
           <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
         </div>
       </div>
@@ -615,6 +638,7 @@
 
   <script src="../../data/static.js"></script>
   <script src="../scripts/chart.js"></script>
+  <script src="../scripts/wallet-data.js"></script>
   <script>
     // ── Order book data ──
     const OB_DATA = [
@@ -891,8 +915,10 @@
 
     // ── Add Price Alert modal (same as Home page) ──
     function openAlertModal() {
-      document.getElementById('alert-symbol').value = 'AAPL';
-      document.getElementById('alert-condition').value = 'above';
+      const symbol = document.querySelector('.sel-symbol').textContent.trim();
+      document.getElementById('alert-symbol').value = symbol;
+      document.getElementById('alert-price-type').value = 'last';
+      document.getElementById('alert-condition').value = 'gte';
       document.getElementById('alert-price').value = document.getElementById('price-input').value || '';
       document.getElementById('alert-modal').classList.add('open');
     }
@@ -900,11 +926,13 @@
       document.getElementById('alert-modal').classList.remove('open');
     }
     function saveAlert() {
+      const symbol = document.getElementById('alert-symbol').value;
+      const priceType = document.getElementById('alert-price-type').value;
       const condition = document.getElementById('alert-condition').value;
-      const price = document.getElementById('alert-price').value;
-      if (!price) return;
-      const label = condition === 'above' ? 'rises above' : 'falls below';
-      showToast(`Alert created: notify when AAPL ${label} ${price}.`);
+      const target = document.getElementById('alert-price').value;
+      if (!target) return;
+      addPriceAlert({ symbol, priceType, condition, target: Number(target), active: true });
+      showToast(`Alert created: ${symbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
       closeAlertModal();
     }
 

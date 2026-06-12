@@ -7,13 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { height: 100%; }
-    body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
 
     /* ── Sub-page header ── */
     .sub-header {
@@ -62,7 +62,7 @@
       color: var(--color-text-primary);
       outline: none;
       transition: border-color 0.15s;
-      font-family: 'IBM Plex Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
     .inp:focus { border-color: var(--color-primary); }
     .inp::placeholder { color: var(--color-text-disabled); }
@@ -405,7 +405,7 @@
 
       <div class="field-wrap">
         <label class="field-label">Account Holder Name</label>
-        <input class="inp" type="text" id="acct-holder" placeholder="Auto-filled from account number" readonly />
+        <input class="inp" type="text" id="acct-holder" placeholder="Account holder name" readonly />
       </div>
 
       <div class="btn-row">
@@ -523,6 +523,7 @@
 
   <div class="toast" id="toast"></div>
 
+<script src="../scripts/wallet-data.js"></script>
 <script>
 /* ── Bank logo picker (horizontal scroll) ── */
 const bankScroll = document.getElementById('bank-scroll');
@@ -663,6 +664,7 @@ function checkPayment() {
   document.querySelector('.sub-header').style.display = 'none';
   document.getElementById('step-success').style.display = 'flex';
   localStorage.setItem('bdsec-account-opened', '1');
+  localStorage.setItem('bdsec-account-opened-date', new Date().toISOString().slice(0, 10));
 }
 
 function goHome() {
@@ -670,9 +672,9 @@ function goHome() {
 }
 
 /* ── Payment apps (using bank-logo art as stand-in icons) ── */
-const PAY_APPS = ['QPay','Socialpay','iPay','Storepay','Lendpay','Nomad','MBank','MobiFinance','Monpay','Mobicom','Arig','ARD'];
+const OA_PAY_APPS = ['QPay','Socialpay','iPay','Storepay','Lendpay','Nomad','MBank','MobiFinance','Monpay','Mobicom','Arig','ARD'];
 const grid = document.getElementById('pay-apps-grid');
-PAY_APPS.forEach((name, i) => {
+OA_PAY_APPS.forEach((name, i) => {
   const logoSrc = `../../public/bank logo/bank${String((i % 12) + 1).padStart(2, '0')}.png`;
   const div = document.createElement('div');
   div.className = 'pay-app-item';
@@ -735,6 +737,7 @@ function openSignaturePad() {
 function saveSignature() {
   document.getElementById('sig-pad').style.display = 'none';
   document.getElementById('sig-done').style.display = 'flex';
+  try { setSignature(canvas.toDataURL()); } catch (e) {}
   lucide.createIcons();
 }
 function redoSignature() {

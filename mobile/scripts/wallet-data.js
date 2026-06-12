@@ -8,6 +8,9 @@ const BANK_ACCOUNTS_KEY    = 'bdsec-bank-accounts';
 const DEPOSIT_HISTORY_KEY  = 'bdsec-deposit-history';
 const WITHDRAW_HISTORY_KEY = 'bdsec-withdraw-history';
 const SAVED_CARD_KEY       = 'bdsec-saved-card';
+const SIGNATURE_KEY        = 'bdsec-signature';
+const TRIPARTITE_KEY       = 'bdsec-tripartite-agreement';
+const PROFILE_KEY          = 'bdsec-user-profile';
 
 const DEFAULT_BALANCES = { nominal: 50000, mcsd: 0 };
 
@@ -62,6 +65,50 @@ function setWithdrawHistory(l) { saveJSON(WITHDRAW_HISTORY_KEY, l); }
 
 function getSavedCard()  { return loadJSON(SAVED_CARD_KEY, null); }
 function setSavedCard(c) { saveJSON(SAVED_CARD_KEY, c); }
+
+function getSignature()  { return loadJSON(SIGNATURE_KEY, null); }
+function setSignature(dataUrl) { saveJSON(SIGNATURE_KEY, dataUrl); }
+
+function getTripartiteAgreement()  { return loadJSON(TRIPARTITE_KEY, null); }
+function setTripartiteAgreement(a) { saveJSON(TRIPARTITE_KEY, a); }
+
+const DEFAULT_PROFILE = { username: 'lkhagvasuren10', email: 'blkhagvasuren10@gmail.com', phone: '' };
+function getUserProfile()  { return { ...DEFAULT_PROFILE, ...loadJSON(PROFILE_KEY, {}) }; }
+function setUserProfile(p) { saveJSON(PROFILE_KEY, { ...getUserProfile(), ...p }); }
+
+/* ── Price alerts ── */
+const PRICE_ALERTS_KEY = 'bdsec-price-alerts';
+
+const PRICE_TYPE_LABELS = {
+  open:   'Opening Price',
+  close:  'Closing Price',
+  high:   'High Price',
+  low:    'Low Price',
+  last:   'Last Traded Price',
+};
+
+const ALERT_CONDITION_LABELS = {
+  gt:  'Greater than',
+  lt:  'Less than',
+  eq:  'Equal to',
+  gte: 'Greater than or equal to',
+  lte: 'Less than or equal to',
+};
+
+function getPriceAlerts()    { return loadJSON(PRICE_ALERTS_KEY, []); }
+function setPriceAlerts(arr) { saveJSON(PRICE_ALERTS_KEY, arr); }
+
+function addPriceAlert(alert) {
+  const alerts = getPriceAlerts();
+  alerts.unshift({
+    id: genId('alert'),
+    active: true,
+    createdDate: new Date().toISOString().slice(0, 10),
+    ...alert,
+  });
+  setPriceAlerts(alerts);
+  return alerts;
+}
 
 function genId(prefix) {
   return prefix + '-' + Math.random().toString(36).slice(2, 9);

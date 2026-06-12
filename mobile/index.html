@@ -11,15 +11,16 @@
   <link rel="stylesheet" href="../styles/components.css" />
   <link rel="stylesheet" href="styles/mobile.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <script>
     (function () {
       const t = localStorage.getItem('tradex-theme') || 'dark';
       document.documentElement.setAttribute('data-theme', t);
-      // Auth guard — redirect to splash if not logged in
+      // Auth guard — redirect to login if not logged in
+      // (splash screen temporarily disabled)
       if (!sessionStorage.getItem('bdsec-auth')) {
-        window.location.replace('splash.html');
+        window.location.replace('login.html');
       }
     })();
   </script>
@@ -27,7 +28,13 @@
   <style>
     /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'IBM Plex Sans', sans-serif; }
+    html, body {
+      height: 100%; margin: 0; overflow: hidden; font-family: 'Inter', sans-serif;
+    }
+    body {
+      display: flex; align-items: center; justify-content: center;
+      background: #0a0e1e;
+    }
 
     /* ── App shell ── */
     #app {
@@ -35,10 +42,13 @@
       flex-direction: column;
       height: 100%;
       max-width: 430px;
+      max-height: 900px;
+      width: 100%;
       margin: 0 auto;
       background: var(--color-bg);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
     }
 
     /* ── Header ── */
@@ -180,7 +190,7 @@
     .nav-tab svg { width: 22px; height: 22px; }
     .nav-tab span {
       font-size: 10px; font-weight: 600;
-      font-family: 'IBM Plex Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       letter-spacing: 0.01em;
     }
     .nav-tab.active { color: var(--color-primary); }
@@ -378,7 +388,7 @@
     </div>
 
     <!-- My Profile -->
-    <button class="menu-item" onclick="closeMenu()" style="padding:16px 20px">
+    <button class="menu-item" onclick="menuNav('profile'); closeMenu()" style="padding:16px 20px">
       <i data-lucide="user-circle"></i>
       <span class="menu-item-label" style="font-weight:600">My Profile</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
@@ -413,16 +423,21 @@
       <span class="menu-item-label">Withdraw</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
+    <button class="menu-item" onclick="menuNav('tripartite'); closeMenu()">
+      <i data-lucide="file-signature"></i>
+      <span class="menu-item-label">Tripartite Agreement</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
+    </button>
+    <button class="menu-item" onclick="menuNav('alerts'); closeMenu()">
+      <i data-lucide="bell"></i>
+      <span class="menu-item-label">Alert</span>
+      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
+    </button>
 
     <div class="menu-divider"></div>
 
     <div class="menu-section-lbl">General</div>
 
-    <button class="menu-item" onclick="menuNav('home'); closeMenu()">
-      <i data-lucide="home"></i>
-      <span class="menu-item-label">Home</span>
-      <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
-    </button>
     <button class="menu-item" onclick="menuNav('balance'); closeMenu()">
       <i data-lucide="wallet"></i>
       <span class="menu-item-label">Portfolio</span>
@@ -639,6 +654,9 @@ const PAGE_MAP = {
   notifications: 'pages/notifications.html',
   settings:     'pages/settings.html',
   'order-history': 'pages/order-history.html',
+  tripartite:   'pages/tripartite.html',
+  profile:      'pages/profile.html',
+  alerts:       'pages/alerts.html',
 };
 function menuNav(key) {
   closeMenu();

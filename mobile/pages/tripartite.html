@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Tripartite Agreement — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    .form-body { padding: 0 16px; }
+    .info-section-title { font-size: 14px; font-weight: 700; margin: 18px 0 10px; }
+    .info-section-title.first { margin-top: 6px; }
+
+    /* ── Intro card ── */
+    .intro-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; padding: 14px 16px; display: flex; gap: 12px;
+      font-size: 12px; color: var(--color-text-secondary); line-height: 1.6;
+    }
+    .intro-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(99,102,241,0.12); color: var(--color-primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .intro-icon svg { width: 18px; height: 18px; }
+
+    /* ── Status (active agreement) card ── */
+    .status-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 16px; padding: 18px 16px; text-align: center;
+    }
+    .status-badge-icon {
+      width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 12px;
+      background: rgba(0,192,118,0.12); color: var(--color-buy);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .status-badge-icon svg { width: 26px; height: 26px; }
+    .status-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+    .status-sub { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 16px; }
+
+    /* ── Account card (radio selectable) ── */
+    .acct-card {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--color-bg-card); border: 1.5px solid var(--color-border);
+      border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .acct-card:hover { border-color: var(--color-primary); }
+    .acct-card.selected { border-color: var(--color-primary); }
+    .acct-logo { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+    .acct-info { flex: 1; min-width: 0; text-align: left; }
+    .acct-bank-name { font-size: 13px; font-weight: 700; }
+    .acct-number { font-size: 11px; color: var(--color-text-secondary); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+    .acct-holder { font-size: 11px; color: var(--color-text-disabled); margin-top: 2px; }
+    .acct-radio {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      border: 1.5px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .acct-radio svg { width: 12px; height: 12px; color: #fff; display: none; }
+    .acct-card.selected .acct-radio { background: var(--color-primary); border-color: var(--color-primary); }
+    .acct-card.selected .acct-radio svg { display: block; }
+
+    /* ── Agreements list (reuse open-account pattern) ── */
+    .agreement-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .agreement-item:hover { border-color: var(--color-primary); }
+    .agreement-item .ag-left { display: flex; align-items: center; gap: 10px; }
+    .agreement-check {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--color-bg-input);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-disabled); flex-shrink: 0;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .agreement-check svg { width: 13px; height: 13px; }
+    .agreement-check.read { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .agreement-name { font-size: 13px; font-weight: 600; }
+    .chevron-icon { color: var(--color-text-disabled); }
+    .chevron-icon svg { width: 16px; height: 16px; }
+
+    /* ── Agreement reader modal ── */
+    .agreement-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 280;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: flex-end; justify-content: center;
+    }
+    .agreement-modal-overlay.open { display: flex; }
+    .agreement-modal-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 78vh;
+      padding: 20px 20px 26px; display: flex; flex-direction: column;
+    }
+    .agreement-modal-hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-shrink: 0; }
+    .agreement-modal-title { font-size: 15px; font-weight: 800; }
+    .agreement-modal-close {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary);
+    }
+    .agreement-modal-close svg { width: 16px; height: 16px; }
+    .agreement-modal-body {
+      overflow-y: auto; font-size: 13px; line-height: 1.75;
+      color: var(--color-text-secondary); white-space: pre-line;
+    }
+
+    /* ── Signature ── */
+    .sig-section { margin-bottom: 8px; }
+    .sig-placeholder {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      border: 1.5px dashed var(--color-border); border-radius: 14px;
+      padding: 30px 16px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .sig-placeholder:hover { border-color: var(--color-primary); background: var(--color-bg-input); }
+    .sig-placeholder-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--color-bg-input); display: flex; align-items: center; justify-content: center;
+      color: var(--color-primary);
+    }
+    .sig-placeholder-icon svg { width: 20px; height: 20px; }
+    .sig-placeholder-text { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
+
+    #sig-canvas {
+      width: 100%; height: 160px; display: block;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-primary);
+      border-radius: 12px 12px 0 0;
+      touch-action: none; cursor: crosshair;
+    }
+    .sig-pad-actions {
+      display: flex;
+      border: 1.5px solid var(--color-border); border-top: none;
+      border-radius: 0 0 12px 12px; overflow: hidden;
+    }
+    .sig-action-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 12px; background: var(--color-bg-card); border: none;
+      border-right: 1px solid var(--color-border);
+      font-size: 13px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer;
+    }
+    .sig-action-btn:last-child { border-right: none; }
+    .sig-action-btn svg { width: 14px; height: 14px; }
+    .sig-action-btn.primary { color: var(--color-primary); }
+
+    .sig-done {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; background: rgba(0,192,118,0.08);
+      border: 1px solid rgba(0,192,118,0.3); border-radius: 12px;
+    }
+    .sig-done-left { display: flex; align-items: center; gap: 10px; color: var(--color-buy); font-size: 13px; font-weight: 600; }
+    .sig-done-left svg { width: 18px; height: 18px; }
+    .sig-redo-btn { background: none; border: none; color: var(--color-primary); font-size: 12px; font-weight: 700; cursor: pointer; }
+
+    /* ── Saved-signature confirm card ── */
+    .saved-sig-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; padding: 14px 16px;
+    }
+    .saved-sig-preview {
+      background: var(--color-bg-input); border: 1px solid var(--color-border);
+      border-radius: 10px; padding: 8px; margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .saved-sig-preview img { max-width: 100%; max-height: 80px; }
+    .saved-sig-check { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+    .saved-sig-check input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--color-primary); margin-top: 1px; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      width: 100%; padding: 14px; background: var(--color-primary);
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: opacity 0.15s;
+      margin-top: 8px; margin-bottom: 18px;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-outline {
+      width: 100%; padding: 13px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+      cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-bottom: 18px;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
+    .btn-outline svg { width: 16px; height: 16px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--color-text-primary); color: var(--color-bg);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 300;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .hist-empty { padding: 32px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
+
+    /* ── View switching ── */
+    #setup-view, #active-view { display: none; }
+    #setup-view.show, #active-view.show { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">Tripartite Agreement</div>
+  </div>
+
+  <div class="form-body">
+    <div class="intro-card">
+      <div class="intro-icon"><i data-lucide="repeat"></i></div>
+      <div>The Tripartite Agreement links your bank account, brokerage (Nominal) account and MCSD account so cash can be transferred between them online. Choose one bank account, read the agreement and sign it to activate.</div>
+    </div>
+
+    <!-- ══ ACTIVE VIEW ══ -->
+    <div id="active-view">
+      <div class="info-section-title first">Status</div>
+      <div class="status-card">
+        <div class="status-badge-icon"><i data-lucide="check"></i></div>
+        <div class="status-title">Agreement Active</div>
+        <div class="status-sub" id="active-since">Signed on —</div>
+      </div>
+
+      <div class="info-section-title">Linked Bank Account</div>
+      <div id="active-acct"></div>
+
+      <button class="btn-outline" onclick="openChangeAccount()">
+        <i data-lucide="repeat"></i> Change Bank Account
+      </button>
+    </div>
+
+    <!-- ══ SETUP VIEW ══ -->
+    <div id="setup-view">
+      <div class="info-section-title first">1. Select Bank Account</div>
+      <div id="acct-list"></div>
+
+      <div class="info-section-title">2. Read Agreement</div>
+      <div class="agreement-item" onclick="openAgreement()">
+        <div class="ag-left">
+          <div class="agreement-check" id="ac-tripartite"><i data-lucide="file-text"></i></div>
+          <span class="agreement-name">Tripartite Cash Transfer Agreement</span>
+        </div>
+        <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
+      </div>
+
+      <div class="info-section-title">3. Signature</div>
+
+      <!-- Saved signature on file -->
+      <div class="saved-sig-card" id="saved-sig-card" style="display:none">
+        <div class="saved-sig-preview"><img id="saved-sig-img" alt="Your signature" /></div>
+        <label class="saved-sig-check">
+          <input type="checkbox" id="use-saved-sig" onchange="onSavedSigToggle()" />
+          <span>Use my signature on file to sign this Tripartite Agreement.</span>
+        </label>
+      </div>
+
+      <!-- No saved signature: draw one -->
+      <div class="sig-section" id="draw-sig-section" style="display:none">
+        <div class="sig-placeholder" id="sig-placeholder" onclick="openSignaturePad()">
+          <div class="sig-placeholder-icon"><i data-lucide="pen-line"></i></div>
+          <div class="sig-placeholder-text">Tap to draw your signature</div>
+        </div>
+        <div class="sig-pad" id="sig-pad" style="display:none">
+          <canvas id="sig-canvas"></canvas>
+          <div class="sig-pad-actions">
+            <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Clear</span></button>
+            <button class="sig-action-btn primary" onclick="saveSignatureLocal()"><i data-lucide="check"></i><span>Done</span></button>
+          </div>
+        </div>
+        <div class="sig-done" id="sig-done" style="display:none">
+          <div class="sig-done-left"><i data-lucide="check-circle"></i><span>Signature captured</span></div>
+          <button class="sig-redo-btn" onclick="redoSignature()">Redo</button>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="complete-btn" onclick="completeAgreement()" disabled>Complete Agreement</button>
+    </div>
+  </div>
+
+  <div style="height:10px"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- Change account modal -->
+  <div class="modal-overlay" id="change-acct-overlay" onclick="if(event.target===this) closeChangeAccount()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="info-section-title" style="margin-top:0">Select Bank Account</div>
+      <div id="change-acct-list"></div>
+      <button class="btn-primary" style="margin-bottom:0" onclick="saveChangedAccount()">Save</button>
+    </div>
+  </div>
+
+  <!-- Agreement reader modal -->
+  <div id="agreement-modal" class="agreement-modal-overlay">
+    <div class="agreement-modal-card">
+      <div class="agreement-modal-hdr">
+        <span class="agreement-modal-title">Tripartite Cash Transfer Agreement</span>
+        <button class="agreement-modal-close" onclick="closeAgreement()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="agreement-modal-body">This Tripartite Cash Transfer Agreement ("Agreement") is entered into between the Client, BDSec Securities LLC ("Broker"), and the Mongolian Central Securities Depository ("MCSD").
+
+1. Purpose
+This Agreement enables the Client to transfer cash electronically between their designated bank account, their Nominal (brokerage) account held with the Broker, and their account at the MCSD.
+
+2. Designated Bank Account
+The Client shall designate one (1) bank account to be used for all transfers under this Agreement. The Client may change the designated bank account at any time by submitting a request through the trading platform.
+
+3. Transfers
+Funds may be transferred from the designated bank account to the Nominal account for the purpose of securities trading, and from the Nominal account back to the designated bank account upon withdrawal request.
+
+4. Authorization
+By signing this Agreement, the Client authorizes the Broker and the MCSD to process transfer instructions issued through the trading platform without requiring a separate physical signature for each transaction.
+
+5. Liability
+The Client is responsible for ensuring that the designated bank account remains active and accurately registered under the Client's name. The Broker is not liable for delays caused by incorrect account information.
+
+6. Termination
+This Agreement remains in effect until the Client closes their trading account or requests termination in writing.
+
+By signing below, the Client acknowledges they have read, understood, and agree to the terms above.</div>
+      <button class="btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">I've Read This</button>
+    </div>
+  </div>
+
+  <script src="../scripts/wallet-data.js"></script>
+  <script>
+    let selectedAccountId = null;
+    let agreementRead = false;
+    let sigConfirmed = false;
+
+    function goBack() {
+      try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
+    }
+
+    function notifyModalOpen() {
+      try { window.parent.postMessage({ type: 'modal-open' }, '*'); } catch (e) {}
+    }
+    function notifyModalClose() {
+      try { window.parent.postMessage({ type: 'modal-close' }, '*'); } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    function acctCardHTML(a, selected) {
+      return `
+        <div class="acct-card ${selected ? 'selected' : ''}" data-id="${a.id}" onclick="selectAccount('${a.id}')">
+          <img class="acct-logo" src="../../public/bank logo/${a.logo}" alt="${a.bank}" />
+          <div class="acct-info">
+            <div class="acct-bank-name">${a.bank}</div>
+            <div class="acct-number">${maskAccountNumber(a.number)}</div>
+            <div class="acct-holder">${a.holder}</div>
+          </div>
+          <div class="acct-radio"><i data-lucide="check"></i></div>
+        </div>`;
+    }
+
+    function renderAccountList() {
+      const accounts = getBankAccounts();
+      const el = document.getElementById('acct-list');
+      if (!accounts.length) {
+        el.innerHTML = '<div class="hist-empty">No linked bank accounts. Add one from Bank Accounts first.</div>';
+        return;
+      }
+      el.innerHTML = accounts.map(a => acctCardHTML(a, a.id === selectedAccountId)).join('');
+      lucide.createIcons();
+    }
+
+    function selectAccount(id) {
+      selectedAccountId = id;
+      renderAccountList();
+      updateCompleteBtn();
+    }
+
+    /* ── Agreement reader ── */
+    function openAgreement() {
+      document.getElementById('agreement-modal').classList.add('open');
+      notifyModalOpen();
+    }
+    function closeAgreement() {
+      document.getElementById('agreement-modal').classList.remove('open');
+      notifyModalClose();
+      if (!agreementRead) {
+        agreementRead = true;
+        document.getElementById('ac-tripartite').classList.add('read');
+        document.getElementById('ac-tripartite').innerHTML = '<i data-lucide="check"></i>';
+        lucide.createIcons();
+        updateCompleteBtn();
+      }
+    }
+
+    /* ── Signature ── */
+    function onSavedSigToggle() {
+      sigConfirmed = document.getElementById('use-saved-sig').checked;
+      updateCompleteBtn();
+    }
+
+    let canvas, ctx, drawing = false, lastX = 0, lastY = 0;
+    function initSignatureCanvas() {
+      canvas = document.getElementById('sig-canvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const src = e.touches ? e.touches[0] : e;
+        return [src.clientX - rect.left, src.clientY - rect.top];
+      }
+      function draw(e) {
+        const [x, y] = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        [lastX, lastY] = [x, y];
+      }
+      canvas.addEventListener('mousedown', e => { drawing = true; [lastX, lastY] = getPos(e); });
+      canvas.addEventListener('mousemove', e => { if (drawing) draw(e); });
+      canvas.addEventListener('mouseup', () => { drawing = false; });
+      canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e); }, { passive: false });
+      canvas.addEventListener('touchmove', e => { e.preventDefault(); if (drawing) draw(e); }, { passive: false });
+      canvas.addEventListener('touchend', () => { drawing = false; });
+      window.addEventListener('resize', resizeCanvas);
+    }
+    function resizeCanvas() {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width) return;
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-text-primary') || '#fff';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+    }
+    function clearCanvas() { if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    function openSignaturePad() {
+      document.getElementById('sig-placeholder').style.display = 'none';
+      document.getElementById('sig-pad').style.display = 'block';
+      resizeCanvas();
+    }
+    function saveSignatureLocal() {
+      document.getElementById('sig-pad').style.display = 'none';
+      document.getElementById('sig-done').style.display = 'flex';
+      try { setSignature(canvas.toDataURL()); } catch (e) {}
+      sigConfirmed = true;
+      lucide.createIcons();
+      updateCompleteBtn();
+    }
+    function redoSignature() {
+      clearCanvas();
+      sigConfirmed = false;
+      document.getElementById('sig-done').style.display = 'none';
+      document.getElementById('sig-pad').style.display = 'block';
+      updateCompleteBtn();
+    }
+
+    function updateCompleteBtn() {
+      const ok = selectedAccountId && agreementRead && sigConfirmed;
+      document.getElementById('complete-btn').disabled = !ok;
+    }
+
+    function completeAgreement() {
+      setTripartiteAgreement({ bankAccountId: selectedAccountId, date: new Date().toISOString().slice(0, 16).replace('T', ' '), signed: true });
+      showToast('Tripartite Agreement signed');
+      renderView();
+    }
+
+    /* ── Change bank account (after agreement is active) ── */
+    let changeSelectedId = null;
+    function openChangeAccount() {
+      const current = getTripartiteAgreement();
+      changeSelectedId = current ? current.bankAccountId : null;
+      const accounts = getBankAccounts();
+      document.getElementById('change-acct-list').innerHTML = accounts.map(a => `
+        <div class="acct-card ${a.id === changeSelectedId ? 'selected' : ''}" data-id="${a.id}" onclick="pickChangeAccount('${a.id}')">
+          <img class="acct-logo" src="../../public/bank logo/${a.logo}" alt="${a.bank}" />
+          <div class="acct-info">
+            <div class="acct-bank-name">${a.bank}</div>
+            <div class="acct-number">${maskAccountNumber(a.number)}</div>
+            <div class="acct-holder">${a.holder}</div>
+          </div>
+          <div class="acct-radio"><i data-lucide="check"></i></div>
+        </div>`).join('');
+      lucide.createIcons();
+      document.getElementById('change-acct-overlay').classList.add('show');
+      notifyModalOpen();
+    }
+    function pickChangeAccount(id) {
+      changeSelectedId = id;
+      document.querySelectorAll('#change-acct-list .acct-card').forEach(c => {
+        c.classList.toggle('selected', c.dataset.id === id);
+      });
+    }
+    function closeChangeAccount() {
+      document.getElementById('change-acct-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+    function saveChangedAccount() {
+      const current = getTripartiteAgreement() || {};
+      setTripartiteAgreement({ ...current, bankAccountId: changeSelectedId });
+      closeChangeAccount();
+      renderView();
+      showToast('Bank account updated');
+    }
+
+    /* ── View rendering ── */
+    function renderView() {
+      const agreement = getTripartiteAgreement();
+      if (agreement && agreement.signed) {
+        document.getElementById('setup-view').classList.remove('show');
+        document.getElementById('active-view').classList.add('show');
+        document.getElementById('active-since').textContent = `Signed on ${agreement.date}`;
+        const acct = getBankAccounts().find(a => a.id === agreement.bankAccountId);
+        document.getElementById('active-acct').innerHTML = acct ? acctCardHTML(acct, true).replace('onclick="selectAccount(\'' + acct.id + '\')"', '') : '<div class="hist-empty">No bank account linked</div>';
+        lucide.createIcons();
+        return;
+      }
+
+      document.getElementById('active-view').classList.remove('show');
+      document.getElementById('setup-view').classList.add('show');
+
+      renderAccountList();
+
+      const sig = getSignature();
+      if (sig) {
+        document.getElementById('saved-sig-card').style.display = 'block';
+        document.getElementById('draw-sig-section').style.display = 'none';
+        document.getElementById('saved-sig-img').src = sig;
+      } else {
+        document.getElementById('saved-sig-card').style.display = 'none';
+        document.getElementById('draw-sig-section').style.display = 'block';
+        initSignatureCanvas();
+      }
+      updateCompleteBtn();
+    }
+
+    renderView();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

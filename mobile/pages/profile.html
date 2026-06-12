@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>My Profile — TradeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+
+    /* ── Sub-page header ── */
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .back-btn svg { width: 18px; height: 18px; }
+    .sub-title { font-size: 16px; font-weight: 700; flex: 1; text-align: center; margin-right: 36px; }
+
+    .form-body { padding: 0 16px 24px; }
+    .info-section-title { font-size: 14px; font-weight: 700; margin: 18px 0 10px; }
+    .info-section-title.first { margin-top: 6px; }
+
+    /* ── Profile header card ── */
+    .profile-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 16px; padding: 22px 16px; text-align: center;
+    }
+    .profile-avatar {
+      width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 12px;
+      background: var(--color-primary); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 800; letter-spacing: 0.5px;
+    }
+    .profile-name { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+    .profile-username { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 12px; font-family: 'IBM Plex Mono', monospace; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 700;
+    }
+    .status-pill svg { width: 14px; height: 14px; }
+    .status-pill.online { background: rgba(0,192,118,0.12); color: var(--color-buy); }
+    .status-pill.pending { background: rgba(245,158,11,0.12); color: #f59e0b; }
+    .status-pill-sub { font-size: 11px; color: var(--color-text-disabled); margin-top: 8px; }
+
+    /* ── Status steps ── */
+    .status-step {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .status-step.done { cursor: default; }
+    .status-step:not(.done):hover { border-color: var(--color-primary); }
+    .status-step-icon {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--color-bg-input); color: var(--color-text-disabled);
+    }
+    .status-step.done .status-step-icon { background: rgba(0,192,118,0.12); color: var(--color-buy); }
+    .status-step-icon svg { width: 18px; height: 18px; }
+    .status-step-info { flex: 1; min-width: 0; }
+    .status-step-title { font-size: 13px; font-weight: 700; }
+    .status-step-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+    .status-step-sub.pending { color: #f59e0b; }
+    .chevron-icon { color: var(--color-text-disabled); flex-shrink: 0; }
+    .chevron-icon svg { width: 16px; height: 16px; }
+
+    /* ── Accordion sections ── */
+    .accordion-item {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; margin-bottom: 10px; overflow: hidden;
+    }
+    .accordion-header {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer;
+    }
+    .accordion-icon {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      background: var(--color-bg-input); color: var(--color-primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .accordion-icon svg { width: 18px; height: 18px; }
+    .accordion-title { flex: 1; font-size: 14px; font-weight: 700; }
+    .accordion-chevron { color: var(--color-text-disabled); flex-shrink: 0; display: flex; transition: transform 0.2s ease; }
+    .accordion-chevron svg { width: 16px; height: 16px; }
+    .accordion-item.open .accordion-chevron { transform: rotate(90deg); }
+    .accordion-body { display: none; padding: 0 16px 14px; border-top: 1px solid var(--color-border); }
+    .accordion-item.open .accordion-body { display: block; padding-top: 12px; }
+    .accordion-body .info-card { border: none; border-radius: 0; margin: 0; }
+    .accordion-body .locked-note { margin-bottom: 12px; }
+    .accordion-body .agreement-item:last-child { margin-bottom: 0; }
+
+    /* ── Info rows ── */
+    .info-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; overflow: hidden; margin-bottom: 4px;
+    }
+    .info-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 13px 16px; border-bottom: 1px solid var(--color-border);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row-text { min-width: 0; }
+    .info-row-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 3px; }
+    .info-row-value { font-size: 13px; font-weight: 600; word-break: break-word; }
+    .info-row-value.muted { color: var(--color-text-disabled); font-weight: 500; }
+    .edit-btn {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--color-primary);
+    }
+    .edit-btn svg { width: 14px; height: 14px; }
+
+    .locked-note {
+      display: flex; gap: 10px; align-items: flex-start;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+      font-size: 11px; color: var(--color-text-secondary); line-height: 1.6;
+    }
+    .locked-note svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; color: var(--color-text-disabled); }
+
+    /* ── Contracts list (reuse agreement-item pattern) ── */
+    .agreement-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .agreement-item:hover { border-color: var(--color-primary); }
+    .agreement-item .ag-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .agreement-check {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--color-bg-input);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-disabled); flex-shrink: 0;
+    }
+    .agreement-check svg { width: 14px; height: 14px; }
+    .agreement-check.signed { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+    .ag-text { min-width: 0; }
+    .agreement-name { font-size: 13px; font-weight: 600; }
+    .agreement-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+    .agreement-sub.pending { color: #f59e0b; }
+    .ag-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* ── Agreement / contract reader modal ── */
+    .agreement-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 280;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: flex-end; justify-content: center;
+    }
+    .agreement-modal-overlay.open { display: flex; }
+    .agreement-modal-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 78vh;
+      padding: 20px 20px 26px; display: flex; flex-direction: column;
+    }
+    .agreement-modal-hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-shrink: 0; }
+    .agreement-modal-title { font-size: 15px; font-weight: 800; }
+    .agreement-modal-close {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary);
+    }
+    .agreement-modal-close svg { width: 16px; height: 16px; }
+    .agreement-modal-body {
+      overflow-y: auto; font-size: 13px; line-height: 1.75;
+      color: var(--color-text-secondary); white-space: pre-line;
+    }
+
+    /* ── Field / buttons (reuse open-account look) ── */
+    .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
+    .field-wrap { margin-bottom: 4px; }
+    .inp {
+      width: 100%; background: var(--color-bg); border: 1.5px solid var(--color-border);
+      border-radius: 10px; padding: 13px 14px; font-size: 14px; color: var(--color-text-primary);
+      outline: none; transition: border-color 0.15s; font-family: 'Inter', sans-serif;
+    }
+    .inp:focus { border-color: var(--color-primary); }
+    .inp.error { border-color: var(--color-sell); }
+    .field-error { font-size: 11px; color: var(--color-sell); margin-top: 6px; display: none; }
+    .field-error.show { display: block; }
+
+    .btn-primary {
+      width: 100%; padding: 14px; background: var(--color-primary);
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-outline {
+      padding: 12px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-size: 13px; font-weight: 700; color: var(--color-text-primary);
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
+
+    /* ── OTP verification (email / phone change) ── */
+    .otp-email { text-align: center; font-size: 14px; font-weight: 600; color: var(--color-primary); margin: 2px 0 22px; }
+    .otp-grid { display: flex; gap: 9px; justify-content: center; margin-bottom: 14px; }
+    .otp-box {
+      width: 42px; height: 50px; background: var(--color-bg);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      text-align: center; font-size: 19px; font-weight: 700;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+    }
+    .otp-box:focus { border-color: var(--color-primary); }
+    .otp-box.error { border-color: var(--color-sell); }
+
+    /* ── PIN verification ── */
+    .pin-modal-title { font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 6px; }
+    .pin-modal-sub { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-bottom: 20px; line-height: 1.5; }
+    .pin-grid { display: flex; gap: 10px; margin-bottom: 10px; }
+    .pin-box {
+      flex: 1; min-width: 0; height: 54px; background: var(--color-bg);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      text-align: center; font-size: 20px; font-weight: 700; letter-spacing: 2px;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .pin-box:focus { border-color: var(--color-primary); }
+    .pin-box.error { border-color: var(--color-sell); }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--color-text-primary); color: var(--color-bg);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 300;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  </style>
+</head>
+<body>
+
+  <!-- Sub-page header -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="sub-title">My Profile</div>
+  </div>
+
+  <div class="form-body">
+
+    <!-- Profile header -->
+    <div class="profile-card">
+      <div class="profile-avatar" id="profile-avatar">LB</div>
+      <div class="profile-name" id="profile-name">—</div>
+      <div class="profile-username" id="profile-username">—</div>
+      <div id="profile-status-pill"></div>
+      <div class="status-pill-sub" id="profile-status-sub"></div>
+    </div>
+
+    <!-- Online Trader status steps -->
+    <div class="info-section-title">Online Trader Status</div>
+    <div id="status-list"></div>
+
+    <!-- Collapsible info sections -->
+    <div class="info-section-title">Account Details</div>
+
+    <!-- General Information (editable) -->
+    <div class="accordion-item" id="acc-general">
+      <div class="accordion-header" onclick="toggleAccordion('general')">
+        <div class="accordion-icon"><i data-lucide="id-card"></i></div>
+        <div class="accordion-title">General Information</div>
+        <span class="accordion-chevron"><i data-lucide="chevron-right"></i></span>
+      </div>
+      <div class="accordion-body">
+        <div class="info-card" id="account-info-list"></div>
+      </div>
+    </div>
+
+    <!-- Personal Information (read-only) -->
+    <div class="accordion-item" id="acc-personal">
+      <div class="accordion-header" onclick="toggleAccordion('personal')">
+        <div class="accordion-icon"><i data-lucide="user-circle"></i></div>
+        <div class="accordion-title">Personal Information</div>
+        <span class="accordion-chevron"><i data-lucide="chevron-right"></i></span>
+      </div>
+      <div class="accordion-body">
+        <div class="locked-note">
+          <i data-lucide="lock"></i>
+          <div>This information was collected during account opening and KYC verification. To correct any of these details, please contact your broker.</div>
+        </div>
+        <div class="info-card" id="personal-info-list"></div>
+      </div>
+    </div>
+
+    <!-- My Contracts -->
+    <div class="accordion-item" id="acc-contracts">
+      <div class="accordion-header" onclick="toggleAccordion('contracts')">
+        <div class="accordion-icon"><i data-lucide="file-text"></i></div>
+        <div class="accordion-title">My Contracts</div>
+        <span class="accordion-chevron"><i data-lucide="chevron-right"></i></span>
+      </div>
+      <div class="accordion-body" id="contracts-list"></div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Edit field modal -->
+  <div class="modal-overlay" id="edit-overlay" onclick="if(event.target===this) closeEditModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="info-section-title" style="margin-top:0" id="edit-modal-title">Edit</div>
+      <div class="field-wrap">
+        <label class="field-label" id="edit-modal-label">Value</label>
+        <input class="inp" id="edit-modal-input" />
+        <div class="field-error" id="edit-modal-error"></div>
+      </div>
+      <div style="height:14px"></div>
+      <button class="btn-primary" onclick="saveEditModal()">Save</button>
+      <div style="height:6px"></div>
+    </div>
+  </div>
+
+  <!-- OTP verification modal (email / phone change) -->
+  <div class="modal-overlay" id="otp-overlay" onclick="if(event.target===this) closeOtpModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="pin-modal-title" id="otp-modal-title">Verify New Email</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);text-align:center;margin-bottom:2px;line-height:1.5">A 6-digit one-time code was sent to</div>
+      <div class="otp-email" id="otp-modal-target"></div>
+      <div class="otp-grid" id="otp-grid">
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
+        <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
+      </div>
+      <div class="field-error" id="otp-error">Please enter all 6 digits.</div>
+      <div style="height:14px"></div>
+      <button class="btn-primary" onclick="verifyOtp()">Verify Code</button>
+      <button class="btn-outline" style="width:100%;margin:10px 0 6px" onclick="sendOtp()">Resend Code</button>
+    </div>
+  </div>
+
+  <!-- PIN verification modal -->
+  <div class="modal-overlay" id="pin-overlay" onclick="if(event.target===this) closePinModal()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="pin-modal-title">Confirm Your Identity</div>
+      <div class="pin-modal-sub" id="pin-modal-sub">Enter your 4-digit PIN code to confirm this change.</div>
+      <div class="pin-grid" id="pin-grid">
+        <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+        <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+        <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+        <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
+      </div>
+      <div class="field-error" id="pin-error">Please enter all 4 digits.</div>
+      <div style="height:14px"></div>
+      <button class="btn-primary" onclick="confirmPin()">Confirm</button>
+      <div style="height:6px"></div>
+    </div>
+  </div>
+
+  <!-- Contract reader modal -->
+  <div id="contract-modal" class="agreement-modal-overlay">
+    <div class="agreement-modal-card">
+      <div class="agreement-modal-hdr">
+        <span class="agreement-modal-title" id="contract-modal-title"></span>
+        <button class="agreement-modal-close" onclick="closeContractModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="agreement-modal-body" id="contract-modal-body"></div>
+      <button class="btn-primary" style="margin:16px 0 0" onclick="closeContractModal()">Close</button>
+    </div>
+  </div>
+
+  <script src="../scripts/wallet-data.js"></script>
+  <script>
+    function goBack() {
+      try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
+    }
+    function notifyModalOpen() {
+      try { window.parent.postMessage({ type: 'modal-open' }, '*'); } catch (e) {}
+    }
+    function notifyModalClose() {
+      try { window.parent.postMessage({ type: 'modal-close' }, '*'); } catch (e) {}
+    }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    /* ── Accordion ── */
+    function toggleAccordion(name) {
+      document.getElementById(`acc-${name}`).classList.toggle('open');
+    }
+
+    /* ── Onboarding status helpers ── */
+    function getAccountOpened() { return localStorage.getItem('bdsec-account-opened') === '1'; }
+    function getAccountOpenedDate() { return localStorage.getItem('bdsec-account-opened-date') || ''; }
+    function getKycDone() { return localStorage.getItem('bdsec-kyc-done') === '1'; }
+    function getKycDoneDate() { return localStorage.getItem('bdsec-kyc-done-date') || ''; }
+
+    /* ── Contract texts ── */
+    const CONTRACTS = [
+      {
+        id: 'acc-open', name: 'Account Opening Agreement',
+        signed: () => getAccountOpened(), date: () => getAccountOpenedDate(),
+        content: `This Account Opening Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client").
+
+1. By submitting this application, the Client confirms that all information provided is accurate, complete, and up to date, and agrees to notify the Company promptly of any changes.
+
+2. The Company will open a securities trading account in the Client's name upon successful verification of identity and receipt of the account opening fee.
+
+3. The Client acknowledges that trading in securities involves risk, including the possible loss of principal, and that past performance is not indicative of future results.
+
+4. The Client authorizes the Company to carry out instructions received through the registered account, mobile application, or other approved channels.
+
+5. This Agreement remains in effect until terminated in writing by either party, subject to settlement of any outstanding obligations.`
+      },
+      {
+        id: 'nominal', name: 'Nominal Account Service Agreement',
+        signed: () => getAccountOpened(), date: () => getAccountOpenedDate(),
+        content: `This Nominal Account Service Agreement governs the holding of securities on the Client's behalf through a nominal (omnibus) account maintained by the Company at the Securities Clearing House and Central Depository.
+
+1. Securities purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
+
+2. The Company will maintain accurate sub-records identifying the Client's beneficial interest in any securities held in the nominal account.
+
+3. The Client may request a transfer of securities from the nominal account to an individual account at any time, subject to applicable fees and processing times.
+
+4. The Company shall exercise reasonable care in safeguarding assets held in the nominal account and will provide periodic statements reflecting the Client's holdings.
+
+5. Any corporate actions (dividends, rights issues, voting) relating to securities in the nominal account will be passed through to the Client in accordance with regulatory requirements.`
+      },
+      {
+        id: 'broker', name: 'Online Broker Service Agreement',
+        signed: () => getAccountOpened(), date: () => getAccountOpenedDate(),
+        content: `This Online Broker Service Agreement sets out the terms under which the Company provides electronic trading and brokerage services to the Client through its online and mobile platforms.
+
+1. The Client agrees to keep login credentials, PIN codes, and authentication methods confidential and to notify the Company immediately of any unauthorized access.
+
+2. Orders placed through the platform are executed on a best-efforts basis at prevailing market prices and may be subject to delays, market conditions, or exchange rules beyond the Company's control.
+
+3. The Company may charge brokerage commissions, settlement fees, and other charges as disclosed in its published fee schedule, which may be updated from time to time.
+
+4. The Client is solely responsible for evaluating the merits and risks of any investment decision made through the platform.
+
+5. The Company reserves the right to suspend or restrict access to the platform in cases of suspected fraud, technical failure, or as required by regulators.`
+      },
+      {
+        id: 'brokerage', name: 'Online Brokerage Agreement (KYC)',
+        signed: () => getKycDone(), date: () => getKycDoneDate(),
+        content: `This Online Brokerage Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client") in connection with the provision of online brokerage and trading services.
+
+1. The Client confirms that the personal, financial, and identification information provided in this KYC form is true, accurate, and complete, and agrees to update the Company promptly of any material changes.
+
+2. The Company will use the information provided to verify the Client's identity, assess suitability, and comply with applicable anti-money laundering and counter-terrorism financing regulations.
+
+3. The Client authorizes the Company to place trade orders, settle transactions, and report holdings in accordance with instructions submitted through approved channels.
+
+4. The Client acknowledges that all investment decisions are made at their own discretion and that the Company does not guarantee investment outcomes.
+
+5. The Company may decline, suspend, or terminate brokerage services where verification cannot be completed or where regulatory obligations so require.`
+      },
+      {
+        id: 'nominee', name: 'Nominee Account Agreement (KYC)',
+        signed: () => getKycDone(), date: () => getKycDoneDate(),
+        content: `This Nominee Account Agreement governs the manner in which the Client's securities may be held through a nominee (omnibus) structure maintained by the Company with the Securities Clearing House and Central Depository.
+
+1. Securities recorded under the nominee account remain beneficially owned by the Client at all times, and the Company will maintain accurate sub-ledger records reflecting the Client's interest.
+
+2. The Client may, at any time and subject to applicable processing fees, request transfer of securities from the nominee account into an individually registered account.
+
+3. The Company shall act with reasonable skill and care in administering the nominee account and will provide the Client with periodic statements of holdings and transaction activity.
+
+4. Corporate actions such as dividends, rights issues, and voting entitlements relating to securities held in the nominee account will be passed through to the Client in line with regulatory requirements and exchange rules.
+
+5. This Agreement remains effective for as long as the Client maintains an account with the Company, unless terminated earlier in accordance with its terms.`
+      },
+      {
+        id: 'tripartite', name: 'Tripartite Cash Transfer Agreement',
+        signed: () => !!(getTripartiteAgreement() && getTripartiteAgreement().signed), date: () => (getTripartiteAgreement() || {}).date || '',
+        content: `This Tripartite Cash Transfer Agreement ("Agreement") is entered into between the Client, BDSec Securities LLC ("Broker"), and the Mongolian Central Securities Depository ("MCSD").
+
+1. Purpose
+This Agreement enables the Client to transfer cash electronically between their designated bank account, their Nominal (brokerage) account held with the Broker, and their account at the MCSD.
+
+2. Designated Bank Account
+The Client shall designate one (1) bank account to be used for all transfers under this Agreement. The Client may change the designated bank account at any time by submitting a request through the trading platform.
+
+3. Transfers
+Funds may be transferred from the designated bank account to the Nominal account for the purpose of securities trading, and from the Nominal account back to the designated bank account upon withdrawal request.
+
+4. Authorization
+By signing this Agreement, the Client authorizes the Broker and the MCSD to process transfer instructions issued through the trading platform without requiring a separate physical signature for each transaction.
+
+5. Liability
+The Client is responsible for ensuring that the designated bank account remains active and accurately registered under the Client's name. The Broker is not liable for delays caused by incorrect account information.
+
+6. Termination
+This Agreement remains in effect until the Client closes their trading account or requests termination in writing.
+
+By signing below, the Client acknowledges they have read, understood, and agree to the terms above.`
+      },
+    ];
+
+    /* ── Header ── */
+    function renderHeader() {
+      const first = localStorage.getItem('oa-first-name') || 'Lkhagvasuren';
+      const last  = localStorage.getItem('oa-last-name')  || 'Battsengel';
+      const fullName = `${first} ${last}`.trim();
+      const initials = (first[0] || '') .toUpperCase() + (last[0] || '').toUpperCase();
+      const profile = getUserProfile();
+
+      document.getElementById('profile-avatar').textContent = initials || 'U';
+      document.getElementById('profile-name').textContent = fullName;
+      document.getElementById('profile-username').textContent = '@' + profile.username;
+
+      const steps = [getAccountOpened(), getKycDone(), !!(getTripartiteAgreement() && getTripartiteAgreement().signed)];
+      const doneCount = steps.filter(Boolean).length;
+      const pillEl = document.getElementById('profile-status-pill');
+      const subEl = document.getElementById('profile-status-sub');
+      if (doneCount === 3) {
+        pillEl.innerHTML = `<span class="status-pill online"><i data-lucide="badge-check"></i>Online Trader</span>`;
+        subEl.textContent = 'All verification steps completed';
+      } else {
+        pillEl.innerHTML = `<span class="status-pill pending"><i data-lucide="clock"></i>Setup In Progress</span>`;
+        subEl.textContent = `${doneCount} of 3 steps completed`;
+      }
+    }
+
+    /* ── Status steps ── */
+    function renderStatus() {
+      const tri = getTripartiteAgreement();
+      const steps = [
+        { title: 'Open MCSD Account', icon: 'building-2', done: getAccountOpened(),
+          doneSub: getAccountOpenedDate() ? `Completed on ${getAccountOpenedDate()}` : 'Completed',
+          todoSub: 'Not started — tap to open your account', page: 'open-account' },
+        { title: 'Complete KYC Verification', icon: 'shield-check', done: getKycDone(),
+          doneSub: getKycDoneDate() ? `Completed on ${getKycDoneDate()}` : 'Completed',
+          todoSub: 'Required before you can trade — tap to start', page: 'kyc' },
+        { title: 'Sign Tripartite Agreement', icon: 'file-signature', done: !!(tri && tri.signed),
+          doneSub: tri && tri.date ? `Signed on ${tri.date}` : 'Signed',
+          todoSub: 'Link your bank, brokerage and MCSD accounts', page: 'tripartite' },
+      ];
+      const el = document.getElementById('status-list');
+      el.innerHTML = steps.map(s => `
+        <div class="status-step ${s.done ? 'done' : ''}" ${s.done ? '' : `onclick="goToPage('${s.page}')"`}>
+          <div class="status-step-icon"><i data-lucide="${s.done ? 'check' : s.icon}"></i></div>
+          <div class="status-step-info">
+            <div class="status-step-title">${s.title}</div>
+            <div class="status-step-sub ${s.done ? '' : 'pending'}">${s.done ? s.doneSub : s.todoSub}</div>
+          </div>
+          ${s.done ? '' : '<span class="chevron-icon"><i data-lucide="chevron-right"></i></span>'}
+        </div>`).join('');
+      lucide.createIcons();
+    }
+    function goToPage(page) {
+      try { window.parent.navigateTo(page); } catch (e) {}
+    }
+
+    /* ── Personal information (read-only) ── */
+    function renderPersonalInfo() {
+      const first   = localStorage.getItem('oa-first-name') || '';
+      const last    = localStorage.getItem('oa-last-name')  || '';
+      const dob     = localStorage.getItem('oa-dob')        || '';
+      const gender  = localStorage.getItem('oa-gender')     || '';
+      const address = localStorage.getItem('oa-address')    || '';
+      const country = (localStorage.getItem('reg-country') || 'Mongolia').trim();
+
+      const rows = [
+        { label: 'Full Name', value: [first, last].filter(Boolean).join(' ') },
+        { label: 'Date of Birth', value: dob },
+        { label: 'Gender', value: gender },
+        { label: 'Citizenship', value: country === 'Mongolia' ? 'Mongolia' : 'Foreign Citizen' },
+        { label: 'Home Address', value: address },
+      ];
+      document.getElementById('personal-info-list').innerHTML = rows.map(r => `
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">${r.label}</div>
+            <div class="info-row-value ${r.value ? '' : 'muted'}">${r.value || 'Not provided yet'}</div>
+          </div>
+        </div>`).join('');
+    }
+
+    /* ── Account & login (editable) ── */
+    const EDITABLE_FIELDS = {
+      username: { label: 'Username', type: 'text', validate: v => v.trim().length >= 3 ? '' : 'Username must be at least 3 characters.' },
+      email:    { label: 'Email',    type: 'email', validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Please enter a valid email address.' },
+      phone:    { label: 'Phone Number', type: 'tel', validate: v => /^[0-9+\s-]{6,}$/.test(v.trim()) ? '' : 'Please enter a valid phone number.' },
+    };
+    function renderAccountInfo() {
+      const profile = getUserProfile();
+      const phone = profile.phone || localStorage.getItem('oa-phone') || '';
+      const values = { username: profile.username, email: profile.email, phone };
+      document.getElementById('account-info-list').innerHTML = Object.keys(EDITABLE_FIELDS).map(key => {
+        const f = EDITABLE_FIELDS[key];
+        const val = values[key];
+        return `
+        <div class="info-row">
+          <div class="info-row-text">
+            <div class="info-row-label">${f.label}</div>
+            <div class="info-row-value ${val ? '' : 'muted'}">${val || 'Not set'}</div>
+          </div>
+          <button class="edit-btn" onclick="openEditModal('${key}')"><i data-lucide="pencil"></i></button>
+        </div>`;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    let editingField = null;
+    function openEditModal(key) {
+      editingField = key;
+      const f = EDITABLE_FIELDS[key];
+      const profile = getUserProfile();
+      const current = key === 'phone' ? (profile.phone || localStorage.getItem('oa-phone') || '') : profile[key];
+      document.getElementById('edit-modal-title').textContent = `Edit ${f.label}`;
+      document.getElementById('edit-modal-label').textContent = f.label;
+      const input = document.getElementById('edit-modal-input');
+      input.type = f.type;
+      input.value = current;
+      input.classList.remove('error');
+      document.getElementById('edit-modal-error').classList.remove('show');
+      document.getElementById('edit-overlay').classList.add('show');
+      notifyModalOpen();
+      setTimeout(() => input.focus(), 150);
+    }
+    function closeEditModal() {
+      document.getElementById('edit-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+    function saveEditModal() {
+      const f = EDITABLE_FIELDS[editingField];
+      const input = document.getElementById('edit-modal-input');
+      const errEl = document.getElementById('edit-modal-error');
+      const val = input.value.trim();
+      const err = f.validate(val);
+      if (err) {
+        input.classList.add('error');
+        errEl.textContent = err;
+        errEl.classList.add('show');
+        return;
+      }
+      pendingEdit = { field: editingField, value: val, label: f.label };
+      closeEditModal();
+      if (editingField === 'email' || editingField === 'phone') {
+        openOtpModal();
+      } else {
+        openPinModal();
+      }
+    }
+
+    /* ── OTP verification (required before changing email / phone) ── */
+    function maskContact(value, kind) {
+      if (!value) return kind === 'email' ? 'your email' : 'your phone number';
+      if (kind === 'email') {
+        const at = value.indexOf('@');
+        if (at <= 1) return value;
+        return `${value.slice(0, 2)}${'*'.repeat(Math.max(at - 2, 1))}${value.slice(at)}`;
+      }
+      const digits = value.replace(/\s+/g, '');
+      return digits.length > 4 ? `${'*'.repeat(digits.length - 4)}${digits.slice(-4)}` : digits;
+    }
+    function openOtpModal() {
+      const kind = pendingEdit.field;
+      document.getElementById('otp-modal-title').textContent = `Verify New ${pendingEdit.label}`;
+      document.getElementById('otp-modal-target').textContent = maskContact(pendingEdit.value, kind);
+      const boxes = document.querySelectorAll('#otp-grid .otp-box');
+      boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
+      document.getElementById('otp-error').classList.remove('show');
+      document.getElementById('otp-overlay').classList.add('show');
+      notifyModalOpen();
+      setTimeout(() => boxes[0].focus(), 150);
+    }
+    function closeOtpModal() {
+      document.getElementById('otp-overlay').classList.remove('show');
+      notifyModalClose();
+    }
+    function otpAdvance(box) {
+      box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
+      box.classList.remove('error');
+      document.getElementById('otp-error').classList.remove('show');
+      if (box.value && box.nextElementSibling) box.nextElementSibling.focus();
+    }
+    function sendOtp() {
+      const boxes = document.querySelectorAll('#otp-grid .otp-box');
+      boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
+      document.getElementById('otp-error').classList.remove('show');
+      boxes[0].focus();
+      showToast('Verification code resent');
+    }
+    function verifyOtp() {
+      const boxes = [...document.querySelectorAll('#otp-grid .otp-box')];
+      const code = boxes.map(b => b.value).join('');
+      const errEl = document.getElementById('otp-error');
+      if (code.length !== 6) {
+        boxes.forEach(b => { if (!b.value) b.classList.add('error'); });
+        errEl.textContent = 'Please enter all 6 digits.';
+        errEl.classList.add('show');
+        return;
+      }
+      closeOtpModal();
+      openPinModal();
+    }
+
+    /* ── PIN verification (required before saving General Information changes) ── */
+    let pendingEdit = null;
+    function openPinModal() {
+      document.getElementById('pin-modal-sub').textContent = `Enter your 4-digit PIN code to confirm updating your ${pendingEdit.label.toLowerCase()}.`;
+      const boxes = document.querySelectorAll('#pin-grid .pin-box');
+      boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
+      document.getElementById('pin-error').classList.remove('show');
+      document.getElementById('pin-overlay').classList.add('show');
+      notifyModalOpen();
+      setTimeout(() => boxes[0].focus(), 150);
+    }
+    function closePinModal() {
+      document.getElementById('pin-overlay').classList.remove('show');
+      notifyModalClose();
+      pendingEdit = null;
+    }
+    function pinAdvance(inp) {
+      inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 1);
+      inp.classList.remove('error');
+      document.getElementById('pin-error').classList.remove('show');
+      if (inp.value.length === 1) {
+        const next = inp.nextElementSibling;
+        if (next && next.classList.contains('pin-box')) next.focus();
+        else confirmPin();
+      }
+    }
+    function confirmPin() {
+      const boxes = [...document.querySelectorAll('#pin-grid .pin-box')];
+      const pin = boxes.map(b => b.value).join('');
+      const errEl = document.getElementById('pin-error');
+      if (pin.length !== 4) {
+        boxes.forEach(b => { if (!b.value) b.classList.add('error'); });
+        errEl.textContent = 'Please enter all 4 digits.';
+        errEl.classList.add('show');
+        return;
+      }
+      if (!pendingEdit) { closePinModal(); return; }
+      const { field, value, label } = pendingEdit;
+      setUserProfile({ [field]: value });
+      closePinModal();
+      renderHeader();
+      renderAccountInfo();
+      showToast(`${label} updated`);
+    }
+
+    /* ── Contracts ── */
+    function renderContracts() {
+      document.getElementById('contracts-list').innerHTML = CONTRACTS.map(c => {
+        const signed = c.signed();
+        const date = c.date();
+        return `
+        <div class="agreement-item" onclick="openContract('${c.id}')">
+          <div class="ag-left">
+            <div class="agreement-check ${signed ? 'signed' : ''}"><i data-lucide="${signed ? 'check' : 'file-text'}"></i></div>
+            <div class="ag-text">
+              <div class="agreement-name">${c.name}</div>
+              <div class="agreement-sub ${signed ? '' : 'pending'}">${signed ? `Signed${date ? ' on ' + date : ''}` : 'Not signed yet'}</div>
+            </div>
+          </div>
+          <div class="ag-right"><span class="chevron-icon"><i data-lucide="chevron-right"></i></span></div>
+        </div>`;
+      }).join('');
+      lucide.createIcons();
+    }
+    function openContract(id) {
+      const c = CONTRACTS.find(x => x.id === id);
+      if (!c) return;
+      document.getElementById('contract-modal-title').textContent = c.name;
+      document.getElementById('contract-modal-body').textContent = c.content;
+      document.getElementById('contract-modal').classList.add('open');
+      notifyModalOpen();
+    }
+    function closeContractModal() {
+      document.getElementById('contract-modal').classList.remove('open');
+      notifyModalClose();
+    }
+
+    renderHeader();
+    renderStatus();
+    renderPersonalInfo();
+    renderAccountInfo();
+    renderContracts();
+    lucide.createIcons();
+  </script>
+</body>
+</html>
