@@ -158,12 +158,12 @@
   <!-- Market filter + horizontal-scroll stock cards -->
   <div class="web-section-head">
     <div>
-      <div class="web-section-title">Markets</div>
+      <div class="web-section-title">Арилжаа</div>
       <div class="web-muted" id="market-date">2026.06.12</div>
     </div>
     <div class="dd-trigger" id="market-filter-trigger" onclick="toggleFilterMenu(event)">
       <i data-lucide="activity" id="market-filter-icon"></i>
-      <span id="market-filter-label">Active</span>
+      <span id="market-filter-label">Идэвхтэй</span>
       <i data-lucide="chevron-down" class="chev"></i>
       <div class="dd-menu" id="market-filter-menu"></div>
     </div>
@@ -187,8 +187,8 @@
           <span class="detail-price" id="d-price">—</span>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="icon-btn" id="watch-btn" onclick="toggleWatchlist()" title="Watchlist"><i data-lucide="star"></i></button>
-          <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Add price alert"><i data-lucide="bell-plus"></i></button>
+          <button class="icon-btn" id="watch-btn" onclick="toggleWatchlist()" title="Онцлох жагсаалт"><i data-lucide="star"></i></button>
+          <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Үнийн мэдэгдэл нэмэх"><i data-lucide="bell-plus"></i></button>
         </div>
       </div>
       <div style="font-size:11px;color:var(--color-text-disabled);margin-bottom:12px">
@@ -196,8 +196,8 @@
       </div>
 
       <div class="chart-tabs">
-        <button class="chart-tab active" onclick="setChartType('line', this)" title="Line chart"><i data-lucide="chart-line"></i></button>
-        <button class="chart-tab" onclick="setChartType('candle', this)" title="Candlestick chart"><i data-lucide="chart-candlestick"></i></button>
+        <button class="chart-tab active" onclick="setChartType('line', this)" title="Шугаман график"><i data-lucide="chart-line"></i></button>
+        <button class="chart-tab" onclick="setChartType('candle', this)" title="Лааны график"><i data-lucide="chart-candlestick"></i></button>
       </div>
       <div id="main-chart"></div>
       <div class="tf-tabs" id="tf-tabs">
@@ -206,7 +206,7 @@
         <button class="tf-tab" data-tf="3M" onclick="setTimeframe('3M', this)">3M</button>
         <button class="tf-tab" data-tf="6M" onclick="setTimeframe('6M', this)">6M</button>
         <button class="tf-tab" data-tf="1Y" onclick="setTimeframe('1Y', this)">1Y</button>
-        <button class="tf-tab" data-tf="All" onclick="setTimeframe('All', this)">All</button>
+        <button class="tf-tab" data-tf="All" onclick="setTimeframe('All', this)">Бүгд</button>
       </div>
 
       <div class="home-trade-actions">
@@ -228,7 +228,7 @@
       <div class="web-card web-card-pad">
         <div class="web-section-title" style="margin-bottom:10px">Гүйцэтгэсэн захиалга</div>
         <div class="ob-mini ob-mini-h">
-          <span>Ticker</span><span>Төрөл</span>
+          <span>Тикер</span><span>Төрөл</span>
           <span style="text-align:right">Тоо</span><span style="text-align:right">Үнэ</span>
         </div>
         <div id="executed-orders-body" class="ob-mini ob-mini-list"></div>
@@ -283,40 +283,40 @@
 
 <div class="web-modal-overlay" id="alert-modal">
   <div class="web-modal">
-    <h3 class="web-modal-title">Add Price Alert</h3>
+    <h3 class="web-modal-title">Үнийн мэдэгдэл нэмэх</h3>
     <div class="am-field">
-      <label class="am-label">Symbol</label>
+      <label class="am-label">Хувьцаа</label>
       <input class="am-inp" id="alert-symbol" readonly />
     </div>
     <div class="am-field">
-      <label class="am-label">Price Type</label>
+      <label class="am-label">Үнийн төрөл</label>
       <select class="am-inp am-select" id="alert-price-type">
-        <option value="open">Opening Price</option>
-        <option value="close">Closing Price</option>
-        <option value="high">High Price</option>
-        <option value="low">Low Price</option>
-        <option value="last" selected>Last Traded Price</option>
+        <option value="open">Нээлтийн үнэ</option>
+        <option value="close">Хаалтын үнэ</option>
+        <option value="high">Хамгийн өндөр үнэ</option>
+        <option value="low">Хамгийн доод үнэ</option>
+        <option value="last" selected>Сүүлийн арилжааны үнэ</option>
       </select>
     </div>
     <div class="am-row">
       <div class="am-field">
-        <label class="am-label">Condition</label>
+        <label class="am-label">Нөхцөл</label>
         <select class="am-inp am-select" id="alert-condition">
-          <option value="gt">Greater than</option>
-          <option value="lt">Less than</option>
-          <option value="eq">Equal to</option>
-          <option value="gte" selected>Greater than or equal to</option>
-          <option value="lte">Less than or equal to</option>
+          <option value="gt">Их байвал</option>
+          <option value="lt">Бага байвал</option>
+          <option value="eq">Тэнцүү байвал</option>
+          <option value="gte" selected>Их буюу тэнцүү байвал</option>
+          <option value="lte">Бага буюу тэнцүү байвал</option>
         </select>
       </div>
       <div class="am-field">
-        <label class="am-label">Target Value</label>
+        <label class="am-label">Зорилтот үнэ</label>
         <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
       </div>
     </div>
     <div class="web-modal-actions" style="margin-top:0">
-      <button class="btn btn-outline" onclick="closeAlertModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveAlert()">Create Alert</button>
+      <button class="btn btn-outline" onclick="closeAlertModal()">Цуцлах</button>
+      <button class="btn btn-primary" onclick="saveAlert()">Мэдэгдэл үүсгэх</button>
     </div>
   </div>
 </div>
@@ -337,11 +337,11 @@
   };
 
   const MARKET_FILTERS = [
-    { key:'active',    label:'Active',    icon:'activity' },
-    { key:'watchlist', label:'Watchlist', icon:'star' },
-    { key:'gainers',   label:'Gainers',   icon:'trending-up' },
-    { key:'losers',    label:'Losers',    icon:'trending-down' },
-    { key:'bonds',     label:'Bonds',     icon:'landmark' },
+    { key:'active',    label:'Идэвхтэй',    icon:'activity' },
+    { key:'watchlist', label:'Онцлох жагсаалт', icon:'star' },
+    { key:'gainers',   label:'Өсөлттэй',   icon:'trending-up' },
+    { key:'losers',    label:'Бууралттай',    icon:'trending-down' },
+    { key:'bonds',     label:'Бонд',     icon:'landmark' },
   ];
 
   const TIMEFRAME_POINTS = { '1W':7, '1M':22, '3M':66, '6M':132, '1Y':252, 'All':400 };
@@ -413,7 +413,7 @@
     const list = filteredList();
     const container = document.getElementById('stock-cards');
     if (!list.length) {
-      container.innerHTML = `<div style="padding:20px;color:var(--color-text-disabled);font-size:13px">No items in this view.</div>`;
+      container.innerHTML = `<div style="padding:20px;color:var(--color-text-disabled);font-size:13px">Энэ харагдацад бараа алга.</div>`;
       return;
     }
     container.innerHTML = list.map((s, i) => {
@@ -424,7 +424,7 @@
       const data = findIntraday(s.symbol);
       const isSelected = s.symbol === selectedSymbol;
       const pinned = currentFilter !== 'bonds' && i === 0 && isSelected;
-      const badge = s.isBond ? `${s.coupon.toFixed(1)}% coupon` : `${sign}${s.changePct.toFixed(2)}%`;
+      const badge = s.isBond ? `${s.coupon.toFixed(1)}% купон` : `${sign}${s.changePct.toFixed(2)}%`;
       return `<div class="stock-card${isSelected ? ' selected' : ''}${pinned ? ' pinned' : ''}" onclick="selectStock('${s.symbol}')">
         <div class="card-top">
           <div class="ticker-avatar" style="background:${AVATAR_COLORS[s.symbol] || AVATAR_COLORS.BDS}">${s.symbol.slice(0, 2)}</div>
@@ -432,7 +432,7 @@
         </div>
         <div class="card-name">${s.name}</div>
         <div style="display:flex;justify-content:space-between;align-items:flex-end">
-          <div><div class="card-price-label">${s.isBond ? 'Nominal' : 'Хаалт'}</div><div class="card-price">${fmtMNT(s.price)}</div></div>
+          <div><div class="card-price-label">${s.isBond ? 'Nominal' : 'Хаалтын ханш'}</div><div class="card-price">${fmtMNT(s.price)}</div></div>
           <div>${sparkline(data, sparkColor)}</div>
         </div>
       </div>`;
@@ -496,16 +496,16 @@
     document.getElementById('info-title').textContent = `${s.name} — ${symbol}`;
     const items = [
       { label:'ISIN',               value: d.isin || '—' },
-      { label:'Symbol',             value: symbol },
-      { label:'Shares Outstanding', value: d.sharesOut || '—' },
-      { label:'Market Cap',         value: d.marketCap ? d.marketCap + '₮' : '—' },
-      { label:'P/E Ratio',          value: d.pe || '—' },
-      { label:'Previous Close',     value: d.prevClose ? fmtMNT(d.prevClose) : '—' },
-      { label:'Open',               value: d.open ? fmtMNT(d.open) : '—' },
-      { label:'Day High',           value: d.dayHigh ? fmtMNT(d.dayHigh) : '—' },
-      { label:'Day Low',            value: d.dayLow  ? fmtMNT(d.dayLow)  : '—' },
-      { label:'52-Week High',       value: d.wkHigh52 ? fmtMNT(d.wkHigh52) : '—' },
-      { label:'52-Week Low',        value: d.wkLow52  ? fmtMNT(d.wkLow52)  : '—' },
+      { label:'Тикер',             value: symbol },
+      { label:'Гаргасан хувьцаа', value: d.sharesOut || '—' },
+      { label:'Зах зээлийн үнэлгээ', value: d.marketCap ? d.marketCap + '₮' : '—' },
+      { label:'P/E харьцаа',    value: d.pe || '—' },
+      { label:'Өмнөх хаалт',     value: d.prevClose ? fmtMNT(d.prevClose) : '—' },
+      { label:'Нээлт',           value: d.open ? fmtMNT(d.open) : '—' },
+      { label:'Өдрийн өндөр',   value: d.dayHigh ? fmtMNT(d.dayHigh) : '—' },
+      { label:'Өдрийн доод',    value: d.dayLow  ? fmtMNT(d.dayLow)  : '—' },
+      { label:'52 долоо хоногийн өндөр', value: d.wkHigh52 ? fmtMNT(d.wkHigh52) : '—' },
+      { label:'52 долоо хоногийн доод',  value: d.wkLow52  ? fmtMNT(d.wkLow52)  : '—' },
     ];
     document.getElementById('stock-info-grid').innerHTML = items.map(i =>
       `<div class="sinfo-item"><span class="sinfo-label">${i.label}</span><span class="sinfo-value">${i.value}</span></div>`
@@ -666,7 +666,7 @@
     if (!target) return;
     addPriceAlert({ symbol: selectedSymbol, priceType, condition, target: Number(target), active: true });
     closeAlertModal();
-    showToast(`Alert created: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
+    showToast(`Мэдэгдэл үүслээ: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
   }
 
   /* ── Navigation helpers ── */

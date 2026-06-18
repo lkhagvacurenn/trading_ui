@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio — BDSec</title>
+  <title>Портфолио — BDSec</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -66,9 +66,9 @@
     .pf-hero-sub { font-size: 13px; color: rgba(255,255,255,0.6); }
 
     .pf-hero-stats { display: flex; gap: 28px; }
-    .pf-hero-stat-label { font-size: 11px; color: rgba(255,255,255,0.55); margin-bottom: 3px; }
+    .pf-hero-stat-label { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 3px; }
     .pf-hero-stat-val {
-      font-size: 15px; font-weight: 700;
+      font-size: 16px; font-weight: 700;
       font-family: 'IBM Plex Mono', monospace; color: #fff;
     }
     .pf-hero-stat-val.up { color: #00e08f; }
@@ -253,8 +253,7 @@
   <div class="pf-hero">
     <div class="pf-hero-left">
       <div class="pf-hero-eyebrow">
-        <span class="pf-hero-eyebrow-dot"></span>
-        Portfolio Overview
+        Өгөөжийн хураангуй
       </div>
       <div class="pf-hero-value" id="hero-total">—</div>
       <div class="pf-hero-change">
@@ -262,26 +261,26 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
           <span id="hero-alltime-pct">+19.80%</span>
         </div>
-        <span class="pf-hero-sub">All-time return</span>
+        <span class="pf-hero-sub">Нийт өгөөж</span>
       </div>
       <div class="pf-hero-stats">
         <div>
-          <div class="pf-hero-stat-label">Invested</div>
+          <div class="pf-hero-stat-label">Хөрөнгө оруулалт</div>
           <div class="pf-hero-stat-val" id="hero-invested">—</div>
         </div>
         <div class="pf-hero-stat-sep"></div>
         <div>
-          <div class="pf-hero-stat-label">Unrealized P&amp;L</div>
+          <div class="pf-hero-stat-label">Ашиг/алдагдал</div>
           <div class="pf-hero-stat-val up" id="hero-pnl">—</div>
         </div>
         <div class="pf-hero-stat-sep"></div>
         <div>
-          <div class="pf-hero-stat-label">Holdings</div>
+          <div class="pf-hero-stat-label">Хувьцаа</div>
           <div class="pf-hero-stat-val" id="hero-count">5</div>
         </div>
         <div class="pf-hero-stat-sep"></div>
         <div>
-          <div class="pf-hero-stat-label">Cash</div>
+          <div class="pf-hero-stat-label">Мөнгөн хөрөнгө</div>
           <div class="pf-hero-stat-val" id="hero-cash">—</div>
         </div>
       </div>
@@ -291,7 +290,7 @@
     <div class="pf-hero-chart">
       <div class="pf-sparkline-wrap">
         <div class="pf-sparkline-header">
-          <span class="pf-sparkline-title">Portfolio Performance</span>
+          <span class="pf-sparkline-title">Портфолиогийн гүйцэтгэл</span>
           <div class="pf-tf-btns">
             <button class="pf-tf-btn" onclick="setTF(this,'1M')">1M</button>
             <button class="pf-tf-btn" onclick="setTF(this,'3M')">3M</button>
@@ -326,7 +325,7 @@
       <div class="pf-kpi-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       </div>
-      <div class="pf-kpi-label">Today's Change</div>
+      <div class="pf-kpi-label">Өнөөдрийн өөрчлөлт</div>
       <div class="pf-kpi-value up" id="kpi-today-val">+180,000₮</div>
       <div class="pf-kpi-sub" id="kpi-today-pct">+0.35%</div>
     </div>
@@ -335,16 +334,16 @@
       <div class="pf-kpi-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       </div>
-      <div class="pf-kpi-label">Total Invested</div>
+      <div class="pf-kpi-label">Нийт хөрөнгө оруулалт</div>
       <div class="pf-kpi-value" id="kpi-invested">—</div>
-      <div class="pf-kpi-sub">Cost basis</div>
+      <div class="pf-kpi-sub">Өртгийн суурь</div>
     </div>
     <div class="pf-kpi">
       <div class="pf-kpi-icon-bg"></div>
       <div class="pf-kpi-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
       </div>
-      <div class="pf-kpi-label">Best Performer</div>
+      <div class="pf-kpi-label">Шилдэг хувьцаа</div>
       <div class="pf-kpi-value up" id="kpi-best-sym">BDS</div>
       <div class="pf-kpi-sub" id="kpi-best-pct">+26.5%</div>
     </div>
@@ -353,9 +352,9 @@
       <div class="pf-kpi-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
       </div>
-      <div class="pf-kpi-label">Largest Position</div>
+      <div class="pf-kpi-label">Хамгийн том байр суурь</div>
       <div class="pf-kpi-value" id="kpi-largest-sym">BDS</div>
-      <div class="pf-kpi-sub" id="kpi-largest-pct">31.7% of portfolio</div>
+      <div class="pf-kpi-sub" id="kpi-largest-pct">31.7% портфолиод</div>
     </div>
   </div>
 
@@ -367,24 +366,24 @@
     <!-- Holdings table -->
     <div class="pf-holdings-card">
       <div class="pf-holdings-head">
-        <div class="pf-holdings-title">Holdings</div>
+        <div class="pf-holdings-title">Хувьцаа</div>
         <div class="pf-sort-btns">
-          <button class="pf-sort-btn active" onclick="sortHoldings('value',this)">By Value</button>
-          <button class="pf-sort-btn" onclick="sortHoldings('pnl',this)">By P&amp;L</button>
-          <button class="pf-sort-btn" onclick="sortHoldings('pct',this)">By Return</button>
+          <button class="pf-sort-btn active" onclick="sortHoldings('value',this)">Үнийн дүнгээр</button>
+          <button class="pf-sort-btn" onclick="sortHoldings('pnl',this)">Ашиг/алдагдлаар</button>
+          <button class="pf-sort-btn" onclick="sortHoldings('pct',this)">Өгөөжөөр</button>
         </div>
       </div>
       <div class="pf-table-scroll">
         <table class="pf-table">
           <thead>
             <tr>
-              <th style="min-width:140px">Asset</th>
-              <th class="num">Shares</th>
-              <th class="num">Avg Cost</th>
-              <th class="num">Current</th>
-              <th class="num">Mkt Value</th>
+              <th style="min-width:140px">Хувьцаа</th>
+              <th class="num">Тоо хэмжээ</th>
+              <th class="num">Дундаж өртөг</th>
+              <th class="num">Одоогийн үнэ</th>
+              <th class="num">Зах. үнэ цэнэ</th>
               <th class="num">P&amp;L</th>
-              <th style="min-width:100px">Weight</th>
+              <th style="min-width:100px">Жин</th>
             </tr>
           </thead>
           <tbody id="holdings-tbody"></tbody>
@@ -397,12 +396,12 @@
 
       <!-- Allocation donut -->
       <div class="pf-alloc-card">
-        <div class="pf-card-title">Allocation</div>
+        <div class="pf-card-title">Хуваарилалт</div>
         <div class="pf-donut-wrap">
           <svg id="donut-svg" width="160" height="160" viewBox="0 0 160 160"></svg>
           <div class="pf-donut-center">
             <div class="pf-donut-center-val" id="donut-center-val">—</div>
-            <div class="pf-donut-center-label">Total</div>
+            <div class="pf-donut-center-label">Нийт</div>
           </div>
         </div>
         <div class="pf-alloc-list" id="alloc-list"></div>
@@ -410,7 +409,7 @@
 
       <!-- Sector breakdown -->
       <div class="pf-sector-card">
-        <div class="pf-card-title">Sector Breakdown</div>
+        <div class="pf-card-title">Салбарын задаргаа</div>
         <div id="sector-list"></div>
       </div>
 
@@ -472,12 +471,12 @@ document.getElementById('kpi-invested').textContent = fmtCompact(WALLET.totalInv
 // Best performer
 const best = [...holdings].sort((a,b) => b.pct - a.pct)[0];
 document.getElementById('kpi-best-sym').textContent = best.symbol;
-document.getElementById('kpi-best-pct').textContent = '+' + best.pct.toFixed(1) + '% return';
+document.getElementById('kpi-best-pct').textContent = '+' + best.pct.toFixed(1) + '% өгөөж';
 
 // Largest position
 const largest = [...holdings].sort((a,b) => b.value - a.value)[0];
 document.getElementById('kpi-largest-sym').textContent = largest.symbol;
-document.getElementById('kpi-largest-pct').textContent = ((largest.value / totalValue)*100).toFixed(1) + '% of portfolio';
+document.getElementById('kpi-largest-pct').textContent = ((largest.value / totalValue)*100).toFixed(1) + '% портфолиод';
 
 /* ── Sparkline ── */
 const SPARK_DATA = {

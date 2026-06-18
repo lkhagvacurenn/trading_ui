@@ -229,8 +229,8 @@
         <div class="oa-section-hdr">
           <div class="oa-section-num"><i data-lucide="user-round"></i></div>
           <div class="oa-section-info">
-            <strong>Open Account</strong>
-            <span>Personal details, bank account, agreements &amp; payment.</span>
+            <strong>Данс нээх</strong>
+            <span>Хувийн мэдээлэл, банкны данс, гэрээ &amp; төлбөр.</span>
           </div>
         </div>
       </div>
@@ -240,8 +240,8 @@
         <div class="oa-section-hdr">
           <div class="oa-section-num"><i data-lucide="shield-check"></i></div>
           <div class="oa-section-info">
-            <strong>KYC Verification</strong>
-            <span>Identity, employment, financial &amp; compliance details.</span>
+            <strong>KYC Баталгаажуулалт</strong>
+            <span>Иргэний бичиг, ажил эрхлэлт, санхүүгийн мэдээлэл.</span>
           </div>
         </div>
       </div>
@@ -251,8 +251,8 @@
         <div class="oa-section-hdr">
           <div class="oa-section-num"><i data-lucide="repeat"></i></div>
           <div class="oa-section-info">
-            <strong>Tripartite Agreement</strong>
-            <span>Link your bank, brokerage &amp; MCSD accounts.</span>
+            <strong>Гурвалсан гэрээ</strong>
+            <span>Банк, брокер <span>Link your bank, brokerage &amp; MCSD accounts.</span>amp; ҮЦТХТ дансуудаа холбох.</span>
           </div>
         </div>
       </div>
@@ -271,98 +271,98 @@
         <div class="step-seg" id="oa-seg-2"></div>
         <div class="step-seg" id="oa-seg-3"></div>
       </div>
-      <div class="step-meta" id="oa-step-meta">Step 1 of 4 — Personal Information</div>
+      <div class="step-meta" id="oa-step-meta">Алхам 1/4 — Хувийн мэдээлэл</div>
 
       <!-- ══ STEP 1: Personal info ══ -->
       <div class="step-panel active" id="step-1">
-        <div class="web-section-title" style="margin-bottom:18px">Personal Information</div>
+        <div class="web-section-title" style="margin-bottom:18px">Хувийн мэдээлэл</div>
 
         <div class="field-row">
           <div class="field-wrap">
-            <label class="field-label">First Name</label>
-            <input class="inp" type="text" id="oa-first-name" placeholder="First name" />
+            <label class="field-label">Нэр</label>
+            <input class="inp" type="text" id="oa-first-name" placeholder="Нэр" />
           </div>
           <div class="field-wrap">
-            <label class="field-label">Last Name</label>
-            <input class="inp" type="text" id="oa-last-name" placeholder="Last name" />
+            <label class="field-label">Овог</label>
+            <input class="inp" type="text" id="oa-last-name" placeholder="Овог" />
           </div>
         </div>
 
         <div class="field-row">
           <div class="field-wrap">
-            <label class="field-label">Date of Birth</label>
+            <label class="field-label">Төрсөн огноо</label>
             <input class="inp" type="date" id="oa-dob" />
           </div>
           <div class="field-wrap">
-            <label class="field-label">Gender</label>
+            <label class="field-label">Хүйс</label>
             <select class="inp inp-select" id="oa-gender">
-              <option value="">Select gender</option>
-              <option>Male</option>
-              <option>Female</option>
+              <option value="">Хүйс сонгох</option>
+              <option>Эр</option>
+              <option>Эм</option>
             </select>
           </div>
         </div>
 
         <div class="field-row">
           <div class="field-wrap">
-            <label class="field-label">Phone Number</label>
+            <label class="field-label">Утасны дугаар</label>
             <input class="inp" type="tel" id="oa-phone" placeholder="+976 ···" />
           </div>
           <div class="field-wrap">
-            <label class="field-label">Home Address</label>
-            <input class="inp" type="text" id="oa-address" placeholder="Address" />
+            <label class="field-label">Гэрийн хаяг</label>
+            <input class="inp" type="text" id="oa-address" placeholder="Хаяг" />
           </div>
         </div>
 
         <div class="btn-row">
-          <button class="btn btn-primary" onclick="oaStep1Continue()">Continue</button>
+          <button class="btn btn-primary" onclick="oaStep1Continue()">Үргэлжлүүлэх</button>
         </div>
       </div>
 
       <!-- ══ STEP 2: Bank account ══ -->
       <div class="step-panel" id="step-2">
-        <div class="web-section-title" style="margin-bottom:18px">Bank Account</div>
+        <div class="web-section-title" style="margin-bottom:18px">Банкны данс</div>
 
         <div class="field-wrap">
-          <label class="field-label">Select Bank</label>
+          <label class="field-label">Банк сонгох</label>
           <div class="bank-scroll" id="bank-scroll"></div>
         </div>
 
         <div class="field-wrap">
-          <label class="field-label">Currency</label>
+          <label class="field-label">Валют</label>
           <select class="inp inp-select" id="acct-currency">
-            <option>MNT — Mongolian Tögrög</option>
-            <option>USD — US Dollar</option>
-            <option>EUR — Euro</option>
-            <option>CNY — Chinese Yuan</option>
+            <option>MNT — Монгол төгрөг</option>
+            <option>USD — АНУ доллар</option>
+            <option>EUR — Евро</option>
+            <option>CNY — Хятад юань</option>
           </select>
         </div>
 
         <div class="field-row">
           <div class="field-wrap">
-            <label class="field-label">Account Number</label>
-            <input class="inp" type="tel" id="acct-number" placeholder="8-digit account number" maxlength="8" oninput="handleAcctNumberInput(this)" />
+            <label class="field-label">Дансны дугаар</label>
+            <input class="inp" type="tel" id="acct-number" placeholder="8 оронтой дансны дугаар" maxlength="8" oninput="handleAcctNumberInput(this)" />
           </div>
           <div class="field-wrap">
-            <label class="field-label">Account Holder Name</label>
-            <input class="inp" type="text" id="acct-holder" placeholder="Auto-filled" readonly />
+            <label class="field-label">Дансны эзэмшигч</label>
+            <input class="inp" type="text" id="acct-holder" placeholder="Автоматаар бөглөгдөнө" readonly />
           </div>
         </div>
 
         <div class="btn-row">
-          <button class="btn btn-outline" onclick="goStep(1)"><i data-lucide="arrow-left"></i><span>Back</span></button>
-          <button class="btn btn-primary" onclick="goStep(3)">Continue</button>
+          <button class="btn btn-outline" onclick="goStep(1)"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
+          <button class="btn btn-primary" onclick="goStep(3)">Үргэлжлүүлэх</button>
         </div>
       </div>
 
       <!-- ══ STEP 3: Agreements & Signature ══ -->
       <div class="step-panel" id="step-3">
-        <div class="web-section-title" style="margin-bottom:18px">Agreements &amp; Signature</div>
+        <div class="web-section-title" style="margin-bottom:18px">Гэрээ &amp; Гарын үсэг</div>
 
         <div class="agreement-item" onclick="openAgreement('acc-open')">
           <div class="ag-left">
             <div class="agreement-check" id="ac-acc-open"><i data-lucide="file-text"></i></div>
-            <span class="agreement-name">Account Opening Agreement</span>
+            <span class="agreement-name">Данс нээх гэрээ</span>
           </div>
           <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
         </div>
@@ -370,7 +370,7 @@
         <div class="agreement-item" onclick="openAgreement('nominal')">
           <div class="ag-left">
             <div class="agreement-check" id="ac-nominal"><i data-lucide="file-text"></i></div>
-            <span class="agreement-name">Nominal Account Service Agreement</span>
+            <span class="agreement-name">Номинал дансны үйлчилгээний гэрээ</span>
           </div>
           <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
         </div>
@@ -378,68 +378,68 @@
         <div class="agreement-item" onclick="openAgreement('broker')">
           <div class="ag-left">
             <div class="agreement-check" id="ac-broker"><i data-lucide="file-text"></i></div>
-            <span class="agreement-name">Online Broker Service Agreement</span>
+            <span class="agreement-name">Онлайн брокерийн үйлчилгээний гэрээ</span>
           </div>
           <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
         </div>
 
         <div class="sig-section">
-          <label class="field-label">Signature</label>
+          <label class="field-label">Гарын үсэг</label>
 
           <div class="sig-placeholder" id="sig-placeholder" onclick="openSignaturePad()">
             <div class="sig-placeholder-icon"><i data-lucide="pen-line"></i></div>
-            <div class="sig-placeholder-text">Click to draw your signature</div>
+            <div class="sig-placeholder-text">Гарын үсгээ зурна уу</div>
           </div>
 
           <div class="sig-pad" id="sig-pad" style="display:none">
             <canvas id="sig-canvas"></canvas>
             <div class="sig-pad-actions">
-              <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Clear</span></button>
-              <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Done</span></button>
+              <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Арилгах</span></button>
+              <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Болсон</span></button>
             </div>
           </div>
 
           <div class="sig-done" id="sig-done" style="display:none">
             <div class="sig-done-left">
               <i data-lucide="check-circle"></i>
-              <span>Signature captured</span>
+              <span>Гарын үсэг хадгалагдлаа</span>
             </div>
-            <button class="sig-redo-btn" onclick="redoSignature()">Redo</button>
+            <button class="sig-redo-btn" onclick="redoSignature()">Дахин зурах</button>
           </div>
         </div>
 
         <div class="btn-row" style="margin-top:20px">
-          <button class="btn btn-outline" onclick="goStep(2)"><i data-lucide="arrow-left"></i><span>Back</span></button>
-          <button class="btn btn-primary" onclick="goStep(4)">Continue</button>
+          <button class="btn btn-outline" onclick="goStep(2)"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
+          <button class="btn btn-primary" onclick="goStep(4)">Үргэлжлүүлэх</button>
         </div>
       </div>
 
       <!-- ══ STEP 4: Payment ══ -->
       <div class="step-panel" id="step-4">
-        <div class="web-section-title" style="margin-bottom:18px">Payment</div>
+        <div class="web-section-title" style="margin-bottom:18px">Төлбөр</div>
 
         <div class="qr-wrapper">
-          <img src="../../public/qr.png" alt="Payment QR code" style="width:180px;height:180px;object-fit:contain;border-radius:8px" />
+          <img src="../../public/qr.png" alt="Төлбөрийн QR код" style="width:180px;height:180px;object-fit:contain;border-radius:8px" />
         </div>
 
-        <div class="qr-fee-label">Account opening fee: 5,000₮</div>
+        <div class="qr-fee-label">Данс нээх хураамж: 5,000₮</div>
 
         <div class="pay-apps-grid" id="pay-apps-grid"></div>
 
         <div class="btn-row" style="margin-bottom:0">
-          <button class="btn btn-outline" onclick="goStep(3)"><i data-lucide="arrow-left"></i><span>Back</span></button>
-          <button class="btn-check-payment" style="flex:1.3" onclick="checkPayment()">Check Payment</button>
+          <button class="btn btn-outline" onclick="goStep(3)"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
+          <button class="btn-check-payment" style="flex:1.3" onclick="checkPayment()">Төлбөр шалгах</button>
         </div>
       </div>
 
       <!-- ══ SUCCESS ══ -->
       <div id="step-success">
         <div class="success-icon"><i data-lucide="check"></i></div>
-        <div class="success-title">Payment Successful!</div>
+        <div class="success-title">Төлбөр амжилттай!</div>
         <div class="success-msg">
-          Your account opening request has been submitted. Since you do not yet have a securities account, we will proceed with the opening process.
+          Таны данс нээх хүсэлт илгээгдлээ. Үнэт цаасны данс байхгүй тул бид нээлтийн үйл явцыг үргэлжлүүлэх болно.
         </div>
-        <button class="btn btn-primary" style="width:100%" onclick="goSection('kyc')">Continue to KYC Verification</button>
+        <button class="btn btn-primary" style="width:100%" onclick="goSection('kyc')">KYC баталгаажуулалт руу үргэлжлүүлэх</button>
       </div>
 
     </div>
@@ -471,7 +471,7 @@
       <button class="agreement-modal-close" onclick="closeAgreement()"><i data-lucide="x"></i></button>
     </div>
     <div id="agreement-modal-body" class="agreement-modal-body"></div>
-    <button class="btn btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">I've Read This</button>
+    <button class="btn btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">Уншлаа</button>
   </div>
 </div>
 
@@ -505,7 +505,7 @@ function handleAcctNumberInput(inp) {
 /* ── Agreements: unread → reader modal → read ── */
 const AGREEMENTS = {
   'acc-open': {
-    name: 'Account Opening Agreement',
+    name: "Данс нээх гэрээ",
     content: `This Account Opening Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client").
 
 1. By submitting this application, the Client confirms that all information provided is accurate, complete, and up to date, and agrees to notify the Company promptly of any changes.
@@ -519,7 +519,7 @@ const AGREEMENTS = {
 5. This Agreement remains in effect until terminated in writing by either party, subject to settlement of any outstanding obligations.`
   },
   'nominal': {
-    name: 'Nominal Account Service Agreement',
+    name: "Номинал дансны үйлчилгээний гэрээ",
     content: `This Nominal Account Service Agreement governs the holding of securities on the Client's behalf through a nominal (omnibus) account maintained by the Company at the Securities Clearing House and Central Depository.
 
 1. Securities purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
@@ -533,7 +533,7 @@ const AGREEMENTS = {
 5. Any corporate actions (dividends, rights issues, voting) relating to securities in the nominal account will be passed through to the Client in accordance with regulatory requirements.`
   },
   'broker': {
-    name: 'Online Broker Service Agreement',
+    name: "Онлайн брокерийн үйлчилгээний гэрээ",
     content: `This Online Broker Service Agreement sets out the terms under which the Company provides electronic trading and brokerage services to the Client through its online and mobile platforms.
 
 1. The Client agrees to keep login credentials, PIN codes, and authentication methods confidential and to notify the Company immediately of any unauthorized access.
@@ -585,7 +585,7 @@ function oaStep1Continue() {
 
 let currentStep = 1;
 const TOTAL_STEPS = 4;
-const OA_STEP_TITLES = ['Personal Information', 'Bank Account', 'Agreements & Signature', 'Payment'];
+const OA_STEP_TITLES = ['Хувийн мэдээлэл', 'Банкны данс', 'Гэрээ & Гарын үсэг', 'Төлбөр'];
 
 function goStep(n) {
   document.getElementById(`step-${currentStep}`).classList.remove('active');
@@ -600,7 +600,7 @@ function updateOverview() {
     const stepNum = i + 1;
     seg.className = 'step-seg' + (stepNum < currentStep ? ' done' : stepNum === currentStep ? ' active' : '');
   }
-  document.getElementById('oa-step-meta').textContent = `Step ${currentStep} of ${TOTAL_STEPS} — ${OA_STEP_TITLES[currentStep - 1]}`;
+  document.getElementById('oa-step-meta').textContent = `Алхам ${currentStep}/${TOTAL_STEPS} — ${OA_STEP_TITLES[currentStep - 1]}`;
 }
 
 function checkPayment() {
@@ -681,7 +681,7 @@ OA_PAY_APPS.forEach((name, i) => {
   const div = document.createElement('div');
   div.className = 'pay-app-item';
   div.innerHTML = `<div class="pay-app-icon"><img src="${logoSrc}" alt="${name}" /></div>`;
-  div.onclick = () => showToast(`Opening ${name}…`);
+  div.onclick = () => showToast(`${name} нээж байна…`);
   grid.appendChild(div);
 });
 
@@ -739,52 +739,4 @@ function openSignaturePad() {
 function saveSignature() {
   document.getElementById('sig-pad').style.display = 'none';
   document.getElementById('sig-done').style.display = 'flex';
-  try { setSignature(canvas.toDataURL()); } catch (e) {}
-  lucide.createIcons();
-}
-function redoSignature() {
-  clearCanvas();
-  document.getElementById('sig-done').style.display = 'none';
-  document.getElementById('sig-pad').style.display = 'block';
-}
-
-/* ── Drag-to-scroll for horizontal containers ── */
-function addDragScroll(el) {
-  if (!el) return;
-  let isDown = false, startX = 0, scrollLeft = 0;
-  el.addEventListener('mousedown', e => { isDown = true; el.style.cursor = 'grabbing'; startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft; });
-  el.addEventListener('mouseleave', () => { isDown = false; el.style.cursor = ''; });
-  el.addEventListener('mouseup', () => { isDown = false; el.style.cursor = ''; });
-  el.addEventListener('mousemove', e => { if (!isDown) return; e.preventDefault(); const x = e.pageX - el.offsetLeft; el.scrollLeft = scrollLeft - (x - startX); });
-}
-addDragScroll(document.getElementById('bank-scroll'));
-
-updateOverview();
-refreshSectionStatus();
-
-/* Restore success states and auto-switch sections */
-(function () {
-  /* If account step was already completed, show success view inside account section */
-  if (localStorage.getItem('bdsec-account-opened') === '1') {
-    for (let i = 1; i <= 4; i++) {
-      const el = document.getElementById(`step-${i}`);
-      if (el) el.classList.remove('active');
-    }
-    document.getElementById('step-success').style.display = 'flex';
-    document.getElementById('oa-step-bar').style.display = 'none';
-    document.getElementById('oa-step-meta').style.display = 'none';
-  }
-
-  const target = sessionStorage.getItem('bdsec-open-account-section');
-  if (target) {
-    sessionStorage.removeItem('bdsec-open-account-section');
-    goSection(target);
-  } else if (localStorage.getItem('bdsec-account-opened') === '1' && localStorage.getItem('bdsec-kyc-done') !== '1') {
-    goSection('kyc');
-  }
-})();
-
-lucide.createIcons();
-</script>
-</body>
-</html>
+  try { setSignature(canvas.toDataURL()); } catc

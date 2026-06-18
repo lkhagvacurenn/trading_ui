@@ -303,7 +303,7 @@
             <path d="M3.18 23.76c.37.2.8.2 1.17.01l12.44-7.19-2.65-2.64-10.96 9.82zM.1 1.05C.04 1.28 0 1.52 0 1.78v20.44c0 .26.04.5.1.73l11.53-11.48L.1 1.05zM20.34 10.38l-2.78-1.61-3.05 3.05 3.05 3.05 2.8-1.62c.8-.46.8-1.61-.02-2.07v.2zM4.35.22L16.79 7.4 14.14 10.05 3.18.23C3.55.04 3.98.03 4.35.22z"/>
           </svg>
           <div class="al-store-text">
-            <span class="al-store-sub">Get it on</span>
+            <span class="al-store-sub">Авах</span>
             <span class="al-store-name">Google Play</span>
           </div>
         </a>
@@ -313,7 +313,7 @@
             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
           </svg>
           <div class="al-store-text">
-            <span class="al-store-sub">Download on the</span>
+            <span class="al-store-sub">Татаж авах</span>
             <span class="al-store-name">App Store</span>
           </div>
         </a>
@@ -325,7 +325,7 @@
   <div class="auth-right">
     <div class="auth-topbar">
       <button class="lang-btn" onclick="toggleLang()">
-        <i data-lucide="globe"></i><span id="lang-text">English</span>
+        <i data-lucide="globe"></i><span id="lang-text">Монгол</span>
       </button>
       <button class="theme-btn" onclick="toggleTheme()">
         <i data-lucide="sun" id="theme-icon-sun"></i>
@@ -342,42 +342,42 @@
       <!-- ════ AUTH SECTION ════ -->
       <div id="auth-section">
 
-        <h2 class="auth-heading" id="auth-heading">Welcome back</h2>
-        <p class="auth-subheading" id="auth-subheading">Sign in to access your portfolio, place orders, and manage your account.</p>
+        <h2 class="auth-heading" id="auth-heading">Тавтай морил</h2>
+        <p class="auth-subheading" id="auth-subheading">Портфолио харах, захиалга өгөх, данс удирдахын тулд нэвтэрнэ үү.</p>
 
         <div class="auth-toggle">
-          <button class="auth-toggle-btn active" id="toggle-login"    onclick="switchAuth('login')">Sign In</button>
-          <button class="auth-toggle-btn"        id="toggle-register" onclick="switchAuth('register')">Sign Up</button>
+          <button class="auth-toggle-btn active" id="toggle-login"    onclick="switchAuth('login')">Нэвтрэх</button>
+          <button class="auth-toggle-btn"        id="toggle-register" onclick="switchAuth('register')">Бүртгүүлэх</button>
         </div>
 
         <!-- ── LOGIN ── -->
         <div class="panel active" id="panel-login">
 
           <div class="field-wrap">
-            <label class="field-label">Username</label>
+            <label class="field-label">Хэрэглэгчийн нэр</label>
             <div class="inp-wrap">
               <span class="field-icon"><i data-lucide="user"></i></span>
-              <input class="inp has-icon" type="text" placeholder="Username" />
+              <input class="inp has-icon" type="text" placeholder="Хэрэглэгчийн нэр" />
             </div>
           </div>
 
           <div class="field-wrap">
-            <label class="field-label">Password</label>
+            <label class="field-label">Нууц үг</label>
             <div class="inp-wrap">
               <span class="field-icon"><i data-lucide="lock"></i></span>
-              <input class="inp has-icon has-eye" type="password" id="login-pw" placeholder="Password" />
+              <input class="inp has-icon has-eye" type="password" id="login-pw" placeholder="Нууц үг" />
               <button class="field-eye" onclick="togglePw('login-pw',this)"><i data-lucide="eye"></i></button>
             </div>
           </div>
 
           <div class="check-row">
             <span class="check-left">
-              <input type="checkbox" id="rem" /><label for="rem">Remember device</label>
+              <input type="checkbox" id="rem" /><label for="rem">Төхөөрөмж сануулах</label>
             </span>
-            <span class="forgot-link" onclick="showForgot()">Forgot password?</span>
+            <span class="forgot-link" onclick="showForgot()">Нууц үг мартсан уу?</span>
           </div>
 
-          <button class="btn-primary" onclick="goHome()">Sign In</button>
+          <button class="btn-primary" onclick="goHome()">Нэвтрэх</button>
 
           <div class="or-divider">or</div>
 
@@ -398,52 +398,52 @@
           <!-- Step 1 -->
           <div class="panel active" id="reg-step-1">
             <div class="field-wrap">
-              <label class="field-label">Country</label>
-              <select class="inp inp-select" id="reg-country"><option>Mongolia</option><option>United States</option><option>Japan</option><option>Other</option></select>
+              <label class="field-label">Улс</label>
+              <select class="inp inp-select" id="reg-country"><option>Монгол</option><option>АНУ</option><option>Япон</option><option>Бусад</option></select>
             </div>
             <div class="field-wrap">
-              <label class="field-label">User type</label>
-              <select class="inp inp-select" id="reg-usertype"><option>Individual</option><option>Corporate</option></select>
+              <label class="field-label">Хэрэглэгчийн төрөл</label>
+              <select class="inp inp-select" id="reg-usertype"><option>Хувь хүн</option><option>Байгууллага</option></select>
             </div>
-            <button class="btn-primary" onclick="regStep1Continue()">Continue</button>
+            <button class="btn-primary" onclick="regStep1Continue()">Үргэлжлүүлэх</button>
           </div>
 
           <!-- Step 2 -->
           <div class="panel" id="reg-step-2">
             <div class="field-wrap">
-              <label class="field-label" id="reg-idnum-label">Registration number</label>
+              <label class="field-label" id="reg-idnum-label">Регистрийн дугаар</label>
               <div class="reg-row">
                 <div class="reg-prefix" id="reg-idnum-prefix">
                   <button class="reg-char-btn active" id="rc-A" onclick="setRegChar('A')">А</button>
                   <button class="reg-char-btn"        id="rc-B" onclick="setRegChar('B')">Б</button>
                 </div>
-                <input class="inp" type="text" id="reg-idnum-input" placeholder="Registration number" maxlength="8" style="flex:1" />
+                <input class="inp" type="text" id="reg-idnum-input" placeholder="Регистрийн дугаар" maxlength="8" style="flex:1" />
               </div>
             </div>
             <div class="field-wrap">
-              <label class="field-label">Email / Phone</label>
-              <input class="inp" type="text" placeholder="Email or phone" />
+              <label class="field-label">Имэйл / Утас</label>
+              <input class="inp" type="text" placeholder="Имэйл эсвэл утас" />
             </div>
             <div class="field-wrap">
-              <label class="field-label">Password</label>
+              <label class="field-label">Нууц үг</label>
               <div class="inp-wrap">
                 <span class="field-icon"><i data-lucide="lock"></i></span>
-                <input class="inp has-icon has-eye" type="password" id="reg-pw" placeholder="Password"
+                <input class="inp has-icon has-eye" type="password" id="reg-pw" placeholder="Нууц үг"
                   oninput="checkPasswordReq(this.value)"
                   onfocus="document.getElementById('password-req').classList.add('open')"
                   onblur="document.getElementById('password-req').classList.remove('open')" />
                 <button class="field-eye" onclick="togglePw('reg-pw',this)"><i data-lucide="eye"></i></button>
               </div>
               <div class="field-req" id="password-req">
-                <div class="req-item" id="preq-len"><i data-lucide="check"></i><span>At least 8 characters</span></div>
-                <div class="req-item" id="preq-upper"><i data-lucide="check"></i><span>At least 1 uppercase letter</span></div>
-                <div class="req-item" id="preq-lower"><i data-lucide="check"></i><span>At least 1 lowercase letter</span></div>
-                <div class="req-item" id="preq-digit"><i data-lucide="check"></i><span>At least 1 digit</span></div>
-                <div class="req-item" id="preq-special"><i data-lucide="check"></i><span>At least 1 special character</span></div>
+                <div class="req-item" id="preq-len"><i data-lucide="check"></i><span>Хамгийн багадаа 8 тэмдэгт</span></div>
+                <div class="req-item" id="preq-upper"><i data-lucide="check"></i><span>Хамгийн багадаа 1 том үсэг</span></div>
+                <div class="req-item" id="preq-lower"><i data-lucide="check"></i><span>Хамгийн багадаа 1 жижиг үсэг</span></div>
+                <div class="req-item" id="preq-digit"><i data-lucide="check"></i><span>Хамгийн багадаа 1 тоо</span></div>
+                <div class="req-item" id="preq-special"><i data-lucide="check"></i><span>Хамгийн багадаа 1 тусгай тэмдэгт</span></div>
               </div>
             </div>
             <div class="field-wrap">
-              <label class="field-label">Confirm password</label>
+              <label class="field-label">Нууц үг баталгаажуулах</label>
               <div class="inp-wrap">
                 <span class="field-icon"><i data-lucide="lock"></i></span>
                 <input class="inp has-icon has-eye" type="password" id="reg-pw2" placeholder="Re-enter password" />
@@ -452,11 +452,11 @@
             </div>
             <div class="terms-row">
               <input type="checkbox" id="terms" />
-              <label for="terms">I agree to the <span>Terms of Service</span> and <span>Privacy Policy</span></label>
+              <label for="terms">Дараахтай зөвшөөрч байна: <span>Үйлчилгээний нөхцөл</span> болон <span>Нууцлалын бодлого</span></label>
             </div>
             <div class="btn-row">
-              <button class="btn-outline btn-icon" onclick="regNext(1)"><i data-lucide="arrow-left"></i><span>Back</span></button>
-              <button class="btn-primary" onclick="regNext(3)">Continue</button>
+              <button class="btn-outline btn-icon" onclick="regNext(1)"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
+              <button class="btn-primary" onclick="regNext(3)">Үргэлжлүүлэх</button>
             </div>
             <div class="or-divider">or</div>
             <button class="btn-emongolia">
@@ -467,7 +467,7 @@
 
           <!-- Step 3: OTP -->
           <div class="panel" id="reg-step-3">
-            <p style="font-size:14px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px;line-height:1.6">A one-time code was sent to your phone / email.</p>
+            <p style="font-size:14px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px;line-height:1.6">Таны утас / имэйл рүү нэг удаагийн код илгээгдлээ.</p>
             <div class="otp-email">blk*******@gmail.com</div>
             <div class="otp-grid">
               <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
@@ -478,33 +478,33 @@
               <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
             </div>
             <div class="btn-row">
-              <button class="btn-outline btn-icon" onclick="regNext(2)"><i data-lucide="arrow-left"></i><span>Back</span></button>
-              <button class="btn-primary" onclick="verifyRegOtp()">Verify</button>
+              <button class="btn-outline btn-icon" onclick="regNext(2)"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
+              <button class="btn-primary" onclick="verifyRegOtp()">Баталгаажуулах</button>
             </div>
-            <button class="btn-outline" style="width:100%">Resend Code</button>
+            <button class="btn-outline" style="width:100%">Код дахин илгээх</button>
           </div>
 
           <!-- Step 4: Username + PIN setup (shown after OTP verification) -->
           <div class="panel" id="reg-step-4">
-            <h3 class="pin-setup-title">Create your username and PIN code</h3>
+            <h3 class="pin-setup-title">Хэрэглэгчийн нэр болон PIN код үүсгэх</h3>
 
             <div class="field-wrap">
-              <label class="field-label">Username</label>
-              <input class="inp" type="text" id="pin-username" placeholder="Choose a username"
+              <label class="field-label">Хэрэглэгчийн нэр</label>
+              <input class="inp" type="text" id="pin-username" placeholder="Хэрэглэгчийн нэр сонгох"
                 oninput="checkUsernameReq(this.value)"
                 onfocus="document.getElementById('username-req').classList.add('open')"
                 onblur="document.getElementById('username-req').classList.remove('open')" />
               <div class="field-req" id="username-req">
-                <div class="req-item" id="ureq-latin"><i data-lucide="check"></i><span>Use Latin letters</span></div>
-                <div class="req-item" id="ureq-len"><i data-lucide="check"></i><span>8-20 characters</span></div>
-                <div class="req-item" id="ureq-letter"><i data-lucide="check"></i><span>At least 1 letter</span></div>
-                <div class="req-item" id="ureq-digit"><i data-lucide="check"></i><span>At least 1 digit</span></div>
+                <div class="req-item" id="ureq-latin"><i data-lucide="check"></i><span>Латин үсэг ашиглах</span></div>
+                <div class="req-item" id="ureq-len"><i data-lucide="check"></i><span>8-20 тэмдэгт</span></div>
+                <div class="req-item" id="ureq-letter"><i data-lucide="check"></i><span>Хамгийн багадаа 1 үсэг</span></div>
+                <div class="req-item" id="ureq-digit"><i data-lucide="check"></i><span>Хамгийн багадаа 1 тоо</span></div>
               </div>
             </div>
 
             <div class="pin-block">
               <div class="pin-block-hdr">
-                <span class="field-label" style="margin:0">4-digit PIN code</span>
+                <span class="field-label" style="margin:0">4 оронтой PIN код</span>
                 <button class="pin-eye" onclick="togglePinReveal('pin-create')"><i data-lucide="eye"></i></button>
               </div>
               <div class="pin-grid" id="pin-create">
@@ -517,7 +517,7 @@
 
             <div class="pin-block">
               <div class="pin-block-hdr">
-                <span class="field-label" style="margin:0">Confirm PIN code</span>
+                <span class="field-label" style="margin:0">PIN код баталгаажуулах</span>
                 <button class="pin-eye" onclick="togglePinReveal('pin-confirm')"><i data-lucide="eye"></i></button>
               </div>
               <div class="pin-grid" id="pin-confirm">
@@ -528,7 +528,7 @@
               </div>
             </div>
 
-            <button class="btn-primary" onclick="finishRegister()">Create Account</button>
+            <button class="btn-primary" onclick="finishRegister()">Данс үүсгэх</button>
           </div>
         </div>
 
@@ -539,29 +539,29 @@
       <div id="forgot-section" style="display:none">
 
         <div class="panel active" id="fp-1">
-          <div class="back-row" onclick="hideForgot()"><i data-lucide="arrow-left"></i><span>Back to Sign In</span></div>
-          <h2 class="auth-heading">Reset password</h2>
-          <p class="auth-subheading">Enter your account details and we'll send you a verification code.</p>
+          <div class="back-row" onclick="hideForgot()"><i data-lucide="arrow-left"></i><span>Нэвтрэх хуудас руу буцах</span></div>
+          <h2 class="auth-heading">Нууц үг сэргээх</h2>
+          <p class="auth-subheading">Дансны мэдээллээ оруулвал баталгаажуулах код илгээх болно.</p>
           <div class="field-wrap">
-            <label class="field-label">Username</label>
-            <input class="inp" type="text" placeholder="Registered username" />
+            <label class="field-label">Хэрэглэгчийн нэр</label>
+            <input class="inp" type="text" placeholder="Бүртгэлтэй хэрэглэгчийн нэр" />
           </div>
           <div class="field-wrap">
-            <label class="field-label">Email / Phone number</label>
-            <input class="inp" type="text" placeholder="Registered email or phone" />
+            <label class="field-label">Имэйл / Утасны дугаар</label>
+            <input class="inp" type="text" placeholder="Бүртгэлтэй имэйл эсвэл утас" />
           </div>
-          <button class="btn-primary" onclick="fpNext(2)">Send Reset Link</button>
+          <button class="btn-primary" onclick="fpNext(2)">Сэргээх холбоос илгээх</button>
           <div class="or-divider">or</div>
           <div class="btn-row">
-            <button class="btn-outline" onclick="hideForgot()">Sign In</button>
-            <button class="btn-outline" onclick="hideForgot();switchAuth('register')">Sign Up</button>
+            <button class="btn-outline" onclick="hideForgot()">Нэвтрэх</button>
+            <button class="btn-outline" onclick="hideForgot();switchAuth('register')">Бүртгүүлэх</button>
           </div>
         </div>
 
         <div class="panel" id="fp-2">
-          <div class="back-row" onclick="fpNext(1)"><i data-lucide="arrow-left"></i><span>Back</span></div>
-          <h2 class="auth-heading">Enter verification code</h2>
-          <p class="auth-subheading">A 6-digit code was sent to your email / phone.</p>
+          <div class="back-row" onclick="fpNext(1)"><i data-lucide="arrow-left"></i><span>Буцах</span></div>
+          <h2 class="auth-heading">Баталгаажуулах код оруулах</h2>
+          <p class="auth-subheading">Таны имэйл / утасны дугаарт 6 оронтой код илгээгдлээ.</p>
           <div class="otp-email">blk*******@gmail.com</div>
           <div class="otp-grid">
             <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
@@ -571,39 +571,39 @@
             <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
             <input class="otp-box" maxlength="1" type="tel" oninput="otpAdvance(this)" />
           </div>
-          <button class="btn-primary" onclick="fpNext(3)">Continue</button>
-          <button class="btn-outline" style="width:100%">Resend Code</button>
+          <button class="btn-primary" onclick="fpNext(3)">Үргэлжлүүлэх</button>
+          <button class="btn-outline" style="width:100%">Код дахин илгээх</button>
         </div>
 
         <div class="panel" id="fp-3">
-          <div class="back-row" onclick="fpNext(2)"><i data-lucide="arrow-left"></i><span>Back</span></div>
-          <h2 class="auth-heading">Set new password</h2>
-          <p class="auth-subheading">Choose a strong password for your account.</p>
+          <div class="back-row" onclick="fpNext(2)"><i data-lucide="arrow-left"></i><span>Буцах</span></div>
+          <h2 class="auth-heading">Шинэ нууц үг тохируулах</h2>
+          <p class="auth-subheading">Дансандаа хүчтэй нууц үг сонгоно уу.</p>
           <div class="field-wrap">
-            <label class="field-label">New Password</label>
+            <label class="field-label">Шинэ нууц үг</label>
             <div class="inp-wrap">
               <span class="field-icon"><i data-lucide="lock"></i></span>
-              <input class="inp has-icon has-eye" type="password" id="fp-pw" placeholder="New password" />
+              <input class="inp has-icon has-eye" type="password" id="fp-pw" placeholder="Шинэ нууц үг" />
               <button class="field-eye" onclick="togglePw('fp-pw',this)"><i data-lucide="eye"></i></button>
             </div>
           </div>
           <div class="field-wrap">
-            <label class="field-label">Confirm New Password</label>
+            <label class="field-label">Шинэ нууц үг баталгаажуулах</label>
             <div class="inp-wrap">
               <span class="field-icon"><i data-lucide="lock"></i></span>
               <input class="inp has-icon has-eye" type="password" id="fp-pw2" placeholder="Re-enter new password" />
               <button class="field-eye" onclick="togglePw('fp-pw2',this)"><i data-lucide="eye"></i></button>
             </div>
           </div>
-          <button class="btn-primary" onclick="fpNext(4)">Change Password</button>
+          <button class="btn-primary" onclick="fpNext(4)">Нууц үг өөрчлөх</button>
         </div>
 
         <div class="panel" id="fp-4">
           <div class="success-block">
             <div class="success-circle"><i data-lucide="check"></i></div>
-            <div class="success-title">Password Changed!</div>
-            <div class="success-msg">Your password has been successfully updated. You can now sign in with your new password.</div>
-            <button class="btn-primary" style="width:100%;margin:0" onclick="hideForgot()">Back to Sign In</button>
+            <div class="success-title">Нууц үг өөрчлөгдлөө!</div>
+            <div class="success-msg">Таны нууц үг амжилттай шинэчлэгдлээ. Шинэ нууц үгээрээ нэвтэрч болно.</div>
+            <button class="btn-primary" style="width:100%;margin:0" onclick="hideForgot()">Нэвтрэх хуудас руу буцах</button>
           </div>
         </div>
 
@@ -617,11 +617,11 @@
   <div class="auth-modal-overlay" id="faceid-modal">
     <div class="auth-modal">
       <div class="am-icon-wrap"><i data-lucide="scan-face"></i></div>
-      <div class="am-title">Enable Face ID for faster sign-in?</div>
-      <div class="am-desc">With Face ID enabled, you won't need to enter your username and password next time you sign in on this device.</div>
+      <div class="am-title">Хурдан нэвтрэхийн тулд Face ID идэвхжүүлэх үү?</div>
+      <div class="am-desc">With Face ID enabled, you won't need to enter your username болон password next time you sign in on this device.</div>
       <div class="am-btn-row">
-        <button class="btn-outline" onclick="faceIDDecline()">Not now</button>
-        <button class="btn-primary" onclick="faceIDAllow()">Enable</button>
+        <button class="btn-outline" onclick="faceIDDecline()">Дараа</button>
+        <button class="btn-primary" onclick="faceIDAllow()">Идэвхжүүлэх</button>
       </div>
     </div>
   </div>
@@ -630,9 +630,9 @@
   <div class="auth-modal-overlay" id="otp-success-modal">
     <div class="auth-modal">
       <div class="success-circle"><i data-lucide="check"></i></div>
-      <div class="success-title">Code Verified!</div>
-      <div class="success-msg">Your one-time code has been confirmed. Now let's set up your username and PIN code.</div>
-      <button class="btn-primary" style="width:100%;margin:0" onclick="proceedToPinSetup()">Continue</button>
+      <div class="success-title">Код баталгаажлаа!</div>
+      <div class="success-msg">Нэг удаагийн код баталгаажлаа. Одоо хэрэглэгчийн нэр болон PIN кодоо тохируулна уу.</div>
+      <button class="btn-primary" style="width:100%;margin:0" onclick="proceedToPinSetup()">Үргэлжлүүлэх</button>
     </div>
   </div>
 
@@ -640,9 +640,9 @@
   <div class="auth-modal-overlay" id="register-success-modal">
     <div class="auth-modal">
       <div class="success-circle"><i data-lucide="check"></i></div>
-      <div class="success-title">Registration Successful!</div>
-      <div class="success-msg">Your account has been created. Sign in with your new username and PIN code to get started.</div>
-      <button class="btn-primary" style="width:100%;margin:0" onclick="closeRegisterSuccess()">Sign In</button>
+      <div class="success-title">Бүртгэл амжилттай!</div>
+      <div class="success-msg">Таны данс үүслээ. Шинэ хэрэглэгчийн нэр болон PIN кодоороо нэвтэрч болно.</div>
+      <button class="btn-primary" style="width:100%;margin:0" onclick="closeRegisterSuccess()">Нэвтрэх</button>
     </div>
   </div>
 
@@ -680,10 +680,10 @@ function switchAuth(tab) {
   document.getElementById('toggle-register').classList.toggle('active', tab === 'register');
   document.getElementById('panel-login').classList.toggle('active', tab === 'login');
   document.getElementById('panel-register').classList.toggle('active', tab === 'register');
-  document.getElementById('auth-heading').textContent = tab === 'login' ? 'Welcome back' : 'Create your account';
+  document.getElementById('auth-heading').textContent = tab === 'login' ? 'Тавтай морил' : 'Данс үүсгэх';
   document.getElementById('auth-subheading').textContent = tab === 'login'
-    ? 'Sign in to access your portfolio, place orders, and manage your account.'
-    : 'Open a BDSec account in minutes and start trading the Mongolian markets.';
+    ? 'Портфолио харах, захиалга өгөх, данс удирдахын тулд нэвтэрнэ үү.'
+    : 'Open a BDSec account in minutes болон start trading the Mongolian markets.';
   if (tab === 'register') setRegStep(1);
 }
 
@@ -714,15 +714,15 @@ function regStep1Continue() {
   regNext(2);
 }
 function applyRegStep2Labels() {
-  const country  = localStorage.getItem('reg-country')  || 'Mongolia';
-  const usertype = localStorage.getItem('reg-usertype') || 'Individual';
+  const country  = localStorage.getItem('reg-country')  || 'Монгол';
+  const usertype = localStorage.getItem('reg-usertype') || 'Хувь хүн';
   const label  = document.getElementById('reg-idnum-label');
   const prefix = document.getElementById('reg-idnum-prefix');
   const input  = document.getElementById('reg-idnum-input');
 
   let text, showPrefix;
-  if (usertype === 'Corporate')    { text = 'Corporate number';    showPrefix = false; }
-  else if (country === 'Mongolia') { text = 'Registration number'; showPrefix = true;  }
+  if (usertype === 'Байгууллага')    { text = 'Байгууллагын дугаар';    showPrefix = false; }
+  else if (country === 'Монгол') { text = 'Регистрийн дугаар'; showPrefix = true;  }
   else                              { text = 'Passport number';     showPrefix = false; }
 
   label.textContent = text;
