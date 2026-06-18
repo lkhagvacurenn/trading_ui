@@ -39,8 +39,10 @@
 
       <div class="px-4 py-3 border-b border-color">
         <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" id="sidebar-user" onclick="navigateTo('profile')" title="Profile">
-          <div id="sidebar-user-initials" class="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-               style="background:var(--gradient-avatar)">ББ</div>
+          <div id="sidebar-user-initials" class="w-9 h-9 rounded-full flex items-center justify-center text-white flex-shrink-0"
+               style="background:var(--gradient-avatar)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
           <div class="flex-1 min-w-0">
             <p id="sidebar-user-name" class="text-sm font-semibold truncate">Б.Батбаяр</p>
           </div>
@@ -57,6 +59,9 @@
         <a href="pages/balance.html" class="nav-link" data-page="balance" data-title="Balance">
           <i data-lucide="wallet" class="w-4 h-4"></i> Balance
         </a>
+        <a href="pages/bank-account.html" class="nav-link" data-page="bank-account" data-title="Bank Account">
+          <i data-lucide="building-2" class="w-4 h-4"></i> Bank Account
+        </a>
         <a href="pages/returns.html" class="nav-link" data-page="returns" data-title="Portfolio">
           <i data-lucide="pie-chart" class="w-4 h-4"></i> Portfolio
         </a>
@@ -66,13 +71,13 @@
         <a href="pages/bonds.html" class="nav-link" data-page="bonds" data-title="Bonds">
           <i data-lucide="landmark" class="w-4 h-4"></i> Bonds
         </a>
-        <a href="pages/alerts.html" class="nav-link" data-page="alerts" data-title="Alerts">
-          <i data-lucide="bell-ring" class="w-4 h-4"></i> Alerts
-        </a>
 
 
         <a href="pages/trade.html" class="nav-link nav-link-highlight" data-page="trade" data-title="Secondary Trading">
           <i data-lucide="arrow-left-right" class="w-4 h-4"></i> Secondary Trading
+        </a>
+        <a href="pages/alerts.html" class="nav-link" data-page="alerts" data-title="Alerts">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i> Alerts
         </a>
 
 
@@ -85,11 +90,11 @@
         <a href="pages/withdrawal.html" class="nav-link" data-page="withdrawal" data-title="Withdraw">
           <i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Withdraw
         </a>
-        <a href="pages/bank-account.html" class="nav-link" data-page="bank-account" data-title="Bank Account">
-          <i data-lucide="building-2" class="w-4 h-4"></i> Bank Account
-        </a>
         <a href="pages/faq.html" class="nav-link" data-page="faq" data-title="FAQ">
           <i data-lucide="help-circle" class="w-4 h-4"></i> FAQ
+        </a>
+        <a href="pages/profile.html" class="nav-link" data-page="security" data-title="Security" onclick="window.frames['page-frame']&&setTimeout(()=>{try{window.frames['page-frame'].document.getElementById('acc-password').scrollIntoView({behavior:'smooth'})}catch(e){}},400)">
+          <i data-lucide="shield" class="w-4 h-4"></i> Security
         </a>
       </nav>
 

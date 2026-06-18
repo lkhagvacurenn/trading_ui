@@ -37,7 +37,6 @@
 }
 #sidebar .nav-link.active {
   background: rgba(73,73,170,0.12);
-  color: var(--color-primary);
 }
 
 /* Trade — highlighted like mobile's center FAB */
