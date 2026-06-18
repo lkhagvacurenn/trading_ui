@@ -12,8 +12,8 @@
 
   <style>
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html { height: 100%; }
-    body { margin: 0; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); min-height: 100%; }
+    html, body { margin: 0; }
+    body { font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); }
 
     /* ── Sub-page header ── */
     .sub-header { display: flex; align-items: center; padding: 14px 16px 10px; gap: 12px; }
@@ -30,7 +30,7 @@
     .kyc-intro p { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin: 0; }
 
     /* ── Form basics (shared with Open Account patterns) ── */
-    .form-body { padding: 0 16px; }
+    .form-body { padding: 0 16px 24px; }
     .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
     .field-wrap { margin-bottom: 14px; }
     .inp {
@@ -560,20 +560,21 @@ function renderGeneralInfo(profile, isFirst) {
   let html = sectionHeader('user-circle', 'General Information', null, isFirst);
   html += `<div class="field-row">${fText(uid('gi-family'), 'Family Name')}${fText('kyc-surname', 'Surname', { value: surname, locked: !!surname })}</div>`;
   html += fText('kyc-given', 'Given Name', { value: givenName, locked: !!givenName });
-  html += fText('kyc-citizenship', 'Citizenship', { value: profile.isMongolian ? 'Mongolia' : 'Foreign Citizen', readonly: true });
-  html += fSelect('kyc-gender', 'Gender', ['Male', 'Female'], { value: gender, locked: !!gender });
-  html += profile.isMongolian
+  html += `<div class="field-row">${fText('kyc-citizenship', 'Citizenship', { value: profile.isMongolian ? 'Mongolia' : 'Foreign Citizen', readonly: true })}${fSelect('kyc-gender', 'Gender', ['Male', 'Female'], { value: gender, locked: !!gender })}</div>`;
+  const regnumField = profile.isMongolian
     ? fText(uid('gi-regnum'), 'Register Number', { placeholder: 'АА00000000' })
     : fText(uid('gi-passport'), 'Passport Number', { placeholder: 'Passport number' });
-  html += fText('kyc-dob', 'Date of Birth', { type: 'date', value: profile.dobStr, readonly: !!profile.dobStr });
+  html += `<div class="field-row">${regnumField}${fText('kyc-dob', 'Date of Birth', { type: 'date', value: profile.dobStr, readonly: !!profile.dobStr })}</div>`;
   html += fVerifiable(uid('gi-email'), 'Email', 'email', { type: 'email', placeholder: 'name@example.com' });
-  html += fVerifiable('kyc-mobile', 'Mobile Phone', 'phone', { type: 'tel', value: phone, locked: !!phone });
-  html += fText(uid('gi-secphone'), 'Secondary Phone', { type: 'tel' });
+  html += `<div class="field-row">${fVerifiable('kyc-mobile', 'Mobile Phone', 'phone', { type: 'tel', value: phone, locked: !!phone })}${fText(uid('gi-secphone'), 'Secondary Phone', { type: 'tel' })}</div>`;
+  return html;
+}
 
-  html += subHeader('Address');
+function renderAddressInfo(profile) {
+  const address = localStorage.getItem('oa-address') || '';
+  let html = sectionHeader('map-pin', 'Permanent Address');
   if (profile.isMongolian) {
-    html += fSelect(uid('gi-province'), 'Province / City', PROVINCES);
-    html += fSelect(uid('gi-district'), 'District / Soum', DISTRICTS);
+    html += `<div class="field-row">${fSelect(uid('gi-province'), 'Province / City', PROVINCES)}${fSelect(uid('gi-district'), 'District / Soum', DISTRICTS)}</div>`;
     html += fText('kyc-address', 'Address', { value: address, locked: !!address });
   } else {
     html += fSelect(uid('gi-country'), 'Country', COUNTRIES);
@@ -597,10 +598,8 @@ function renderGeneralInfo(profile, isFirst) {
 function renderEmployment() {
   let html = sectionHeader('briefcase', 'Employment');
   html += fSelect(uid('emp-type'), 'Employment Type', ['Civil Servant', 'State Owned Enterprise', 'Private Sector', 'Foreign Registered Entity', 'Transnational Organization', 'Self Employed', 'Student', 'Unemployed', 'Pensioner', 'Other']);
-  html += fText(uid('emp-employer'), 'Employer Name');
-  html += fText(uid('emp-industry'), 'Industry Type');
-  html += fText(uid('emp-position'), 'Position');
-  html += fText(uid('emp-address'), 'Employer Address');
+  html += `<div class="field-row">${fText(uid('emp-employer'), 'Employer Name')}${fText(uid('emp-industry'), 'Industry Type')}</div>`;
+  html += `<div class="field-row">${fText(uid('emp-position'), 'Position')}${fText(uid('emp-address'), 'Employer Address')}</div>`;
   return html;
 }
 
@@ -652,11 +651,9 @@ function renderEducation() {
 
 function renderEmergencyContact() {
   let html = sectionHeader('phone-call', 'Emergency Contact');
-  html += fSelect(uid('ec-rel'), 'Relationship', ['Parent', 'Spouse', 'Sibling', 'Child', 'Relative', 'Friend', 'Other']);
-  html += fText(uid('ec-name'), 'Full Name');
-  html += fText(uid('ec-regnum'), 'Register Number');
+  html += `<div class="field-row">${fSelect(uid('ec-rel'), 'Relationship', ['Parent', 'Spouse', 'Sibling', 'Child', 'Relative', 'Friend', 'Other'])}${fText(uid('ec-name'), 'Full Name')}</div>`;
+  html += `<div class="field-row">${fText(uid('ec-regnum'), 'Register Number')}${fText(uid('ec-phone'), 'Mobile Phone', { type: 'tel' })}</div>`;
   html += fText(uid('ec-address'), 'Address');
-  html += fText(uid('ec-phone'), 'Mobile Phone', { type: 'tel' });
   return html;
 }
 
@@ -674,11 +671,9 @@ function renderAttorneyInfo() {
 
 function renderGuardianInfo() {
   let html = sectionHeader('users', 'Guardian Information');
-  html += fSelect(uid('g-rel'), 'Relationship', ['Father', 'Mother', 'Guardian', 'Other']);
-  html += fText(uid('g-name'), 'Full Name');
-  html += fText(uid('g-regnum'), 'Register Number');
+  html += `<div class="field-row">${fSelect(uid('g-rel'), 'Relationship', ['Father', 'Mother', 'Guardian', 'Other'])}${fText(uid('g-name'), 'Full Name')}</div>`;
+  html += `<div class="field-row">${fText(uid('g-regnum'), 'Register Number')}${fText(uid('g-phone'), 'Mobile Phone', { type: 'tel' })}</div>`;
   html += fText(uid('g-address'), 'Address');
-  html += fText(uid('g-phone'), 'Mobile Phone', { type: 'tel' });
   return html;
 }
 
@@ -831,9 +826,11 @@ function renderAdultSteps(profile) {
     : ['Passport — Front Page', 'Selfie Photo'];
   return [
     { title: 'General Information', html: renderGeneralInfo(profile, true), requireVerify: true },
+    { title: 'Address Information', html: renderAddressInfo(profile) },
     { title: 'Employment & PEP', html: renderEmployment() + renderPepInfo() },
     { title: 'Financial & Representation', html: renderFinancialInfo() + renderActingOnBehalf(profile) },
-    { title: 'Education & Contacts', html: renderEducation() + renderEmergencyContact() + renderAttorneyInfo() },
+    { title: 'Education & Contacts', html: renderEducation() + renderEmergencyContact() },
+    { title: 'Attorney Information', html: renderAttorneyInfo() },
     { title: 'Document Upload', html: renderUploads(docs) },
     { title: 'Agreements & Signature', html: renderAgreements() + renderSignature('Digital Signature') },
   ];
@@ -845,6 +842,7 @@ function renderChildSteps(profile) {
     : ['Guardian Passport — Front Page', 'Guardian Selfie Photo', 'Child Birth Certificate'];
   return [
     { title: 'General Information', html: renderGeneralInfo(profile, true), requireVerify: true },
+    { title: 'Address Information', html: renderAddressInfo(profile) },
     { title: 'Education & Emergency Contact', html: renderEducation() + renderEmergencyContact() },
     { title: 'Guardian Information', html: renderGuardianInfo() },
     { title: 'Document Upload', html: renderUploads(docs) },
@@ -1082,12 +1080,19 @@ function updateKycStepBar() {
   });
   document.getElementById('kyc-step-meta').textContent = `Step ${kycCurrentStep} of ${kycSteps.length} — ${kycSteps[kycCurrentStep - 1].title}`;
 }
+function reportHeight() {
+  try {
+    window.parent.postMessage({ type: 'iframe-height', id: 'kyc-iframe', height: document.body.scrollHeight }, '*');
+  } catch(e) {}
+}
+
 function kycGoStep(n) {
   document.getElementById(`kyc-step-${kycCurrentStep}`).classList.remove('active');
   kycCurrentStep = n;
   document.getElementById(`kyc-step-${kycCurrentStep}`).classList.add('active');
   updateKycStepBar();
   window.scrollTo(0, 0);
+  requestAnimationFrame(reportHeight);
 }
 function kycContinue(nextStep) {
   if (kycSteps[kycCurrentStep - 1].requireVerify && !kycVerifyGateOk()) return;
@@ -1123,6 +1128,7 @@ function submitKyc() {
     btn.onclick = () => { try { window.parent.navigateTo('tripartite'); } catch (e) {} };
   }
   window.scrollTo(0, 0);
+  requestAnimationFrame(reportHeight);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1142,6 +1148,38 @@ updateKycStepBar();
 initSignatureCanvas();
 lucide.createIcons();
 kycEvalConditionals();
+requestAnimationFrame(reportHeight);
+
+/* When embedded in web flow, change bottom-sheet modals to centered dialogs */
+if (kycEmbeddedInFlow) {
+  const style = document.createElement('style');
+  style.textContent = `
+    .agreement-modal-overlay { align-items: center !important; padding: 24px; }
+    .agreement-modal-card {
+      border-radius: 18px !important;
+      border-bottom: 1px solid var(--color-border) !important;
+      max-width: 520px !important;
+      max-height: 80vh !important;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+/* If KYC already submitted, show success screen immediately */
+if (localStorage.getItem('bdsec-kyc-done') === '1') {
+  document.getElementById('kyc-header').style.display = 'none';
+  document.getElementById('kyc-intro').style.display = 'none';
+  document.getElementById('kyc-step-bar').style.display = 'none';
+  document.getElementById('kyc-step-meta').style.display = 'none';
+  document.getElementById('kyc-form-body').style.display = 'none';
+  const successEl = document.getElementById('kyc-success');
+  successEl.style.display = 'flex';
+  if (kycEmbeddedInFlow) {
+    const btn = document.getElementById('kyc-success-btn');
+    btn.textContent = 'Continue to Tripartite Agreement';
+    btn.onclick = () => { try { window.parent.navigateTo('tripartite'); } catch (e) {} };
+  }
+}
 </script>
 </body>
 </html>

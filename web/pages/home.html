@@ -73,6 +73,25 @@
     .web-grid-chart-right .web-card { display:flex; flex-direction:column; }
     .web-grid-chart-right .web-card:last-child { flex:1; min-height:0; }
     .web-grid-chart-right .ob-mini-list { flex:1; overflow:auto; }
+
+    /* ── Stock info grid ── */
+    .sinfo-item { display:flex; flex-direction:column; gap:3px; padding:10px 12px; background:var(--color-bg-input); border-radius:10px; }
+    .sinfo-label { font-size:10px; font-weight:700; color:var(--color-text-disabled); text-transform:uppercase; letter-spacing:.04em; }
+    .sinfo-value { font-size:13px; font-weight:700; color:var(--color-text-primary); font-family:'IBM Plex Mono', monospace; }
+    .sinfo-value.up { color:var(--color-buy); }
+    .sinfo-value.down { color:var(--color-sell); }
+
+    /* ── Orders table in stock panel ── */
+    #stock-orders-body tr { border-bottom:1px solid var(--color-border); }
+    #stock-orders-body tr:last-child { border-bottom:none; }
+    #stock-orders-body td { padding:9px 6px; vertical-align:middle; }
+    #stock-orders-body td:first-child { padding-left:16px; }
+    #stock-orders-body td:last-child { padding-right:16px; }
+    .order-status-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; text-transform:uppercase; letter-spacing:.03em; }
+    .order-status-badge.filled    { background:rgba(0,192,118,.12); color:var(--color-buy); }
+    .order-status-badge.pending   { background:rgba(99,102,241,.12); color:var(--color-primary); }
+    .order-status-badge.partial   { background:rgba(251,191,36,.12);  color:#F59E0B; }
+    .order-status-badge.cancelled { background:rgba(239,68,68,.10);   color:var(--color-sell); }
   </style>
 </head>
 <body>
@@ -84,27 +103,55 @@
     <button id="acct-banner-btn" class="btn btn-primary btn-sm" onclick="openAccountForm()" style="flex-shrink:0">Данс нээх</button>
   </div>
 
-  <!-- Market overview -->
-  <div class="market-stats-row">
-    <div class="stat-card">
-      <div class="stat-label">Advancers</div>
-      <div class="stat-value up"><i data-lucide="trending-up"></i><span id="stat-advancers">—</span></div>
-      <div class="stat-sub" id="stat-advancers-sub">—</div>
+  <!-- Balance summary cards -->
+  <div id="balance-cards-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <!-- Total — gradient card -->
+    <div class="web-card" style="padding:16px 18px;background:linear-gradient(135deg,#32308d 0%,var(--color-primary) 45%,#6f63e8 100%);border-color:rgba(255,255,255,0.14);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-24px;right:-24px;width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i data-lucide="wallet" style="width:14px;height:14px;color:#fff"></i>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.72);text-transform:uppercase;letter-spacing:.05em">Нийт хөрөнгө</div>
+      </div>
+      <div id="bc-total" style="font-size:18px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#fff;margin-bottom:4px">—</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Номинал + ҮЦТХТ + Үнэт цаас</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Decliners</div>
-      <div class="stat-value down"><i data-lucide="trending-down"></i><span id="stat-decliners">—</span></div>
-      <div class="stat-sub" id="stat-decliners-sub">—</div>
+    <!-- Nominal -->
+    <div class="web-card" style="padding:16px 18px;background:linear-gradient(135deg,#32308d 0%,var(--color-primary) 45%,#6f63e8 100%);border-color:rgba(255,255,255,0.14);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-24px;right:-24px;width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i data-lucide="banknote" style="width:14px;height:14px;color:#fff"></i>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.72);text-transform:uppercase;letter-spacing:.05em">Номинал</div>
+      </div>
+      <div id="bc-nominal" style="font-size:18px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#fff;margin-bottom:4px">—</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Боломжит мөнгөн дүн</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Total Volume</div>
-      <div class="stat-value"><span id="stat-volume">—</span></div>
-      <div class="stat-sub" id="stat-volume-sub">—</div>
+    <!-- MCSD -->
+    <div class="web-card" style="padding:16px 18px;background:linear-gradient(135deg,#32308d 0%,var(--color-primary) 45%,#6f63e8 100%);border-color:rgba(255,255,255,0.14);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-24px;right:-24px;width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i data-lucide="building-2" style="width:14px;height:14px;color:#fff"></i>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.72);text-transform:uppercase;letter-spacing:.05em">ҮЦТХТ</div>
+      </div>
+      <div id="bc-mcsd" style="font-size:18px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#fff;margin-bottom:4px">—</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Тооцооны данс</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Most Active</div>
-      <div class="stat-value"><span id="stat-active">—</span></div>
-      <div class="stat-sub" id="stat-active-sub">—</div>
+    <!-- Securities -->
+    <div class="web-card" style="padding:16px 18px;background:linear-gradient(135deg,#32308d 0%,var(--color-primary) 45%,#6f63e8 100%);border-color:rgba(255,255,255,0.14);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-24px;right:-24px;width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i data-lucide="trending-up" style="width:14px;height:14px;color:#fff"></i>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.72);text-transform:uppercase;letter-spacing:.05em">Үнэт цаас</div>
+      </div>
+      <div id="bc-securities" style="font-size:18px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#fff;margin-bottom:4px">—</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Одоогийн зах зээлийн үнэ</div>
     </div>
   </div>
 
@@ -189,17 +236,37 @@
     </div>
   </div>
 
-  <!-- Market table -->
-  <div class="web-card">
-    <div class="web-card-pad" style="padding-bottom:8px;border-bottom:1px solid var(--color-border)">
-      <div class="web-section-title">Зах зээлийн хүснэгт</div>
+  <!-- Stock info + my orders row -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+    <!-- Left: stock details -->
+    <div class="web-card web-card-pad">
+      <div class="web-section-title" style="margin-bottom:14px" id="info-title">БДСec ХК — BDS</div>
+      <div id="stock-info-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px"></div>
     </div>
-    <div class="table-wrap" style="border:none;border-radius:0">
-      <table>
-        <thead><tr><th>Ticker</th><th>Үнэ</th><th>Өөрчлөлт</th><th></th></tr></thead>
-        <tbody id="market-table"></tbody>
-      </table>
+
+    <!-- Right: my orders on selected stock -->
+    <div class="web-card">
+      <div class="web-card-pad" style="padding-bottom:10px;border-bottom:1px solid var(--color-border)">
+        <div class="web-section-title" id="orders-title">Миний захиалга — BDS</div>
+      </div>
+      <div style="overflow-y:auto;max-height:260px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="position:sticky;top:0;background:var(--color-bg-card);z-index:1">
+              <th style="padding:8px 16px;text-align:left;color:var(--color-text-disabled);font-size:10px;text-transform:uppercase;font-weight:700;border-bottom:1px solid var(--color-border)">Огноо</th>
+              <th style="padding:8px 6px;color:var(--color-text-disabled);font-size:10px;text-transform:uppercase;font-weight:700;border-bottom:1px solid var(--color-border)">Төрөл</th>
+              <th style="padding:8px 6px;text-align:right;color:var(--color-text-disabled);font-size:10px;text-transform:uppercase;font-weight:700;border-bottom:1px solid var(--color-border)">Тоо</th>
+              <th style="padding:8px 16px 8px 6px;text-align:right;color:var(--color-text-disabled);font-size:10px;text-transform:uppercase;font-weight:700;border-bottom:1px solid var(--color-border)">Үнэ</th>
+              <th style="padding:8px 16px 8px 6px;text-align:right;color:var(--color-text-disabled);font-size:10px;text-transform:uppercase;font-weight:700;border-bottom:1px solid var(--color-border)">Төлөв</th>
+            </tr>
+          </thead>
+          <tbody id="stock-orders-body"></tbody>
+        </table>
+        <div id="stock-orders-empty" style="display:none;padding:32px 16px;text-align:center;font-size:13px;color:var(--color-text-disabled)">Энэ хувьцаанд захиалга байхгүй</div>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -406,44 +473,69 @@
     document.getElementById('market-filter-menu')?.classList.remove('open');
   });
 
-  /* ── Market overview stats ── */
-  function parseVolume(v) {
-    const num = parseFloat(v);
-    if (String(v).includes('M')) return num * 1e6;
-    if (String(v).includes('K')) return num * 1e3;
-    return num;
-  }
-  function formatVolume(n) {
-    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
-    if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
-    return String(Math.round(n));
-  }
-  function renderMarketStats() {
-    const advancers = STOCKS.filter(s => s.changePct > 0);
-    const decliners = STOCKS.filter(s => s.changePct < 0);
-    const totalVol = STOCKS.reduce((sum, s) => sum + parseVolume(s.volume), 0);
-    const mostActive = STOCKS.reduce((a, b) => parseVolume(a.volume) > parseVolume(b.volume) ? a : b);
+  /* ── Market table (kept for internal use but not rendered in DOM) ── */
+  function renderMarketTable() { /* removed from view */ }
 
-    document.getElementById('stat-advancers').textContent = advancers.length;
-    document.getElementById('stat-advancers-sub').textContent = advancers.map(s => s.symbol).join(', ') || '—';
-    document.getElementById('stat-decliners').textContent = decliners.length;
-    document.getElementById('stat-decliners-sub').textContent = decliners.map(s => s.symbol).join(', ') || '—';
-    document.getElementById('stat-volume').textContent = formatVolume(totalVol);
-    document.getElementById('stat-volume-sub').textContent = STOCKS.length + ' securities traded';
-    document.getElementById('stat-active').textContent = mostActive.symbol;
-    document.getElementById('stat-active-sub').textContent = mostActive.volume + ' vol';
+  /* ── Stock info panel ── */
+  // Mock extended market data per symbol
+  const STOCK_DETAILS = {
+    BDS:  { isin:'MN0000000BDS', sharesOut:'12,500,000', marketCap:'15.5B', pe:'18.4', prevClose:1225, open:1228, dayHigh:1252, dayLow:1220, wkHigh52:1350, wkLow52:880 },
+    KHAN: { isin:'MN0000000KHN', sharesOut:'8,200,000',  marketCap:'31.6B', pe:'11.2', prevClose:3892, open:3870, dayHigh:3910, dayLow:3840, wkHigh52:4200, wkLow52:3100 },
+    APU:  { isin:'MN0000000APU', sharesOut:'21,000,000', marketCap:'12.9B', pe:'22.1', prevClose:604,  open:606,  dayHigh:618,  dayLow:600,  wkHigh52:680,  wkLow52:480 },
+    MSM:  { isin:'MN0000000MSM', sharesOut:'5,600,000',  marketCap:'1.7B',  pe:'14.8', prevClose:295,  open:296,  dayHigh:301,  dayLow:293,  wkHigh52:330,  wkLow52:240 },
+    TDB:  { isin:'MN0000000TDB', sharesOut:'9,800,000',  marketCap:'13.9B', pe:'9.6',  prevClose:1398, open:1405, dayHigh:1435, dayLow:1395, wkHigh52:1520, wkLow52:1100 },
+    SBN:  { isin:'MN0000000SBN', sharesOut:'3,100,000',  marketCap:'2.8B',  pe:'16.3', prevClose:902,  open:895,  dayHigh:898,  dayLow:882,  wkHigh52:1050, wkLow52:720 },
+    MNDL: { isin:'MN0000000MND', sharesOut:'6,400,000',  marketCap:'10.0B', pe:'20.5', prevClose:1555, open:1558, dayHigh:1570, dayLow:1548, wkHigh52:1650, wkLow52:1200 },
+    GOLO: { isin:'MN0000000GLO', sharesOut:'14,200,000', marketCap:'30.9B', pe:'13.7', prevClose:2162, open:2168, dayHigh:2195, dayLow:2155, wkHigh52:2400, wkLow52:1800 },
+  };
+
+  function renderStockInfo(symbol) {
+    const s = findCard(symbol);
+    if (!s) return;
+    const d = STOCK_DETAILS[symbol] || {};
+    document.getElementById('info-title').textContent = `${s.name} — ${symbol}`;
+    const items = [
+      { label:'ISIN',               value: d.isin || '—' },
+      { label:'Symbol',             value: symbol },
+      { label:'Shares Outstanding', value: d.sharesOut || '—' },
+      { label:'Market Cap',         value: d.marketCap ? d.marketCap + '₮' : '—' },
+      { label:'P/E Ratio',          value: d.pe || '—' },
+      { label:'Previous Close',     value: d.prevClose ? fmtMNT(d.prevClose) : '—' },
+      { label:'Open',               value: d.open ? fmtMNT(d.open) : '—' },
+      { label:'Day High',           value: d.dayHigh ? fmtMNT(d.dayHigh) : '—' },
+      { label:'Day Low',            value: d.dayLow  ? fmtMNT(d.dayLow)  : '—' },
+      { label:'52-Week High',       value: d.wkHigh52 ? fmtMNT(d.wkHigh52) : '—' },
+      { label:'52-Week Low',        value: d.wkLow52  ? fmtMNT(d.wkLow52)  : '—' },
+    ];
+    document.getElementById('stock-info-grid').innerHTML = items.map(i =>
+      `<div class="sinfo-item"><span class="sinfo-label">${i.label}</span><span class="sinfo-value">${i.value}</span></div>`
+    ).join('');
   }
 
-  /* ── Market table ── */
-  function renderMarketTable() {
-    document.getElementById('market-table').innerHTML = STOCKS.map(s => {
-      const sign = s.changePct >= 0 ? '+' : '';
-      const cls = s.changePct >= 0 ? 'change-up' : 'change-down';
-      return `<tr style="cursor:pointer" onclick="selectStock('${s.symbol}')">
-        <td class="font-semibold">${s.symbol}</td>
-        <td class="mono">${fmtMNT(s.price)}</td>
-        <td class="mono ${cls}">${sign}${s.changePct.toFixed(2)}%</td>
-        <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();quickTradeSymbol('${s.symbol}','BUY')">Авах</button></td>
+  /* ── My orders for selected stock ── */
+  function renderStockOrders(symbol) {
+    const orders = ORDERS.filter(o => o.symbol === symbol);
+    document.getElementById('orders-title').textContent = `Миний захиалга — ${symbol}`;
+    const tbody = document.getElementById('stock-orders-body');
+    const empty = document.getElementById('stock-orders-empty');
+    if (!orders.length) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    const statusMap = { FILLED:'filled', PENDING:'pending', PARTIAL:'partial', CANCELLED:'cancelled' };
+    const statusLbl = { FILLED:'Гүйцэтгэсэн', PENDING:'Хүлээгдэж буй', PARTIAL:'Хэсэгчлэн', CANCELLED:'Цуцлагдсан' };
+    tbody.innerHTML = orders.map(o => {
+      const typeCls = o.type === 'BUY' ? 'var(--color-buy)' : 'var(--color-sell)';
+      const typeLbl = o.type === 'BUY' ? 'Авах' : 'Зарах';
+      const sBadge  = statusMap[o.status] || '';
+      return `<tr>
+        <td style="color:var(--color-text-secondary);font-size:11px">${o.date}</td>
+        <td style="color:${typeCls};font-weight:700;font-size:12px">${typeLbl}</td>
+        <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${o.qty.toLocaleString('mn-MN')}</td>
+        <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtMNT(o.price)}</td>
+        <td style="text-align:right"><span class="order-status-badge ${sBadge}">${statusLbl[o.status]||o.status}</span></td>
       </tr>`;
     }).join('');
   }
@@ -503,6 +595,8 @@
 
     renderChart(symbol);
     renderCards();
+    renderStockInfo(symbol);
+    renderStockOrders(symbol);
   }
 
   /* ── Chart ── */
@@ -579,7 +673,7 @@
   function goTrade() { try { window.parent.navigateTo('trade'); } catch(e) {} }
   function openAccountForm() {
     const btn = document.getElementById('acct-banner-btn');
-    if (btn.textContent.includes('KYC')) { try { window.parent.navigateTo('kyc'); } catch(e) {} return; }
+    if (btn.textContent.includes('KYC')) { try { sessionStorage.setItem('bdsec-open-account-section', 'kyc'); window.parent.navigateTo('open-account'); } catch(e) {} return; }
     try { window.parent.navigateTo('open-account'); } catch(e) {}
   }
   function quickTrade(side) {
@@ -604,15 +698,40 @@
     banner.style.display = 'none';
   }
 
-  renderMarketStats();
+  /* ── Balance summary cards ── */
+  (function renderBalanceCards() {
+    const nominal = WALLET.cashBalance;
+    const mcsd    = 1_500_000; // mock MCSD balance
+    const securities = PORTFOLIO.reduce((sum, p) => sum + p.shares * p.currentPrice, 0);
+    const total = nominal + mcsd + securities;
+    document.getElementById('bc-total').textContent     = fmtMNT(total);
+    document.getElementById('bc-nominal').textContent   = fmtMNT(nominal);
+    document.getElementById('bc-mcsd').textContent      = fmtMNT(mcsd);
+    document.getElementById('bc-securities').textContent = fmtMNT(securities);
+  })();
+
   renderFilterMenu();
   renderCards();
   renderMarketTable();
   renderObMini();
   renderExecutedOrders();
   selectStock('BDS');
+  renderStockInfo('BDS');
+  renderStockOrders('BDS');
   refreshAccountBanner();
   lucide.createIcons();
+
+  /* ── Drag-to-scroll for horizontal card row ── */
+  (function () {
+    const el = document.getElementById('stock-cards');
+    if (!el) return;
+    let isDown = false, startX = 0, scrollLeft = 0;
+    el.addEventListener('mousedown', e => { isDown = true; el.style.cursor = 'grabbing'; startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft; });
+    el.addEventListener('mouseleave', () => { isDown = false; el.style.cursor = 'grab'; });
+    el.addEventListener('mouseup',    () => { isDown = false; el.style.cursor = 'grab'; });
+    el.addEventListener('mousemove',  e => { if (!isDown) return; e.preventDefault(); el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX); });
+    el.style.cursor = 'grab';
+  })();
 </script>
 </body>
 </html>

@@ -20,42 +20,47 @@
     }
 
     /* ══════════════════════════════
-       LEFT — branding panel
+       LEFT — app showcase panel
     ══════════════════════════════ */
     .auth-left {
       flex: 1.1; position: relative; overflow: hidden;
       background: var(--gradient-hero);
-      display: flex; flex-direction: column; justify-content: center;
-      padding: 64px 72px; color: #fff;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 48px 40px; gap: 32px;
     }
-    .auth-left::before, .auth-left::after {
-      content: ''; position: absolute; border-radius: 50%;
-      background: rgba(255,255,255,0.06);
+    /* phone screenshot as contained image */
+    .al-phone-img {
+      width: 90%; 
+      object-fit: contain; border-radius: 24px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+      display: block; flex-shrink: 0;
+      position: relative; z-index: 1;
     }
-    .auth-left::before { width: 420px; height: 420px; top: -140px; right: -120px; }
-    .auth-left::after { width: 320px; height: 320px; bottom: -120px; left: -80px; background: rgba(255,255,255,0.05); }
-
-    .al-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 56px; position: relative; z-index: 1; }
-    .al-logo img { height: 34px; object-fit: contain; }
-    .al-logo span { font-size: 19px; font-weight: 800; letter-spacing: 0.02em; }
-
-    .al-title { font-size: 38px; font-weight: 800; line-height: 1.25; margin: 0 0 16px; position: relative; z-index: 1; max-width: 480px; }
-    .al-sub { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.78); margin: 0 0 44px; max-width: 440px; position: relative; z-index: 1; }
-
-    .al-features { display: flex; flex-direction: column; gap: 18px; position: relative; z-index: 1; }
-    .al-feature { display: flex; align-items: flex-start; gap: 14px; }
-    .al-feature-icon {
-      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
-      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
-      display: flex; align-items: center; justify-content: center;
+    /* hide overlay — no longer needed */
+    .al-overlay { display: none; }
+    /* download section */
+    .al-download {
+      position: relative; z-index: 1;
+      width: 100%;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
-    .al-feature-icon svg { width: 19px; height: 19px; }
-    .al-feature-text strong { display: block; font-size: 14.5px; font-weight: 700; margin-bottom: 2px; }
-    .al-feature-text span { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5; }
-
-    .al-stats { display: flex; gap: 36px; margin-top: 48px; position: relative; z-index: 1; }
-    .al-stat strong { display: block; font-size: 22px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
-    .al-stat span { font-size: 12px; color: rgba(255,255,255,0.65); }
+    .al-dl-label {
+      font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.65);
+      letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 2px;
+    }
+    .al-store-btns { display: flex; gap: 10px; width: 100%; max-width: 320px; }
+    .al-store-btn {
+      flex: 1; display: flex; align-items: center; gap: 9px;
+      padding: 10px 14px; border-radius: 12px;
+      background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.14);
+      color: #fff; text-decoration: none; cursor: pointer;
+      transition: background 0.15s; font-family: 'Manrope', sans-serif;
+    }
+    .al-store-btn:hover { background: rgba(255,255,255,0.16); }
+    .al-store-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .al-store-text { display: flex; flex-direction: column; gap: 1px; }
+    .al-store-sub { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.05em; }
+    .al-store-name { font-size: 13px; font-weight: 800; }
 
     /* ══════════════════════════════
        RIGHT — auth form
@@ -285,44 +290,34 @@
 </head>
 <body>
 
-  <!-- ════ LEFT — branding ════ -->
+  <!-- ════ LEFT — app showcase ════ -->
   <div class="auth-left">
-    <div class="al-logo">
-      <img src="../public/dark.png" alt="BDSec" />
-      <span>BDSec Investments</span>
-    </div>
-
-    <h1 class="al-title">Trade Mongolian markets with confidence</h1>
-    <p class="al-sub">Real-time stock and bond prices, secure portfolio management, and seamless deposits — all in one platform built for Mongolian investors.</p>
-
-    <div class="al-features">
-      <div class="al-feature">
-        <div class="al-feature-icon"><i data-lucide="line-chart"></i></div>
-        <div class="al-feature-text">
-          <strong>Real-time market data</strong>
-          <span>Live prices, charts, and order books for MSE-listed securities.</span>
-        </div>
+    <img class="al-phone-img" src="../public/login.png" alt="BDSec mobile app" />
+    <div class="al-overlay"></div>
+    <div class="al-download">
+      <span class="al-dl-label">Апп татаж авах</span>
+      <div class="al-store-btns">
+        <!-- Google Play -->
+        <a class="al-store-btn" href="https://play.google.com/store" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <path d="M3.18 23.76c.37.2.8.2 1.17.01l12.44-7.19-2.65-2.64-10.96 9.82zM.1 1.05C.04 1.28 0 1.52 0 1.78v20.44c0 .26.04.5.1.73l11.53-11.48L.1 1.05zM20.34 10.38l-2.78-1.61-3.05 3.05 3.05 3.05 2.8-1.62c.8-.46.8-1.61-.02-2.07v.2zM4.35.22L16.79 7.4 14.14 10.05 3.18.23C3.55.04 3.98.03 4.35.22z"/>
+          </svg>
+          <div class="al-store-text">
+            <span class="al-store-sub">Get it on</span>
+            <span class="al-store-name">Google Play</span>
+          </div>
+        </a>
+        <!-- App Store -->
+        <a class="al-store-btn" href="https://apps.apple.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          <div class="al-store-text">
+            <span class="al-store-sub">Download on the</span>
+            <span class="al-store-name">App Store</span>
+          </div>
+        </a>
       </div>
-      <div class="al-feature">
-        <div class="al-feature-icon"><i data-lucide="shield-check"></i></div>
-        <div class="al-feature-text">
-          <strong>Secure & regulated</strong>
-          <span>Your funds and data are protected with bank-grade security.</span>
-        </div>
-      </div>
-      <div class="al-feature">
-        <div class="al-feature-icon"><i data-lucide="landmark"></i></div>
-        <div class="al-feature-text">
-          <strong>Bonds & IPO access</strong>
-          <span>Participate in government bonds and new public offerings.</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="al-stats">
-      <div class="al-stat"><strong>20+</strong><span>Years of experience</span></div>
-      <div class="al-stat"><strong>50K+</strong><span>Active investors</span></div>
-      <div class="al-stat"><strong>120+</strong><span>Listed securities</span></div>
     </div>
   </div>
 
@@ -339,10 +334,10 @@
     </div>
 
     <div class="auth-card">
-      <div class="auth-card-logo">
+      <!-- <div class="auth-card-logo">
         <img id="ac-logo-light" src="../public/logo.png" alt="BDSec" />
         <img id="ac-logo-dark" src="../public/dark.png" alt="BDSec" />
-      </div>
+      </div> -->
 
       <!-- ════ AUTH SECTION ════ -->
       <div id="auth-section">
@@ -382,11 +377,11 @@
             <span class="forgot-link" onclick="showForgot()">Forgot password?</span>
           </div>
 
-          <button class="btn-primary" onclick="showFaceID()">Sign In</button>
+          <button class="btn-primary" onclick="goHome()">Sign In</button>
 
           <div class="or-divider">or</div>
 
-          <button class="btn-emongolia" onclick="showFaceID()">
+          <button class="btn-emongolia" onclick="goHome()">
             <img class="emongolia-logo" src="../public/emongolia.png" alt="E-Mongolia" />
             Continue with E-Mongolia
           </button>

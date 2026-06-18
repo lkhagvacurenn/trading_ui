@@ -11,108 +11,774 @@
   <link rel="stylesheet" href="../styles/web.css" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
-  <style>body{margin:0;font-family:'Manrope', sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); }
+
+    /* ── Page layout ── */
+    .wd-page { padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .wd-grid { display: grid; grid-template-columns: 580px 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 860px) { .wd-grid { grid-template-columns: 1fr; } }
+
+    /* ── Title bar ── */
+    .page-title-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .page-back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); flex-shrink: 0;
+    }
+    .page-back-btn svg { width: 18px; height: 18px; }
+    .page-title { font-size: 20px; font-weight: 800; }
+
+    /* ── Card ── */
+    .card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 18px; overflow: hidden; }
+    .card-body { padding: 20px; }
+
+    /* ── Section label ── */
+    .sec-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      color: var(--color-text-disabled); text-transform: uppercase; margin-bottom: 10px;
+    }
+
+    /* ── Account selector ── */
+    .acct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .acct-btn {
+      padding: 14px 16px; border-radius: 14px;
+      border: 1.5px solid var(--color-border); background: var(--color-bg);
+      font-family: 'Manrope', sans-serif; cursor: pointer; transition: all 0.15s ease;
+      display: flex; align-items: center; gap: 10px; text-align: left;
+    }
+    .acct-btn-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--color-bg-input); color: var(--color-text-secondary);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .acct-btn-icon svg { width: 17px; height: 17px; }
+    .acct-btn-text { flex: 1; }
+    .acct-btn-name { font-size: 13px; font-weight: 700; line-height: 1.2; color: var(--color-text-primary); }
+    .acct-btn-type { font-size: 10px; color: var(--color-text-disabled); margin-top: 3px; margin-bottom: 1px; }
+    .acct-btn-bal { font-size: 11px; font-weight: 700; color: var(--color-text-secondary); font-family: 'IBM Plex Mono', monospace; }
+    .acct-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--color-border); flex-shrink: 0; }
+    .acct-btn.active { border-color: var(--color-primary); background: rgba(73,73,170,0.10); }
+    .acct-btn.active .acct-btn-icon { background: var(--color-primary); color: #fff; }
+    .acct-btn.active .acct-dot { border: 5px solid var(--color-primary); background: #fff; }
+    .acct-btn.active .acct-btn-name { color: var(--color-primary); }
+
+    /* ── Receiving bank ── */
+    .bank-picker { border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .bank-picker-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 14px; background: var(--color-bg);
+      cursor: pointer; transition: background 0.12s;
+    }
+    .bank-picker-header:hover { background: var(--color-bg-input); }
+    .bank-picker-selected { display: flex; align-items: center; gap: 10px; }
+    .bank-logo-sm { width: 28px; height: 28px; border-radius: 7px; object-fit: cover; background: var(--color-bg-input); flex-shrink: 0; }
+    .bank-picker-name { font-size: 13px; font-weight: 700; }
+    .bank-picker-num { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
+    .bank-picker-chev { width: 16px; height: 16px; color: var(--color-text-disabled); transition: transform 0.15s; flex-shrink: 0; }
+    .bank-picker.open .bank-picker-chev { transform: rotate(180deg); }
+    .bank-picker-list { border-top: 1px solid var(--color-border); display: none; }
+    .bank-picker.open .bank-picker-list { display: block; }
+    .bank-picker-item {
+      display: flex; align-items: center; gap: 10px; padding: 11px 14px;
+      cursor: pointer; border-bottom: 1px solid var(--color-border); transition: background 0.1s;
+    }
+    .bank-picker-item:last-child { border-bottom: none; }
+    .bank-picker-item:hover { background: var(--color-bg-input); }
+    .bank-picker-item.active { background: rgba(73,73,170,0.08); }
+    .bank-picker-item-name { font-size: 13px; font-weight: 700; }
+    .bank-picker-item-num { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
+    .bank-picker-empty { padding: 18px; text-align: center; font-size: 12px; color: var(--color-text-disabled); }
+    .field-error { font-size: 11px; color: var(--color-sell); margin-top: -10px; margin-bottom: 12px; display: none; }
+    .field-error.show { display: block; }
+
+    /* ── Amount input ── */
+    .amount-wrap { position: relative; margin-bottom: 14px; }
+    .amount-inp {
+      width: 100%; background: var(--color-bg);
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      padding: 11px 80px 11px 14px;
+      font-size: 17px; font-weight: 700; font-family: 'IBM Plex Mono', monospace;
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+      text-align: right;
+    }
+    .amount-inp:focus { border-color: var(--color-primary); }
+    .amount-inp::placeholder { color: var(--color-text-disabled); font-size: 15px; }
+    .amount-inp.error { border-color: var(--color-sell); }
+    .amount-suffix {
+      position: absolute; right: 46px; top: 50%; transform: translateY(-50%);
+      font-size: 14px; font-weight: 700; color: var(--color-text-secondary);
+      font-family: 'IBM Plex Mono', monospace; pointer-events: none;
+    }
+    .amount-max-btn {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      padding: 4px 8px; border-radius: 7px; border: none;
+      background: var(--color-bg-input); color: var(--color-primary);
+      font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif;
+    }
+    .amount-max-btn:hover { background: rgba(73,73,170,0.12); }
+
+    /* ── Quick amounts ── */
+    .quick-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
+    .quick-btn {
+      padding: 9px 6px; border-radius: 10px;
+      border: 1px solid var(--color-border); background: var(--color-bg);
+      font-size: 12px; font-weight: 700; color: var(--color-text-secondary);
+      cursor: pointer; transition: all 0.12s; text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .quick-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: rgba(73,73,170,0.08); }
+
+    /* ── Fee box ── */
+    .fee-box { border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .fee-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; }
+    .fee-row + .fee-row { border-top: 1px dashed var(--color-border); }
+    .fee-total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; border-top: 1.5px solid var(--color-border);
+      background: rgba(0,0,0,0.12);
+    }
+    .fee-lbl { font-size: 12px; color: var(--color-text-secondary); }
+    .fee-val { font-size: 13px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+    .fee-total-lbl { font-size: 13px; font-weight: 700; }
+    .fee-net-val { font-size: 15px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: var(--color-primary); }
+
+    /* ── Submit button ── */
+    .btn-withdraw {
+      width: 100%; padding: 15px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 800; color: #fff;
+      cursor: pointer; transition: opacity 0.15s; font-family: 'Manrope', sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-withdraw:hover { opacity: 0.88; }
+    .btn-withdraw svg { width: 18px; height: 18px; }
+
+    /* ── History ── */
+    .sec-title { font-size: 16px; font-weight: 800; margin-bottom: 14px; }
+    .date-range-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .dr-pill { padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; border: 1px solid var(--color-border); background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: all 0.12s; font-family: 'Manrope', sans-serif; }
+    .dr-pill.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .dr-pill:hover:not(.active) { border-color: var(--color-primary); color: var(--color-primary); }
+    .dr-sep { width: 1px; height: 18px; background: var(--color-border); flex-shrink: 0; }
+    .dr-date-inp { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--color-text-primary); font-family: 'Manrope', sans-serif; outline: none; }
+    .dr-date-inp:focus { border-color: var(--color-primary); }
+    [data-theme="dark"] .dr-date-inp { color-scheme: dark; }
+    .dr-arrow { font-size: 12px; color: var(--color-text-disabled); }
+    .hist-filters { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .hist-filter-sel {
+      padding: 7px 12px; border-radius: 8px;
+      border: 1px solid var(--color-border); background: var(--color-bg-card);
+      font-size: 12px; font-weight: 600; color: var(--color-text-secondary);
+      cursor: pointer; outline: none; font-family: 'Manrope', sans-serif;
+    }
+    .hist-filter-sel:focus { border-color: var(--color-primary); }
+    .hist-empty { padding: 40px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
+    .hist-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; border-bottom: 1px solid var(--color-border);
+      transition: background 0.1s;
+    }
+    .hist-item:last-child { border-bottom: none; }
+    .hist-item:hover { background: var(--color-bg-input); }
+    .hist-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .hist-icon svg { width: 18px; height: 18px; }
+    .hist-icon.ok      { background: rgba(0,192,118,0.12);  color: var(--color-buy); }
+    .hist-icon.pending { background: rgba(255,186,0,0.14);  color: #ffba00; }
+    .hist-icon.fail    { background: rgba(239,68,68,0.14);  color: var(--color-sell); }
+    .hist-info { flex: 1; min-width: 0; }
+    .hist-title-row { font-size: 13px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hist-date { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
+    .hist-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; color: var(--color-sell); }
+    .hist-badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+    .hist-badge.ok      { background: rgba(0,192,118,0.12);  color: var(--color-buy); }
+    .hist-badge.pending { background: rgba(255,186,0,0.14);  color: #ffba00; }
+    .hist-badge.fail    { background: rgba(239,68,68,0.14);  color: var(--color-sell); }
+    .hist-actions { display: flex; gap: 5px; }
+    .hist-action-btn {
+      width: 26px; height: 26px; border-radius: 7px;
+      border: 1px solid var(--color-border); background: var(--color-bg-input);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); transition: all 0.13s;
+    }
+    .hist-action-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .hist-action-btn.danger:hover { border-color: var(--color-sell); color: var(--color-sell); }
+    .hist-action-btn svg { width: 12px; height: 12px; }
+
+    /* ── Pagination ── */
+    .pagination { display: flex; gap: 6px; justify-content: center; padding: 14px 16px; }
+    .page-btn { min-width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg-card); font-size: 12px; font-weight: 700; color: var(--color-text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0 8px; }
+    .page-btn:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); }
+    .page-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .page-btn svg { width: 14px; height: 14px; }
+
+    /* ── Overlays ── */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 200; }
+    .overlay.show { display: flex; }
+    .modal-box { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 20px; padding: 24px; width: 400px; max-width: 95vw; }
+    .modal-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; }
+    .modal-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--color-border); }
+    .modal-row:last-of-type { border-bottom: none; }
+    .modal-lbl { font-size: 12px; color: var(--color-text-secondary); }
+    .modal-val { font-size: 13px; font-weight: 700; text-align: right; font-family: 'IBM Plex Mono', monospace; }
+    .modal-total-val { font-size: 15px; font-weight: 800; color: var(--color-primary); font-family: 'IBM Plex Mono', monospace; }
+    .modal-btn-row { display: flex; gap: 10px; margin-top: 18px; }
+    .modal-btn-cancel {
+      flex: 1; padding: 12px; background: var(--color-bg); border: 1.5px solid var(--color-border);
+      border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--color-text-secondary);
+      cursor: pointer; font-family: 'Manrope', sans-serif; transition: border-color 0.15s;
+    }
+    .modal-btn-cancel:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .modal-btn-confirm {
+      flex: 1.4; padding: 12px; background: var(--color-primary); border: none;
+      border-radius: 10px; font-size: 14px; font-weight: 800; color: #fff;
+      cursor: pointer; font-family: 'Manrope', sans-serif; transition: opacity 0.15s;
+    }
+    .modal-btn-confirm:hover { opacity: 0.88; }
+    .modal-btn-close {
+      width: 100%; padding: 12px; margin-top: 16px; background: var(--color-bg);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-size: 14px; font-weight: 700; color: var(--color-text-secondary);
+      cursor: pointer; font-family: 'Manrope', sans-serif; transition: border-color 0.15s;
+    }
+    .modal-btn-close:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* cancel confirm modal */
+    .cancel-confirm-icon {
+      width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 14px;
+      background: rgba(239,68,68,0.12); color: var(--color-sell);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cancel-confirm-icon svg { width: 24px; height: 24px; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); background: var(--color-text-primary); color: var(--color-bg); padding: 10px 20px; border-radius: 99px; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 999; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  </style>
 </head>
 <body>
-<div class="web-page">
-  <div class="web-grid-2">
+
+<div class="wd-page">
+
+  <!-- Title bar -->
+  <div class="page-title-bar">
+    <button class="page-back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+    <div class="page-title">Мөнгө хүсэх</div>
+  </div>
+
+  <div class="wd-grid">
+
+    <!-- LEFT: Form -->
     <div>
-      <h1 class="web-page-title">Зарлага хийх</h1>
-      <p style="color:var(--color-text-secondary);font-size:14px;margin:-8px 0 20px">Номинал дансаас банкны данс руу мөнгө шилжүүлнэ.</p>
+      <div class="card">
+        <div class="card-body">
 
-      <div class="web-form-card">
-        <div style="font-size:12px;color:var(--color-text-disabled);margin-bottom:4px">Боломжит зарлага</div>
-        <div style="font-size:20px;font-weight:800;font-family:'IBM Plex Mono', monospace;margin-bottom:16px" id="avail-w">—</div>
+          <!-- Account selector -->
+          <div class="sec-label">Данс сонгох</div>
+          <div class="acct-grid">
+            <button class="acct-btn active" data-acct="nominal" onclick="selectAccount('nominal')">
+              <div class="acct-btn-icon"><i data-lucide="wallet"></i></div>
+              <div class="acct-btn-text">
+                <div class="acct-btn-name">Номинал данс</div>
+                <div class="acct-btn-bal" id="bal-nominal">—</div>
+              </div>
+              <div class="acct-dot"></div>
+            </button>
+            <button class="acct-btn" data-acct="mcsd" onclick="selectAccount('mcsd')">
+              <div class="acct-btn-icon"><i data-lucide="landmark"></i></div>
+              <div class="acct-btn-text">
+                <div class="acct-btn-name">MCSD данс</div>
+                <div class="acct-btn-bal" id="bal-mcsd">—</div>
+              </div>
+              <div class="acct-dot"></div>
+            </button>
+          </div>
 
-        <div class="web-field"><label>Банк сонгох</label>
-          <div class="bank-grid" id="bank-grid"></div>
+          <!-- Receiving bank account -->
+          <div class="sec-label">Хүлээн авах данс</div>
+          <div class="bank-picker" id="bank-picker">
+            <div class="bank-picker-header" onclick="toggleBankPicker()">
+              <div class="bank-picker-selected" id="bank-picker-selected">
+                <div style="width:28px;height:28px;border-radius:7px;background:var(--color-bg-input);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="building-2" style="width:14px;height:14px;color:var(--color-text-disabled)"></i></div>
+                <div>
+                  <div class="bank-picker-name" id="bank-picker-name" style="color:var(--color-text-disabled)">Банк сонгох</div>
+                </div>
+              </div>
+              <i data-lucide="chevron-down" class="bank-picker-chev"></i>
+            </div>
+            <div class="bank-picker-list" id="bank-picker-list"></div>
+          </div>
+          <div class="field-error" id="bank-error">Хүлээн авах данс сонгоно уу</div>
+
+          <!-- Amount -->
+          <div class="sec-label">Зарлагын дүн</div>
+          <div class="amount-wrap">
+            <input class="amount-inp" type="number" id="amount-inp" placeholder="0" min="0" oninput="updateFee()" />
+            <span class="amount-suffix">₮</span>
+            <button class="amount-max-btn" onclick="setMax()">Max</button>
+          </div>
+          <div class="field-error" id="amount-error">Дүн оруулна уу</div>
+
+          <!-- Quick amounts -->
+          <div class="quick-row">
+            <button class="quick-btn" onclick="setAmount(100000)">100K</button>
+            <button class="quick-btn" onclick="setAmount(500000)">500K</button>
+            <button class="quick-btn" onclick="setAmount(1000000)">1M</button>
+            <button class="quick-btn" onclick="setAmount(5000000)">5M</button>
+          </div>
+
+          <!-- Fee summary -->
+          <div class="fee-box">
+            <div class="fee-row">
+              <span class="fee-lbl">Зарлагын дүн</span>
+              <span class="fee-val" id="fee-amount">0 ₮</span>
+            </div>
+            <div class="fee-row">
+              <span class="fee-lbl">Банкны шимтгэл</span>
+              <span class="fee-val" id="fee-val">300 ₮</span>
+            </div>
+            <div class="fee-total-row">
+              <span class="fee-total-lbl">Хүлээн авах дүн</span>
+              <span class="fee-net-val" id="fee-net">— ₮</span>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn-withdraw" onclick="goVerify()">
+            <i data-lucide="arrow-up-right"></i>
+            Мөнгө хүсэх
+          </button>
+
         </div>
-
-        <div class="web-field"><label>Дүн (₮)</label>
-          <input class="trade-input" type="number" id="wd-amount" placeholder="0" oninput="updateFee()" />
-        </div>
-
-        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">
-          <span style="color:var(--color-text-secondary)">Банкны шимтгэл</span>
-          <span class="mono" id="bank-fee">300₮</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:16px">
-          <span>Хүлээн авах дүн</span>
-          <span class="mono" id="net-amt">—</span>
-        </div>
-
-        <button class="btn btn-primary" style="width:100%" onclick="submitWithdraw()">Зарлага илгээх</button>
       </div>
     </div>
 
+    <!-- RIGHT: History -->
     <div>
-      <div class="web-section-title" style="margin-bottom:12px">Зарлагын түүх</div>
-      <div class="web-card" id="wd-list"></div>
+      <div class="sec-title">Зарлагын түүх</div>
+      <div class="date-range-bar">
+        <button class="dr-pill" data-m="1" onclick="setDR(1,this)">1 сар</button>
+        <button class="dr-pill" data-m="2" onclick="setDR(2,this)">2 сар</button>
+        <button class="dr-pill active" data-m="3" onclick="setDR(3,this)">3 сар</button>
+        <div class="dr-sep"></div>
+        <input type="date" class="dr-date-inp" id="dr-from" onchange="onDRCustom()" />
+        <span class="dr-arrow">→</span>
+        <input type="date" class="dr-date-inp" id="dr-to" onchange="onDRCustom()" />
+      </div>
+      <div class="hist-filters">
+        <select class="hist-filter-sel" id="filter-acct" onchange="renderHistory()">
+          <option value="">Бүх данс</option>
+          <option value="nominal">Номинал</option>
+          <option value="mcsd">MCSD</option>
+        </select>
+        <select class="hist-filter-sel" id="filter-status" onchange="renderHistory()">
+          <option value="">Бүх төлөв</option>
+          <option value="completed">Биелсэн</option>
+          <option value="pending">Хүлээгдэж байна</option>
+          <option value="cancelled">Цуцлагдсан</option>
+        </select>
+      </div>
+      <div class="card">
+        <div id="hist-list"></div>
+        <div id="hist-pagination"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Verify modal -->
+<div class="overlay" id="verify-overlay" onclick="if(event.target===this)closeVerify()">
+  <div class="modal-box">
+    <div class="modal-title">Зарлага баталгаажуулах</div>
+    <div id="verify-body"></div>
+    <div class="modal-btn-row">
+      <button class="modal-btn-cancel" onclick="closeVerify()">Буцах</button>
+      <button class="modal-btn-confirm" onclick="submitWithdraw()">Баталгаажуулах</button>
     </div>
   </div>
 </div>
 
+<!-- Cancel confirm modal -->
+<div class="overlay" id="cancel-overlay" onclick="if(event.target===this)closeCancelModal()">
+  <div class="modal-box" style="text-align:center;max-width:360px">
+    <div class="cancel-confirm-icon"><i data-lucide="trash-2"></i></div>
+    <div class="modal-title" style="text-align:center">Хүсэлт цуцлах уу?</div>
+    <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 4px">Зарлагын хүсэлтийг цуцлахад дүн таны дансанд буцаагдана.</p>
+    <div class="modal-btn-row">
+      <button class="modal-btn-cancel" onclick="closeCancelModal()">Үгүй</button>
+      <button class="modal-btn-confirm" onclick="confirmCancel()">Цуцлах</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div class="overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+  <div class="modal-box">
+    <div class="modal-title">Зарлагын дэлгэрэнгүй</div>
+    <div id="detail-body"></div>
+    <button class="modal-btn-close" onclick="closeDetail()">Хаах</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script src="../../data/static.js"></script>
 <script src="../scripts/components.js"></script>
 <script>
-  let selectedBank = BANKS[0]?.code;
+  /* ── Constants ── */
+  const MCSD_BAL = 1_500_000;
+  const ACCT_LABELS   = { nominal: 'Номинал', mcsd: 'MCSD' };
+  const STATUS_LABELS = { completed: 'Биелсэн', pending: 'Хүлээгдэж байна', cancelled: 'Цуцлагдсан' };
 
-  document.getElementById('bank-grid').innerHTML = BANKS.map(b =>
-    `<div class="bank-option${b.code===selectedBank?' selected':''}" data-code="${b.code}" onclick="pickBank(this,'${b.code}')">${b.short}</div>`
-  ).join('');
+  const MOCK_BANK_ACCOUNTS = [
+    { id: 'ba1', bank: 'Голомт Банк',  logo: 'bank01.png', number: '1234567890', isDefault: true  },
+    { id: 'ba2', bank: 'Хаан Банк',    logo: 'bank02.png', number: '9876543210', isDefault: false },
+    { id: 'ba3', bank: 'ТДБ Банк',     logo: 'bank03.png', number: '5551234567', isDefault: false },
+  ];
 
-  function pickBank(el, code) {
-    selectedBank = code;
-    document.querySelectorAll('.bank-option').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
+  /* ── State ── */
+  let selAccount  = 'nominal';
+  let selBankId   = null;
+  let editingId   = null;
+  let cancelId    = null;
+  let histPage    = 1;
+  const PAGE_SIZE = 6;
+
+  /* ── localStorage ── */
+  function getHistory() { try { return JSON.parse(localStorage.getItem('bdsec-wd-history') || '[]'); } catch { return []; } }
+  function saveHistory(h) { localStorage.setItem('bdsec-wd-history', JSON.stringify(h)); }
+  function getBalances() {
+    try { return JSON.parse(localStorage.getItem('bdsec-balances') || 'null') || { nominal: WALLET.cashBalance, mcsd: MCSD_BAL }; }
+    catch { return { nominal: WALLET.cashBalance, mcsd: MCSD_BAL }; }
+  }
+  function saveBalances(b) { localStorage.setItem('bdsec-balances', JSON.stringify(b)); }
+
+  /* ── Helpers ── */
+  function fmtMNT(n) { return new Intl.NumberFormat('mn-MN').format(Math.round(n)) + ' ₮'; }
+  function nowStr() { const d = new Date(), p = n => String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+  function genId() { return 'WD-' + Math.random().toString(36).slice(2,8).toUpperCase(); }
+  function maskNum(n) { const s = String(n); return s.length <= 4 ? s : '•••• ' + s.slice(-4); }
+  function goBack() { try { window.parent.navigateTo('balance'); } catch { window.history.back(); } }
+  function showToast(msg) {
+    const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  /* ── Balances display ── */
+  function refreshBalanceDisplay() {
+    const b = getBalances();
+    document.getElementById('bal-nominal').textContent = fmtMNT(b.nominal ?? WALLET.cashBalance);
+    document.getElementById('bal-mcsd').textContent    = fmtMNT(b.mcsd    ?? MCSD_BAL);
+  }
+
+  function availBalance() {
+    const b = getBalances();
+    return selAccount === 'nominal' ? (b.nominal ?? WALLET.cashBalance) : (b.mcsd ?? MCSD_BAL);
+  }
+
+  /* ── Account ── */
+  function selectAccount(acct) {
+    selAccount = acct;
+    document.querySelectorAll('.acct-btn').forEach(b => b.classList.toggle('active', b.dataset.acct === acct));
     updateFee();
   }
 
-  function calcFee(amt) {
-    if (selectedBank === '150000') return 200;
-    return amt > 5000000 ? 500 : 300;
+  /* ── Bank picker ── */
+  function renderBankPickerList() {
+    const list = document.getElementById('bank-picker-list');
+    if (!MOCK_BANK_ACCOUNTS.length) {
+      list.innerHTML = '<div class="bank-picker-empty">Холбосон данс байхгүй байна</div>'; return;
+    }
+    list.innerHTML = MOCK_BANK_ACCOUNTS.map(a => `
+      <div class="bank-picker-item ${a.id === selBankId ? 'active' : ''}" data-id="${a.id}" onclick="pickBank('${a.id}')">
+        <img class="bank-logo-sm" src="../../public/bank logo/${a.logo}" alt="${a.bank}" onerror="this.style.opacity='0'" />
+        <div>
+          <div class="bank-picker-item-name">${a.bank}</div>
+          <div class="bank-picker-item-num">${maskNum(a.number)}</div>
+        </div>
+      </div>`).join('');
   }
+
+  function updateBankPickerHeader() {
+    const acc = MOCK_BANK_ACCOUNTS.find(a => a.id === selBankId);
+    const el  = document.getElementById('bank-picker-selected');
+    if (acc) {
+      el.innerHTML = `
+        <img class="bank-logo-sm" src="../../public/bank logo/${acc.logo}" alt="${acc.bank}" onerror="this.style.opacity='0'" />
+        <div>
+          <div class="bank-picker-name">${acc.bank}</div>
+          <div class="bank-picker-num">${maskNum(acc.number)}</div>
+        </div>`;
+    } else {
+      el.innerHTML = `
+        <div style="width:28px;height:28px;border-radius:7px;background:var(--color-bg-input);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="building-2" style="width:14px;height:14px;color:var(--color-text-disabled)"></i></div>
+        <div><div class="bank-picker-name" style="color:var(--color-text-disabled)">Банк сонгох</div></div>`;
+      lucide.createIcons();
+    }
+  }
+
+  function toggleBankPicker() {
+    document.getElementById('bank-picker').classList.toggle('open');
+  }
+
+  function pickBank(id) {
+    selBankId = id;
+    document.querySelectorAll('.bank-picker-item').forEach(i => i.classList.toggle('active', i.dataset.id === id));
+    updateBankPickerHeader();
+    document.getElementById('bank-picker').classList.remove('open');
+    document.getElementById('bank-error').classList.remove('show');
+    lucide.createIcons();
+  }
+
+  document.addEventListener('click', e => {
+    const picker = document.getElementById('bank-picker');
+    if (!picker.contains(e.target)) picker.classList.remove('open');
+  });
+
+  /* ── Amount & fee ── */
+  function calcFee(amt) { return amt > 5_000_000 ? 500 : 300; }
+
+  function setAmount(n) { document.getElementById('amount-inp').value = n; updateFee(); }
+  function setMax() { document.getElementById('amount-inp').value = availBalance(); updateFee(); }
 
   function updateFee() {
-    const amt = parseFloat(document.getElementById('wd-amount').value) || 0;
+    const amt = parseFloat(document.getElementById('amount-inp').value) || 0;
     const fee = calcFee(amt);
-    document.getElementById('bank-fee').textContent = fmtMNT(fee);
-    document.getElementById('net-amt').textContent = amt > fee ? fmtMNT(amt - fee) : '—';
+    document.getElementById('fee-amount').textContent = fmtMNT(amt);
+    document.getElementById('fee-val').textContent    = fmtMNT(fee);
+    document.getElementById('fee-net').textContent    = amt > fee ? fmtMNT(amt - fee) : '—';
+    document.getElementById('amount-error').classList.remove('show');
+    document.getElementById('amount-inp').classList.remove('error');
   }
 
-  function renderList() {
-    document.getElementById('wd-list').innerHTML = WITHDRAWALS.map(w => {
-      const cls = w.status === 'COMPLETED' ? 'ok' : w.status === 'PENDING' ? 'pending' : 'bad';
-      const lbl = w.status === 'COMPLETED' ? 'Биелсэн' : w.status === 'PENDING' ? 'Хүлээгдэж байна' : 'Цуцлагдсан';
-      const cancel = w.status === 'PENDING' ? `<button class="btn btn-ghost btn-sm" style="color:var(--color-sell);margin-top:4px" onclick="cancelWd('${w.id}')">Цуцлах</button>` : '';
-      return `<div style="padding:14px 16px;border-bottom:1px solid var(--color-border)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div><div style="font-weight:700;font-family:'IBM Plex Mono', monospace">${fmtMNT(w.amount)}</div>
-          <div style="font-size:11px;color:var(--color-text-disabled);margin-top:2px">${w.bank} ${w.account} · ${w.date}</div></div>
-          <span class="status-badge ${cls}">${lbl}</span>
-        </div>${cancel}</div>`;
-    }).join('');
+  /* ── Verify flow ── */
+  function goVerify() {
+    const amt  = parseFloat(document.getElementById('amount-inp').value);
+    const avail = availBalance();
+    let valid = true;
+
+    if (!selBankId) {
+      document.getElementById('bank-error').classList.add('show'); valid = false;
+    }
+    if (!amt || amt <= 0) {
+      document.getElementById('amount-error').textContent = 'Дүн оруулна уу';
+      document.getElementById('amount-error').classList.add('show');
+      document.getElementById('amount-inp').classList.add('error'); valid = false;
+    } else if (amt > avail) {
+      document.getElementById('amount-error').textContent = `Үлдэгдэл хүрэлцэхгүй (${fmtMNT(avail)})`;
+      document.getElementById('amount-error').classList.add('show');
+      document.getElementById('amount-inp').classList.add('error'); valid = false;
+    }
+    if (!valid) return;
+
+    const acc = MOCK_BANK_ACCOUNTS.find(a => a.id === selBankId);
+    const fee = calcFee(amt);
+    document.getElementById('verify-body').innerHTML = `
+      <div class="modal-row"><span class="modal-lbl">Данс</span><span class="modal-val">${ACCT_LABELS[selAccount]}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Хүлээн авах банк</span><span class="modal-val">${acc.bank}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Дансны дугаар</span><span class="modal-val">${maskNum(acc.number)}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Зарлагын дүн</span><span class="modal-val">${fmtMNT(amt)}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Шимтгэл</span><span class="modal-val">${fmtMNT(fee)}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Хүлээн авах дүн</span><span class="modal-val modal-total-val">${fmtMNT(amt - fee)}</span></div>`;
+    document.getElementById('verify-overlay').classList.add('show');
   }
+
+  function closeVerify() { document.getElementById('verify-overlay').classList.remove('show'); }
 
   function submitWithdraw() {
-    const amt = parseFloat(document.getElementById('wd-amount').value);
-    if (!amt || amt < 1000) { showToast('1000₮-с дээш дүн оруулна уу', 'error'); return; }
-    if (amt > WALLET.cashBalance) { showToast('Үлдэгдэл хүрэлцэхгүй', 'error'); return; }
-    showToast('Зарлагын хүсэлт илгээгдлээ', 'success');
-    document.getElementById('wd-amount').value = '';
+    const amt  = parseFloat(document.getElementById('amount-inp').value);
+    const fee  = calcFee(amt);
+    const b    = getBalances();
+    let hist   = getHistory();
+
+    if (editingId) {
+      const item  = hist.find(h => h.id === editingId);
+      const delta = amt - item.amount;
+      b[selAccount] = (b[selAccount] || 0) - delta;
+      item.amount = amt; item.fee = fee;
+      item.bankId = selBankId; item.account = selAccount; item.date = nowStr();
+      editingId = null;
+    } else {
+      b[selAccount] = (b[selAccount] || 0) - amt;
+      hist.unshift({ id: genId(), date: nowStr(), account: selAccount, amount: amt, fee, bankId: selBankId, status: 'pending' });
+    }
+    saveBalances(b);
+    saveHistory(hist);
+
+    document.getElementById('amount-inp').value = '';
     updateFee();
+    refreshBalanceDisplay();
+    closeVerify();
+    histPage = 1;
+    renderHistory();
+    showToast('Зарлагын хүсэлт илгээгдлээ');
   }
 
-  function cancelWd(id) {
-    const w = WITHDRAWALS.find(x => x.id === id);
-    if (w) w.status = 'CANCELLED';
-    showToast('Зарлага цуцлагдлаа', 'success');
-    renderList();
+  /* ── Cancel ── */
+  function cancelWithdraw(id) {
+    cancelId = id;
+    document.getElementById('cancel-overlay').classList.add('show');
+  }
+  function closeCancelModal() { document.getElementById('cancel-overlay').classList.remove('show'); cancelId = null; }
+  function confirmCancel() {
+    const hist = getHistory();
+    const item = hist.find(h => h.id === cancelId);
+    if (!item || item.status !== 'pending') { closeCancelModal(); return; }
+    item.status = 'cancelled';
+    saveHistory(hist);
+    const b = getBalances();
+    b[item.account] = (b[item.account] || 0) + item.amount;
+    saveBalances(b);
+    refreshBalanceDisplay();
+    closeCancelModal();
+    renderHistory();
+    showToast('Хүсэлт цуцлагдлаа');
   }
 
-  document.getElementById('avail-w').textContent = fmtMNT(WALLET.cashBalance);
+  /* ── Edit ── */
+  function editWithdraw(id) {
+    const hist = getHistory();
+    const item = hist.find(h => h.id === id);
+    if (!item || item.status !== 'pending') return;
+    editingId = id;
+    selectAccount(item.account);
+    selBankId = item.bankId;
+    updateBankPickerHeader();
+    renderBankPickerList();
+    document.getElementById('amount-inp').value = item.amount;
+    updateFee();
+    showToast('Хүсэлтийг засаж дахин илгээнэ үү');
+  }
+
+  /* ── Date range ── */
+  let drFrom = null, drTo = null;
+  function initDR() {
+    drTo = new Date();
+    drFrom = new Date(); drFrom.setMonth(drFrom.getMonth() - 3);
+    document.getElementById('dr-from').value = drFrom.toISOString().slice(0,10);
+    document.getElementById('dr-to').value   = drTo.toISOString().slice(0,10);
+  }
+  function setDR(months, btn) {
+    document.querySelectorAll('.dr-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    drTo = new Date(); drFrom = new Date(); drFrom.setMonth(drFrom.getMonth() - months);
+    document.getElementById('dr-from').value = drFrom.toISOString().slice(0,10);
+    document.getElementById('dr-to').value   = drTo.toISOString().slice(0,10);
+    histPage = 1; renderHistory();
+  }
+  function onDRCustom() {
+    document.querySelectorAll('.dr-pill').forEach(p => p.classList.remove('active'));
+    drFrom = new Date(document.getElementById('dr-from').value);
+    drTo   = new Date(document.getElementById('dr-to').value);
+    if (isNaN(drFrom) || isNaN(drTo)) return;
+    const maxTo = new Date(drFrom); maxTo.setMonth(maxTo.getMonth() + 3);
+    if (drTo > maxTo) { drTo = maxTo; document.getElementById('dr-to').value = maxTo.toISOString().slice(0,10); }
+    histPage = 1; renderHistory();
+  }
+
+  /* ── History ── */
+  function getFilteredHistory() {
+    const acct   = document.getElementById('filter-acct').value;
+    const status = document.getElementById('filter-status').value;
+    let list = getHistory();
+    if (acct)   list = list.filter(h => h.account === acct);
+    if (status) list = list.filter(h => h.status  === status);
+    if (drFrom && drTo) list = list.filter(h => {
+      const d = new Date(h.date.replace(' ','T'));
+      return d >= drFrom && d <= drTo;
+    });
+    return list;
+  }
+
+  function renderHistory() {
+    const list = getFilteredHistory();
+    const el   = document.getElementById('hist-list');
+    if (!list.length) {
+      el.innerHTML = '<div class="hist-empty">Зарлагын түүх байхгүй байна</div>';
+      document.getElementById('hist-pagination').innerHTML = '';
+      return;
+    }
+    const total = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+    if (histPage > total) histPage = total;
+    const items = list.slice((histPage - 1) * PAGE_SIZE, histPage * PAGE_SIZE);
+    const icMap  = { completed: 'ok', pending: 'pending', cancelled: 'fail' };
+    const icIcon = { completed: 'check', pending: 'clock', cancelled: 'x' };
+
+    el.innerHTML = items.map(h => {
+      const cls  = icMap[h.status]  || 'pending';
+      const ico  = icIcon[h.status] || 'clock';
+      const lbl  = STATUS_LABELS[h.status] || h.status;
+      const acc  = MOCK_BANK_ACCOUNTS.find(a => a.id === h.bankId);
+      const bankLabel = acc ? `${acc.bank} · ${maskNum(acc.number)}` : '—';
+      const actions = h.status === 'pending' ? `
+        <div class="hist-actions">
+          <button class="hist-action-btn" title="Засах" onclick="editWithdraw('${h.id}')"><i data-lucide="pencil"></i></button>
+          <button class="hist-action-btn danger" title="Цуцлах" onclick="cancelWithdraw('${h.id}')"><i data-lucide="trash-2"></i></button>
+        </div>` : '';
+      return `<div class="hist-item">
+        <div class="hist-icon ${cls}"><i data-lucide="${ico}"></i></div>
+        <div class="hist-info">
+          <div class="hist-title-row">${ACCT_LABELS[h.account]||h.account} · ${bankLabel}</div>
+          <div class="hist-date">${h.date}</div>
+        </div>
+        <div class="hist-right">
+          ${actions}
+          <div class="hist-amount">-${fmtMNT(h.amount)}</div>
+          <span class="hist-badge ${cls}" style="cursor:pointer" onclick="showDetail('${h.id}')">${lbl}</span>
+        </div>
+      </div>`;
+    }).join('');
+    renderPagination(total);
+    lucide.createIcons();
+  }
+
+  function renderPagination(total) {
+    const el = document.getElementById('hist-pagination');
+    if (total <= 1) { el.innerHTML = ''; return; }
+    let html = '<div class="pagination">';
+    html += `<button class="page-btn" onclick="goPage(${histPage-1})" ${histPage===1?'disabled':''}><i data-lucide="chevron-left"></i></button>`;
+    for (let p = 1; p <= total; p++) html += `<button class="page-btn ${p===histPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    html += `<button class="page-btn" onclick="goPage(${histPage+1})" ${histPage===total?'disabled':''}><i data-lucide="chevron-right"></i></button>`;
+    html += '</div>';
+    el.innerHTML = html;
+    lucide.createIcons();
+  }
+
+  function goPage(p) { histPage = p; renderHistory(); }
+
+  /* ── Detail ── */
+  function showDetail(id) {
+    const h   = getHistory().find(x => x.id === id); if (!h) return;
+    const acc = MOCK_BANK_ACCOUNTS.find(a => a.id === h.bankId);
+    const cls = { completed:'ok', pending:'pending', cancelled:'fail' }[h.status] || 'pending';
+    const lbl = STATUS_LABELS[h.status] || h.status;
+    document.getElementById('detail-body').innerHTML = `
+      <div class="modal-row"><span class="modal-lbl">ID</span><span class="modal-val">${h.id}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Данс</span><span class="modal-val">${ACCT_LABELS[h.account]||h.account}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Хүлээн авах банк</span><span class="modal-val">${acc ? acc.bank : '—'}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Дансны дугаар</span><span class="modal-val">${acc ? maskNum(acc.number) : '—'}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Зарлагын дүн</span><span class="modal-val">-${fmtMNT(h.amount)}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Шимтгэл</span><span class="modal-val">${fmtMNT(h.fee || 300)}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Огноо</span><span class="modal-val">${h.date}</span></div>
+      <div class="modal-row"><span class="modal-lbl">Төлөв</span><span class="modal-val"><span class="hist-badge ${cls}">${lbl}</span></span></div>`;
+    document.getElementById('detail-overlay').classList.add('show');
+  }
+  function closeDetail() { document.getElementById('detail-overlay').classList.remove('show'); }
+
+  /* ── Init ── */
+  refreshBalanceDisplay();
+  selBankId = MOCK_BANK_ACCOUNTS[0]?.id || null;
+  renderBankPickerList();
+  updateBankPickerHeader();
   updateFee();
-  renderList();
+  initDR();
+  renderHistory();
+  lucide.createIcons();
 </script>
 </body>
 </html>

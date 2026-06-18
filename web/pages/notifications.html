@@ -3,99 +3,426 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Мэдэгдэл — BDSec</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Мэдэгдэл</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
-  <link rel="stylesheet" href="../../styles/components.css" />
-  <link rel="stylesheet" href="../styles/web.css" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
-  <style>body{margin:0;font-family:'Manrope', sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
-</head>
-<body>
-<div class="web-page">
-  <div class="page-toolbar">
-    <h1 class="web-page-title" style="margin:0">Мэдэгдэл</h1>
-    <div class="page-toolbar-left">
-      <button class="btn btn-outline btn-sm" onclick="markAllRead()">Бүгдийг уншсан</button>
-      <button class="btn btn-ghost btn-sm" onclick="goAlerts()">
-        <i data-lucide="bell-ring" style="width:14px;height:14px"></i> Сэрэмжлүүлэг
-      </button>
-    </div>
-  </div>
-
-  <div class="filter-pills" style="margin-bottom:16px">
-    <button class="filter-pill active" data-tab="all" onclick="setTab('all',this)">Бүгд</button>
-    <button class="filter-pill" data-tab="unread" onclick="setTab('unread',this)">Уншаагүй</button>
-    <button class="filter-pill" data-tab="alert" onclick="setTab('alert',this)">Сэрэмжлүүлэг</button>
-    <button class="filter-pill" data-tab="order" onclick="setTab('order',this)">Захиалга</button>
-    <button class="filter-pill" data-tab="system" onclick="setTab('system',this)">Систем</button>
-  </div>
-
-  <div id="notif-list"></div>
-</div>
-
-<script src="../../data/static.js"></script>
-<script src="../scripts/components.js"></script>
-<script>
-  let items = NOTIFICATIONS.map(n => ({ ...n }));
-  let activeTab = 'all';
-
-  const ICON_MAP = {
-    alert: 'bell-ring',
-    order: 'list-ordered',
-    system: 'info',
-    account: 'wallet',
-  };
-
-  function goAlerts() {
-    try { window.parent.navigateTo('alerts'); } catch (e) {}
-  }
-
-  function setTab(tab, btn) {
-    activeTab = tab;
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    renderList();
-  }
-
-  function markAllRead() {
-    items.forEach(n => { n.read = true; });
-    renderList();
-    showToast('Бүгд уншсан боллоо');
-  }
-
-  function markRead(id) {
-    const n = items.find(x => x.id === id);
-    if (n) n.read = true;
-    renderList();
-  }
-
-  function renderList() {
-    let list = items;
-    if (activeTab === 'unread') list = list.filter(n => !n.read);
-    else if (activeTab !== 'all') list = list.filter(n => n.type === activeTab);
-
-    const container = document.getElementById('notif-list');
-    if (!list.length) {
-      container.innerHTML = '<div class="orders-empty">Мэдэгдэл байхгүй</div>';
-      return;
+  <script>(function(){try{const t=localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: 'Manrope', sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      overflow: hidden;
     }
 
-    container.innerHTML = list.map(n => `
-      <div class="notif-item${n.read ? '' : ' unread'}" onclick="markRead('${n.id}')">
-        <div class="notif-icon"><i data-lucide="${ICON_MAP[n.type] || 'bell'}"></i></div>
-        <div class="notif-content">
-          <div class="notif-title">${n.title}${n.read ? '' : ' <span class="notif-dot"></span>'}</div>
-          <div class="notif-body">${n.body}</div>
-          <div class="notif-date">${n.date}</div>
+    /* ═══ ROOT LAYOUT ═══ */
+    .notif-root {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .notif-header {
+      padding: 18px 0 13px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg-card);
+      flex-shrink: 0;
+    }
+    .notif-header-inner {
+      max-width: 960px; margin: 0 auto; padding: 0 24px;
+    }
+    .notif-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .notif-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .notif-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0;
+    }
+    .unread-badge {
+      background: var(--color-primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .mark-all-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-input);
+      color: var(--color-text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .mark-all-btn:hover { background: rgba(73,73,170,0.12); border-color: var(--color-primary); color: var(--color-primary); }
+    .mark-all-btn svg { width: 13px; height: 13px; }
+
+    /* ═══ FILTER PILLS ═══ */
+    .filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-pill {
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 99px;
+      border: 1px solid var(--color-border); background: transparent;
+      color: var(--color-text-secondary); font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; font-family: 'Manrope', sans-serif;
+    }
+    .filter-pill.active { background: rgba(73,73,170,0.15); border-color: var(--color-primary); color: var(--color-primary); }
+    .filter-pill:hover:not(.active) { background: var(--color-bg-input); color: var(--color-text-primary); }
+    .pill-count {
+      background: var(--color-bg-input); border-radius: 99px;
+      padding: 1px 6px; font-size: 10px; font-family: 'IBM Plex Mono', monospace;
+    }
+    .filter-pill.active .pill-count { background: rgba(73,73,170,0.3); }
+
+    /* ═══ BODY: two columns ═══ */
+    .notif-body-outer { flex: 1; overflow-y: auto; }
+    .notif-body-outer::-webkit-scrollbar { width: 4px; }
+    .notif-body-outer::-webkit-scrollbar-track { background: transparent; }
+    .notif-body-outer::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+    .notif-body {
+      max-width: 960px; margin: 0 auto; padding: 16px 24px 24px;
+      display: grid;
+      grid-template-columns: 1fr 268px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    /* ═══ LEFT: LIST ═══ */
+    .notif-list-col { display: flex; flex-direction: column; }
+
+    .date-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--color-text-disabled);
+      margin: 0 0 6px; padding: 0 2px;
+    }
+    .date-label + .date-label, .notif-item + .date-label { margin-top: 18px; }
+
+    /* Notification card */
+    .notif-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 11px 12px; border-radius: 11px;
+      border: 1px solid transparent;
+      margin-bottom: 3px; cursor: pointer;
+      transition: all 0.15s; position: relative;
+    }
+    .notif-item:hover { background: var(--color-bg-input); border-color: var(--color-border); }
+    .notif-item.selected { background: rgba(73,73,170,0.10); border-color: rgba(73,73,170,0.35); }
+    .notif-item.unread { background: rgba(73,73,170,0.05); border-color: rgba(73,73,170,0.16); }
+    .notif-item.unread:hover, .notif-item.unread.selected { background: rgba(73,73,170,0.12); border-color: rgba(73,73,170,0.4); }
+    .notif-item.unread::before {
+      content: ''; position: absolute; left: 0; top: 10px; bottom: 10px;
+      width: 3px; border-radius: 0 3px 3px 0; background: var(--color-primary);
+    }
+
+    .ni-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .ni-icon svg { width: 15px; height: 15px; }
+    .ni-alert   { background: rgba(245,158,11,0.15); color: #F59E0B; }
+    .ni-order   { background: rgba(14,165,233,0.15); color: #0EA5E9; }
+    .ni-system  { background: rgba(99,102,241,0.15); color: #6366f1; }
+    .ni-account { background: rgba(16,185,129,0.15); color: #10B981; }
+
+    .ni-content { flex: 1; min-width: 0; }
+    .ni-row1 { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+    .ni-title { font-size: 13px; font-weight: 700; color: var(--color-text-primary); line-height: 1.3; }
+    .ni-time { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; white-space: nowrap; flex-shrink: 0; }
+    .ni-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ni-footer { display: flex; align-items: center; gap: 6px; margin-top: 5px; }
+    .type-chip {
+      font-size: 10px; font-weight: 700; padding: 2px 7px;
+      border-radius: 99px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .tc-alert   { background: rgba(245,158,11,0.12); color: #F59E0B; }
+    .tc-order   { background: rgba(14,165,233,0.12); color: #0EA5E9; }
+    .tc-system  { background: rgba(99,102,241,0.12); color: #6366f1; }
+    .tc-account { background: rgba(16,185,129,0.12); color: #10B981; }
+    .unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-primary); flex-shrink: 0; }
+
+    /* ═══ RIGHT: PANEL ═══ */
+    .notif-right-col { background: var(--color-bg); position: sticky; top: 0; }
+
+    .rcard { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+    .rcard-title { font-size: 11px; font-weight: 700; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+
+    .unread-hero { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 14px; }
+    .unread-num { font-size: 44px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: var(--color-primary); line-height: 1; }
+    .unread-sub { font-size: 12px; color: var(--color-text-secondary); padding-bottom: 5px; }
+
+    .type-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--color-border); }
+    .type-row-left { display: flex; align-items: center; gap: 8px; }
+    .type-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .type-row-label { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
+    .type-row-right { display: flex; align-items: center; gap: 7px; }
+    .type-unread-badge { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; background: rgba(73,73,170,0.15); color: var(--color-primary); }
+    .type-count { font-size: 13px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-primary); }
+
+    .qa-btn {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 10px 13px; border-radius: 10px;
+      border: 1px solid var(--color-border); background: var(--color-bg-input);
+      color: var(--color-text-secondary); font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; font-family: 'Manrope', sans-serif;
+      margin-bottom: 6px;
+    }
+    .qa-btn:last-child { margin-bottom: 0; }
+    .qa-btn:hover { background: rgba(73,73,170,0.12); border-color: var(--color-primary); color: var(--color-primary); }
+    .qa-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* Detail panel */
+    .detail-icon { width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin-bottom: 13px; }
+    .detail-icon svg { width: 21px; height: 21px; }
+    .detail-type-chip { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; display: inline-block; }
+    .detail-title { font-size: 15px; font-weight: 800; margin: 0 0 10px; line-height: 1.35; }
+    .detail-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.65; margin-bottom: 14px; }
+    .detail-meta { display: flex; flex-direction: column; gap: 8px; padding: 13px 0; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); margin-bottom: 14px; }
+    .dmeta-row { display: flex; justify-content: space-between; font-size: 12px; }
+    .dmeta-key { color: var(--color-text-disabled); }
+    .dmeta-val { font-weight: 600; font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+    .detail-action-btn {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      width: 100%; padding: 11px; border-radius: 10px; border: none;
+      background: var(--color-primary); color: #fff;
+      font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.15s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .detail-action-btn:hover { opacity: 0.85; }
+    .detail-action-btn svg { width: 14px; height: 14px; }
+
+    /* Empty states */
+    .notif-empty {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 60px 20px; gap: 12px;
+      color: var(--color-text-disabled); text-align: center;
+    }
+    .notif-empty svg { width: 38px; height: 38px; opacity: 0.3; }
+    .notif-empty p { margin: 0; font-size: 13px; }
+  </style>
+</head>
+<body>
+<div class="notif-root">
+
+  <!-- ── Header ── -->
+  <div class="notif-header">
+  <div class="notif-header-inner">
+    <div class="notif-header-row">
+      <div class="notif-title-group">
+        <h1 class="notif-title">Мэдэгдэл</h1>
+        <span class="unread-badge" id="hdr-badge">2</span>
+      </div>
+      <button class="mark-all-btn" onclick="markAllRead()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m1 9 11 11L23 6"/><path d="m1 9 5 5"/></svg>
+        Бүгдийг уншсан болгох
+      </button>
+    </div>
+    <div class="filter-row">
+      <button class="filter-pill active" data-filter="all"     onclick="setFilter('all')">    Бүгд     <span class="pill-count" id="fc-all">8</span></button>
+      <button class="filter-pill"        data-filter="unread"  onclick="setFilter('unread')"> Уншаагүй <span class="pill-count" id="fc-unread">2</span></button>
+      <button class="filter-pill"        data-filter="alert"   onclick="setFilter('alert')">  Сэрэмж   <span class="pill-count" id="fc-alert">2</span></button>
+      <button class="filter-pill"        data-filter="order"   onclick="setFilter('order')">  Захиалга <span class="pill-count" id="fc-order">2</span></button>
+      <button class="filter-pill"        data-filter="system"  onclick="setFilter('system')"> Систем   <span class="pill-count" id="fc-system">2</span></button>
+      <button class="filter-pill"        data-filter="account" onclick="setFilter('account')">Данс     <span class="pill-count" id="fc-account">2</span></button>
+    </div>
+  </div><!-- /notif-header-inner -->
+  </div><!-- /notif-header -->
+
+  <!-- ── Body ── -->
+  <div class="notif-body-outer">
+  <div class="notif-body">
+
+    <!-- Left: list -->
+    <div class="notif-list-col">
+      <div id="notif-list"></div>
+    </div>
+
+    <!-- Right: stats / detail -->
+    <div class="notif-right-col" id="notif-right"></div>
+
+  </div>
+  </div>
+</div>
+
+<script>
+// ─── Data ────────────────────────────────────────────────────────────────────
+const NOTIFS = [
+  { id:'N-001', type:'alert',   title:'Үнийн сэрэмж идэвхжлээ',  body:'KHAN хааллын үнэ 3,800₮-ийн доор унав — тохируулсан нөхцөл биелэв.',         date:'2026-06-18 11:30', read:false },
+  { id:'N-002', type:'system',  title:'Зах зээл нээлттэй',        body:'Өнөөдрийн арилжааны цаг 10:00 цагт эхэлж байна. Сайн арилжаа хийгээрэй.',     date:'2026-06-18 09:55', read:false },
+  { id:'N-003', type:'order',   title:'Захиалга биелэв',           body:'BDS — 50 хувьцааг 1,220₮-ийн үнэ дээр авлаа. Нийт 61,000₮.',                  date:'2026-06-17 09:35', read:true  },
+  { id:'N-004', type:'account', title:'Цэнэглэлт амжилттай',      body:'3,000,000₮-ийг таны Номинал дансанд байршууллаа.',                              date:'2026-06-16 11:22', read:true  },
+  { id:'N-005', type:'order',   title:'Захиалга хүлээгдэж байна', body:'APU — 100 хувьцааг 605₮-ийн үнэ дээр авах захиалга өгөгдлөө.',                  date:'2026-06-16 08:45', read:true  },
+  { id:'N-006', type:'system',  title:'Шинэ IPO нээлттэй',        body:'Эрдэнэс Тавантолгой ХК-ийн IPO захиалга эхэллээ. Өргөдлөө гаргана уу.',        date:'2026-06-15 08:00', read:true  },
+  { id:'N-007', type:'account', title:'Мөнгө авах хүсэлт',        body:'200,000₮-ийн татан авалт боловсруулагдаж байна. 1–2 ажлын өдөр болно.',         date:'2026-06-14 16:05', read:true  },
+  { id:'N-008', type:'alert',   title:'Үнийн сэрэмж идэвхжлээ',  body:'BDS хааллын үнэ 1,240₮-ийн дээр гарлаа — зорилтот үнэ биелэв.',               date:'2026-06-12 14:32', read:true  },
+];
+
+const ICONS = {
+  alert:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
+  order:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+  system: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  account:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>`,
+};
+const LABELS  = { alert:'Сэрэмж', order:'Захиалга', system:'Систем', account:'Данс' };
+const ACTIONS = { alert:'Сэрэмж харах', order:'Захиалга харах', system:'Дэлгэрэнгүй', account:'Данс харах' };
+const NAV     = { alert:'alerts', order:'all-orders', system:null, account:'balance' };
+const COLORS  = { alert:'#F59E0B', order:'#0EA5E9', system:'#6366f1', account:'#10B981' };
+
+let currentFilter = 'all';
+let selectedId    = null;
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function timeAgo(str) {
+  const now  = new Date();
+  const d    = new Date(str.replace(' ','T'));
+  const sec  = Math.floor((now - d) / 1000);
+  if (sec < 60)    return 'Дөнгөж сая';
+  if (sec < 3600)  return Math.floor(sec/60) + ' мин';
+  if (sec < 86400) return Math.floor(sec/3600) + ' ц';
+  const days = Math.floor(sec/86400);
+  if (days === 1)  return 'Өчигдөр';
+  return d.toLocaleDateString('mn-MN', { month:'short', day:'numeric' });
+}
+function dateLabel(str) {
+  const d   = new Date(str.replace(' ','T'));
+  const now = new Date();
+  const yes = new Date(now); yes.setDate(now.getDate()-1);
+  if (d.toDateString() === now.toDateString()) return 'Өнөөдөр';
+  if (d.toDateString() === yes.toDateString()) return 'Өчигдөр';
+  return d.toLocaleDateString('mn-MN', { month:'long', day:'numeric' });
+}
+function filtered() {
+  if (currentFilter === 'all')    return NOTIFS;
+  if (currentFilter === 'unread') return NOTIFS.filter(n => !n.read);
+  return NOTIFS.filter(n => n.type === currentFilter);
+}
+
+// ─── Render list ─────────────────────────────────────────────────────────────
+function renderList() {
+  const el   = document.getElementById('notif-list');
+  const list = filtered();
+  if (!list.length) {
+    el.innerHTML = `<div class="notif-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><p>Мэдэгдэл байхгүй байна</p></div>`;
+    return;
+  }
+  const groups = {};
+  list.forEach(n => {
+    const lbl = dateLabel(n.date);
+    (groups[lbl] = groups[lbl] || []).push(n);
+  });
+  let html = '';
+  Object.entries(groups).forEach(([lbl, items]) => {
+    html += `<div class="date-label">${lbl}</div>`;
+    items.forEach(n => {
+      const unr = !n.read ? ' unread' : '';
+      const sel = n.id === selectedId ? ' selected' : '';
+      html += `<div class="notif-item${unr}${sel}" onclick="select('${n.id}')">
+        <div class="ni-icon ni-${n.type}">${ICONS[n.type]}</div>
+        <div class="ni-content">
+          <div class="ni-row1">
+            <div class="ni-title">${n.title}</div>
+            <div class="ni-time">${timeAgo(n.date)}</div>
+          </div>
+          <div class="ni-body">${n.body}</div>
+          <div class="ni-footer">
+            <span class="type-chip tc-${n.type}">${LABELS[n.type]}</span>
+            ${!n.read ? '<span class="unread-dot"></span>' : ''}
+          </div>
         </div>
-      </div>`).join('');
-    lucide.createIcons();
+      </div>`;
+    });
+  });
+  el.innerHTML = html;
+}
+
+// ─── Render right panel ───────────────────────────────────────────────────────
+function renderRight() {
+  const col = document.getElementById('notif-right');
+  const n   = NOTIFS.find(x => x.id === selectedId);
+
+  if (!n) {
+    col.innerHTML = '';
+    return;
   }
 
+  const navPage = NAV[n.type];
+  col.innerHTML = `
+    <div class="rcard">
+      <div class="detail-icon ni-${n.type}">${ICONS[n.type]}</div>
+      <span class="detail-type-chip tc-${n.type}">${LABELS[n.type]}</span>
+      <h2 class="detail-title">${n.title}</h2>
+      <p class="detail-body">${n.body}</p>
+      <div class="detail-meta">
+        <div class="dmeta-row"><span class="dmeta-key">Огноо</span><span class="dmeta-val">${n.date}</span></div>
+        <div class="dmeta-row"><span class="dmeta-key">Төлөв</span><span class="dmeta-val">${n.read ? '✓ Уншсан' : '● Уншаагүй'}</span></div>
+        <div class="dmeta-row"><span class="dmeta-key">Дугаар</span><span class="dmeta-val">${n.id}</span></div>
+      </div>
+      ${navPage ? `<button class="detail-action-btn" onclick="if(window.parent&&window.parent.navigateTo)window.parent.navigateTo('${navPage}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        ${ACTIONS[n.type]}
+      </button>` : ''}
+    </div>`;
+}
+
+// ─── Actions ─────────────────────────────────────────────────────────────────
+function select(id) {
+  const n = NOTIFS.find(x => x.id === id);
+  if (!n) return;
+  n.read = true;
+  selectedId = id;
+  updateCounts();
   renderList();
+  renderRight();
+}
+function markAllRead() {
+  NOTIFS.forEach(n => n.read = true);
+  selectedId = null;
+  updateCounts();
+  renderList();
+  renderRight();
+}
+function setFilter(f) {
+  currentFilter = f;
+  selectedId = null;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === f));
+  renderList();
+  renderRight();
+}
+function updateCounts() {
+  const unread = NOTIFS.filter(n => !n.read).length;
+  document.getElementById('fc-all').textContent     = NOTIFS.length;
+  document.getElementById('fc-unread').textContent  = unread;
+  ['alert','order','system','account'].forEach(t =>
+    document.getElementById('fc-'+t).textContent = NOTIFS.filter(n => n.type === t).length
+  );
+  const badge = document.getElementById('hdr-badge');
+  badge.textContent    = unread;
+  badge.style.display  = unread > 0 ? '' : 'none';
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+updateCounts();
+renderList();
+renderRight();
 </script>
 </body>
 </html>

@@ -4,550 +4,1302 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Хоёрдогч арилжаа — BDSec</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
-  <link rel="stylesheet" href="../../styles/components.css" />
-  <link rel="stylesheet" href="../styles/web.css" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin:0; font-family:'Manrope', sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
-    * { box-sizing:border-box; }
-    .selector-pill {
-      display:flex; align-items:center; gap:8px;
-      background:var(--color-bg-input); border:1px solid var(--color-border);
-      border-radius:10px; padding:8px 12px; cursor:pointer;
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); overflow: hidden; }
+
+    /* ── Root layout ── */
+    .tr-root { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* ══════════════════════════════
+       HEADER
+    ══════════════════════════════ */
+    .tr-header {
+      display: flex; align-items: center; gap: 0;
+      height: 52px; flex-shrink: 0;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg-card);
     }
-    .sel-symbol { font-size:14px; font-weight:700; }
-    .sel-name { font-size:11px; color:var(--color-text-secondary); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .price-big { font-size:20px; font-weight:800; font-family:'IBM Plex Mono', monospace; text-align:right; }
-    .price-date { font-size:10px; color:var(--color-text-disabled); text-align:right; }
-    .price-change { font-size:12px; font-weight:600; text-align:right; }
-    .price-change.up { color:var(--color-buy); }
-    .price-change.down { color:var(--color-sell); }
-    .price-steps-table { width:100%; font-size:12px; border-collapse:collapse; }
-    .price-steps-table th, .price-steps-table td { padding:8px 10px; border-bottom:1px solid var(--color-border); text-align:left; }
-    .chart-wrap { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:12px; padding:12px; min-height:360px; }
+    /* Stock picker */
+    .tr-picker {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 16px; height: 100%; cursor: pointer;
+      border-right: 1px solid var(--color-border);
+      min-width: 180px; flex-shrink: 0;
+      transition: background 0.12s;
+    }
+    .tr-picker:hover { background: rgba(73,73,170,0.07); }
+    .tr-picker-sym { font-size: 16px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .tr-picker-name { font-size: 11px; color: var(--color-text-secondary); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+    .tr-picker svg { width: 14px; height: 14px; color: var(--color-text-disabled); flex-shrink: 0; }
+
+    /* Price block */
+    .tr-price-block {
+      display: flex; align-items: baseline; gap: 8px;
+      padding: 0 20px; border-right: 1px solid var(--color-border); height: 100%;
+      align-items: center; flex-shrink: 0;
+    }
+    .tr-price-val { font-size: 20px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .tr-price-chg { font-size: 12px; font-weight: 700; }
+    .tr-price-chg.up { color: var(--color-buy); }
+    .tr-price-chg.down { color: var(--color-sell); }
+
+    /* OHLCV stats */
+    .tr-stats {
+      display: flex; align-items: center; gap: 0; flex: 1; height: 100%;
+      overflow: hidden;
+    }
+    .tr-stat {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 16px; border-right: 1px solid var(--color-border); height: 100%;
+      min-width: 80px;
+    }
+    .tr-stat-label { font-size: 9px; font-weight: 700; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .tr-stat-val { font-size: 12px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+    .tr-stat-val.up { color: var(--color-buy); }
+    .tr-stat-val.down { color: var(--color-sell); }
+
+    /* Header actions */
+    .tr-hdr-actions { display: flex; align-items: center; gap: 4px; padding: 0 12px; flex-shrink: 0; }
+    .tr-icon-btn {
+      width: 34px; height: 34px; border-radius: 9px;
+      border: 1px solid var(--color-border); background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-secondary); transition: all 0.13s;
+    }
+    .tr-icon-btn svg { width: 16px; height: 16px; }
+    .tr-icon-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .tr-icon-btn.starred { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); color: #F59E0B; }
+
+    /* ══════════════════════════════
+       MAIN BODY (3 columns)
+    ══════════════════════════════ */
+    .tr-body {
+      display: flex; flex: 1; overflow: hidden;
+    }
+
+    /* ── ORDER BOOK ── */
+    .tr-book {
+      width: 220px; flex-shrink: 0;
+      border-right: 1px solid var(--color-border);
+      display: flex; flex-direction: column; overflow: hidden;
+      background: var(--color-bg-card);
+    }
+    .tr-book-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding: 8px 10px 6px;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--color-text-disabled);
+      flex-shrink: 0;
+    }
+    .tr-book-header span:last-child { text-align: right; }
+    .tr-book-scroll { flex: 1; overflow-y: auto; }
+    .tr-book-scroll::-webkit-scrollbar { display: none; }
+
+    /* Ask rows (sell side — red) */
+    .ob-ask, .ob-bid {
+      position: relative; display: flex; align-items: center;
+      padding: 4px 10px; cursor: pointer; transition: opacity 0.1s;
+    }
+    .ob-ask:hover, .ob-bid:hover { opacity: 0.75; }
+    .ob-depth-bar {
+      position: absolute; top: 0; bottom: 0;
+      opacity: 0.12;
+    }
+    .ob-ask .ob-depth-bar { right: 0; background: var(--color-sell); }
+    .ob-bid .ob-depth-bar { right: 0; background: var(--color-buy); }
+    .ob-price {
+      flex: 1; font-size: 12px; font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace; position: relative; z-index: 1;
+    }
+    .ob-ask .ob-price { color: var(--color-sell); }
+    .ob-bid .ob-price { color: var(--color-buy); }
+    .ob-qty {
+      font-size: 11px; font-family: 'IBM Plex Mono', monospace;
+      color: var(--color-text-secondary); position: relative; z-index: 1;
+      text-align: right;
+    }
+
+    /* Spread row */
+    .ob-spread {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 5px 10px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);
+      background: rgba(0,0,0,0.15); flex-shrink: 0;
+    }
+    .ob-spread-label { font-size: 9px; color: var(--color-text-disabled); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ob-spread-val { font-size: 11px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-secondary); }
+    .ob-spread-pct { font-size: 10px; color: var(--color-text-disabled); }
+
+    /* ── CENTER (chart/trades) ── */
+    .tr-center {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+      min-width: 0;
+    }
+    .tr-center-tabs {
+      display: flex; align-items: center; gap: 0;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg-card); flex-shrink: 0;
+    }
+    .tr-ctab {
+      padding: 10px 16px; font-size: 12px; font-weight: 700;
+      border: none; background: transparent; color: var(--color-text-disabled);
+      cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: all 0.13s; font-family: 'Manrope', sans-serif;
+    }
+    .tr-ctab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+    .tr-ctab:hover:not(.active) { color: var(--color-text-secondary); }
+
+    /* Period pills (chart) */
+    .tr-period-bar {
+      display: flex; align-items: center; gap: 4px; padding: 8px 14px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg-card); flex-shrink: 0;
+    }
+    .tr-period-btn {
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;
+      border: 1px solid transparent; background: transparent;
+      color: var(--color-text-secondary); cursor: pointer; transition: all 0.12s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .tr-period-btn.active { background: rgba(73,73,170,0.15); border-color: rgba(73,73,170,0.3); color: var(--color-primary); }
+    .tr-period-btn:hover:not(.active) { color: var(--color-text-primary); }
+
+    .tr-center-content { flex: 1; overflow: hidden; position: relative; }
+    #panel-chart { width: 100%; height: 100%; padding: 12px; }
+    #panel-chart svg { display: block; width: 100%; height: 100%; }
+
+    /* Executed trades */
+    #panel-trades { height: 100%; overflow-y: auto; }
+    #panel-trades::-webkit-scrollbar { width: 3px; }
+    #panel-trades::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+    .exec-hdr {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      padding: 8px 14px; border-bottom: 1px solid var(--color-border);
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--color-text-disabled);
+      position: sticky; top: 0; background: var(--color-bg-card); z-index: 1;
+    }
+    .exec-hdr span:not(:first-child) { text-align: right; }
+    .exec-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      padding: 6px 14px; border-bottom: 1px solid rgba(51,51,92,0.4);
+      font-size: 12px; font-family: 'IBM Plex Mono', monospace;
+      transition: background 0.1s;
+    }
+    .exec-row:hover { background: rgba(73,73,170,0.04); }
+    .exec-row span:not(:first-child) { text-align: right; }
+    .exec-row .ep-up { color: var(--color-buy); }
+    .exec-row .ep-down { color: var(--color-sell); }
+
+    /* ── ORDER FORM ── */
+    .tr-form {
+      width: 280px; flex-shrink: 0;
+      border-left: 1px solid var(--color-border);
+      display: flex; flex-direction: column; overflow-y: auto;
+      background: var(--color-bg-card);
+    }
+    .tr-form::-webkit-scrollbar { width: 3px; }
+    .tr-form::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+    .tr-form-inner { padding: 14px; display: flex; flex-direction: column; gap: 11px; }
+
+    /* BUY / SELL tabs */
+    .side-tabs { display: grid; grid-template-columns: 1fr 1fr; border-radius: 10px; overflow: hidden; border: 1px solid var(--color-border); }
+    .side-tab {
+      padding: 10px; font-size: 13px; font-weight: 800;
+      border: none; background: transparent; cursor: pointer;
+      transition: all 0.15s; font-family: 'Manrope', sans-serif;
+      color: var(--color-text-disabled); letter-spacing: 0.04em;
+    }
+    .side-tab.active-buy  { background: var(--color-buy);  color: #fff; }
+    .side-tab.active-sell { background: var(--color-sell); color: #fff; }
+    .side-tab:not(.active-buy):not(.active-sell):hover { background: var(--color-bg-input); color: var(--color-text-primary); }
+
+    /* Form selects */
+    .f-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .f-select {
+      width: 100%; appearance: none; -webkit-appearance: none;
+      background: var(--color-bg); border: 1.5px solid var(--color-border);
+      border-radius: 9px; padding: 9px 28px 9px 11px; font-size: 12px; font-weight: 600;
+      color: var(--color-text-primary); font-family: 'Manrope', sans-serif;
+      cursor: pointer; outline: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .f-select:focus { border-color: var(--color-primary); }
+
+    /* Balance row */
+    .f-balance {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--color-bg); border-radius: 9px; padding: 8px 11px;
+      border: 1px solid var(--color-border);
+    }
+    .f-balance-label { font-size: 11px; color: var(--color-text-disabled); font-weight: 600; }
+    .f-balance-val { font-size: 12px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+    .f-balance-link { font-size: 10px; color: var(--color-primary); cursor: pointer; font-weight: 700; }
+    .f-balance-link:hover { opacity: 0.7; }
+
+    /* Inputs */
+    .f-field { display: flex; flex-direction: column; gap: 5px; }
+    .f-label { font-size: 10px; font-weight: 700; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: 0.05em; }
+    .f-input {
+      width: 100%; background: var(--color-bg); border: 1.5px solid var(--color-border);
+      border-radius: 9px; padding: 10px 12px; font-size: 14px; font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace; color: var(--color-text-primary);
+      outline: none; transition: border-color 0.15s; text-align: right;
+    }
+    .f-input:focus { border-color: var(--color-primary); }
+    .f-input::placeholder { color: var(--color-text-disabled); font-weight: 400; font-size: 13px; }
+
+    /* Price stepper */
+    .f-stepper { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--color-border); border-radius: 9px; overflow: hidden; background: var(--color-bg); }
+    .f-stepper-btn {
+      width: 36px; flex-shrink: 0; border: none; background: transparent;
+      color: var(--color-text-secondary); font-size: 18px; font-weight: 700;
+      cursor: pointer; height: 42px; display: flex; align-items: center; justify-content: center;
+      transition: all 0.12s; border-right: 1px solid var(--color-border);
+    }
+    .f-stepper-btn:last-child { border-right: none; border-left: 1px solid var(--color-border); }
+    .f-stepper-btn:hover { background: rgba(73,73,170,0.1); color: var(--color-primary); }
+    .f-stepper-inp {
+      flex: 1; border: none; background: transparent; text-align: center;
+      font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace;
+      color: var(--color-text-primary); outline: none; padding: 0 4px; height: 42px;
+    }
+    .f-step-hint { font-size: 10px; color: var(--color-text-disabled); text-align: center; margin-top: -4px; }
+    .f-step-hint a { color: var(--color-primary); cursor: pointer; }
+    .f-step-hint a:hover { opacity: 0.7; }
+
+    /* GTD date */
+    .f-gtd { display: flex; flex-direction: column; gap: 5px; }
+    .f-date-inp {
+      width: 100%; background: var(--color-bg); border: 1.5px solid var(--color-border);
+      border-radius: 9px; padding: 9px 12px; font-size: 13px; font-weight: 600;
+      color: var(--color-text-primary); font-family: 'Manrope', sans-serif; outline: none;
+    }
+    .f-date-inp:focus { border-color: var(--color-primary); }
+    [data-theme="dark"] .f-date-inp { color-scheme: dark; }
+
+    /* Summary */
+    .f-summary {
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: 9px; overflow: hidden;
+    }
+    .f-sum-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 12px; border-bottom: 1px dashed var(--color-border);
+      font-size: 12px;
+    }
+    .f-sum-row:last-child { border-bottom: none; }
+    .f-sum-row.net { border-top: 1px solid var(--color-border); border-bottom: none; padding: 9px 12px; }
+    .f-sum-label { color: var(--color-text-secondary); font-weight: 600; }
+    .f-sum-val { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 12px; }
+    .f-sum-row.net .f-sum-val { font-size: 14px; }
+
+    /* Submit */
+    .f-submit {
+      width: 100%; padding: 13px; border-radius: 10px; border: none;
+      font-size: 14px; font-weight: 800; letter-spacing: 0.04em;
+      cursor: pointer; transition: opacity 0.15s; font-family: 'Manrope', sans-serif;
+    }
+    .f-submit:hover { opacity: 0.88; }
+    .f-submit.buy  { background: var(--color-buy);  color: #fff; }
+    .f-submit.sell { background: var(--color-sell); color: #fff; }
+
+    /* ══════════════════════════════
+       MY ORDERS (bottom)
+    ══════════════════════════════ */
+    .tr-orders {
+      height: 210px; flex-shrink: 0;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-bg-card);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .tr-orders-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 16px; border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .tr-orders-title { font-size: 13px; font-weight: 800; }
+    .tr-orders-viewall {
+      font-size: 11px; font-weight: 700; color: var(--color-primary);
+      background: none; border: none; cursor: pointer; font-family: 'Manrope', sans-serif;
+    }
+    .tr-orders-viewall:hover { opacity: 0.7; }
+    .tr-orders-tabs { display: flex; border-bottom: 1px solid var(--color-border); flex-shrink: 0; }
+    .tr-otab {
+      padding: 7px 14px; font-size: 11px; font-weight: 700;
+      border: none; background: transparent; color: var(--color-text-disabled);
+      cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: all 0.12s; font-family: 'Manrope', sans-serif;
+    }
+    .tr-otab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+    .tr-orders-body { flex: 1; overflow-y: auto; }
+    .tr-orders-body::-webkit-scrollbar { width: 3px; }
+    .tr-orders-body::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+    /* Order rows */
+    .ord-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 16px; border-bottom: 1px solid rgba(51,51,92,0.4);
+      transition: background 0.1s;
+    }
+    .ord-row:hover { background: rgba(73,73,170,0.03); }
+    .ord-side-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .osb-buy  { background: rgba(0,192,118,0.14); color: var(--color-buy); }
+    .osb-sell { background: rgba(239,68,68,0.12); color: var(--color-sell); }
+    .ord-sym { font-size: 13px; font-weight: 800; flex-shrink: 0; width: 44px; }
+    .ord-meta { flex: 1; min-width: 0; font-size: 11px; color: var(--color-text-secondary); }
+    .ord-price { font-size: 12px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; flex-shrink: 0; text-align: right; }
+    .ord-date { font-size: 10px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; flex-shrink: 0; }
+    .ord-status { font-size: 10px; font-weight: 700; flex-shrink: 0; }
+    .os-active    { color: #F59E0B; }
+    .os-filled    { color: var(--color-buy); }
+    .os-cancelled { color: var(--color-text-disabled); }
+    .ord-cancel-btn {
+      padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700;
+      background: transparent; border: 1px solid rgba(239,68,68,0.3); color: var(--color-sell);
+      cursor: pointer; font-family: 'Manrope', sans-serif; flex-shrink: 0;
+      transition: all 0.12s;
+    }
+    .ord-cancel-btn:hover { background: rgba(239,68,68,0.1); border-color: var(--color-sell); }
+    .ord-partial { font-size: 9px; color: #F59E0B; font-weight: 700; }
+
+    .orders-empty {
+      padding: 24px; text-align: center;
+      font-size: 12px; color: var(--color-text-disabled);
+    }
+
+    /* ══════════════════════════════
+       MODALS
+    ══════════════════════════════ */
+    .t-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .t-overlay.open { display: flex; }
+    .t-modal {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 18px; width: 400px; max-width: 100%; max-height: 85vh;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .t-modal.sm { width: 340px; }
+    .t-modal.lg { width: 520px; }
+    .t-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--color-border); flex-shrink: 0;
+    }
+    .t-modal-title { font-size: 15px; font-weight: 800; }
+    .t-modal-close {
+      width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--color-border);
+      background: transparent; color: var(--color-text-disabled); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .t-modal-close svg { width: 14px; height: 14px; }
+    .t-modal-close:hover { border-color: var(--color-sell); color: var(--color-sell); }
+    .t-modal-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+    .t-modal-body::-webkit-scrollbar { width: 3px; }
+    .t-modal-foot {
+      padding: 12px 20px; border-top: 1px solid var(--color-border);
+      display: flex; gap: 10px; flex-shrink: 0;
+    }
+    .t-btn {
+      flex: 1; padding: 11px; border-radius: 10px; font-size: 13px; font-weight: 700;
+      cursor: pointer; border: none; font-family: 'Manrope', sans-serif; transition: opacity 0.15s;
+    }
+    .t-btn:hover { opacity: 0.85; }
+    .t-btn.outline { background: var(--color-bg); border: 1.5px solid var(--color-border); color: var(--color-text-secondary); }
+    .t-btn.outline:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .t-btn.primary { background: var(--color-primary); color: #fff; }
+    .t-btn.buy-btn  { background: var(--color-buy);  color: #fff; }
+    .t-btn.sell-btn { background: var(--color-sell); color: #fff; }
+
+    /* Confirm modal rows */
+    .cf-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid rgba(51,51,92,0.5);
+      font-size: 13px;
+    }
+    .cf-row:last-child { border-bottom: none; }
+    .cf-row.total { padding-top: 12px; border-top: 1.5px solid var(--color-border); border-bottom: none; }
+    .cf-label { color: var(--color-text-secondary); font-weight: 600; }
+    .cf-val { font-family: 'IBM Plex Mono', monospace; font-weight: 700; }
+    .cf-row.total .cf-val { font-size: 16px; }
+
+    /* Stock search */
+    .t-stock-search {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--color-bg); border: 1.5px solid var(--color-border);
+      border-radius: 10px; padding: 10px 14px; margin-bottom: 12px;
+    }
+    .t-stock-search svg { width: 15px; height: 15px; color: var(--color-text-disabled); flex-shrink: 0; }
+    .t-stock-search input {
+      border: none; background: transparent; outline: none; flex: 1;
+      font-size: 14px; color: var(--color-text-primary); font-family: 'Manrope', sans-serif;
+    }
+    .t-stock-search input::placeholder { color: var(--color-text-disabled); }
+    .stock-list-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+      transition: background 0.12s; margin-bottom: 4px;
+    }
+    .stock-list-item:hover { background: rgba(73,73,170,0.08); }
+    .stock-list-item.selected { background: rgba(73,73,170,0.12); border: 1px solid rgba(73,73,170,0.3); }
+    .sli-sym { font-size: 14px; font-weight: 800; margin-right: 10px; }
+    .sli-name { font-size: 12px; color: var(--color-text-secondary); }
+    .sli-sector { font-size: 10px; color: var(--color-text-disabled); margin-top: 2px; }
+    .sli-right { text-align: right; }
+    .sli-price { font-size: 13px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+    .sli-change { font-size: 11px; font-weight: 700; }
+    .sli-change.up { color: var(--color-buy); }
+    .sli-change.down { color: var(--color-sell); }
+
+    /* Price steps table */
+    .steps-table { width: 100%; border-collapse: collapse; }
+    .steps-table th, .steps-table td { padding: 9px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--color-border); }
+    .steps-table th { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-disabled); }
+    .steps-table tbody tr:last-child td { border-bottom: none; }
+
+    /* Toast */
+    .t-toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 12px); z-index: 900; background: var(--color-text-primary); color: var(--color-bg); padding: 9px 18px; border-radius: 99px; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.22s; white-space: nowrap; }
+    .t-toast.show { opacity: 1; transform: translate(-50%, 0); }
   </style>
 </head>
 <body>
-<div class="web-page">
+<div class="tr-root">
 
-  <!-- Stock header -->
-  <div class="trade-header">
-    <div class="trade-header-left">
-      <div class="selector-pill" onclick="openStockModal()">
-        <i data-lucide="search" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
-        <span class="sel-symbol" id="hdr-symbol">BDS</span>
-        <span style="width:3px;height:3px;border-radius:50%;background:var(--color-text-disabled)"></span>
-        <span class="sel-name" id="hdr-name">БДСec ХК</span>
-        <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
+  <!-- ════ HEADER ════ -->
+  <div class="tr-header">
+    <div class="tr-picker" onclick="openStockModal()">
+      <div style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+        <span class="tr-picker-sym" id="hdr-symbol">BDS</span>
+        <span class="tr-picker-name" id="hdr-name">БДСec ХК</span>
       </div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
     </div>
-    <div class="trade-header-right">
-      <div>
-        <div class="price-big" id="hdr-price">—</div>
-        <div class="price-date" id="hdr-date">2026-06-09</div>
-        <div class="price-change up" id="hdr-change">+1.23 (+0.65%)</div>
-      </div>
-      <div class="trade-tab-icons">
-        <button class="trade-icon-btn" title="Сэрэмжлүүлэг"><i data-lucide="clock-plus"></i></button>
-        <button class="trade-icon-btn star-active" id="star-btn" onclick="toggleStar()" title="Watchlist"><i data-lucide="star"></i></button>
-      </div>
+
+    <div class="tr-price-block">
+      <span class="tr-price-val" id="hdr-price">—</span>
+      <span class="tr-price-chg up" id="hdr-change">—</span>
+    </div>
+
+    <div class="tr-stats">
+      <div class="tr-stat"><span class="tr-stat-label">Өмнөх</span><span class="tr-stat-val" id="stat-prev">—</span></div>
+      <div class="tr-stat"><span class="tr-stat-label">Нээлт</span><span class="tr-stat-val" id="stat-open">—</span></div>
+      <div class="tr-stat"><span class="tr-stat-label">Өндөр</span><span class="tr-stat-val up" id="stat-high">—</span></div>
+      <div class="tr-stat"><span class="tr-stat-label">Доод</span><span class="tr-stat-val down" id="stat-low">—</span></div>
+      <div class="tr-stat"><span class="tr-stat-label">Эргэлт</span><span class="tr-stat-val" id="stat-vol">—</span></div>
+    </div>
+
+    <div class="tr-hdr-actions">
+      <button class="tr-icon-btn" title="Үнийн алхам" onclick="openPriceSteps()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-4"/></svg>
+      </button>
+      <button class="tr-icon-btn" title="Сэрэмжлүүлэг нэмэх" onclick="openTradeAlertModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M12 2v2"/></svg>
+      </button>
+      <button class="tr-icon-btn" id="star-btn" title="Watchlist" onclick="toggleStar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="star-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
     </div>
   </div>
 
-  <div class="trade-layout">
-    <!-- Left: order book / chart -->
-    <div class="trade-main">
-      <div class="trade-tabs">
-        <div class="trade-tab-list">
-          <button class="trade-tab active" data-tab="book" onclick="switchMainTab('book', this)">Захиалгын сан</button>
-          <button class="trade-tab" data-tab="chart" onclick="switchMainTab('chart', this)">График</button>
-        </div>
-      </div>
+  <!-- ════ MAIN BODY ════ -->
+  <div class="tr-body">
 
-      <div id="panel-book">
-        <div class="book-exec-grid">
-          <div class="ob-panel">
-            <div class="ob-book-header">
-              <span>Тоо</span>
-              <span>Авах үнэ</span>
-              <span>Зарах үнэ</span>
-              <span>Тоо</span>
-            </div>
-            <div class="ob-book-body" id="orderbook-body"></div>
-          </div>
-          <div class="exec-panel">
-            <div class="exec-panel-title">Биелсэн арилжаа</div>
-            <div class="exec-cols">
-              <span>Тоо</span><span>Үнэ</span><span>Цаг</span>
-            </div>
-            <div class="exec-body" id="exec-body"></div>
-          </div>
-        </div>
+    <!-- ── Order Book ── -->
+    <div class="tr-book">
+      <div class="tr-book-header">
+        <span>Тоо / Үнэ</span>
+        <span>Тоо / Үнэ</span>
       </div>
+      <div class="tr-book-header" style="grid-template-columns:1fr 1fr;font-size:9px;color:var(--color-sell);padding:4px 10px 2px;border-bottom:none">
+        <span>ЗАРАХ</span><span style="text-align:right;color:var(--color-buy)">АВАХ</span>
+      </div>
+      <div class="tr-book-scroll" id="book-scroll"></div>
+    </div>
 
-      <div id="panel-chart" style="display:none">
-        <div class="chart-wrap">
-          <div id="trade-chart"></div>
+    <!-- ── Center ── -->
+    <div class="tr-center">
+      <div class="tr-center-tabs">
+        <button class="tr-ctab active" onclick="switchCTab('chart',this)">График</button>
+        <button class="tr-ctab" onclick="switchCTab('trades',this)">Биелсэн арилжаа</button>
+      </div>
+      <div class="tr-period-bar" id="period-bar">
+        <button class="tr-period-btn active" onclick="setPeriod('1D',this)">1Ө</button>
+        <button class="tr-period-btn" onclick="setPeriod('1W',this)">1Д</button>
+        <button class="tr-period-btn" onclick="setPeriod('1M',this)">1С</button>
+        <button class="tr-period-btn" onclick="setPeriod('3M',this)">3С</button>
+      </div>
+      <div class="tr-center-content">
+        <div id="panel-chart"></div>
+        <div id="panel-trades" style="display:none">
+          <div class="exec-hdr"><span>Тоо</span><span>Үнэ</span><span>Цаг</span></div>
+          <div id="exec-body"></div>
         </div>
       </div>
     </div>
 
-    <!-- Right: order form -->
-    <div class="trade-form-panel">
-      <h2 class="trade-form-title">Захиалга өгөх</h2>
+    <!-- ── Order Form ── -->
+    <div class="tr-form">
+      <div class="tr-form-inner">
+        <!-- BUY / SELL -->
+        <div class="side-tabs">
+          <button class="side-tab active-buy" id="btn-buy" onclick="setSide('BUY')">АВАХ</button>
+          <button class="side-tab" id="btn-sell" onclick="setSide('SELL')">ЗАРАХ</button>
+        </div>
 
-      <div class="trade-form-row">
-        <select class="trade-select" id="order-type" onchange="onOrderTypeChange()">
-          <option value="limit">Нөхцөлт</option>
-          <option value="market">Зах зээлийн</option>
+        <!-- Type + Duration -->
+        <div class="f-row2">
+          <div>
+            <div class="f-label" style="margin-bottom:4px">Захиалгын төрөл</div>
+            <select class="f-select" id="order-type" onchange="onOrderTypeChange()">
+              <option value="limit">Нөхцөлт</option>
+              <option value="market">Зах зээлийн</option>
+            </select>
+          </div>
+          <div>
+            <div class="f-label" style="margin-bottom:4px">Хугацаа</div>
+            <select class="f-select" id="order-dur" onchange="onDurChange()">
+              <option value="GTC">GTC</option>
+              <option value="DAY">DAY</option>
+              <option value="GTD">GTD</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- GTD date -->
+        <div class="f-gtd" id="gtd-wrap" style="display:none">
+          <div class="f-label">Дуусах огноо</div>
+          <input type="date" class="f-date-inp" id="expire-date" />
+        </div>
+
+        <!-- Balance -->
+        <div class="f-balance">
+          <div>
+            <div class="f-balance-label">Боломжит</div>
+            <div class="f-balance-val" id="balance-display">—</div>
+          </div>
+          <span class="f-balance-link" id="recharge-link" onclick="goRecharge()">Цэнэглэх</span>
+        </div>
+
+        <!-- Price (limit) -->
+        <div class="f-field" id="price-section">
+          <div class="f-label">Үнэ (₮)</div>
+          <div class="f-stepper">
+            <button class="f-stepper-btn" onclick="adjustPrice('down')">−</button>
+            <input class="f-stepper-inp" type="number" id="price-input" oninput="updateSummary()" onblur="validatePrice()" />
+            <button class="f-stepper-btn" onclick="adjustPrice('up')">+</button>
+          </div>
+          <div class="f-step-hint" id="step-hint">Алхам: 1₮ · <a onclick="openPriceSteps()">Үнийн алхам</a></div>
+        </div>
+
+        <!-- Qty -->
+        <div class="f-field">
+          <div class="f-label">Тоо ширхэг</div>
+          <input class="f-input" type="number" id="qty-input" placeholder="0" min="1" oninput="updateSummary()" style="text-align:right" />
+        </div>
+
+        <!-- Summary -->
+        <div class="f-summary">
+          <div class="f-sum-row">
+            <span class="f-sum-label">Нийт дүн</span>
+            <span class="f-sum-val" id="sum-total">₮0</span>
+          </div>
+          <div class="f-sum-row">
+            <span class="f-sum-label" style="color:var(--color-primary)">Шимтгэл (<span id="fee-pct">1</span>%)</span>
+            <span class="f-sum-val" id="sum-fee">₮0</span>
+          </div>
+          <div class="f-sum-row net">
+            <span class="f-sum-label" style="font-weight:700;color:var(--color-text-primary)">Төлөх нийт</span>
+            <span class="f-sum-val" id="sum-net">₮0</span>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="f-submit buy" id="submit-btn" onclick="openConfirm()">АВАХ BDS</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════ MY ORDERS ════ -->
+  <div class="tr-orders">
+    <div class="tr-orders-head">
+      <span class="tr-orders-title" id="orders-title">BDS захиалгууд</span>
+      <button class="tr-orders-viewall" onclick="goAllOrders()">Бүх захиалга →</button>
+    </div>
+    <div class="tr-orders-tabs">
+      <button class="tr-otab active" onclick="setOrderTab('active',this)">Идэвхтэй (<span id="cnt-active">0</span>)</button>
+      <button class="tr-otab" onclick="setOrderTab('completed',this)">Биелсэн (<span id="cnt-completed">0</span>)</button>
+      <button class="tr-otab" onclick="setOrderTab('cancelled',this)">Цуцлагдсан (<span id="cnt-cancelled">0</span>)</button>
+    </div>
+    <div class="tr-orders-body" id="orders-body"></div>
+  </div>
+
+</div>
+
+<!-- ════ STOCK SELECTOR MODAL ════ -->
+<div class="t-overlay" id="modal-stock" onclick="if(event.target===this)closeStockModal()">
+  <div class="t-modal lg">
+    <div class="t-modal-header">
+      <span class="t-modal-title">Хувьцаа сонгох</span>
+      <button class="t-modal-close" onclick="closeStockModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="t-modal-body">
+      <div class="t-stock-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Хайх…" id="stock-search-inp" oninput="filterStocks()" />
+      </div>
+      <div id="stock-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CONFIRM MODAL ════ -->
+<div class="t-overlay" id="modal-confirm" onclick="if(event.target===this)closeConfirm()">
+  <div class="t-modal sm">
+    <div class="t-modal-header">
+      <span class="t-modal-title">Захиалга баталгаажуулах</span>
+      <button class="t-modal-close" onclick="closeConfirm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="t-modal-body">
+      <div class="cf-row"><span class="cf-label">Хувьцаа</span><span class="cf-val" id="cf-sym">—</span></div>
+      <div class="cf-row"><span class="cf-label">Төрөл</span><span class="cf-val" id="cf-side">—</span></div>
+      <div class="cf-row"><span class="cf-label">Тоо ширхэг</span><span class="cf-val" id="cf-qty">—</span></div>
+      <div class="cf-row"><span class="cf-label">Захиалгын үнэ</span><span class="cf-val" id="cf-price">—</span></div>
+      <div class="cf-row"><span class="cf-label">Дүн</span><span class="cf-val" id="cf-total">—</span></div>
+      <div class="cf-row"><span class="cf-label">Шимтгэл</span><span class="cf-val" id="cf-fee">—</span></div>
+      <div class="cf-row total"><span class="cf-label" style="font-weight:800;color:var(--color-text-primary)">Нийт дүн</span><span class="cf-val" id="cf-net" style="color:var(--color-primary)">—</span></div>
+    </div>
+    <div class="t-modal-foot">
+      <button class="t-btn outline" onclick="closeConfirm()">Цуцлах</button>
+      <button class="t-btn primary" id="cf-submit-btn" onclick="placeOrder()">Баталгаажуулах</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PRICE STEPS MODAL ════ -->
+<div class="t-overlay" id="modal-steps" onclick="if(event.target===this)closePriceSteps()">
+  <div class="t-modal sm">
+    <div class="t-modal-header">
+      <span class="t-modal-title">Үнийн алхам</span>
+      <button class="t-modal-close" onclick="closePriceSteps()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="t-modal-body" style="padding:0">
+      <table class="steps-table">
+        <thead><tr><th>Нэгжийн үнэ (₮)</th><th>Алхам (₮)</th></tr></thead>
+        <tbody>
+          <tr><td>1,000-с доош</td><td>0.01</td></tr>
+          <tr><td>1,000 – 5,000</td><td>1</td></tr>
+          <tr><td>5,000 – 10,000</td><td>5</td></tr>
+          <tr><td>10,000 – 20,000</td><td>10</td></tr>
+          <tr><td>20,000 – 40,000</td><td>20</td></tr>
+          <tr><td>40,000 – 50,000</td><td>40</td></tr>
+          <tr><td>50,000 – 80,000</td><td>50</td></tr>
+          <tr><td>80,000-с дээш</td><td>80</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="t-modal-foot">
+      <button class="t-btn outline" onclick="closePriceSteps()">Хаах</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PRICE ALERT MODAL ════ -->
+<div class="t-overlay" id="modal-trade-alert" onclick="if(event.target===this)closeTradeAlertModal()">
+  <div class="t-modal sm">
+    <div class="t-modal-header">
+      <span class="t-modal-title">Үнийн сэрэмжлүүлэг нэмэх</span>
+      <button class="t-modal-close" onclick="closeTradeAlertModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="t-modal-body" style="display:flex;flex-direction:column;gap:12px">
+      <!-- Stock (readonly) -->
+      <div class="f-field">
+        <div class="f-label">Хувьцаа</div>
+        <input class="f-input" id="ta-symbol" readonly style="text-align:left;background:var(--color-bg);color:var(--color-text-secondary);cursor:default" />
+      </div>
+      <!-- Price type -->
+      <div class="f-field">
+        <div class="f-label">Үнийн төрөл</div>
+        <select class="f-select" id="ta-price-type" style="background:var(--color-bg)">
+          <option value="LAST_PRICE">Сүүлийн үнэ</option>
+          <option value="OPENING_PRICE">Нээлтийн үнэ</option>
+          <option value="CLOSING_PRICE">Хаалтын үнэ</option>
         </select>
-        <div class="buy-sell-toggle">
-          <button class="bst-btn active-buy" id="btn-buy" onclick="setSide('BUY')">АВАХ</button>
-          <button class="bst-btn" id="btn-sell" onclick="setSide('SELL')">ЗАРАХ</button>
+      </div>
+      <!-- Condition + target -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="f-field">
+          <div class="f-label">Нөхцөл</div>
+          <select class="f-select" id="ta-condition" style="background:var(--color-bg)">
+            <option value="ABOVE">Дээш (&gt;=)</option>
+            <option value="BELOW">Доош (&lt;=)</option>
+          </select>
+        </div>
+        <div class="f-field">
+          <div class="f-label">Зорилтот үнэ (₮)</div>
+          <input class="f-input" type="number" id="ta-target" placeholder="0" style="text-align:right" />
         </div>
       </div>
-
-      <select class="trade-select" id="order-duration" style="width:100%;margin-bottom:10px" onchange="onDurationChange()">
-        <option value="GTC">Захиалга цуцлагдах хүртэл (GTC)</option>
-        <option value="DAY">Өдрийн захиалга (DAY)</option>
-        <option value="GTD">Заасан өдөр (GTD)</option>
-      </select>
-
-      <div class="trade-gtd-wrap" id="gtd-wrap" style="display:none">
-        <label>Захиалга дуусах огноо</label>
-        <input class="trade-input" type="date" id="expire-date" style="margin:0" />
+      <!-- Preview row -->
+      <div style="background:rgba(73,73,170,0.07);border:1px solid rgba(73,73,170,0.2);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--color-text-secondary)" id="ta-preview">
+        Нөхцөл оруулна уу
       </div>
-
-      <div class="trade-balance-row">
-        <span class="label">Боломжит:</span>
-        <div>
-          <span class="value" id="balance-display">—</span>
-          <span class="link" id="recharge-link" onclick="goRecharge()">Данс цэнэглэх</span>
-        </div>
-      </div>
-
-      <input class="trade-input" type="number" min="1" id="qty-input" placeholder="Тоо ширхэг" oninput="updateSummary()" />
-
-      <div id="price-section">
-        <div class="trade-price-row">
-          <button class="trade-pm-btn" onclick="adjustPrice('down')">−</button>
-          <input class="trade-input" type="number" id="price-input" placeholder="Үнэ" oninput="updateSummary()" onblur="validatePrice()" />
-          <button class="trade-pm-btn" onclick="adjustPrice('up')">+</button>
-        </div>
-        <div class="trade-step-row">
-          <span id="step-label">Алхам: $0.01</span>
-          <button class="trade-step-btn" onclick="openPriceSteps()">Үнийн алхам</button>
-        </div>
-      </div>
-
-      <div class="trade-summary">
-        <div class="trade-summary-row"><span>Дүн:</span><span id="sum-total">0₮</span></div>
-        <div class="trade-summary-row"><span style="color:var(--color-primary)">Шимтгэл (<span id="fee-pct">1</span>%):</span><span id="sum-fee">0₮</span></div>
-        <div class="trade-summary-row net"><span>Шимтгэл тооцсон нийт:</span><span id="sum-net">0₮</span></div>
-      </div>
-
-      <button class="trade-submit buy" id="submit-btn" onclick="openConfirm()">АВАХ BDS</button>
     </div>
-  </div>
-
-  <!-- My orders -->
-  <div class="my-orders-card">
-    <div class="my-orders-head">
-      <h3 class="web-section-title" id="my-orders-title">BDS захиалгууд</h3>
-      <span class="web-muted" style="cursor:pointer" onclick="goAllOrders()">Бүх түүх →</span>
-    </div>
-    <div class="my-orders-tabs">
-      <button class="my-orders-tab active" data-otab="active" onclick="switchOrderTab('active', this)">Идэвхтэй (<span id="cnt-active">0</span>)</button>
-      <button class="my-orders-tab" data-otab="completed" onclick="switchOrderTab('completed', this)">Биелсэн (<span id="cnt-completed">0</span>)</button>
-      <button class="my-orders-tab" data-otab="cancelled" onclick="switchOrderTab('cancelled', this)">Цуцлагдсан (<span id="cnt-cancelled">0</span>)</button>
-    </div>
-    <div class="my-orders-body" id="my-orders-list"></div>
-  </div>
-</div>
-
-<!-- Stock selector modal -->
-<div class="web-modal-overlay" id="stock-modal">
-  <div class="web-modal web-modal-lg">
-    <h3 class="web-modal-title">Хувьцаа сонгох</h3>
-    <input class="trade-input" type="text" id="stock-search" placeholder="Хайх…" oninput="filterStocks()" style="margin-bottom:12px" />
-    <div class="stock-search-list" id="stock-list"></div>
-    <div class="web-modal-actions" style="margin-top:12px">
-      <button class="btn btn-outline" onclick="closeStockModal()">Хаах</button>
+    <div class="t-modal-foot">
+      <button class="t-btn outline" onclick="closeTradeAlertModal()">Цуцлах</button>
+      <button class="t-btn primary" onclick="saveTradeAlert()">Нэмэх</button>
     </div>
   </div>
 </div>
 
-<!-- Confirm order modal -->
-<div class="web-modal-overlay" id="confirm-modal">
-  <div class="web-modal">
-    <h3 class="web-modal-title">Захиалга баталгаажуулах</h3>
-    <div class="web-modal-row"><span class="lbl">Хувьцаа:</span><span id="cf-symbol"></span></div>
-    <div class="web-modal-row"><span class="lbl">Төрөл:</span><span id="cf-side"></span></div>
-    <div class="web-modal-row"><span class="lbl">Тоо ширхэг:</span><span id="cf-qty"></span></div>
-    <div class="web-modal-row"><span class="lbl">Үнэ:</span><span id="cf-price"></span></div>
-    <div class="web-modal-row"><span class="lbl">Дүн:</span><span id="cf-total"></span></div>
-    <div class="web-modal-row"><span class="lbl">Шимтгэл:</span><span id="cf-fee"></span></div>
-    <div class="web-modal-row" style="font-weight:800;padding-top:8px;border-top:2px solid var(--color-border)">
-      <span class="lbl">Нийт дүн:</span><span id="cf-net"></span>
-    </div>
-    <div class="web-modal-actions">
-      <button class="btn btn-outline" onclick="closeConfirm()">Цуцлах</button>
-      <button class="btn btn-primary" id="cf-submit" onclick="placeOrder()">Баталгаажуулах</button>
-    </div>
-  </div>
-</div>
-
-<!-- Price steps modal -->
-<div class="web-modal-overlay" id="steps-modal">
-  <div class="web-modal web-modal-lg">
-    <h3 class="web-modal-title">Үнийн алхам</h3>
-    <table class="price-steps-table">
-      <thead><tr><th>Нэгжийн үнэ</th><th>Өөрчлөлтийн хэмжээ</th></tr></thead>
-      <tbody>
-        <tr><td>1000-с доош</td><td>0.01 төгрөг</td></tr>
-        <tr><td>1000–5000</td><td>1 төгрөг</td></tr>
-        <tr><td>5000–10000</td><td>5 төгрөг</td></tr>
-        <tr><td>10000–20000</td><td>10 төгрөг</td></tr>
-        <tr><td>20000–40000</td><td>20 төгрөг</td></tr>
-        <tr><td>40000–50000</td><td>40 төгрөг</td></tr>
-        <tr><td>50000–80000</td><td>50 төгрөг</td></tr>
-        <tr><td>80000-с дээш</td><td>80 төгрөг</td></tr>
-      </tbody>
-    </table>
-    <div class="web-modal-actions"><button class="btn btn-outline" onclick="closePriceSteps()">Хаах</button></div>
-  </div>
-</div>
+<div class="t-toast" id="t-toast"></div>
 
 <script src="../../data/static.js"></script>
-<script src="../scripts/components.js"></script>
-<script src="../../mobile/scripts/chart.js"></script>
 <script>
-  const feePct = typeof FEE_EQUITY !== 'undefined' ? FEE_EQUITY : 1;
-  let selectedStock = STOCKS[0];
-  let orderSide = 'BUY';
-  let orderTab = 'active';
-  let chartRendered = false;
+/* ── Constants ── */
+const feePct = typeof FEE_EQUITY !== 'undefined' ? FEE_EQUITY : 1;
+let selectedStock = STOCKS[0];
+let orderSide = 'BUY';
+let orderTab  = 'active';
+let isStarred = false;
+let currentPeriod = '1D';
+let currentCTab   = 'chart';
+let cachedBook    = null;
 
-  function getPriceStep(price) {
-    if (price < 1000) return 0.01;
-    if (price < 5000) return 1;
-    if (price < 10000) return 5;
-    if (price < 20000) return 10;
-    if (price < 40000) return 20;
-    if (price < 50000) return 40;
-    if (price < 80000) return 50;
-    return 80;
+/* ── Helpers ── */
+function fmtMNT(n) { return '₮' + Math.round(n).toLocaleString('mn-MN'); }
+function fmtChange(ch, pct) {
+  const sign = ch >= 0 ? '+' : '';
+  return `${sign}${fmtMNT(ch)} (${sign}${pct.toFixed(2)}%)`;
+}
+function getPriceStep(p) {
+  if (p < 1000) return 0.01;
+  if (p < 5000) return 1;
+  if (p < 10000) return 5;
+  if (p < 20000) return 10;
+  if (p < 40000) return 20;
+  if (p < 50000) return 40;
+  if (p < 80000) return 50;
+  return 80;
+}
+function roundToStep(v) { const s = getPriceStep(v); return Math.round(v / s) * s; }
+function fmtPrice(p) { const s = getPriceStep(p); return s >= 1 ? Math.round(p).toLocaleString('mn-MN') : p.toFixed(2); }
+
+function showToast(msg) {
+  const el = document.getElementById('t-toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+/* ── Book generation (seeded per stock) ── */
+function seededRand(seed) {
+  let s = seed;
+  return function() { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+}
+function buildOrderBook(stock) {
+  if (cachedBook) return cachedBook;
+  const rand = seededRand(stock.symbol.charCodeAt(0) * 1000 + Math.floor(stock.price));
+  const step = getPriceStep(stock.price);
+  const asks = [], bids = [];
+  for (let i = 1; i <= 8; i++) {
+    const ap = roundToStep(stock.price + i * step);
+    const bp = roundToStep(stock.price - i * step);
+    asks.push({ price: ap, qty: Math.floor(rand() * 3000 + 100) });
+    bids.push({ price: bp, qty: Math.floor(rand() * 3000 + 100) });
   }
+  asks.sort((a,b) => b.price - a.price); // highest ask at top
+  bids.sort((a,b) => b.price - a.price); // highest bid first
+  cachedBook = { asks, bids };
+  return cachedBook;
+}
 
-  function getHolding(symbol) {
-    return PORTFOLIO.find(p => p.symbol === symbol);
+/* ── Chart ── */
+function buildChartData(stock, period) {
+  const base = SPARKLINES[stock.symbol] || Array.from({length:8}, () => stock.price);
+  const rand = seededRand(stock.symbol.charCodeAt(0) + period.charCodeAt(0));
+  const pts = period === '1D' ? 24 : period === '1W' ? 35 : period === '1M' ? 30 : 90;
+  const data = [];
+  let v = base[0];
+  for (let i = 0; i < pts; i++) {
+    v = v * (1 + (rand() - 0.5) * 0.012);
+    data.push(Math.round(v * 100) / 100);
   }
+  data[data.length - 1] = stock.price;
+  return data;
+}
 
-  function getOrderPrice() {
-    if (document.getElementById('order-type').value === 'market') return selectedStock.price;
-    return parseFloat(document.getElementById('price-input').value) || selectedStock.price;
+function renderChart(containerId, stock, period) {
+  const data = buildChartData(stock, period);
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const W = el.clientWidth || 600, H = el.clientHeight || 260;
+  const pad = { t: 16, r: 60, b: 28, l: 8 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const scX = i => pad.l + (i / (data.length - 1)) * iW;
+  const scY = v => pad.t + iH - ((v - min) / range) * iH;
+  const pts = data.map((v,i) => `${scX(i)},${scY(v)}`).join(' ');
+  const isUp = data[data.length-1] >= data[0];
+  const color = isUp ? '#00C076' : '#EF4444';
+  const lastX = scX(data.length - 1), lastY = scY(data[data.length-1]);
+
+  // Y axis labels
+  const yLabels = [min, (min+max)/2, max].map(v => {
+    const y = scY(v);
+    return `<text x="${W - pad.r + 6}" y="${y + 4}" font-size="10" fill="rgba(156,163,175,0.7)" font-family="IBM Plex Mono">${fmtPrice(v)}</text>`;
+  }).join('');
+
+  // X axis time labels
+  const xCount = Math.min(5, data.length);
+  const xLabels = Array.from({length: xCount}, (_,i) => {
+    const idx = Math.floor((data.length - 1) * i / (xCount - 1));
+    const x = scX(idx);
+    const label = period === '1D'
+      ? `${String(idx).padStart(2,'0')}:00`
+      : period === '1W'
+      ? ['Да','Мя','Лх','Пү','Ба','Бя','Ня'][idx % 7]
+      : `${idx + 1}`;
+    return `<text x="${x}" y="${H - 6}" font-size="9" fill="rgba(156,163,175,0.6)" font-family="IBM Plex Mono" text-anchor="middle">${label}</text>`;
+  }).join('');
+
+  // Grid lines
+  const grid = Array.from({length: 4}, (_,i) => {
+    const y = pad.t + (iH * i / 3);
+    return `<line x1="${pad.l}" y1="${y}" x2="${W - pad.r}" y2="${y}" stroke="rgba(51,51,92,0.6)" stroke-width="1"/>`;
+  }).join('');
+
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+    <defs>
+      <linearGradient id="cg${containerId}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${color}" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${grid}
+    <polygon points="${pts} ${scX(data.length-1)},${pad.t+iH} ${pad.l},${pad.t+iH}" fill="url(#cg${containerId})"/>
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/>
+    <circle cx="${lastX}" cy="${lastY}" r="3.5" fill="${color}"/>
+    <line x1="${lastX}" y1="${pad.t}" x2="${lastX}" y2="${pad.t+iH}" stroke="${color}" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+    ${yLabels}
+    ${xLabels}
+  </svg>`;
+}
+
+/* ── Executed trades ── */
+function renderExecuted() {
+  const trades = typeof EXECUTED_TRADES !== 'undefined' ? EXECUTED_TRADES : [];
+  const el = document.getElementById('exec-body');
+  if (!el) return;
+  if (!trades.length) { el.innerHTML = '<div class="orders-empty">Арилжаа байхгүй</div>'; return; }
+  const rand = seededRand(selectedStock.symbol.charCodeAt(0));
+  el.innerHTML = trades.map((t,i) => {
+    const isUp = rand() > 0.45;
+    return `<div class="exec-row">
+      <span>${t.qty.toLocaleString()}</span>
+      <span class="${isUp ? 'ep-up' : 'ep-down'}">${t.price.toFixed(2)}</span>
+      <span>${t.time}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ── Order book render ── */
+function renderOrderBook() {
+  const book = buildOrderBook(selectedStock);
+  const maxQ = Math.max(...book.asks.map(r=>r.qty), ...book.bids.map(r=>r.qty));
+  const spread = book.asks[book.asks.length-1].price - book.bids[0].price;
+  const spreadPct = (spread / book.bids[0].price * 100).toFixed(2);
+
+  let html = '';
+  // ASK rows (sell side) — reversed so lowest ask at bottom
+  book.asks.forEach(r => {
+    const w = Math.round(r.qty / maxQ * 100);
+    html += `<div class="ob-ask" onclick="fillFromBook('SELL','${r.price}','${r.qty}')">
+      <div class="ob-depth-bar" style="width:${w}%"></div>
+      <span class="ob-price">${fmtPrice(r.price)}</span>
+      <span class="ob-qty">${r.qty.toLocaleString()}</span>
+    </div>`;
+  });
+
+  // Spread
+  html += `<div class="ob-spread">
+    <span class="ob-spread-label">Spread</span>
+    <span class="ob-spread-val">${fmtPrice(spread)}</span>
+    <span class="ob-spread-pct">${spreadPct}%</span>
+  </div>`;
+
+  // BID rows (buy side)
+  book.bids.forEach(r => {
+    const w = Math.round(r.qty / maxQ * 100);
+    html += `<div class="ob-bid" onclick="fillFromBook('BUY','${r.price}','${r.qty}')">
+      <div class="ob-depth-bar" style="width:${w}%"></div>
+      <span class="ob-price">${fmtPrice(r.price)}</span>
+      <span class="ob-qty">${r.qty.toLocaleString()}</span>
+    </div>`;
+  });
+
+  document.getElementById('book-scroll').innerHTML = html;
+  // Scroll to middle (spread) after render
+  const scroll = document.getElementById('book-scroll');
+  setTimeout(() => {
+    const mid = scroll.scrollHeight / 2 - scroll.clientHeight / 2;
+    scroll.scrollTop = mid;
+  }, 0);
+}
+
+/* ── Header ── */
+function updateHeader() {
+  const s = selectedStock;
+  document.getElementById('hdr-symbol').textContent = s.symbol;
+  document.getElementById('hdr-name').textContent = s.name;
+  document.getElementById('hdr-price').textContent = fmtMNT(s.price);
+  const chEl = document.getElementById('hdr-change');
+  chEl.textContent = fmtChange(s.change, s.changePct);
+  chEl.className = 'tr-price-chg ' + (s.change >= 0 ? 'up' : 'down');
+
+  // OHLCV (simulated)
+  const rand = seededRand(s.symbol.charCodeAt(0) + 77);
+  const open  = roundToStep(s.price * (0.995 + rand() * 0.01));
+  const high  = roundToStep(s.price * (1.002 + rand() * 0.015));
+  const low   = roundToStep(s.price * (0.980 + rand() * 0.012));
+  const prev  = roundToStep(s.price - s.change);
+  document.getElementById('stat-prev').textContent = fmtPrice(prev);
+  document.getElementById('stat-open').textContent = fmtPrice(open);
+  document.getElementById('stat-high').textContent = fmtPrice(high);
+  document.getElementById('stat-low').textContent  = fmtPrice(low);
+  document.getElementById('stat-vol').textContent  = s.volume || '—';
+
+  document.getElementById('orders-title').textContent = s.symbol + ' захиалгууд';
+  document.getElementById('price-input').value = fmtPrice(s.price).replace(/,/g,'');
+  updateStepHint();
+  updateBalanceDisplay();
+  updateSubmitLabel();
+  updateOrderCounts();
+  renderOrders();
+}
+
+function updateBalanceDisplay() {
+  const el = document.getElementById('balance-display');
+  const link = document.getElementById('recharge-link');
+  if (orderSide === 'BUY') {
+    el.textContent = fmtMNT(WALLET.cashBalance);
+    link.style.display = '';
+  } else {
+    const h = PORTFOLIO.find(p => p.symbol === selectedStock.symbol);
+    el.textContent = (h ? h.shares.toLocaleString() : '0') + ' ширхэг';
+    link.style.display = 'none';
   }
+}
 
-  function calculateTotal() {
-    const qty = parseFloat(document.getElementById('qty-input').value) || 0;
-    return qty * getOrderPrice();
-  }
+function updateStepHint() {
+  const p = parseFloat(document.getElementById('price-input').value) || selectedStock.price;
+  document.getElementById('step-hint').innerHTML = `Алхам: ${getPriceStep(p)}₮ · <a onclick="openPriceSteps()">Үнийн алхам</a>`;
+}
 
-  function calculateNetTotal() {
-    const total = calculateTotal();
-    const fee = total * (feePct / 100);
-    return orderSide === 'BUY' ? total + fee : total - fee;
-  }
+function updateSummary() {
+  const qty = parseFloat(document.getElementById('qty-input').value) || 0;
+  const px  = parseFloat(document.getElementById('price-input').value) || selectedStock.price;
+  const total = qty * px;
+  const fee   = total * feePct / 100;
+  const net   = orderSide === 'BUY' ? total + fee : total - fee;
+  document.getElementById('sum-total').textContent = fmtMNT(total);
+  document.getElementById('sum-fee').textContent = (orderSide === 'BUY' ? '+' : '−') + fmtMNT(fee);
+  document.getElementById('sum-net').textContent = fmtMNT(net);
+  document.getElementById('fee-pct').textContent = feePct;
+}
 
-  function updateHeader() {
-    const s = selectedStock;
-    document.getElementById('hdr-symbol').textContent = s.symbol;
-    document.getElementById('hdr-name').textContent = s.name.substring(0, 16);
-    document.getElementById('hdr-price').textContent = fmtMNT(s.price);
-    document.getElementById('hdr-date').textContent = '2026-06-09';
-    const ch = document.getElementById('hdr-change');
-    ch.textContent = fmtChange(s.change, s.changePct);
-    ch.className = 'price-change ' + (s.change >= 0 ? 'up' : 'down');
-    document.getElementById('my-orders-title').textContent = s.symbol + ' захиалгууд';
-    document.getElementById('price-input').value = s.price >= 1000 ? Math.round(s.price) : s.price.toFixed(2);
-    updateStepLabel();
-    updateBalanceDisplay();
-    updateSubmitLabel();
-    renderMyOrders();
-    updateOrderCounts();
-  }
+function updateSubmitLabel() {
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = (orderSide === 'BUY' ? 'АВАХ' : 'ЗАРАХ') + ' ' + selectedStock.symbol;
+  btn.className = 'f-submit ' + (orderSide === 'BUY' ? 'buy' : 'sell');
+  const cf = document.getElementById('cf-submit-btn');
+  cf.className = 't-btn ' + (orderSide === 'BUY' ? 'buy-btn' : 'sell-btn');
+}
 
-  function updateBalanceDisplay() {
-    const el = document.getElementById('balance-display');
-    const link = document.getElementById('recharge-link');
-    if (orderSide === 'BUY') {
-      el.textContent = fmtMNT(WALLET.cashBalance);
-      link.style.display = 'inline';
-    } else {
-      const h = getHolding(selectedStock.symbol);
-      el.textContent = (h ? h.shares : 0) + ' ширхэг';
-      link.style.display = 'none';
-    }
-  }
+/* ── Side/type/dur ── */
+function setSide(side) {
+  orderSide = side;
+  document.getElementById('btn-buy').className  = 'side-tab' + (side==='BUY'  ? ' active-buy'  : '');
+  document.getElementById('btn-sell').className = 'side-tab' + (side==='SELL' ? ' active-sell' : '');
+  updateBalanceDisplay(); updateSummary(); updateSubmitLabel();
+}
 
-  function updateStepLabel() {
-    const p = parseFloat(document.getElementById('price-input').value) || selectedStock.price;
-    document.getElementById('step-label').textContent = 'Алхам: ' + getPriceStep(p) + '₮';
-  }
-
-  function updateSummary() {
-    const total = calculateTotal();
-    const fee = total * (feePct / 100);
-    document.getElementById('sum-total').textContent = fmtMNT(total);
-    document.getElementById('sum-fee').textContent = (orderSide === 'BUY' ? '+' : '−') + fmtMNT(fee);
-    document.getElementById('sum-net').textContent = fmtMNT(calculateNetTotal());
-    document.getElementById('fee-pct').textContent = feePct;
-  }
-
-  function updateSubmitLabel() {
-    const btn = document.getElementById('submit-btn');
-    btn.textContent = (orderSide === 'BUY' ? 'АВАХ' : 'ЗАРАХ') + ' ' + selectedStock.symbol;
-    btn.className = 'trade-submit ' + (orderSide === 'BUY' ? 'buy' : 'sell');
-    document.getElementById('cf-submit').className = 'btn ' + (orderSide === 'BUY' ? 'btn-success' : 'btn-danger');
-  }
-
-  function renderOrderBook() {
-    const book = typeof ORDER_BOOK !== 'undefined' ? ORDER_BOOK : { buy: [], sell: [] };
-    const len = Math.max(book.buy.length, book.sell.length);
-    let html = '';
-    for (let i = 0; i < len; i++) {
-      const bid = book.sell[i];
-      const ask = book.buy[i];
-      html += `<div class="ob-book-row">
-        <button class="buy-qty" onclick="fillFromBook('SELL','${bid?.price||''}','${bid?.quantity||''}')">${bid ? bid.quantity.toLocaleString() : ''}</button>
-        <button class="buy-px" onclick="fillFromBook('SELL','${bid?.price||''}','${bid?.quantity||''}')">${bid ? bid.price.toFixed(2) : ''}</button>
-        <button class="sell-px" onclick="fillFromBook('BUY','${ask?.price||''}','${ask?.quantity||''}')">${ask ? ask.price.toFixed(2) : ''}</button>
-        <button class="sell-qty" onclick="fillFromBook('BUY','${ask?.price||''}','${ask?.quantity||''}')">${ask ? ask.quantity.toLocaleString() : ''}</button>
-      </div>`;
-    }
-    document.getElementById('orderbook-body').innerHTML = html || '<div class="exec-empty">Мэдээлэл байхгүй</div>';
-  }
-
-  function renderExecuted() {
-    const trades = typeof EXECUTED_TRADES !== 'undefined' ? EXECUTED_TRADES : [];
-    const el = document.getElementById('exec-body');
-    if (!trades.length) {
-      el.innerHTML = '<div class="exec-empty">Арилжаа байхгүй</div>';
-      return;
-    }
-    el.innerHTML = trades.map(t => `
-      <div class="exec-row">
-        <span>${t.qty.toLocaleString()}</span>
-        <span>${t.price.toFixed(2)}</span>
-        <span>${t.time}</span>
-      </div>`).join('');
-  }
-
-  function fillFromBook(side, price, qty) {
-    if (!price) return;
-    setSide(side);
-    document.getElementById('order-type').value = 'limit';
-    onOrderTypeChange();
-    document.getElementById('price-input').value = parseFloat(price).toFixed(2);
-    if (qty) document.getElementById('qty-input').value = qty;
-    updateSummary();
-    updateStepLabel();
-  }
-
-  function switchMainTab(tab, btn) {
-    document.querySelectorAll('.trade-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-book').style.display = tab === 'book' ? 'block' : 'none';
-    document.getElementById('panel-chart').style.display = tab === 'chart' ? 'block' : 'none';
-    if (tab === 'chart' && !chartRendered) {
-      chartRendered = true;
-      const data = SPARKLINES[selectedStock.symbol] || [184,186,188,187,190,189.84];
-      renderLineChart('trade-chart', data, { height: 340, color: '#00C076', showGrid: true });
-    }
-  }
-
-  function setSide(side) {
-    orderSide = side;
-    document.getElementById('btn-buy').className = 'bst-btn' + (side === 'BUY' ? ' active-buy' : '');
-    document.getElementById('btn-sell').className = 'bst-btn' + (side === 'SELL' ? ' active-sell' : '');
-    updateBalanceDisplay();
-    updateSummary();
-    updateSubmitLabel();
-  }
-
-  function onOrderTypeChange() {
-    const isMarket = document.getElementById('order-type').value === 'market';
-    document.getElementById('price-section').style.display = isMarket ? 'none' : 'block';
-    updateSummary();
-  }
-
-  function onDurationChange() {
-    document.getElementById('gtd-wrap').style.display =
-      document.getElementById('order-duration').value === 'GTD' ? 'block' : 'none';
-  }
-
-  function adjustPrice(dir) {
-    let val = parseFloat(document.getElementById('price-input').value);
-    if (isNaN(val) || val <= 0) val = selectedStock.price;
-    const step = getPriceStep(val);
-    let next = dir === 'up' ? val + step : val - step;
-    if (next < 0) next = 0;
-    const newStep = getPriceStep(next);
-    const rounded = Math.round(next / newStep) * newStep;
-    document.getElementById('price-input').value = newStep >= 1 ? Math.round(rounded) : rounded.toFixed(2);
-    updateStepLabel();
-    updateSummary();
-  }
-
-  function validatePrice() {
-    const inp = document.getElementById('price-input');
-    let val = parseFloat(inp.value);
-    if (isNaN(val) || val <= 0) return;
-    const step = getPriceStep(val);
-    const rounded = Math.round(val / step) * step;
-    inp.value = step >= 1 ? Math.round(rounded) : rounded.toFixed(2);
-    updateStepLabel();
-  }
-
-  function openStockModal() {
-    document.getElementById('stock-modal').classList.add('open');
-    renderStockList();
-    lucide.createIcons();
-  }
-  function closeStockModal() { document.getElementById('stock-modal').classList.remove('open'); }
-
-  function renderStockList(filter) {
-    const q = (filter || '').toLowerCase();
-    const list = STOCKS.filter(s => !q || s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
-    document.getElementById('stock-list').innerHTML = list.map(s => `
-      <div class="stock-search-item${s.symbol === selectedStock.symbol ? ' selected' : ''}" onclick="selectStock('${s.symbol}')">
-        <div><strong>${s.symbol}</strong> <span style="font-size:12px;color:var(--color-text-secondary)">${getStockName(s)}</span></div>
-        <span class="mono">${fmtMNT(s.price)}</span>
-      </div>`).join('');
-  }
-  function filterStocks() { renderStockList(document.getElementById('stock-search').value); }
-
-  function selectStock(symbol) {
-    selectedStock = STOCKS.find(s => s.symbol === symbol) || STOCKS[0];
-    chartRendered = false;
-    closeStockModal();
-    updateHeader();
-    renderOrderBook();
-    renderExecuted();
-    updateSummary();
-  }
-
-  function toggleStar() { document.getElementById('star-btn').classList.toggle('star-active'); }
-  function goRecharge() { try { window.parent.navigateTo('balance'); } catch(e) {} }
-
-  function openConfirm() {
-    const qty = document.getElementById('qty-input').value;
-    if (!qty || qty < 1) { alert('Тоо ширхэг оруулна уу'); return; }
-    if (document.getElementById('order-type').value === 'limit' && !document.getElementById('price-input').value) {
-      alert('Үнэ оруулна уу'); return;
-    }
-    const total = calculateTotal();
-    const fee = total * (feePct / 100);
-    document.getElementById('cf-symbol').textContent = selectedStock.symbol;
-    document.getElementById('cf-side').textContent = orderSide === 'BUY' ? 'Худалдан авах' : 'Зарах';
-    document.getElementById('cf-side').style.color = orderSide === 'BUY' ? 'var(--color-buy)' : 'var(--color-sell)';
-    document.getElementById('cf-qty').textContent = qty;
-    document.getElementById('cf-price').textContent = fmtMNT(getOrderPrice());
-    document.getElementById('cf-total').textContent = fmtMNT(total);
-    document.getElementById('cf-fee').textContent = (orderSide === 'BUY' ? '+' : '−') + fmtMNT(fee);
-    document.getElementById('cf-net').textContent = fmtMNT(calculateNetTotal());
-    document.getElementById('confirm-modal').classList.add('open');
-  }
-  function closeConfirm() { document.getElementById('confirm-modal').classList.remove('open'); }
-
-  function placeOrder() {
-    closeConfirm();
-    alert('Захиалга амжилттай илгээгдлээ!');
-    document.getElementById('qty-input').value = '';
-    updateSummary();
-  }
-
-  function openPriceSteps() { document.getElementById('steps-modal').classList.add('open'); }
-  function closePriceSteps() { document.getElementById('steps-modal').classList.remove('open'); }
-
-  function filterOrdersBySymbol() {
-    return ORDERS.filter(o => o.symbol === selectedStock.symbol);
-  }
-
-  function getOrderStatusGroup(status) {
-    const s = status.toUpperCase();
-    if (s === 'PENDING' || s === 'PARTIAL') return 'active';
-    if (s === 'FILLED') return 'completed';
-    if (s === 'CANCELLED') return 'cancelled';
-    return 'active';
-  }
-
-  function updateOrderCounts() {
-    const orders = filterOrdersBySymbol();
-    document.getElementById('cnt-active').textContent = orders.filter(o => getOrderStatusGroup(o.status) === 'active').length;
-    document.getElementById('cnt-completed').textContent = orders.filter(o => getOrderStatusGroup(o.status) === 'completed').length;
-    document.getElementById('cnt-cancelled').textContent = orders.filter(o => getOrderStatusGroup(o.status) === 'cancelled').length;
-  }
-
-  function renderMyOrders() {
-    const orders = filterOrdersBySymbol().filter(o => getOrderStatusGroup(o.status) === orderTab);
-    const el = document.getElementById('my-orders-list');
-    if (!orders.length) {
-      const msgs = { active: 'Идэвхтэй захиалга байхгүй', completed: 'Биелсэн захиалга байхгүй', cancelled: 'Цуцлагдсан захиалга байхгүй' };
-      el.innerHTML = `<div class="orders-empty">${msgs[orderTab]}</div>`;
-      return;
-    }
-    el.innerHTML = orders.map(o => {
-      const total = o.qty * o.price;
-      const fee = total * (feePct / 100);
-      const net = o.type === 'BUY' ? total + fee : total - fee;
-      const isPartial = o.status === 'PARTIAL';
-      return `<div class="order-item">
-        <div class="order-item-left">
-          <div>
-            <span class="order-item-symbol">${o.symbol}</span>
-            <span class="${o.type === 'BUY' ? 'order-badge-buy' : 'order-badge-sell'}">${o.type === 'BUY' ? ' Авах' : ' Зарах'}</span>
-            ${isPartial ? `<span style="font-size:10px;color:#f59e0b"> Хэсэгчлэн (${o.cumQty}/${o.qty})</span>` : ''}
-          </div>
-          <div class="order-item-meta">${o.qty.toLocaleString()} ш × ${fmtMNT(o.price)}</div>
-          <div class="order-item-date">${o.date}</div>
-        </div>
-        <div class="order-item-right">
-          <div class="order-item-total">${fmtMNT(net)}</div>
-          ${orderTab === 'active' ? `<button class="order-cancel-btn" onclick="cancelOrder('${o.id}')">Захиалга цуцлах</button>` :
-            `<span class="${orderTab === 'completed' ? 'order-status-ok' : 'order-status-bad'}">${orderTab === 'completed' ? 'Биелсэн' : 'Цуцлагдсан'}</span>`}
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  function switchOrderTab(tab, btn) {
-    orderTab = tab;
-    document.querySelectorAll('.my-orders-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    renderMyOrders();
-  }
-
-  function goAllOrders() { try { window.parent.navigateTo('all-orders'); } catch(e) {} }
-
-  function cancelOrder(id) {
-    if (confirm('Захиалга цуцлах уу?')) {
-      const o = ORDERS.find(x => x.id === id);
-      if (o) o.status = 'CANCELLED';
-      updateOrderCounts();
-      switchOrderTab('active', document.querySelector('.my-orders-tab[data-otab="active"]'));
-    }
-  }
-
-  renderOrderBook();
-  renderExecuted();
-  updateHeader();
+function onOrderTypeChange() {
+  const isMarket = document.getElementById('order-type').value === 'market';
+  document.getElementById('price-section').style.display = isMarket ? 'none' : '';
   updateSummary();
-  lucide.createIcons();
+}
+
+function onDurChange() {
+  document.getElementById('gtd-wrap').style.display =
+    document.getElementById('order-dur').value === 'GTD' ? '' : 'none';
+}
+
+function adjustPrice(dir) {
+  const inp = document.getElementById('price-input');
+  let val = parseFloat(inp.value);
+  if (isNaN(val) || val <= 0) val = selectedStock.price;
+  const step = getPriceStep(val);
+  let next = dir === 'up' ? val + step : Math.max(step, val - step);
+  inp.value = fmtPrice(roundToStep(next)).replace(/,/g,'');
+  updateStepHint(); updateSummary();
+}
+
+function validatePrice() {
+  const inp = document.getElementById('price-input');
+  let val = parseFloat(inp.value);
+  if (isNaN(val) || val <= 0) return;
+  inp.value = fmtPrice(roundToStep(val)).replace(/,/g,'');
+  updateStepHint();
+}
+
+function fillFromBook(side, price, qty) {
+  if (!price) return;
+  setSide(side);
+  document.getElementById('order-type').value = 'limit';
+  onOrderTypeChange();
+  document.getElementById('price-input').value = price;
+  if (qty) document.getElementById('qty-input').value = qty;
+  updateSummary(); updateStepHint();
+}
+
+/* ── Tabs ── */
+function switchCTab(tab, btn) {
+  currentCTab = tab;
+  document.querySelectorAll('.tr-ctab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-chart').style.display  = tab === 'chart'  ? '' : 'none';
+  document.getElementById('panel-trades').style.display = tab === 'trades' ? '' : 'none';
+  document.getElementById('period-bar').style.display   = tab === 'chart'  ? '' : 'none';
+  if (tab === 'chart') renderChart('panel-chart', selectedStock, currentPeriod);
+  if (tab === 'trades') renderExecuted();
+}
+
+function setPeriod(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('.tr-period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChart('panel-chart', selectedStock, period);
+}
+
+/* ── Stock modal ── */
+function openStockModal() {
+  document.getElementById('modal-stock').classList.add('open');
+  document.getElementById('stock-search-inp').value = '';
+  renderStockList('');
+  setTimeout(() => document.getElementById('stock-search-inp').focus(), 100);
+}
+function closeStockModal() { document.getElementById('modal-stock').classList.remove('open'); }
+
+function renderStockList(q) {
+  const qL = (q || '').toLowerCase();
+  const list = STOCKS.filter(s => !qL || s.symbol.toLowerCase().includes(qL) || s.name.toLowerCase().includes(qL));
+  document.getElementById('stock-list').innerHTML = list.map(s => {
+    const isUp = s.change >= 0;
+    return `<div class="stock-list-item${s.symbol===selectedStock.symbol?' selected':''}" onclick="selectStock('${s.symbol}')">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="sli-sym">${s.symbol}</span>
+        <div><div class="sli-name">${s.name}</div><div class="sli-sector">${s.sector||''}</div></div>
+      </div>
+      <div class="sli-right">
+        <div class="sli-price">${fmtMNT(s.price)}</div>
+        <div class="sli-change ${isUp?'up':'down'}">${isUp?'+':''}${s.change.toFixed(2)} (${isUp?'+':''}${s.changePct.toFixed(2)}%)</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function filterStocks() { renderStockList(document.getElementById('stock-search-inp').value); }
+
+function selectStock(symbol) {
+  selectedStock = STOCKS.find(s => s.symbol === symbol) || STOCKS[0];
+  cachedBook = null;
+  closeStockModal();
+  updateHeader();
+  renderOrderBook();
+  renderChart('panel-chart', selectedStock, currentPeriod);
+  updateSummary();
+}
+
+/* ── Star ── */
+function toggleStar() {
+  isStarred = !isStarred;
+  const btn = document.getElementById('star-btn');
+  const ico = document.getElementById('star-icon');
+  btn.classList.toggle('starred', isStarred);
+  ico.setAttribute('fill', isStarred ? '#F59E0B' : 'none');
+  showToast(isStarred ? selectedStock.symbol + ' watchlist-д нэмлээ' : 'Watchlist-аас хаслаа');
+}
+
+/* ── Confirm modal ── */
+function openConfirm() {
+  const qty = parseInt(document.getElementById('qty-input').value);
+  if (!qty || qty < 1) { showToast('Тоо ширхэг оруулна уу'); return; }
+  const isMarket = document.getElementById('order-type').value === 'market';
+  if (!isMarket && !document.getElementById('price-input').value) { showToast('Үнэ оруулна уу'); return; }
+
+  const px    = parseFloat(document.getElementById('price-input').value) || selectedStock.price;
+  const total = qty * px;
+  const fee   = total * feePct / 100;
+  const net   = orderSide === 'BUY' ? total + fee : total - fee;
+
+  document.getElementById('cf-sym').textContent   = selectedStock.symbol + ' — ' + selectedStock.name;
+  const sideEl = document.getElementById('cf-side');
+  sideEl.textContent = orderSide === 'BUY' ? 'Худалдан авах' : 'Зарах';
+  sideEl.style.color = orderSide === 'BUY' ? 'var(--color-buy)' : 'var(--color-sell)';
+  sideEl.style.fontWeight = '800';
+  document.getElementById('cf-qty').textContent   = qty.toLocaleString('mn-MN') + ' ширхэг';
+  document.getElementById('cf-price').textContent = fmtMNT(px) + (isMarket ? ' (зах зээлийн)' : '');
+  document.getElementById('cf-total').textContent = fmtMNT(total);
+  document.getElementById('cf-fee').textContent   = (orderSide==='BUY'?'+':'−') + fmtMNT(fee);
+  document.getElementById('cf-net').textContent   = fmtMNT(net);
+  document.getElementById('modal-confirm').classList.add('open');
+}
+function closeConfirm() { document.getElementById('modal-confirm').classList.remove('open'); }
+
+function placeOrder() {
+  closeConfirm();
+  const qty = parseInt(document.getElementById('qty-input').value);
+  const px  = parseFloat(document.getElementById('price-input').value) || selectedStock.price;
+  ORDERS.unshift({
+    id: 'ORD-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+    symbol: selectedStock.symbol, type: orderSide,
+    qty, price: px, status: 'PENDING',
+    date: new Date().toISOString().slice(0,16).replace('T',' '), cumQty: 0
+  });
+  document.getElementById('qty-input').value = '';
+  updateSummary(); updateOrderCounts(); renderOrders();
+  showToast('Захиалга амжилттай илгээгдлээ!');
+}
+
+/* ── Price steps ── */
+function openPriceSteps()  { document.getElementById('modal-steps').classList.add('open'); }
+function closePriceSteps() { document.getElementById('modal-steps').classList.remove('open'); }
+
+/* ── My orders ── */
+function statusGroup(s) {
+  const u = s.toUpperCase();
+  if (u==='PENDING'||u==='PARTIAL') return 'active';
+  if (u==='FILLED') return 'completed';
+  if (u==='CANCELLED') return 'cancelled';
+  return 'active';
+}
+function updateOrderCounts() {
+  const orders = ORDERS.filter(o => o.symbol === selectedStock.symbol);
+  document.getElementById('cnt-active').textContent    = orders.filter(o => statusGroup(o.status)==='active').length;
+  document.getElementById('cnt-completed').textContent = orders.filter(o => statusGroup(o.status)==='completed').length;
+  document.getElementById('cnt-cancelled').textContent = orders.filter(o => statusGroup(o.status)==='cancelled').length;
+}
+function renderOrders() {
+  const orders = ORDERS.filter(o => o.symbol===selectedStock.symbol && statusGroup(o.status)===orderTab);
+  const el = document.getElementById('orders-body');
+  if (!orders.length) {
+    const msgs = { active:'Идэвхтэй захиалга байхгүй', completed:'Биелсэн захиалга байхгүй', cancelled:'Цуцлагдсан захиалга байхгүй' };
+    el.innerHTML = `<div class="orders-empty">${msgs[orderTab]||'—'}</div>`; return;
+  }
+  el.innerHTML = orders.map(o => {
+    const total = o.qty * o.price;
+    const fee   = total * feePct / 100;
+    const net   = o.type==='BUY' ? total+fee : total-fee;
+    const isBuy = o.type === 'BUY';
+    const grp   = statusGroup(o.status);
+    const partial = o.status === 'PARTIAL' ? `<span class="ord-partial"> (${o.cumQty}/${o.qty})</span>` : '';
+    const action =
+      grp === 'active'    ? `<button class="ord-cancel-btn" onclick="cancelOrder('${o.id}')">Цуцлах</button>` :
+      grp === 'completed' ? `<span class="ord-status os-filled">Биелсэн</span>` :
+                            `<span class="ord-status os-cancelled">Цуцлагдсан</span>`;
+    return `<div class="ord-row">
+      <span class="ord-side-badge ${isBuy?'osb-buy':'osb-sell'}">${isBuy?'АВ':'ЗАР'}</span>
+      <span class="ord-sym">${o.symbol}</span>
+      <div class="ord-meta">${o.qty.toLocaleString()}ш × ${fmtMNT(o.price)}${partial}</div>
+      <span class="ord-price">${fmtMNT(net)}</span>
+      <span class="ord-date">${o.date.slice(5)}</span>
+      ${action}
+    </div>`;
+  }).join('');
+}
+function setOrderTab(tab, btn) {
+  orderTab = tab;
+  document.querySelectorAll('.tr-otab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+function cancelOrder(id) {
+  const o = ORDERS.find(x => x.id===id); if (!o) return;
+  o.status = 'CANCELLED';
+  updateOrderCounts(); renderOrders();
+  showToast('Захиалга цуцлагдлаа');
+}
+
+/* ── Navigation ── */
+function goAllOrders() { try { window.parent.navigateTo('all-orders'); } catch(e) {} }
+function goRecharge()  { try { window.parent.navigateTo('recharge');   } catch(e) {} }
+/* ── Trade alert modal ── */
+function openTradeAlertModal() {
+  document.getElementById('ta-symbol').value = selectedStock.symbol + ' — ' + selectedStock.name;
+  document.getElementById('ta-price-type').value = 'LAST_PRICE';
+  document.getElementById('ta-condition').value = 'ABOVE';
+  document.getElementById('ta-target').value = fmtPrice(selectedStock.price).replace(/,/g,'');
+  updateAlertPreview();
+  document.getElementById('modal-trade-alert').classList.add('open');
+}
+function closeTradeAlertModal() { document.getElementById('modal-trade-alert').classList.remove('open'); }
+function updateAlertPreview() {
+  const cond = document.getElementById('ta-condition').value;
+  const target = document.getElementById('ta-target').value;
+  const condLabel = cond === 'ABOVE' ? 'дэнзэнгээс дээш' : 'дэнзэнгээс доош';
+  const el = document.getElementById('ta-preview');
+  if (!target) { el.textContent = 'Нөхцөл оруулна уу'; return; }
+  el.innerHTML = `<strong>${selectedStock.symbol}</strong> үнэ <strong>₮${parseFloat(target).toLocaleString('mn-MN')}</strong>-${condLabel} гарахад мэдэгдэнэ`;
+}
+function saveTradeAlert() {
+  const target = parseFloat(document.getElementById('ta-target').value);
+  if (!target || target <= 0) { showToast('Зорилтот үнэ оруулна уу'); return; }
+  if (typeof PRICE_ALERTS !== 'undefined') {
+    PRICE_ALERTS.push({
+      id: 'AL-' + Math.random().toString(36).slice(2,5).toUpperCase(),
+      symbol: selectedStock.symbol,
+      priceType: document.getElementById('ta-price-type').value,
+      condition: document.getElementById('ta-condition').value,
+      targetValue: target,
+      isActive: true, lastTriggered: null
+    });
+  }
+  closeTradeAlertModal();
+  showToast(selectedStock.symbol + ' сэрэмжлүүлэг нэмэгдлээ');
+}
+// Live preview on input change
+document.addEventListener('DOMContentLoaded', () => {
+  ['ta-condition','ta-target','ta-price-type'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateAlertPreview);
+    if (el) el.addEventListener('change', updateAlertPreview);
+  });
+});
+
+/* ── Init ── */
+updateHeader();
+renderOrderBook();
+renderChart('panel-chart', selectedStock, '1D');
+updateSummary();
 </script>
 </body>
 </html>

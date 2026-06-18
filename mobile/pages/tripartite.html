@@ -573,6 +573,9 @@ By signing below, the Client acknowledges they have read, understood, and agree 
 
     renderView();
     lucide.createIcons();
+    requestAnimationFrame(() => {
+      try { window.parent.postMessage({ type: 'iframe-height', id: 'tripartite-iframe', height: document.body.scrollHeight }, '*'); } catch(e) {}
+    });
   </script>
 </body>
 </html>

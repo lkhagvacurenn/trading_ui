@@ -3,56 +3,349 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Бүх захиалга — BDSec</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Захиалгын түүх — BDSec</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
-  <link rel="stylesheet" href="../../styles/components.css" />
-  <link rel="stylesheet" href="../styles/web.css" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
-  <style>body{margin:0;font-family:'Manrope', sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); }
+
+    .page-root { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* ── Header ── */
+    .page-header {
+      padding: 18px 0 13px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg-card);
+      flex-shrink: 0;
+    }
+    .page-header-inner {
+      max-width: 1080px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .page-title-group { display: flex; align-items: center; gap: 10px; }
+    .page-title { font-size: 17px; font-weight: 800; margin: 0; }
+    .stat-chips { display: flex; align-items: center; gap: 6px; }
+    .stat-chip {
+      display: flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: 11px; font-weight: 700;
+    }
+    .sc-total   { background: rgba(73,73,170,0.12); color: var(--color-primary); border: 1px solid rgba(73,73,170,0.22); }
+    .sc-active  { background: rgba(245,158,11,0.12); color: #F59E0B; border: 1px solid rgba(245,158,11,0.2); }
+    .sc-filled  { background: rgba(0,192,118,0.12); color: var(--color-buy); border: 1px solid rgba(0,192,118,0.2); }
+    .stat-chip span { font-family: 'IBM Plex Mono', monospace; }
+
+    /* search */
+    .header-search {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--color-bg-input); border: 1px solid var(--color-border);
+      border-radius: 10px; padding: 8px 14px; min-width: 200px;
+    }
+    .header-search svg { width: 14px; height: 14px; color: var(--color-text-disabled); flex-shrink: 0; }
+    .header-search input {
+      border: none; background: transparent; outline: none;
+      font-size: 13px; color: var(--color-text-primary); flex: 1;
+      font-family: 'Manrope', sans-serif;
+    }
+    .header-search input::placeholder { color: var(--color-text-disabled); }
+
+    /* ── Body ── */
+    .page-body-outer { flex: 1; overflow-y: auto; }
+    .page-body-outer::-webkit-scrollbar { width: 4px; }
+    .page-body-outer::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+    .page-body { max-width: 1080px; margin: 0 auto; padding: 20px 24px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .filter-pills-wrap { display: flex; align-items: center; gap: 6px; }
+    .fpill {
+      padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 700;
+      border: 1px solid var(--color-border); background: transparent;
+      color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .fpill.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .fpill:hover:not(.active) { border-color: var(--color-primary); color: var(--color-primary); }
+
+    .filter-sep { width: 1px; height: 20px; background: var(--color-border); }
+
+    .side-select {
+      appearance: none; -webkit-appearance: none;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 10px; padding: 6px 28px 6px 12px;
+      font-size: 12px; font-weight: 600; color: var(--color-text-primary);
+      font-family: 'Manrope', sans-serif; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+
+    .sort-btn {
+      margin-left: auto; display: flex; align-items: center; gap: 6px;
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 10px; padding: 6px 12px;
+      font-size: 12px; font-weight: 600; color: var(--color-text-secondary);
+      cursor: pointer; font-family: 'Manrope', sans-serif;
+    }
+    .sort-btn svg { width: 13px; height: 13px; transition: transform 0.15s; }
+    .sort-btn.asc svg { transform: rotate(180deg); }
+
+    /* Date range */
+    .date-range-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .dr-pill { padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; border: 1px solid var(--color-border); background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: all 0.12s; font-family: 'Manrope', sans-serif; }
+    .dr-pill.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .dr-pill:hover:not(.active) { border-color: var(--color-primary); color: var(--color-primary); }
+    .dr-sep { width: 1px; height: 18px; background: var(--color-border); flex-shrink: 0; }
+    .dr-date-inp { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--color-text-primary); font-family: 'Manrope', sans-serif; outline: none; }
+    .dr-date-inp:focus { border-color: var(--color-primary); }
+    [data-theme="dark"] .dr-date-inp { color-scheme: dark; }
+    .dr-arrow { font-size: 12px; color: var(--color-text-disabled); }
+
+    /* ── Table card ── */
+    .orders-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .orders-table { width: 100%; border-collapse: collapse; }
+    .orders-table thead tr {
+      border-bottom: 1px solid var(--color-border);
+    }
+    .orders-table thead th {
+      padding: 10px 14px; text-align: left;
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--color-text-disabled);
+      white-space: nowrap;
+    }
+    .orders-table thead th.r { text-align: right; }
+    .orders-table tbody tr {
+      border-bottom: 1px solid rgba(51,51,92,0.5);
+      transition: background 0.1s;
+    }
+    .orders-table tbody tr:last-child { border-bottom: none; }
+    .orders-table tbody tr:hover { background: rgba(73,73,170,0.04); }
+    .orders-table tbody td {
+      padding: 12px 14px; font-size: 13px; vertical-align: middle;
+    }
+    .orders-table tbody td.r { text-align: right; }
+    .orders-table tbody td.mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+    /* Symbol cell */
+    .sym-cell { display: flex; align-items: center; gap: 9px; }
+    .sym-badge {
+      width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 800; font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: -0.02em;
+    }
+    .sym-name { font-size: 13px; font-weight: 700; }
+    .sym-full { font-size: 10px; color: var(--color-text-disabled); margin-top: 1px; }
+
+    /* Side badge */
+    .side-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 6px;
+      font-size: 11px; font-weight: 800;
+    }
+    .side-badge svg { width: 10px; height: 10px; }
+    .sb-buy  { background: rgba(0,192,118,0.14); color: var(--color-buy); }
+    .sb-sell { background: rgba(239,68,68,0.12); color: var(--color-sell); }
+
+    /* Status badge */
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 6px;
+      font-size: 11px; font-weight: 700;
+    }
+    .sc-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .sch-active   { background: rgba(245,158,11,0.12); color: #F59E0B; }
+    .sch-active .sc-dot { background: #F59E0B; }
+    .sch-filled   { background: rgba(0,192,118,0.12); color: var(--color-buy); }
+    .sch-filled .sc-dot { background: var(--color-buy); }
+    .sch-cancelled{ background: rgba(100,100,100,0.1); color: var(--color-text-disabled); }
+    .sch-cancelled .sc-dot { background: var(--color-text-disabled); }
+
+    /* Cancel btn */
+    .cancel-btn {
+      padding: 4px 10px; border-radius: 7px;
+      background: transparent; border: 1px solid rgba(239,68,68,0.3);
+      color: var(--color-sell); font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s; font-family: 'Manrope', sans-serif;
+    }
+    .cancel-btn:hover { background: rgba(239,68,68,0.1); border-color: var(--color-sell); }
+
+    /* Empty state */
+    .orders-empty {
+      padding: 64px 24px; text-align: center; color: var(--color-text-disabled);
+    }
+    .orders-empty svg { width: 36px; height: 36px; opacity: 0.25; margin-bottom: 12px; }
+    .orders-empty p { margin: 0; font-size: 13px; }
+
+    /* Pagination */
+    .pagination-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-top: 1px solid var(--color-border);
+    }
+    .pag-info { font-size: 12px; color: var(--color-text-disabled); }
+    .pag-info span { font-weight: 700; color: var(--color-text-secondary); }
+    .pag-btns { display: flex; align-items: center; gap: 4px; }
+    .pag-btn {
+      min-width: 30px; height: 30px; padding: 0 6px;
+      border-radius: 8px; border: 1px solid var(--color-border);
+      background: transparent; color: var(--color-text-primary);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.12s;
+    }
+    .pag-btn:hover:not(:disabled):not(.active) { border-color: var(--color-primary); color: var(--color-primary); }
+    .pag-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .pag-btn:disabled { opacity: 0.35; cursor: default; }
+    .pag-btn svg { width: 13px; height: 13px; }
+  </style>
 </head>
 <body>
-<div class="web-page">
-  <div class="page-toolbar">
-    <h1 class="web-page-title" style="margin:0">Бүх захиалга</h1>
-    <div class="search-input-wrap">
-      <i data-lucide="search" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
-      <input type="text" placeholder="Ticker хайх…" id="search-q" oninput="renderOrders()" />
+<div class="page-root">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="page-title-group">
+        <h1 class="page-title">Захиалгын түүх</h1>
+        <div class="stat-chips">
+          <div class="stat-chip sc-total"><span id="stat-total">0</span> нийт</div>
+          <div class="stat-chip sc-active"><span id="stat-active">0</span> идэвхтэй</div>
+          <div class="stat-chip sc-filled"><span id="stat-filled">0</span> биелсэн</div>
+        </div>
+      </div>
+      <div class="header-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Тикер хайх…" id="search-q" oninput="onFilter()" />
+      </div>
     </div>
   </div>
 
-  <div class="filter-pills" style="margin-bottom:16px">
-    <button class="filter-pill active" data-tab="all" onclick="setTab('all',this)">Бүгд</button>
-    <button class="filter-pill" data-tab="active" onclick="setTab('active',this)">Идэвхтэй</button>
-    <button class="filter-pill" data-tab="completed" onclick="setTab('completed',this)">Биелсэн</button>
-    <button class="filter-pill" data-tab="cancelled" onclick="setTab('cancelled',this)">Цуцлагдсан</button>
-    <select class="trade-select" id="side-filter" style="width:auto;margin-left:8px" onchange="renderOrders()">
-      <option value="all">Бүх төрөл</option>
-      <option value="BUY">Авах</option>
-      <option value="SELL">Зарах</option>
-    </select>
+  <!-- Body -->
+  <div class="page-body-outer">
+  <div class="page-body">
+
+    <!-- Date range -->
+    <div class="date-range-bar">
+      <button class="dr-pill" data-m="1" onclick="setDR(1,this)">1 сар</button>
+      <button class="dr-pill" data-m="2" onclick="setDR(2,this)">2 сар</button>
+      <button class="dr-pill active" data-m="3" onclick="setDR(3,this)">3 сар</button>
+      <div class="dr-sep"></div>
+      <input type="date" class="dr-date-inp" id="dr-from" onchange="onDRCustom()" />
+      <span class="dr-arrow">→</span>
+      <input type="date" class="dr-date-inp" id="dr-to" onchange="onDRCustom()" />
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="filter-pills-wrap">
+        <button class="fpill active" onclick="setTab('all',this)">Бүгд</button>
+        <button class="fpill" onclick="setTab('active',this)">Идэвхтэй</button>
+        <button class="fpill" onclick="setTab('completed',this)">Биелсэн</button>
+        <button class="fpill" onclick="setTab('cancelled',this)">Цуцлагдсан</button>
+      </div>
+      <div class="filter-sep"></div>
+      <select class="side-select" id="side-filter" onchange="onFilter()">
+        <option value="all">Бүх төрөл</option>
+        <option value="BUY">Авах</option>
+        <option value="SELL">Зарах</option>
+      </select>
+      <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        Огноо
+      </button>
+    </div>
+
+    <!-- Table card -->
+    <div class="orders-card">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Огноо</th>
+            <th>Хувьцаа</th>
+            <th>Төрөл</th>
+            <th class="r">Тоо ширхэг</th>
+            <th class="r">Үнэ</th>
+            <th class="r">Нийт дүн</th>
+            <th>Төлөв</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="orders-body"></tbody>
+      </table>
+      <div class="orders-empty" id="orders-empty" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 12px"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        <p>Захиалга олдсонгүй</p>
+      </div>
+      <div class="pagination-bar" id="pag-bar" style="display:none">
+        <div class="pag-info" id="pag-info"></div>
+        <div class="pag-btns" id="pag-btns"></div>
+      </div>
+    </div>
+
+  </div>
   </div>
 
-  <div class="web-card" style="overflow:hidden">
-    <table class="data-table">
-      <thead><tr>
-        <th>Огноо</th><th>Ticker</th><th>Төрөл</th><th>Тоо</th><th>Үнэ</th><th>Дүн</th><th>Төлөв</th><th></th>
-      </tr></thead>
-      <tbody id="orders-body"></tbody>
-    </table>
-    <div id="orders-empty" class="orders-empty" style="display:none">Захиалга олдсонгүй</div>
-    <div style="display:flex;justify-content:center;gap:8px;padding:16px;border-top:1px solid var(--color-border)" id="pager"></div>
-  </div>
 </div>
 
 <script src="../../data/static.js"></script>
-<script src="../scripts/components.js"></script>
 <script>
+  const SYMBOL_COLORS = {
+    BDS: { bg:'rgba(73,73,170,0.18)',  color:'#a5a5f0' },
+    KHAN:{ bg:'rgba(0,192,118,0.16)',  color:'#00C076' },
+    APU: { bg:'rgba(245,158,11,0.14)', color:'#F59E0B' },
+    MIK: { bg:'rgba(99,102,241,0.16)', color:'#818CF8' },
+    MNDL:{ bg:'rgba(239,68,68,0.14)',  color:'#EF4444' },
+    TDB: { bg:'rgba(20,184,166,0.14)', color:'#2DD4BF' },
+    MNE: { bg:'rgba(168,85,247,0.14)', color:'#C084FC' },
+  };
+  const COMPANY = {
+    BDS:'БД Секьюритис',KHAN:'Хаан Банк',APU:'АПУ ХК',
+    MIK:'МИК ХК',MNDL:'Мандал ДД',TDB:'ТД Банк',MNE:'Монгол Нэрс',
+  };
+
   let tab = 'all';
   let page = 1;
-  const pageSize = 8;
+  let sortDesc = true;
+  const PAGE_SIZE = 10;
+  let drFrom = null, drTo = null;
+
+  function initDR() {
+    drTo = new Date(); drFrom = new Date(); drFrom.setMonth(drFrom.getMonth() - 3);
+    document.getElementById('dr-from').value = drFrom.toISOString().slice(0,10);
+    document.getElementById('dr-to').value   = drTo.toISOString().slice(0,10);
+  }
+  function setDR(months, btn) {
+    document.querySelectorAll('.dr-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    drTo = new Date(); drFrom = new Date(); drFrom.setMonth(drFrom.getMonth() - months);
+    document.getElementById('dr-from').value = drFrom.toISOString().slice(0,10);
+    document.getElementById('dr-to').value   = drTo.toISOString().slice(0,10);
+    page = 1; renderOrders();
+  }
+  function onDRCustom() {
+    document.querySelectorAll('.dr-pill').forEach(p => p.classList.remove('active'));
+    drFrom = new Date(document.getElementById('dr-from').value);
+    drTo   = new Date(document.getElementById('dr-to').value);
+    if (isNaN(drFrom) || isNaN(drTo)) return;
+    const maxTo = new Date(drFrom); maxTo.setMonth(maxTo.getMonth() + 3);
+    if (drTo > maxTo) { drTo = maxTo; document.getElementById('dr-to').value = maxTo.toISOString().slice(0,10); }
+    page = 1; renderOrders();
+  }
+
+  function fmtMNT(v) {
+    return '₮' + v.toLocaleString('mn-MN');
+  }
 
   function statusGroup(s) {
     const u = s.toUpperCase();
@@ -62,17 +355,18 @@
     return 'active';
   }
 
-  function statusBadge(s) {
-    const g = statusGroup(s);
-    const map = { active:['Идэвхтэй','pending'], completed:['Биелсэн','ok'], cancelled:['Цуцлагдсан','bad'] };
-    const [lbl, cls] = map[g] || ['—','pending'];
-    return `<span class="status-badge ${cls}">${lbl}</span>`;
-  }
-
   function setTab(t, btn) {
     tab = t; page = 1;
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.fpill').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
+    renderOrders();
+  }
+
+  function onFilter() { page = 1; renderOrders(); }
+
+  function toggleSort() {
+    sortDesc = !sortDesc;
+    document.getElementById('sort-btn').classList.toggle('asc', !sortDesc);
     renderOrders();
   }
 
@@ -83,59 +377,111 @@
       if (tab !== 'all' && statusGroup(o.status) !== tab) return false;
       if (side !== 'all' && o.type !== side) return false;
       if (q && !o.symbol.toLowerCase().includes(q)) return false;
+      if (drFrom && drTo) {
+        const d = new Date(o.date.replace(' ','T'));
+        if (d < drFrom || d > drTo) return false;
+      }
       return true;
+    }).sort((a, b) => {
+      const da = new Date(a.date.replace(' ','T'));
+      const db = new Date(b.date.replace(' ','T'));
+      return sortDesc ? db - da : da - db;
     });
   }
 
   function renderOrders() {
+    const all = ORDERS;
+    document.getElementById('stat-total').textContent  = all.length;
+    document.getElementById('stat-active').textContent = all.filter(o => statusGroup(o.status) === 'active').length;
+    document.getElementById('stat-filled').textContent = all.filter(o => statusGroup(o.status) === 'completed').length;
+
     const list = filteredOrders();
-    const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+    const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
     if (page > totalPages) page = totalPages;
-    const slice = list.slice((page-1)*pageSize, page*pageSize);
+    const slice = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
     const body = document.getElementById('orders-body');
     const empty = document.getElementById('orders-empty');
+    const pagBar = document.getElementById('pag-bar');
 
     if (!slice.length) {
       body.innerHTML = '';
-      empty.style.display = 'block';
+      empty.style.display = '';
+      pagBar.style.display = 'none';
     } else {
       empty.style.display = 'none';
       body.innerHTML = slice.map(o => {
+        const grp = statusGroup(o.status);
         const total = o.qty * o.price;
-        const sideCls = o.type === 'BUY' ? 'change-up' : 'change-down';
-        const cancelBtn = statusGroup(o.status) === 'active'
-          ? `<button class="btn btn-ghost btn-sm" style="color:var(--color-sell)" onclick="cancelOrder('${o.id}')">Цуцлах</button>` : '';
+        const sc = SYMBOL_COLORS[o.symbol] || { bg:'rgba(73,73,170,0.14)', color:'var(--color-primary)' };
+        const company = COMPANY[o.symbol] || '';
+        const isBuy = o.type === 'BUY';
+
+        const statusHtml =
+          grp === 'active'    ? `<span class="status-chip sch-active"><span class="sc-dot"></span>Идэвхтэй</span>` :
+          grp === 'completed' ? `<span class="status-chip sch-filled"><span class="sc-dot"></span>Биелсэн</span>` :
+                                `<span class="status-chip sch-cancelled"><span class="sc-dot"></span>Цуцлагдсан</span>`;
+
+        const cancelBtn = grp === 'active'
+          ? `<button class="cancel-btn" onclick="cancelOrder('${o.id}')">Цуцлах</button>` : '';
+
         return `<tr>
-          <td style="font-size:12px;color:var(--color-text-secondary)">${o.date}</td>
-          <td class="font-semibold">${o.symbol}</td>
-          <td class="${sideCls}">${o.type === 'BUY' ? 'Авах' : 'Зарах'}</td>
-          <td class="mono">${o.qty.toLocaleString('mn-MN')}</td>
-          <td class="mono">${fmtMNT(o.price)}</td>
-          <td class="mono">${fmtMNT(total)}</td>
-          <td>${statusBadge(o.status)}</td>
-          <td>${cancelBtn}</td>
+          <td style="font-size:11px;color:var(--color-text-disabled);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${o.date}</td>
+          <td>
+            <div class="sym-cell">
+              <div class="sym-badge" style="background:${sc.bg};color:${sc.color}">${o.symbol}</div>
+              <div>
+                <div class="sym-name">${o.symbol}</div>
+                <div class="sym-full">${company}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="side-badge ${isBuy ? 'sb-buy' : 'sb-sell'}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${isBuy ? '<path d="M12 19V5M5 12l7-7 7 7"/>' : '<path d="M12 5v14M5 12l7 7 7-7"/>'}</svg>
+              ${isBuy ? 'Авах' : 'Зарах'}
+            </span>
+          </td>
+          <td class="r mono">${o.qty.toLocaleString('mn-MN')}</td>
+          <td class="r mono">${fmtMNT(o.price)}</td>
+          <td class="r mono" style="font-weight:700">${fmtMNT(total)}</td>
+          <td>${statusHtml}</td>
+          <td style="text-align:right">${cancelBtn}</td>
         </tr>`;
       }).join('');
-    }
 
-    document.getElementById('pager').innerHTML = totalPages > 1 ? `
-      <button class="btn btn-outline btn-sm" ${page<=1?'disabled':''} onclick="goPage(${page-1})">←</button>
-      <span style="font-size:12px;padding:0 8px">${page} / ${totalPages}</span>
-      <button class="btn btn-outline btn-sm" ${page>=totalPages?'disabled':''} onclick="goPage(${page+1})">→</button>` : '';
+      // pagination
+      pagBar.style.display = '';
+      const start = (page - 1) * PAGE_SIZE + 1;
+      const end   = Math.min(page * PAGE_SIZE, list.length);
+      document.getElementById('pag-info').innerHTML =
+        `<span>${start}–${end}</span> / нийт <span>${list.length}</span> захиалга`;
+
+      let btns = `<button class="pag-btn" onclick="goPage(${page-1})" ${page<=1?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>`;
+      const maxVisible = 7;
+      let startP = Math.max(1, page - Math.floor(maxVisible / 2));
+      let endP   = Math.min(totalPages, startP + maxVisible - 1);
+      if (endP - startP < maxVisible - 1) startP = Math.max(1, endP - maxVisible + 1);
+      if (startP > 1) btns += `<button class="pag-btn" onclick="goPage(1)">1</button>${startP > 2 ? '<span style="padding:0 4px;font-size:12px;color:var(--color-text-disabled)">…</span>' : ''}`;
+      for (let p = startP; p <= endP; p++) {
+        btns += `<button class="pag-btn ${p===page?'active':''}" onclick="goPage(${p})">${p}</button>`;
+      }
+      if (endP < totalPages) btns += `${endP < totalPages-1 ? '<span style="padding:0 4px;font-size:12px;color:var(--color-text-disabled)">…</span>' : ''}<button class="pag-btn" onclick="goPage(${totalPages})">${totalPages}</button>`;
+      btns += `<button class="pag-btn" onclick="goPage(${page+1})" ${page>=totalPages?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>`;
+      document.getElementById('pag-btns').innerHTML = btns;
+    }
   }
 
   function goPage(p) { page = p; renderOrders(); }
 
   function cancelOrder(id) {
-    if (!confirm('Захиалга цуцлах уу?')) return;
     const o = ORDERS.find(x => x.id === id);
     if (o) o.status = 'CANCELLED';
-    showToast('Захиалга цуцлагдлаа', 'success');
     renderOrders();
   }
 
+  initDR();
   renderOrders();
-  lucide.createIcons();
 </script>
 </body>
 </html>

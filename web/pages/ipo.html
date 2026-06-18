@@ -4,115 +4,460 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Анхдагч арилжаа — BDSec</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
-  <link rel="stylesheet" href="../../styles/components.css" />
-  <link rel="stylesheet" href="../styles/web.css" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin:0; font-family:'Manrope', sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
-    * { box-sizing:border-box; }
-    .balance-card { background:linear-gradient(135deg,#3a3a8c 0%,#4949AA 50%,#5b5bd6 100%); border-radius:18px; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; position:relative; overflow:hidden; }
-    .bc-label { font-size:11px; color:rgba(255,255,255,0.65); }
-    .bc-value { font-size:22px; font-weight:800; color:#fff; font-family:'IBM Plex Mono', monospace; margin:4px 0; }
-    .bc-btn { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:10px; padding:8px 14px; font-size:12px; font-weight:600; color:#fff; cursor:pointer; }
-    .ipo-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:14px; padding:16px; margin-bottom:12px; }
-    .ipo-company { font-size:14px; font-weight:700; }
-    .ipo-status-badge { font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; }
-    .ipo-status-badge.open { background:rgba(0,192,118,0.15); color:var(--color-buy); }
-    .ipo-status-badge.soon { background:rgba(245,158,11,0.15); color:var(--color-warning); }
-    .ipo-detail-row { display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px; }
-    .ipo-detail-label { color:var(--color-text-disabled); }
-    .ipo-detail-val { font-family:'IBM Plex Mono', monospace; font-weight:600; }
-    .ipo-progress-bar { height:4px; background:var(--color-bg-input); border-radius:99px; overflow:hidden; margin:10px 0; }
-    .ipo-progress-fill { height:100%; border-radius:99px; background:var(--color-primary); }
-    .ipo-order-btn { width:100%; padding:10px; border-radius:10px; background:var(--color-primary); border:none; font-size:13px; font-weight:700; color:#fff; cursor:pointer; }
-    .info-note { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:12px; padding:14px 16px; font-size:13px; color:var(--color-text-secondary); line-height:1.55; margin-bottom:16px; display:flex; gap:10px; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--color-bg); color: var(--color-text-primary); font-family: 'Manrope', sans-serif; }
+
+    /* ── Page shell ── */
+    .ipo-page { padding: 24px; max-width: 1100px; margin: 0 auto; }
+
+    /* ── Page header ── */
+    .ipo-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .ipo-header-left h1 { font-size: 20px; font-weight: 800; margin: 0 0 4px; }
+    .ipo-header-left p  { font-size: 13px; color: var(--color-text-secondary); margin: 0; }
+
+    /* ── Balance banner card ── */
+    .ipo-balance-card {
+      background: linear-gradient(135deg, #32308d 0%, #4949AA 55%, #6060cc 100%);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .ipo-balance-card::after {
+      content: '';
+      position: absolute;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      border: 28px solid rgba(255,255,255,0.06);
+      top: -60px; right: -40px;
+      pointer-events: none;
+    }
+    .ipo-balance-info { flex: 1; }
+    .ipo-balance-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+    .ipo-balance-amt   { font-size: 22px; font-weight: 800; color: #fff; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-deposit-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.12);
+      font-size: 12px; font-weight: 700; color: #fff; cursor: pointer;
+      font-family: 'Manrope', sans-serif; transition: background 0.13s; flex-shrink: 0;
+    }
+    .ipo-deposit-btn svg { width: 13px; height: 13px; }
+    .ipo-deposit-btn:hover { background: rgba(255,255,255,0.22); }
+
+    /* ── Tabs ── */
+    .ipo-tabs { display: flex; border-bottom: 1px solid var(--color-border); margin-bottom: 20px; }
+    .ipo-tab { padding: 10px 16px; font-size: 13px; font-weight: 700; border: none; background: transparent; color: var(--color-text-disabled); cursor: pointer; font-family: 'Manrope', sans-serif; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+    .ipo-tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+    .ipo-tab:hover:not(.active) { color: var(--color-text-secondary); }
+
+    /* ── Two-column layout ── */
+    .ipo-cols { display: grid; grid-template-columns: 340px 1fr; gap: 16px; align-items: start; }
+
+    /* ── IPO list ── */
+    .ipo-list { display: flex; flex-direction: column; gap: 10px; }
+    .ipo-card { background: var(--color-bg-card); border: 1.5px solid var(--color-border); border-radius: 14px; padding: 15px; cursor: pointer; transition: border-color 0.15s; }
+    .ipo-card:hover   { border-color: rgba(73,73,170,0.5); }
+    .ipo-card.selected { border-color: var(--color-primary); background: rgba(73,73,170,0.04); }
+    .ipo-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+    .ipo-symbol   { font-size: 14px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-cname    { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+    .ipo-badge    { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; }
+    .ipo-badge.open   { background: rgba(0,192,118,0.12); color: var(--color-buy); border: 1px solid rgba(0,192,118,0.25); }
+    .ipo-badge.soon   { background: rgba(245,158,11,0.1);  color: #F59E0B; border: 1px solid rgba(245,158,11,0.2); }
+    .ipo-card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+    .ipo-cs-label { font-size: 10px; color: var(--color-text-disabled); font-weight: 600; margin-bottom: 1px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .ipo-cs-val   { font-size: 12px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-prog-bar { height: 4px; background: var(--color-border); border-radius: 99px; overflow: hidden; }
+    .ipo-prog-fill { height: 100%; border-radius: 99px; }
+    .fill-green   { background: var(--color-buy); }
+    .fill-primary { background: var(--color-primary); }
+    .fill-amber   { background: #F59E0B; }
+
+    /* ── Right detail panel ── */
+    .ipo-detail { display: flex; flex-direction: column; gap: 14px; }
+
+    .ipo-detail-header {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; padding: 18px 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .ipo-logo { width: 48px; height: 48px; border-radius: 13px; background: linear-gradient(135deg,#4949AA,#7C7CE0); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #fff; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-detail-name { font-size: 17px; font-weight: 800; margin-bottom: 2px; }
+    .ipo-detail-sym  { font-size: 12px; color: var(--color-text-secondary); font-family: 'IBM Plex Mono', monospace; }
+    .ipo-detail-price { margin-left: auto; text-align: right; flex-shrink: 0; }
+    .ipo-price-val   { font-size: 20px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-price-label { font-size: 10px; color: var(--color-text-disabled); margin-top: 1px; }
+
+    /* Stats grid */
+    .ipo-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .ipo-stat-tile { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 12px; padding: 13px 14px; }
+    .ipo-stile-label { font-size: 10px; color: var(--color-text-disabled); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+    .ipo-stile-val   { font-size: 15px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-stile-sub   { font-size: 11px; color: var(--color-text-disabled); margin-top: 2px; }
+
+    /* Progress */
+    .ipo-detail-prog { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 14px; padding: 16px 18px; }
+    .ipo-dp-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .ipo-dp-title { font-size: 13px; font-weight: 800; }
+    .ipo-dp-pct   { font-size: 18px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-dp-bar   { height: 7px; background: var(--color-border); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
+    .ipo-dp-fill  { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+    .ipo-dp-meta  { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-disabled); }
+
+    /* Order form */
+    .ipo-form { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 14px; padding: 18px; }
+    .ipo-form-title { font-size: 14px; font-weight: 800; margin-bottom: 14px; }
+    .ipo-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .ipo-fl { display: flex; flex-direction: column; gap: 5px; }
+    .ipo-fl-label { font-size: 10px; font-weight: 700; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: 0.04em; }
+    .ipo-fl-inp   { background: var(--color-bg); border: 1.5px solid var(--color-border); border-radius: 10px; padding: 10px 13px; font-size: 15px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-primary); outline: none; transition: border-color 0.15s; width: 100%; }
+    .ipo-fl-inp:focus    { border-color: var(--color-primary); }
+    .ipo-fl-inp:disabled { opacity: 0.5; }
+    .ipo-fee-row  { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid var(--color-border); font-size: 13px; }
+    .ipo-fee-lbl  { color: var(--color-text-secondary); font-weight: 600; }
+    .ipo-fee-val  { font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-fee-total { color: var(--color-primary); font-size: 15px; }
+    .ipo-submit   { width: 100%; padding: 12px; border-radius: 11px; border: none; background: var(--color-primary); color: #fff; font-size: 14px; font-weight: 800; cursor: pointer; font-family: 'Manrope', sans-serif; margin-top: 14px; transition: opacity 0.15s; }
+    .ipo-submit:hover     { opacity: 0.88; }
+    .ipo-submit:disabled  { background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text-disabled); cursor: not-allowed; opacity: 1; }
+
+    /* Info strip */
+    .ipo-info { background: rgba(73,73,170,0.06); border: 1px solid rgba(73,73,170,0.18); border-radius: 12px; padding: 13px 15px; display: flex; gap: 10px; align-items: flex-start; }
+    .ipo-info svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--color-primary); margin-top: 1px; }
+    .ipo-info-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+    .ipo-info-text strong { color: var(--color-text-primary); font-weight: 700; }
+
+    /* ── My orders tab ── */
+    .ipo-orders-list { display: flex; flex-direction: column; gap: 8px; }
+    .ipo-order-row { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 12px; }
+    .ipo-order-ico { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; background: rgba(73,73,170,0.12); display: flex; align-items: center; justify-content: center; color: var(--color-primary); }
+    .ipo-order-ico svg { width: 14px; height: 14px; }
+    .ipo-order-info { flex: 1; }
+    .ipo-order-sym  { font-size: 13px; font-weight: 800; }
+    .ipo-order-meta { font-size: 11px; color: var(--color-text-disabled); margin-top: 1px; }
+    .ipo-order-right { text-align: right; }
+    .ipo-order-amt   { font-size: 13px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-order-status { font-size: 10px; font-weight: 700; margin-top: 2px; }
+    .ipo-order-status.pending { color: #F59E0B; }
+    .ipo-order-status.filled  { color: var(--color-buy); }
+    .ipo-empty { text-align: center; padding: 48px 20px; }
+    .ipo-empty-ico { width: 48px; height: 48px; border-radius: 50%; background: rgba(73,73,170,0.1); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: var(--color-primary); }
+    .ipo-empty-ico svg { width: 18px; height: 18px; }
+    .ipo-empty-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+    .ipo-empty-sub   { font-size: 12px; color: var(--color-text-secondary); }
+
+    /* ── Confirm modal ── */
+    .ipo-overlay { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px; }
+    .ipo-overlay.open { display: flex; }
+    .ipo-confirm-modal { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 20px; width: 360px; padding: 26px; }
+    .ipo-confirm-title { font-size: 17px; font-weight: 800; margin-bottom: 5px; }
+    .ipo-confirm-sub   { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 18px; line-height: 1.5; }
+    .ipo-confirm-rows  { background: var(--color-bg); border-radius: 12px; overflow: hidden; margin-bottom: 18px; }
+    .ipo-confirm-row   { display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--color-border); font-size: 13px; }
+    .ipo-confirm-row:last-child { border-bottom: none; }
+    .ipo-confirm-row span:first-child { color: var(--color-text-secondary); }
+    .ipo-confirm-row span:last-child  { font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+    .ipo-confirm-btns  { display: flex; gap: 10px; }
+    .ipo-confirm-cancel { flex: 1; padding: 11px; border-radius: 10px; border: 1.5px solid var(--color-border); background: transparent; font-size: 13px; font-weight: 700; color: var(--color-text-secondary); cursor: pointer; font-family: 'Manrope', sans-serif; transition: all 0.13s; }
+    .ipo-confirm-cancel:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .ipo-confirm-ok    { flex: 1; padding: 11px; border-radius: 10px; border: none; background: var(--color-primary); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif; transition: opacity 0.15s; }
+    .ipo-confirm-ok:hover { opacity: 0.88; }
+
+    /* Toast */
+    .ipo-toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 12px); z-index: 500; background: var(--color-text-primary); color: var(--color-bg); padding: 8px 18px; border-radius: 99px; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.22s; white-space: nowrap; }
+    .ipo-toast.show { opacity: 1; transform: translate(-50%, 0); }
   </style>
 </head>
 <body>
-<div class="web-page">
+<div class="ipo-page">
 
-  <div class="balance-card">
-    <div>
-      <div class="bc-label">ҮЦТ-ны дансны үлдэгдэл</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.5)">Данс: 9995</div>
-      <div class="bc-value" id="ipo-balance">—</div>
+  <!-- Header -->
+  <div class="ipo-header">
+    <div class="ipo-header-left">
+      <h1>Анхдагч арилжаа (IPO)</h1>
+      <p>МХБ-д шинэ гарч байгаа компаниудын хувьцаанд захиалга өгнө үү</p>
     </div>
-    <button class="bc-btn" onclick="openDeposit()">Орлого</button>
   </div>
 
-  <div class="info-note">
-    <i data-lucide="info" style="width:16px;height:16px;color:var(--color-info);flex-shrink:0;margin-top:2px"></i>
-    <span>Анхдагч зах зээлийн захиалга 10:00–17:00 цагийн хооронд шивэгдэнэ. Захиалга өмнө ҮЦТХТ-ны дансандаа мөнгө байршуулсан байх шаардлагатай.</span>
+  <!-- Balance card -->
+  <div class="ipo-balance-card">
+    <div class="ipo-balance-info">
+      <div class="ipo-balance-label">IPO Данс</div>
+      <div class="ipo-balance-amt" id="ipo-balance">—</div>
+    </div>
+    <button class="ipo-deposit-btn" onclick="go('recharge')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Орлого нэмэх
+    </button>
   </div>
 
-  <div class="web-grid-2">
-    <div>
-  <div class="tabs-bar" style="margin-bottom:16px">
-    <button class="tab-btn active" onclick="switchTab('listed', this)">Идэвхтэй IPO</button>
-    <button class="tab-btn" onclick="switchTab('orders', this)">Миний захиалга</button>
+  <!-- Tabs -->
+  <div class="ipo-tabs">
+    <button class="ipo-tab active" id="tab-btn-list"   onclick="switchTab('list')">Идэвхтэй IPO</button>
+    <button class="ipo-tab"        id="tab-btn-orders" onclick="switchTab('orders')">Миний захиалга</button>
   </div>
 
-    <div id="tab-listed"></div>
-
-    <div id="tab-orders" style="display:none">
-      <div class="web-card web-card-pad" style="text-align:center;padding:48px 24px">
-        <i data-lucide="file-x" style="width:40px;height:40px;color:var(--color-text-disabled);margin-bottom:12px"></i>
-        <div style="font-weight:600;margin-bottom:6px">IPO захиалга байхгүй</div>
-        <div style="font-size:13px;color:var(--color-text-secondary)">Идэвхтэй IPO-оос захиалга өгнө үү.</div>
-      </div>
+  <!-- IPO list tab -->
+  <div id="tab-list">
+    <div class="ipo-cols">
+      <!-- Left: cards -->
+      <div class="ipo-list" id="ipo-card-list"></div>
+      <!-- Right: detail -->
+      <div class="ipo-detail" id="ipo-detail"></div>
     </div>
-    </div>
+  </div>
 
-    <div class="web-card web-card-pad">
-      <div class="web-section-title" style="margin-bottom:12px">IPO тухай</div>
-      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin:0 0 12px">Анхдагч зах зээл (IPO) нь компаниудын хувьцааг анх удаа олон нийтэд санал болгох зах зээл юм.</p>
-      <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border);font-size:13px">
-        <span style="color:var(--color-text-secondary)">Захиалгын цаг</span><span>10:00 – 17:00</span>
-      </div>
-      <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px">
-        <span style="color:var(--color-text-secondary)">Хамгийн бага захиалга</span><span class="mono">100 хувь</span>
-      </div>
+  <!-- My orders tab -->
+  <div id="tab-orders" style="display:none">
+    <div id="ipo-orders-wrap"></div>
+  </div>
+
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="ipo-overlay" id="confirm-modal" onclick="if(event.target===this)closeConfirm()">
+  <div class="ipo-confirm-modal">
+    <div class="ipo-confirm-title">Захиалга баталгаажуулах</div>
+    <div class="ipo-confirm-sub">Дараах мэдээллийг шалгаад захиалгаа баталгаажуулна уу.</div>
+    <div class="ipo-confirm-rows" id="confirm-rows"></div>
+    <div class="ipo-confirm-btns">
+      <button class="ipo-confirm-cancel" onclick="closeConfirm()">Цуцлах</button>
+      <button class="ipo-confirm-ok"     onclick="confirmOrder()">Захиалах</button>
     </div>
   </div>
 </div>
 
-<script src="../../data/static.js"></script>
-<script src="../scripts/components.js"></script>
-<script>
-  function renderIpoList() {
-    document.getElementById('ipo-balance').textContent = fmtMNT(WALLET.cashBalance);
-    document.getElementById('tab-listed').innerHTML = IPO_LIST.map(ipo => {
-      const isOpen = ipo.status === 'open';
-      return `<div class="ipo-card">
-        <div style="display:flex;justify-content:space-between;margin-bottom:12px">
-          <div><div class="ipo-company">${ipo.name}</div><div style="font-size:11px;color:var(--color-text-disabled)">${ipo.symbol}</div></div>
-          <span class="ipo-status-badge ${isOpen ? 'open' : 'soon'}">${isOpen ? 'Идэвхтэй' : 'Удахгүй'}</span>
-        </div>
-        <div class="ipo-detail-row"><span class="ipo-detail-label">Үнэ</span><span class="ipo-detail-val">${fmtMNT(ipo.price)}</span></div>
-        <div class="ipo-detail-row"><span class="ipo-detail-label">Нийт хувь</span><span class="ipo-detail-val">${ipo.total.toLocaleString('mn-MN')}</span></div>
-        <div class="ipo-detail-row"><span class="ipo-detail-label">${isOpen ? 'Хаагдах' : 'Нээгдэх'}</span><span class="ipo-detail-val">${ipo.endDate}</span></div>
-        <div class="ipo-detail-row"><span class="ipo-detail-label">Захиалсан</span><span class="ipo-detail-val ${isOpen ? 'change-up' : ''}">${ipo.subscribed}%</span></div>
-        <div class="ipo-progress-bar"><div class="ipo-progress-fill" style="width:${ipo.subscribed}%;${!isOpen ? 'background:var(--color-warning)' : ''}"></div></div>
-        <button class="ipo-order-btn" ${isOpen ? '' : 'disabled style="background:var(--color-bg-input);color:var(--color-text-secondary);cursor:not-allowed"'}
-          onclick="orderIPO('${ipo.symbol}')">${isOpen ? 'Захиалга өгөх' : 'Одоогоор нээгдээгүй'}</button>
-      </div>`;
-    }).join('');
-  }
+<div class="ipo-toast" id="ipo-toast"></div>
 
-  function switchTab(tab, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-listed').style.display = tab === 'listed' ? 'block' : 'none';
-    document.getElementById('tab-orders').style.display = tab === 'orders' ? 'block' : 'none';
+<script src="../../data/static.js"></script>
+<script>
+const fmtM = v => '₮' + Math.round(v).toLocaleString('mn-MN');
+function go(key) { try { window.parent.navigateTo(key); } catch(e) {} }
+function showToast(msg) {
+  const el = document.getElementById('ipo-toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+let selectedIpo = null;
+let myOrders    = [];
+
+/* ── Render card list ── */
+function renderCardList() {
+  document.getElementById('ipo-balance').textContent = fmtM(WALLET?.ipoAccount || WALLET?.cashBalance || 0);
+  const container = document.getElementById('ipo-card-list');
+  container.innerHTML = IPO_LIST.map(ipo => {
+    const isOpen = ipo.status === 'open';
+    const pctCls = ipo.subscribed >= 80 ? 'fill-green' : 'fill-primary';
+    const badge  = isOpen
+      ? `<span class="ipo-badge open">● Идэвхтэй</span>`
+      : `<span class="ipo-badge soon">◌ Удахгүй</span>`;
+    return `<div class="ipo-card${selectedIpo?.symbol === ipo.symbol ? ' selected' : ''}" onclick="selectIpo('${ipo.symbol}')">
+      <div class="ipo-card-top">
+        <div>
+          <div class="ipo-symbol">${ipo.symbol}</div>
+          <div class="ipo-cname">${ipo.name}</div>
+        </div>
+        ${badge}
+      </div>
+      <div class="ipo-card-stats">
+        <div>
+          <div class="ipo-cs-label">Үнэ</div>
+          <div class="ipo-cs-val">${fmtM(ipo.price)}</div>
+        </div>
+        <div>
+          <div class="ipo-cs-label">Хаагдах</div>
+          <div class="ipo-cs-val" style="font-size:11px">${ipo.endDate}</div>
+        </div>
+      </div>
+      <div class="ipo-prog-bar" style="margin-top:4px">
+        <div class="ipo-prog-fill ${pctCls}" style="width:${ipo.subscribed}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Render detail ── */
+function renderDetail() {
+  const ipo = selectedIpo;
+  if (!ipo) return;
+  const isOpen   = ipo.status === 'open';
+  const pctColor = ipo.subscribed >= 80 ? 'var(--color-buy)' : 'var(--color-primary)';
+  const fillCls  = ipo.subscribed >= 80 ? 'fill-green' : 'fill-primary';
+
+  document.getElementById('ipo-detail').innerHTML = `
+    <div class="ipo-detail-header">
+      <div class="ipo-logo">${ipo.symbol.slice(0,3)}</div>
+      <div style="flex:1">
+        <div class="ipo-detail-name">${ipo.name}</div>
+        <div class="ipo-detail-sym">${ipo.symbol} · МХБ</div>
+      </div>
+      <div class="ipo-detail-price">
+        <div class="ipo-price-val">${fmtM(ipo.price)}</div>
+        <div class="ipo-price-label">Нэгж үнэ</div>
+      </div>
+    </div>
+
+    <div class="ipo-stat-grid">
+      <div class="ipo-stat-tile">
+        <div class="ipo-stile-label">Нийт хувь</div>
+        <div class="ipo-stile-val">${(ipo.total/1000).toFixed(0)}K</div>
+        <div class="ipo-stile-sub">санал болгосон</div>
+      </div>
+      <div class="ipo-stat-tile">
+        <div class="ipo-stile-label">Хамгийн бага</div>
+        <div class="ipo-stile-val">${ipo.minQty}</div>
+        <div class="ipo-stile-sub">хувь</div>
+      </div>
+      <div class="ipo-stat-tile">
+        <div class="ipo-stile-label">${isOpen ? 'Хаагдах огноо' : 'Нээгдэх огноо'}</div>
+        <div class="ipo-stile-val" style="font-size:13px">${ipo.endDate}</div>
+        <div class="ipo-stile-sub">${isOpen ? 'сүүлийн өдөр' : 'нээгдэх өдөр'}</div>
+      </div>
+    </div>
+
+    <div class="ipo-detail-prog">
+      <div class="ipo-dp-head">
+        <span class="ipo-dp-title">Захиалгын явц</span>
+        <span class="ipo-dp-pct" style="color:${pctColor}">${ipo.subscribed}%</span>
+      </div>
+      <div class="ipo-dp-bar"><div class="ipo-dp-fill ${fillCls}" style="width:${ipo.subscribed}%"></div></div>
+      <div class="ipo-dp-meta">
+        <span>Захиалагдсан: ${Math.round(ipo.total * ipo.subscribed / 100).toLocaleString('mn-MN')}</span>
+        <span>Үлдсэн: ${Math.round(ipo.total * (100 - ipo.subscribed) / 100).toLocaleString('mn-MN')}</span>
+      </div>
+    </div>
+
+    <div class="ipo-info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div class="ipo-info-text">Захиалга <strong>10:00–17:00</strong> цагийн хооронд шивэгдэнэ. Захиалга биелсэн тохиолдолд хувьцаа <strong>T+2</strong> хоногт дансанд орно.</div>
+    </div>
+
+    <div class="ipo-form">
+      <div class="ipo-form-title">Захиалга өгөх</div>
+      <div class="ipo-form-row">
+        <div class="ipo-fl">
+          <label class="ipo-fl-label">Хувийн тоо</label>
+          <input class="ipo-fl-inp" type="number" id="order-qty" min="${ipo.minQty}" step="${ipo.minQty}" value="${ipo.minQty}" ${!isOpen ? 'disabled' : ''} oninput="calcTotal()" />
+        </div>
+        <div class="ipo-fl">
+          <label class="ipo-fl-label">Нэгж үнэ</label>
+          <input class="ipo-fl-inp" type="text" value="${fmtM(ipo.price)}" disabled />
+        </div>
+      </div>
+      <div class="ipo-fee-row">
+        <span class="ipo-fee-lbl">Нийт дүн</span>
+        <span class="ipo-fee-val" id="order-total">${fmtM(ipo.price * ipo.minQty)}</span>
+      </div>
+      <div class="ipo-fee-row">
+        <span class="ipo-fee-lbl">Шимтгэл (0.5%)</span>
+        <span class="ipo-fee-val" id="order-fee">${fmtM(ipo.price * ipo.minQty * 0.005)}</span>
+      </div>
+      <div class="ipo-fee-row" style="border-bottom:none;padding-top:10px">
+        <span class="ipo-fee-lbl" style="font-weight:800;color:var(--color-text-primary)">Нийт төлбөр</span>
+        <span class="ipo-fee-val ipo-fee-total" id="order-grand">${fmtM(ipo.price * ipo.minQty * 1.005)}</span>
+      </div>
+      <button class="ipo-submit" id="order-submit" ${!isOpen ? 'disabled' : ''} onclick="openConfirm()">
+        ${isOpen ? 'Захиалга өгөх' : 'Захиалга нээгдээгүй'}
+      </button>
+    </div>
+
+  `;
+}
+
+/* ── Calc total ── */
+function calcTotal() {
+  if (!selectedIpo) return;
+  const qty   = parseInt(document.getElementById('order-qty')?.value || 0);
+  const total = qty * selectedIpo.price;
+  document.getElementById('order-total').textContent = fmtM(total);
+  document.getElementById('order-fee').textContent   = fmtM(total * 0.005);
+  document.getElementById('order-grand').textContent = fmtM(total * 1.005);
+}
+
+/* ── Select IPO ── */
+function selectIpo(symbol) {
+  selectedIpo = IPO_LIST.find(i => i.symbol === symbol);
+  renderCardList();
+  renderDetail();
+}
+
+/* ── Render orders tab ── */
+function renderOrders() {
+  const wrap = document.getElementById('ipo-orders-wrap');
+  if (!myOrders.length) {
+    wrap.innerHTML = `<div class="ipo-empty">
+      <div class="ipo-empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div>
+      <div class="ipo-empty-title">Захиалга байхгүй</div>
+      <div class="ipo-empty-sub">Идэвхтэй IPO-оос захиалга өгнө үү</div>
+    </div>`;
+    return;
   }
-  function openDeposit() { try { window.parent.navigateTo('recharge'); } catch(e) {} }
-  function orderIPO(sym) { alert('IPO захиалга: ' + sym); }
-  renderIpoList();
-  lucide.createIcons();
+  const icoSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>`;
+  wrap.innerHTML = `<div class="ipo-orders-list">${myOrders.map(o => `
+    <div class="ipo-order-row">
+      <div class="ipo-order-ico">${icoSvg}</div>
+      <div class="ipo-order-info">
+        <div class="ipo-order-sym">${o.symbol}</div>
+        <div class="ipo-order-meta">${o.qty} хувь · ${o.date}</div>
+      </div>
+      <div class="ipo-order-right">
+        <div class="ipo-order-amt">${fmtM(o.total)}</div>
+        <div class="ipo-order-status ${o.status}">${o.status === 'pending' ? 'Хүлээгдэж байна' : 'Биелсэн'}</div>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+/* ── Confirm modal ── */
+function openConfirm() {
+  if (!selectedIpo) return;
+  const qty = parseInt(document.getElementById('order-qty')?.value || 0);
+  if (!qty || qty < selectedIpo.minQty) { showToast('Хамгийн багадаа ' + selectedIpo.minQty + ' хувь'); return; }
+  const total = qty * selectedIpo.price;
+  const fee   = total * 0.005;
+  document.getElementById('confirm-rows').innerHTML = `
+    <div class="ipo-confirm-row"><span>Компани</span><span>${selectedIpo.name}</span></div>
+    <div class="ipo-confirm-row"><span>Тоо</span><span>${qty} хувь</span></div>
+    <div class="ipo-confirm-row"><span>Нэгж үнэ</span><span>${fmtM(selectedIpo.price)}</span></div>
+    <div class="ipo-confirm-row"><span>Шимтгэл</span><span>${fmtM(fee)}</span></div>
+    <div class="ipo-confirm-row"><span>Нийт</span><span style="color:var(--color-primary)">${fmtM(total + fee)}</span></div>`;
+  document.getElementById('confirm-modal').classList.add('open');
+}
+function closeConfirm() { document.getElementById('confirm-modal').classList.remove('open'); }
+function confirmOrder() {
+  if (!selectedIpo) return;
+  const qty = parseInt(document.getElementById('order-qty')?.value || 0);
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+  myOrders.push({ symbol: selectedIpo.symbol, qty, total: qty * selectedIpo.price, date: dateStr, status: 'pending' });
+  closeConfirm();
+  showToast('Захиалга амжилттай илгээгдлээ ✓');
+  renderOrders();
+}
+
+/* ── Tab switch ── */
+function switchTab(tab) {
+  document.getElementById('tab-btn-list').classList.toggle('active',   tab === 'list');
+  document.getElementById('tab-btn-orders').classList.toggle('active', tab === 'orders');
+  document.getElementById('tab-list').style.display   = tab === 'list'   ? 'block' : 'none';
+  document.getElementById('tab-orders').style.display = tab === 'orders' ? 'block' : 'none';
+  if (tab === 'orders') renderOrders();
+}
+
+/* ── Init: default-select first open IPO ── */
+const firstOpen = IPO_LIST.find(i => i.status === 'open') || IPO_LIST[0];
+if (firstOpen) selectedIpo = firstOpen;
+renderCardList();
+renderDetail();
 </script>
 </body>
 </html>

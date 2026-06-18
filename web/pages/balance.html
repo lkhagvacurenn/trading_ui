@@ -14,166 +14,455 @@
   <style>
     body { margin:0; font-family:'Manrope', sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
     * { box-sizing:border-box; }
-    .hero-label { font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:4px; }
-    .hero-value { font-size:32px; font-weight:800; color:#fff; font-family:'IBM Plex Mono', monospace; letter-spacing:-0.5px; margin-bottom:12px; }
-    .hero-sub { font-size:12px; color:rgba(255,255,255,0.65); }
-    .hero-cash { font-size:14px; font-weight:600; color:rgba(255,255,255,0.9); font-family:'IBM Plex Mono', monospace; margin:4px 0 18px; }
-    .hero-hide { position:absolute; top:20px; right:20px; width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff; }
-    .hero-actions { display:flex; gap:10px; }
-    .hero-btn { flex:1; padding:10px; border-radius:12px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:13px; font-weight:600; cursor:pointer; text-align:center; }
-    .filter-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-    .filter-dropdown { display:flex; align-items:center; gap:6px; background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:10px; padding:7px 12px; font-size:13px; font-weight:600; cursor:pointer; }
-    .search-bar { display:flex; align-items:center; gap:10px; background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:12px; padding:10px 14px; margin-bottom:12px; }
-    .search-bar input { border:none; background:transparent; outline:none; font-size:13px; color:var(--color-text-primary); flex:1; font-family:'Manrope', sans-serif; }
-    .holding-item { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--color-border); cursor:pointer; }
-    .holding-item:last-child { border-bottom:none; }
-    .holding-item:hover { background:rgba(255,255,255,0.02); }
-    .holding-avatar { width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,#2d2d6e,#4949AA); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; flex-shrink:0; }
-    .holding-info { flex:1; min-width:0; }
-    .holding-symbol { font-size:14px; font-weight:700; }
-    .holding-shares { font-size:12px; color:var(--color-text-secondary); margin-left:6px; }
-    .holding-value { font-size:14px; font-weight:700; font-family:'IBM Plex Mono', monospace; text-align:right; }
+
+    /* ── Summary cards row ── */
+    .balance-cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .balance-summary-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .balance-summary-card.total {
+      background:
+        radial-gradient(80% 90% at 100% 0%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%),
+        radial-gradient(60% 60% at 0% 100%, rgba(0,192,118,0.18) 0%, rgba(0,192,118,0) 55%),
+        linear-gradient(135deg, #32308d 0%, var(--color-primary) 45%, #6f63e8 100%);
+      border-color: rgba(255,255,255,0.14);
+    }
+    .bsc-label {
+      font-size: 11px; font-weight: 700; color: var(--color-text-disabled);
+      text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px;
+    }
+    .balance-summary-card.total .bsc-label { color: rgba(255,255,255,0.65); }
+    .bsc-value {
+      font-size: 22px; font-weight: 800;
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: -0.5px;
+      color: var(--color-text-primary);
+    }
+    .balance-summary-card.total .bsc-value { color: #fff; }
+    .bsc-sub {
+      font-size: 11px; color: var(--color-text-disabled);
+      margin-top: 6px; line-height: 1.4;
+    }
+    .balance-summary-card.total .bsc-sub { color: rgba(255,255,255,0.55); }
+
+    /* ── Action buttons ── */
+    .balance-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .balance-action-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 20px; border-radius: 14px;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: opacity .15s, transform .1s;
+      border: none;
+    }
+    .balance-action-btn:hover { opacity: .88; }
+    .balance-action-btn:active { transform: scale(.98); }
+    .balance-action-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .balance-action-btn.deposit {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    .balance-action-btn.withdraw {
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      color: var(--color-text-primary);
+    }
+
+    /* ── History section ── */
+    .hist-section-title {
+      font-size: 16px; font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .hist-toolbar {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .hist-search {
+      flex: 1; min-width: 200px;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px; padding: 10px 14px;
+    }
+    .hist-search svg { width: 16px; height: 16px; color: var(--color-text-disabled); flex-shrink: 0; }
+    .hist-search input {
+      border: none; background: transparent; outline: none;
+      font-size: 13px; color: var(--color-text-primary); flex: 1;
+      font-family: 'Manrope', sans-serif;
+    }
+    .hist-search input::placeholder { color: var(--color-text-disabled); }
+    .hist-select {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 10px; padding: 9px 32px 9px 12px;
+      font-size: 13px; font-weight: 600; color: var(--color-text-primary);
+      font-family: 'Manrope', sans-serif;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+      cursor: pointer;
+    }
+    .hist-sort-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 13px; font-weight: 600; color: var(--color-text-primary);
+      cursor: pointer; white-space: nowrap;
+    }
+    .hist-sort-btn svg { width: 14px; height: 14px; transition: transform .15s; }
+    .hist-sort-btn.asc svg { transform: rotate(180deg); }
+
+    /* Date range */
+    .date-range-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .dr-pill { padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; border: 1px solid var(--color-border); background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: all 0.12s; font-family: 'Manrope', sans-serif; }
+    .dr-pill.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .dr-pill:hover:not(.active) { border-color: var(--color-primary); color: var(--color-primary); }
+    .dr-sep { width: 1px; height: 18px; background: var(--color-border); flex-shrink: 0; }
+    .dr-date-inp { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--color-text-primary); font-family: 'Manrope', sans-serif; outline: none; }
+    .dr-date-inp:focus { border-color: var(--color-primary); }
+    [data-theme="dark"] .dr-date-inp { color-scheme: dark; }
+    .dr-arrow { font-size: 12px; color: var(--color-text-disabled); }
+
+    .hist-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px; overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .hist-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--color-border);
+      cursor: pointer; transition: background .1s;
+    }
+    .hist-item:last-child { border-bottom: none; }
+    .hist-item:hover { background: rgba(255,255,255,0.025); }
+    .hist-icon {
+      width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hist-icon svg { width: 18px; height: 18px; }
+    .hist-icon.deposit  { background: rgba(0,192,118,0.12); color: var(--color-buy); }
+    .hist-icon.withdraw { background: rgba(239,68,68,0.10); color: var(--color-sell); }
+    .hist-info { flex: 1; min-width: 0; }
+    .hist-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .hist-meta { font-size: 11px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
+    .hist-right { text-align: right; flex-shrink: 0; }
+    .hist-amount { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-bottom: 4px; }
+    .hist-amount.deposit  { color: var(--color-buy); }
+    .hist-amount.withdraw { color: var(--color-sell); }
+    .hist-status-badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .03em;
+    }
+    .hist-status-badge.completed { background: rgba(0,192,118,.1); color: var(--color-buy); }
+    .hist-status-badge.pending   { background: rgba(99,102,241,.1); color: var(--color-primary); }
+    .hist-status-badge.cancelled { background: rgba(239,68,68,.08); color: var(--color-sell); }
+    .hist-empty {
+      padding: 48px; text-align: center;
+      color: var(--color-text-disabled); font-size: 13px;
+    }
+    .hist-pagination {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .page-btn {
+      min-width: 32px; height: 32px; padding: 0 8px;
+      border-radius: 8px; border: 1px solid var(--color-border);
+      background: var(--color-bg-card); color: var(--color-text-primary);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .page-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .page-btn:disabled { opacity: .4; cursor: default; }
+    .page-btn svg { width: 14px; height: 14px; }
+
+    /* acct info panel */
+    .acct-info-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px; overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .acct-info-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; border-bottom: 1px solid var(--color-border);
+      font-size: 13px;
+    }
+    .acct-info-row:last-child { border-bottom: none; }
+    .acct-info-label { color: var(--color-text-secondary); }
+    .acct-info-value { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
   </style>
 </head>
 <body>
 <div class="web-page">
 
-  <div class="web-grid-2">
-    <div>
-      <div class="hero-card" style="margin-bottom:16px;position:relative">
-        <div class="hero-label">Нийт хөрөнгө</div>
-        <div class="hero-value" id="total-value">—</div>
-        <div class="hero-sub">Боломжит мөнгө (ACC-<span id="csd-acct">9995</span>)</div>
-        <div class="hero-cash" id="cash-val">—</div>
-        <button class="hero-hide" onclick="toggleBalance()"><i data-lucide="eye" id="eye-icon"></i></button>
-        <div class="hero-actions">
-          <button class="hero-btn" onclick="openDeposit()"><i data-lucide="plus-circle" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i> Орлого</button>
-          <button class="hero-btn" onclick="openWithdraw()"><i data-lucide="arrow-up-from-line" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i> Зарлага</button>
+  <!-- 3 Summary Cards -->
+  <div class="balance-cards-row">
+    <div class="balance-summary-card total" style="position:relative;overflow:hidden">
+      <div style="position:absolute;top:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
         </div>
+        <div class="bsc-label" style="margin:0">Нийт үлдэгдэл</div>
       </div>
-
-      <div class="filter-row">
-        <button class="filter-dropdown">Үнэт цаас <i data-lucide="chevron-down" style="width:14px;height:14px"></i></button>
-        <button class="btn btn-primary btn-sm"><i data-lucide="calendar" style="width:14px;height:14px"></i> Тайлан</button>
-      </div>
-
-      <div class="search-bar">
-        <i data-lucide="search" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
-        <input type="text" placeholder="Үнэт цаас хайх…" oninput="filterHoldings(this.value)" />
-      </div>
-
-      <div class="web-card" id="holdings-list"></div>
+      <div class="bsc-value" id="bc-total">—</div>
+      <div class="bsc-sub">Номинал + ҮЦТХТ</div>
     </div>
-
-    <div>
-      <div class="web-card web-card-pad">
-        <div class="web-section-title" style="margin-bottom:12px">Дансны мэдээлэл</div>
-        <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--color-border);font-size:13px">
-          <span style="color:var(--color-text-secondary)">ҮЦТХТ данс</span><span class="mono" id="acct-main">—</span>
+    <div class="balance-summary-card" style="position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(73,73,170,0.07)"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(73,73,170,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
         </div>
-        <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--color-border);font-size:13px">
-          <span style="color:var(--color-text-secondary)">IPO данс</span><span class="mono" id="acct-ipo">—</span>
-        </div>
-        <div class="portfolio-row" style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px">
-          <span style="color:var(--color-text-secondary)">Бонд данс</span><span class="mono" id="acct-bond">—</span>
-        </div>
+        <div class="bsc-label" style="margin:0">Номинал үлдэгдэл</div>
       </div>
-
-      <div class="web-card web-card-pad" style="margin-top:16px">
-        <div class="web-section-title" style="margin-bottom:12px">Сүүлийн гүйлгээ</div>
-        <div id="txn-list"></div>
-        <button class="btn btn-outline btn-sm" style="width:100%;margin-top:12px" onclick="goHistory()">Бүх гүйлгээ</button>
+      <div class="bsc-value" id="bc-nominal">—</div>
+      <div class="bsc-sub">Боломжит мөнгөн дүн</div>
+    </div>
+    <div class="balance-summary-card" style="position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(73,73,170,0.07)"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(73,73,170,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
+        </div>
+        <div class="bsc-label" style="margin:0">ҮЦТХТ үлдэгдэл</div>
       </div>
+      <div class="bsc-value" id="bc-mcsd">—</div>
+      <div class="bsc-sub">Тооцооны данс</div>
     </div>
   </div>
+
+  <!-- Deposit / Withdraw buttons -->
+  <div class="balance-actions">
+    <button class="balance-action-btn deposit" onclick="openDeposit()">
+      <i data-lucide="arrow-down-to-line"></i> Данс цэнэглэх
+    </button>
+    <button class="balance-action-btn withdraw" onclick="openWithdraw()">
+      <i data-lucide="arrow-up-from-line"></i> Мөнгө хүсэх
+    </button>
+  </div>
+
+  
+
+  <!-- Transaction History -->
+  <div class="hist-section-title">Гүйлгээний түүх</div>
+
+  <div class="date-range-bar">
+    <button class="dr-pill" data-m="1" onclick="setDR(1,this)">1 сар</button>
+    <button class="dr-pill" data-m="2" onclick="setDR(2,this)">2 сар</button>
+    <button class="dr-pill active" data-m="3" onclick="setDR(3,this)">3 сар</button>
+    <div class="dr-sep"></div>
+    <input type="date" class="dr-date-inp" id="dr-from" onchange="onDRCustom()" />
+    <span class="dr-arrow">→</span>
+    <input type="date" class="dr-date-inp" id="dr-to" onchange="onDRCustom()" />
+  </div>
+
+  <div class="hist-toolbar">
+    <div class="hist-search">
+      <i data-lucide="search"></i>
+      <input type="text" id="hist-q" placeholder="Гүйлгээ хайх…" oninput="renderHistory()" />
+    </div>
+    <select class="hist-select" id="hist-acct" onchange="renderHistory()">
+      <option value="nominal">Номинал</option>
+      <option value="mcsd">ҮЦТХТ</option>
+    </select>
+    <select class="hist-select" id="hist-type" onchange="renderHistory()">
+      <option value="all">Бүх төрөл</option>
+      <option value="deposit">Орлого</option>
+      <option value="withdraw">Зарлага</option>
+    </select>
+    <select class="hist-select" id="hist-status" onchange="renderHistory()">
+      <option value="all">Бүх төлөв</option>
+      <option value="completed">Гүйцэтгэсэн</option>
+      <option value="pending">Хүлээгдэж буй</option>
+      <option value="cancelled">Цуцлагдсан</option>
+    </select>
+    <button class="hist-sort-btn" id="hist-sort-btn" onclick="toggleSort()">
+      <i data-lucide="arrow-down"></i> Огноо
+    </button>
+  </div>
+
+  <div class="hist-card" id="hist-list"></div>
+  <div class="hist-pagination" id="hist-pagination"></div>
+
 </div>
 
 <script src="../../data/static.js"></script>
 <script src="../scripts/components.js"></script>
 <script>
-  let balanceVisible = true;
-  let holdings = [];
+  const MCSD_BALANCE = 1_500_000;
+  let sortDesc = true;
+  let page = 1;
+  const PAGE_SIZE = 8;
+  let drFrom = null, drTo = null;
 
-  function buildHoldings() {
-    holdings = PORTFOLIO.map(p => {
-      const s = stockBySymbol(p.symbol);
-      const value = p.shares * p.currentPrice;
-      const cost = p.shares * p.avgCost;
-      const pct = ((p.currentPrice - p.avgCost) / p.avgCost) * 100;
-      return {
-        symbol: p.symbol,
-        abbr: p.symbol.slice(0, 2),
-        name: s ? getStockName(s) : p.symbol,
-        shares: p.shares,
-        exchange: 'MSE',
-        pct,
-        value,
-        gain: value - cost,
-      };
+  function initDR() {
+    drTo = new Date(); drFrom = new Date(); drFrom.setMonth(drFrom.getMonth() - 3);
+    document.getElementById('dr-from').value = drFrom.toISOString().slice(0,10);
+    document.getElementById('dr-to').value   = drTo.toISOString().slice(0,10);
+  }
+  function setDR(months, btn) {
+    document.querySelectorAll('.dr-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    drTo = new Date(); drFrom = new Date(); drFrom.setMonth(drFrom.getMonth() - months);
+    document.getElementById('dr-from').value = drFrom.toISOString().slice(0,10);
+    document.getElementById('dr-to').value   = drTo.toISOString().slice(0,10);
+    page = 1; renderHistory();
+  }
+  function onDRCustom() {
+    document.querySelectorAll('.dr-pill').forEach(p => p.classList.remove('active'));
+    drFrom = new Date(document.getElementById('dr-from').value);
+    drTo   = new Date(document.getElementById('dr-to').value);
+    if (isNaN(drFrom) || isNaN(drTo)) return;
+    const maxTo = new Date(drFrom); maxTo.setMonth(maxTo.getMonth() + 3);
+    if (drTo > maxTo) { drTo = maxTo; document.getElementById('dr-to').value = maxTo.toISOString().slice(0,10); }
+    page = 1; renderHistory();
+  }
+
+  // Mock transaction data keyed by account type
+  const MOCK_TRANSACTIONS = {
+    nominal: [
+      { id:'N001', type:'deposit',  amount:5000000, date:'2026-06-01 10:24', status:'completed' },
+      { id:'N002', type:'withdraw', amount:1500000, date:'2026-06-03 14:10', status:'completed' },
+      { id:'N003', type:'deposit',  amount:3000000, date:'2026-05-22 09:15', status:'completed' },
+      { id:'N004', type:'withdraw', amount:500000,  date:'2026-05-18 16:40', status:'cancelled' },
+      { id:'N005', type:'deposit',  amount:2000000, date:'2026-05-10 11:00', status:'completed' },
+      { id:'N006', type:'withdraw', amount:800000,  date:'2026-05-05 08:35', status:'pending' },
+      { id:'N007', type:'deposit',  amount:1000000, date:'2026-04-28 13:20', status:'completed' },
+      { id:'N008', type:'withdraw', amount:300000,  date:'2026-04-20 15:50', status:'completed' },
+      { id:'N009', type:'deposit',  amount:4500000, date:'2026-04-10 10:00', status:'completed' },
+    ],
+    mcsd: [
+      { id:'M001', type:'deposit',  amount:2000000, date:'2026-06-02 09:30', status:'completed' },
+      { id:'M002', type:'withdraw', amount:500000,  date:'2026-05-30 14:55', status:'pending' },
+      { id:'M003', type:'deposit',  amount:1000000, date:'2026-05-15 11:20', status:'completed' },
+      { id:'M004', type:'withdraw', amount:200000,  date:'2026-05-08 16:10', status:'cancelled' },
+      { id:'M005', type:'deposit',  amount:750000,  date:'2026-04-25 10:45', status:'completed' },
+    ],
+  };
+
+  const STATUS_LABEL = { completed: 'Гүйцэтгэсэн', pending: 'Хүлээгдэж буй', cancelled: 'Цуцлагдсан' };
+  const TYPE_LABEL   = { deposit: 'Орлого', withdraw: 'Зарлага' };
+
+  function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+  function renderBalances() {
+    const nominal = WALLET.cashBalance;
+    setText('bc-total',   fmtMNT(nominal + MCSD_BALANCE));
+    setText('bc-nominal', fmtMNT(nominal));
+    setText('bc-mcsd',    fmtMNT(MCSD_BALANCE));
+    setText('bc-csd-acct', WALLET.csdAccount);
+    setText('ai-main',  WALLET.accountNo);
+    setText('ai-csd',   WALLET.csdAccount);
+    setText('ai-ipo',   WALLET.ipoAccount);
+    setText('ai-bond',  WALLET.bondAccount);
+  }
+
+  function renderHistory() {
+    const acct   = document.getElementById('hist-acct').value;
+    const type   = document.getElementById('hist-type').value;
+    const status = document.getElementById('hist-status').value;
+    const q      = document.getElementById('hist-q').value.trim().toLowerCase();
+
+    let list = (MOCK_TRANSACTIONS[acct] || []).slice();
+
+    if (type !== 'all')   list = list.filter(i => i.type === type);
+    if (status !== 'all') list = list.filter(i => i.status === status);
+    if (drFrom && drTo) list = list.filter(i => {
+      const d = new Date(i.date.replace(' ','T'));
+      return d >= drFrom && d <= drTo;
     });
-  }
-
-  function renderHoldings(data) {
-    const el = document.getElementById('holdings-list');
-    if (!data.length) {
-      el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--color-text-disabled);font-size:13px">Олдсонгүй</div>';
-      return;
+    if (q) {
+      list = list.filter(i =>
+        (TYPE_LABEL[i.type] || '').toLowerCase().includes(q) ||
+        i.date.includes(q) ||
+        String(i.amount).includes(q) ||
+        (STATUS_LABEL[i.status] || '').toLowerCase().includes(q)
+      );
     }
-    el.innerHTML = data.map(h => {
-      const isUp = h.pct >= 0;
-      const sign = h.pct >= 0 ? '+' : '';
-      return `<div class="holding-item" onclick="goTrade('${h.symbol}')">
-        <div class="holding-avatar">${h.abbr}</div>
-        <div class="holding-info">
-          <span class="holding-symbol">${h.symbol}</span><span class="holding-shares">${h.shares.toLocaleString('mn-MN')} ширхэг</span>
-          <div style="font-size:11px;color:var(--color-text-disabled);margin-top:2px">${h.name} · <span class="${isUp?'change-up':'change-down'}">${sign}${h.pct.toFixed(1)}%</span></div>
-        </div>
-        <div class="holding-value">${fmtMNT(h.value)}</div>
-      </div>`;
-    }).join('');
-  }
 
-  function renderTxns() {
-    document.getElementById('txn-list').innerHTML = WALLET.transactions.slice(0, 5).map(t => {
-      const positive = t.amount > 0;
-      return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border);font-size:12px">
-        <div><div style="font-weight:600">${t.note}</div><div style="color:var(--color-text-disabled)">${t.date}</div></div>
-        <span class="mono ${positive?'change-up':'change-down'}">${positive?'+':''}${fmtMNT(Math.abs(t.amount))}</span>
-      </div>`;
-    }).join('');
-  }
+    list.sort((a, b) => {
+      const da = new Date(a.date.replace(' ', 'T'));
+      const db = new Date(b.date.replace(' ', 'T'));
+      return sortDesc ? db - da : da - db;
+    });
 
-  function filterHoldings(q) {
-    const filtered = q ? holdings.filter(h =>
-      h.symbol.toLowerCase().includes(q.toLowerCase()) || h.name.toLowerCase().includes(q.toLowerCase())
-    ) : holdings;
-    renderHoldings(filtered);
-  }
+    const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+    if (page > totalPages) page = totalPages;
+    const items = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  function toggleBalance() {
-    balanceVisible = !balanceVisible;
-    const mask = '••••••';
-    document.getElementById('total-value').textContent = balanceVisible ? fmtMNT(WALLET.portfolioValue) : mask;
-    document.getElementById('cash-val').textContent = balanceVisible ? fmtMNT(WALLET.cashBalance) : mask;
-    document.getElementById('eye-icon').setAttribute('data-lucide', balanceVisible ? 'eye' : 'eye-off');
+    const el = document.getElementById('hist-list');
+    if (!items.length) {
+      el.innerHTML = '<div class="hist-empty">Гүйлгээ олдсонгүй</div>';
+    } else {
+      el.innerHTML = items.map(i => {
+        const isDep = i.type === 'deposit';
+        const sign  = isDep ? '+' : '-';
+        return `
+          <div class="hist-item">
+            <div class="hist-icon ${i.type}">
+              <i data-lucide="${isDep ? 'arrow-down-to-line' : 'arrow-up-from-line'}"></i>
+            </div>
+            <div class="hist-info">
+              <div class="hist-title">${TYPE_LABEL[i.type] || i.type}</div>
+              <div class="hist-meta">${i.date}</div>
+            </div>
+            <div class="hist-right">
+              <div class="hist-amount ${i.type}">${sign}${fmtMNT(i.amount)}</div>
+              <span class="hist-status-badge ${i.status}">${STATUS_LABEL[i.status] || i.status}</span>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    renderPagination(totalPages);
     lucide.createIcons();
   }
 
-  function openDeposit() { try { window.parent.navigateTo('recharge'); } catch(e) {} }
-  function openWithdraw() { try { window.parent.navigateTo('withdrawal'); } catch(e) {} }
-  function goTrade(sym) { try { window.parent.navigateTo('trade'); } catch(e) {} }
+  function renderPagination(totalPages) {
+    const el = document.getElementById('hist-pagination');
+    if (totalPages <= 1) { el.innerHTML = ''; return; }
+    let html = `<button class="page-btn" onclick="gotoPage(${page - 1})" ${page === 1 ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button>`;
+    for (let p = 1; p <= totalPages; p++) {
+      html += `<button class="page-btn ${p === page ? 'active' : ''}" onclick="gotoPage(${p})">${p}</button>`;
+    }
+    html += `<button class="page-btn" onclick="gotoPage(${page + 1})" ${page === totalPages ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button>`;
+    el.innerHTML = html;
+    lucide.createIcons();
+  }
 
-  function goHistory() { try { window.parent.navigateTo('history'); } catch(e) {} }
+  function gotoPage(p) { page = p; renderHistory(); }
 
-  buildHoldings();
-  document.getElementById('total-value').textContent = fmtMNT(WALLET.portfolioValue);
-  document.getElementById('cash-val').textContent = fmtMNT(WALLET.cashBalance);
-  document.getElementById('csd-acct').textContent = WALLET.csdAccount;
-  document.getElementById('acct-main').textContent = WALLET.accountNo;
-  document.getElementById('acct-ipo').textContent = WALLET.ipoAccount;
-  document.getElementById('acct-bond').textContent = WALLET.bondAccount;
-  renderHoldings(holdings);
-  renderTxns();
+  function toggleSort() {
+    sortDesc = !sortDesc;
+    document.getElementById('hist-sort-btn').classList.toggle('asc', !sortDesc);
+    renderHistory();
+  }
+
+  function openDeposit()  { try { window.parent.navigateTo('recharge');    } catch(e) {} }
+  function openWithdraw() { try { window.parent.navigateTo('withdrawal');  } catch(e) {} }
+
+  renderBalances();
+  initDR();
+  renderHistory();
   lucide.createIcons();
 </script>
 </body>

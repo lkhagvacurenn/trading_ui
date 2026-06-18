@@ -4,173 +4,629 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Профайл — BDSec</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
-  <link rel="stylesheet" href="../../styles/components.css" />
-  <link rel="stylesheet" href="../styles/web.css" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
-  <style>body{margin:0;font-family:'Manrope', sans-serif;background:var(--color-bg);color:var(--color-text-primary)}</style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--color-bg); color: var(--color-text-primary); font-family: 'Manrope', sans-serif; }
+    .pf-page { max-width: 680px; margin: 0 auto; padding: 24px 20px 60px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* ── HERO ── */
+    .pf-hero { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 18px; }
+    .pf-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg,#4949AA,#7C7CE0); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #fff; flex-shrink: 0; border: 2px solid rgba(73,73,170,0.5); }
+    .pf-hero-info { flex: 1; min-width: 0; }
+    .pf-hero-name { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+    .pf-hero-acct { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-secondary); margin-bottom: 8px; }
+    .pf-hbadge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+    .pf-hbadge svg { width: 10px; height: 10px; }
+    .pf-hbadge.ok { background: rgba(0,192,118,0.1); color: var(--color-buy); border: 1px solid rgba(0,192,118,0.2); }
+    .pf-hbadge.pending { background: rgba(245,158,11,0.1); color: #F59E0B; border: 1px solid rgba(245,158,11,0.2); }
+
+    /* ── PROGRESS ── */
+    .pf-steps-card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; }
+    .pf-steps-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--color-border); }
+    .pf-steps-title { font-size: 13px; font-weight: 800; }
+    .pf-steps-pct { font-size: 11px; font-weight: 700; color: var(--color-primary); }
+    .pf-prog-bar { height: 3px; background: var(--color-border); }
+    .pf-prog-fill { height: 100%; background: var(--color-primary); transition: width 0.4s; }
+    .pf-step { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid rgba(51,51,92,0.4); cursor: pointer; transition: background 0.12s; }
+    .pf-step:last-child { border-bottom: none; }
+    .pf-step:hover { background: rgba(73,73,170,0.04); }
+    .pf-step-ico { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 2px solid var(--color-border); }
+    .pf-step-ico svg { width: 12px; height: 12px; }
+    .pf-step.done .pf-step-ico { background: rgba(0,192,118,0.1); border-color: var(--color-buy); color: var(--color-buy); }
+    .pf-step:not(.done) .pf-step-ico { color: var(--color-text-disabled); }
+    .pf-step-info { flex: 1; }
+    .pf-step-name { font-size: 13px; font-weight: 700; }
+    .pf-step-sub { font-size: 11px; margin-top: 1px; }
+    .pf-step.done .pf-step-sub { color: var(--color-buy); }
+    .pf-step:not(.done) .pf-step-sub { color: var(--color-text-disabled); }
+
+    /* ── SECTION LABEL ── */
+    .pf-sec-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-disabled); padding: 4px 4px 0; }
+
+    /* ── ACCOUNT DETAILS CARD ── */
+    .pf-acct-card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; }
+
+    /* ── ACCORDION ── */
+    .pf-acc { border-bottom: 1px solid var(--color-border); }
+    .pf-acc:last-child { border-bottom: none; }
+    .pf-acc-trigger { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: transparent; border: none; font-family: 'Manrope', sans-serif; color: var(--color-text-primary); cursor: pointer; text-align: left; transition: background 0.12s; }
+    .pf-acc-trigger:hover { background: rgba(73,73,170,0.04); }
+    .pf-acc-trigger-ico { width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .pf-acc-trigger-ico svg { width: 15px; height: 15px; }
+    .pf-acc-trigger-info { flex: 1; }
+    .pf-acc-trigger-title { font-size: 14px; font-weight: 700; display: block; }
+    .pf-acc-trigger-sub { font-size: 11px; color: var(--color-text-disabled); margin-top: 1px; display: block; }
+    .pf-acc-chevron { flex-shrink: 0; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled); transition: transform 0.22s; }
+    .pf-acc-chevron svg { width: 14px; height: 14px; }
+    .pf-acc.open .pf-acc-chevron { transform: rotate(180deg); }
+    .pf-acc-body { display: none; border-top: 1px solid rgba(51,51,92,0.4); }
+    .pf-acc.open .pf-acc-body { display: block; }
+
+    /* ── INFO ROWS ── */
+    .pf-rows { padding: 0; }
+    .pf-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid rgba(51,51,92,0.35); gap: 10px; }
+    .pf-row:last-child { border-bottom: none; }
+    .pf-row-lhs { min-width: 0; flex: 1; }
+    .pf-row-label { font-size: 10px; color: var(--color-text-disabled); font-weight: 600; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .pf-row-val { font-size: 13px; font-weight: 700; word-break: break-word; }
+    .pf-row-val.mono { font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+    .pf-row-rhs { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+    /* badges */
+    .pf-status { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+    .pf-status svg { width: 9px; height: 9px; }
+    .pf-status.ok  { background: rgba(0,192,118,0.1);  color: var(--color-buy); }
+    .pf-status.no  { background: rgba(245,158,11,0.1); color: #F59E0B; }
+    .pf-status.bad { background: rgba(239,68,68,0.1);  color: var(--color-sell); }
+    .pf-vbadge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+    .pf-vbadge svg { width: 9px; height: 9px; }
+    .pf-vbadge.ok  { background: rgba(0,192,118,0.1);  color: var(--color-buy); }
+    .pf-vbadge.no  { background: rgba(245,158,11,0.1); color: #F59E0B; }
+    .pf-copy-btn { width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--color-border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled); flex-shrink: 0; transition: all 0.13s; }
+    .pf-copy-btn svg { width: 10px; height: 10px; }
+    .pf-copy-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .pf-verify-link { font-size: 11px; font-weight: 700; color: var(--color-primary); background: none; border: none; cursor: pointer; font-family: 'Manrope', sans-serif; padding: 0; white-space: nowrap; }
+    .pf-verify-link:hover { opacity: 0.7; }
+
+    /* Contracts */
+    .pf-contract { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid rgba(51,51,92,0.35); }
+    .pf-contract:last-child { border-bottom: none; }
+    .pf-contract-ico { width: 32px; height: 32px; border-radius: 8px; background: rgba(73,73,170,0.12); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--color-primary); }
+    .pf-contract-ico svg { width: 13px; height: 13px; }
+    .pf-contract-info { flex: 1; }
+    .pf-contract-name { font-size: 13px; font-weight: 700; }
+    .pf-contract-date { font-size: 11px; color: var(--color-text-disabled); margin-top: 1px; }
+    .pf-dl-btn { padding: 5px 10px; border-radius: 7px; border: 1px solid var(--color-border); background: transparent; font-size: 11px; font-weight: 700; color: var(--color-text-secondary); cursor: pointer; font-family: 'Manrope', sans-serif; display: flex; align-items: center; gap: 4px; transition: all 0.12s; }
+    .pf-dl-btn svg { width: 11px; height: 11px; }
+    .pf-dl-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* Contact section */
+    .pf-contact-card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; }
+    .pf-contact-head { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--color-border); }
+    .pf-contact-ico { width: 34px; height: 34px; border-radius: 10px; background: rgba(73,73,170,0.12); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--color-primary); }
+    .pf-contact-ico svg { width: 15px; height: 15px; }
+    .pf-contact-title { font-size: 14px; font-weight: 700; flex: 1; }
+    .pf-edit-btn { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--color-border); background: transparent; font-size: 12px; font-weight: 700; color: var(--color-primary); cursor: pointer; font-family: 'Manrope', sans-serif; display: flex; align-items: center; gap: 5px; flex-shrink: 0; transition: all 0.13s; }
+    .pf-edit-btn svg { width: 12px; height: 12px; }
+    .pf-edit-btn:hover { background: rgba(73,73,170,0.08); border-color: var(--color-primary); }
+
+    /* OTP inline */
+    .pf-verify-prompt { background: rgba(73,73,170,0.06); border: 1px solid rgba(73,73,170,0.2); border-radius: 10px; margin: 0 16px 12px; padding: 12px 14px; display: none; flex-direction: column; gap: 9px; }
+    .pf-verify-prompt.show { display: flex; }
+    .pf-verify-prompt p { margin: 0; font-size: 12px; color: var(--color-text-secondary); }
+    .pf-otp-row { display: flex; gap: 8px; }
+    .pf-otp-inp { flex: 1; background: var(--color-bg); border: 1.5px solid var(--color-border); border-radius: 8px; padding: 9px 12px; font-size: 16px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-primary); outline: none; letter-spacing: 0.2em; }
+    .pf-otp-inp:focus { border-color: var(--color-primary); }
+    .pf-otp-confirm { padding: 9px 14px; border-radius: 8px; border: none; background: var(--color-primary); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif; white-space: nowrap; }
+
+    /* Edit form */
+    .pf-edit-form { display: none; padding: 14px 16px 16px; border-top: 1px solid var(--color-border); }
+    .pf-edit-form.active { display: block; }
+    .pf-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    .pf-field:last-of-type { margin-bottom: 0; }
+    .pf-field-label { font-size: 10px; font-weight: 700; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: 0.05em; }
+    .pf-inp { background: var(--color-bg); border: 1.5px solid var(--color-border); border-radius: 10px; padding: 10px 13px; font-size: 14px; font-weight: 600; color: var(--color-text-primary); font-family: 'Manrope', sans-serif; outline: none; transition: border-color 0.15s; width: 100%; }
+    .pf-inp:focus { border-color: var(--color-primary); }
+    .pf-form-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .pf-save-btn { flex: 1; padding: 11px; border-radius: 10px; border: none; background: var(--color-primary); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif; transition: opacity 0.15s; }
+    .pf-save-btn:hover { opacity: 0.88; }
+    .pf-cancel-btn { padding: 11px 18px; border-radius: 10px; border: 1.5px solid var(--color-border); background: transparent; color: var(--color-text-secondary); font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif; transition: all 0.13s; }
+    .pf-cancel-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* LOGOUT */
+    .pf-logout { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border-radius: 13px; border: 1.5px solid rgba(239,68,68,0.25); background: transparent; color: var(--color-sell); font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif; transition: all 0.15s; }
+    .pf-logout svg { width: 16px; height: 16px; }
+    .pf-logout:hover { background: rgba(239,68,68,0.07); border-color: var(--color-sell); }
+
+    /* PIN MODAL */
+    .pf-overlay { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px; }
+    .pf-overlay.open { display: flex; }
+    .pf-modal { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 20px; width: 320px; padding: 28px; text-align: center; }
+    .pf-modal-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .pf-modal-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 24px; line-height: 1.5; }
+    .pf-pin-dots { display: flex; justify-content: center; gap: 16px; margin-bottom: 28px; }
+    .pf-pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--color-border); background: transparent; transition: all 0.15s; }
+    .pf-pin-dot.filled { background: var(--color-primary); border-color: var(--color-primary); }
+    .pf-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .pf-num-btn { padding: 14px; border-radius: 12px; border: 1px solid var(--color-border); background: transparent; font-size: 18px; font-weight: 700; color: var(--color-text-primary); cursor: pointer; font-family: 'IBM Plex Mono', monospace; transition: all 0.12s; }
+    .pf-num-btn:hover { background: rgba(73,73,170,0.1); border-color: var(--color-primary); }
+    .pf-num-btn:active { transform: scale(0.95); }
+    .pf-num-btn.del { font-size: 14px; font-family: 'Manrope', sans-serif; font-weight: 700; color: var(--color-text-secondary); }
+    .pf-pin-err { font-size: 12px; color: var(--color-sell); font-weight: 700; min-height: 16px; margin-top: -16px; margin-bottom: 10px; }
+
+    /* TOAST */
+    .pf-toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 12px); z-index: 500; background: var(--color-text-primary); color: var(--color-bg); padding: 8px 18px; border-radius: 99px; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.22s; white-space: nowrap; }
+    .pf-toast.show { opacity: 1; transform: translate(-50%, 0); }
+  </style>
 </head>
 <body>
-<div class="web-page" style="max-width:640px">
+<div class="pf-page">
 
-  <div class="profile-card">
-    <div class="profile-avatar" id="profile-initials">ББ</div>
-    <div class="profile-name" id="profile-name">—</div>
-    <div class="profile-username" id="profile-acct">—</div>
-    <div class="status-pill" id="profile-status-pill"></div>
-    <div class="status-pill-sub" id="profile-status-sub"></div>
+  <!-- HERO -->
+  <div class="pf-hero">
+    <div class="pf-avatar" id="pf-avatar">ББ</div>
+    <div class="pf-hero-info">
+      <div class="pf-hero-name" id="pf-name">—</div>
+      <div class="pf-hero-acct" id="pf-acct-no">—</div>
+      <div id="pf-badge"></div>
+    </div>
   </div>
 
-  <div id="status-steps"></div>
-
-  <div class="accordion-item" id="acc-personal">
-    <div class="accordion-header" onclick="toggleAccordion('acc-personal')">
-      <div class="accordion-icon"><i data-lucide="user"></i></div>
-      <div class="accordion-title">Хувийн мэдээлэл</div>
-      <div class="accordion-chevron"><i data-lucide="chevron-right"></i></div>
+  <!-- PROGRESS -->
+  <div class="pf-steps-card">
+    <div class="pf-steps-head">
+      <span class="pf-steps-title">Бүртгэлийн явц</span>
+      <span class="pf-steps-pct" id="steps-pct">0 / 3</span>
     </div>
-    <div class="accordion-body">
-      <div class="info-card">
-        <div class="info-row">
-          <div class="info-row-text">
-            <div class="info-row-label">И-мэйл</div>
-            <div class="info-row-value" id="pf-email">—</div>
+    <div class="pf-prog-bar"><div class="pf-prog-fill" id="steps-fill" style="width:0%"></div></div>
+    <div id="pf-steps-body"></div>
+  </div>
+
+  <!-- ACCOUNT DETAILS -->
+  <div class="pf-sec-label">Дансны дэлгэрэнгүй</div>
+  <div class="pf-acct-card">
+
+    <!-- Accordion 1: General Info -->
+    <div class="pf-acc" id="acc-general">
+      <div class="pf-acc-body">
+        <div class="pf-rows">
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Дансны дугаар</div><div class="pf-row-val mono" id="gi-acct-no">—</div></div>
+            <div class="pf-row-rhs">
+              <button class="pf-copy-btn" onclick="copyText(document.getElementById('gi-acct-no').textContent)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="info-row">
-          <div class="info-row-text">
-            <div class="info-row-label">Утас</div>
-            <div class="info-row-value" id="pf-phone">—</div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">CSD дугаар</div><div class="pf-row-val mono" id="gi-csd-no">—</div></div>
+            <div class="pf-row-rhs">
+              <button class="pf-copy-btn" onclick="copyText(document.getElementById('gi-csd-no').textContent)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="info-row">
-          <div class="info-row-text">
-            <div class="info-row-label">Регистр</div>
-            <div class="info-row-value mono" id="pf-reg">—</div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Данс нээсэн огноо</div><div class="pf-row-val" id="gi-opened">—</div></div>
           </div>
-        </div>
-        <div class="info-row">
-          <div class="info-row-text">
-            <div class="info-row-label">Иргэншил</div>
-            <div class="info-row-value" id="pf-nat">—</div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Дансны төрөл</div><div class="pf-row-val" id="gi-acct-type">—</div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">KYC статус</div></div>
+            <div class="pf-row-rhs" id="gi-kyc-status"></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Хураамжийн төлөв</div></div>
+            <div class="pf-row-rhs" id="gi-fee-status"></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="accordion-item" id="acc-accounts">
-    <div class="accordion-header" onclick="toggleAccordion('acc-accounts')">
-      <div class="accordion-icon"><i data-lucide="landmark"></i></div>
-      <div class="accordion-title">Дансны мэдээлэл</div>
-      <div class="accordion-chevron"><i data-lucide="chevron-right"></i></div>
-    </div>
-    <div class="accordion-body">
-      <div class="info-card">
-        <div class="info-row">
-          <div class="info-row-text">
-            <div class="info-row-label">ҮЦТХ-ийн данс</div>
-            <div class="info-row-value mono" id="pf-acct-main">—</div>
-          </div>
+    <!-- Accordion 2: Personal Info -->
+    <div class="pf-acc" id="acc-personal">
+      <button class="pf-acc-trigger" onclick="toggleAcc('personal')">
+        <div class="pf-acc-trigger-ico" style="background:rgba(0,192,118,0.1);color:var(--color-buy)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
-        <div class="info-row">
-          <div class="info-row-text">
-            <div class="info-row-label">Анхдагч арилжааны данс</div>
-            <div class="info-row-value mono" id="pf-acct-ipo">—</div>
-          </div>
+        <div class="pf-acc-trigger-info">
+          <span class="pf-acc-trigger-title">Хувийн мэдээлэл</span>
+          <span class="pf-acc-trigger-sub">Овог нэр, регистр, хаяг, баримт</span>
         </div>
-        <div class="info-row">
-          <div class="info-row-text">
-            <div class="info-row-label">Бондын данс</div>
-            <div class="info-row-value mono" id="pf-acct-bond">—</div>
+        <div class="pf-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+      </button>
+      <div class="pf-acc-body">
+        <div class="pf-rows">
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Овог</div><div class="pf-row-val" id="pi-lastname">—</div></div>
+            <div class="pf-row-rhs"><div style="text-align:right"><div class="pf-row-label">Нэр</div><div class="pf-row-val" id="pi-firstname">—</div></div></div>
           </div>
-        </div>
-        <div class="info-row">
-          <div class="info-row-text">
-            <div class="info-row-label">ҮЦТХТ-ийн дансны дугаар</div>
-            <div class="info-row-value mono" id="pf-acct-csd">—</div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Регистрийн дугаар</div><div class="pf-row-val mono" id="pi-reg">—</div></div>
+            <div class="pf-row-rhs">
+              <button class="pf-copy-btn" onclick="copyText(document.getElementById('pi-reg').textContent)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Төрсөн огноо</div><div class="pf-row-val" id="pi-dob">—</div></div>
+            <div class="pf-row-rhs"><div style="text-align:right"><div class="pf-row-label">Хүйс</div><div class="pf-row-val" id="pi-gender">—</div></div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Иргэншил</div><div class="pf-row-val" id="pi-nat">—</div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-row-lhs"><div class="pf-row-label">Оршин суугаа хаяг</div><div class="pf-row-val" id="pi-addr">—</div></div>
+          </div>
+          <!-- KYC doc fields -->
+          <div class="pf-row" style="background:rgba(73,73,170,0.03)">
+            <div class="pf-row-lhs"><div class="pf-row-label">Баримтын төрөл</div><div class="pf-row-val" id="pi-doc-type">—</div></div>
+            <div class="pf-row-rhs"><div style="text-align:right"><div class="pf-row-label">Баримтын дугаар</div><div class="pf-row-val mono" id="pi-doc-no">—</div></div></div>
+          </div>
+          <div class="pf-row" style="background:rgba(73,73,170,0.03)">
+            <div class="pf-row-lhs"><div class="pf-row-label">Олгосон огноо</div><div class="pf-row-val" id="pi-doc-issued">—</div></div>
+            <div class="pf-row-rhs"><div style="text-align:right"><div class="pf-row-label">Дуусах хугацаа</div><div class="pf-row-val" id="pi-doc-expiry">—</div></div></div>
+          </div>
+          <div class="pf-row" style="background:rgba(73,73,170,0.03)">
+            <div class="pf-row-lhs"><div class="pf-row-label">Олгосон байгууллага</div><div class="pf-row-val" id="pi-doc-issuer">—</div></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="accordion-item" id="acc-links">
-    <div class="accordion-header" onclick="toggleAccordion('acc-links')">
-      <div class="accordion-icon"><i data-lucide="link"></i></div>
-      <div class="accordion-title">Товч холбоос</div>
-      <div class="accordion-chevron"><i data-lucide="chevron-right"></i></div>
+    <!-- Accordion 3: My Contracts -->
+    <div class="pf-acc" id="acc-contracts">
+      <button class="pf-acc-trigger" onclick="toggleAcc('contracts')">
+        <div class="pf-acc-trigger-ico" style="background:rgba(245,158,11,0.1);color:#F59E0B">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="pf-acc-trigger-info">
+          <span class="pf-acc-trigger-title">Миний гэрээ</span>
+          <span class="pf-acc-trigger-sub">Байгуулсан гэрээнүүд</span>
+        </div>
+        <div class="pf-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+      </button>
+      <div class="pf-acc-body" id="contracts-body">
+        <!-- filled by JS -->
+      </div>
     </div>
-    <div class="accordion-body">
-      <div class="profile-links">
-        <button class="profile-link-btn" onclick="go('general')"><i data-lucide="clipboard-list"></i> Дансны мэдээлэл</button>
-        <button class="profile-link-btn" onclick="go('kyc')"><i data-lucide="shield-check"></i> KYC</button>
-        <button class="profile-link-btn" onclick="go('fee')"><i data-lucide="credit-card"></i> Дансны хураамж</button>
-        <button class="profile-link-btn" onclick="go('opening-process')"><i data-lucide="list-checks"></i> Данс нээх явц</button>
-        <button class="profile-link-btn" onclick="go('alerts')"><i data-lucide="bell-ring"></i> Сэрэмжлүүлэг</button>
-        <button class="profile-link-btn" onclick="go('faq')"><i data-lucide="help-circle"></i> FAQ</button>
+
+  </div><!-- /pf-acct-card -->
+
+  <!-- CONTACT -->
+  <div class="pf-sec-label">Холбоо барих</div>
+  <div class="pf-contact-card">
+    <div class="pf-contact-head">
+      <div class="pf-contact-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/></svg>
+      </div>
+      <span class="pf-contact-title">Холбоо барих</span>
+      <button class="pf-edit-btn" id="btn-edit-contact" onclick="toggleContactEdit()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Засах
+      </button>
+    </div>
+    <!-- View -->
+    <div id="view-contact">
+      <div class="pf-rows">
+        <div class="pf-row">
+          <div class="pf-row-lhs"><div class="pf-row-label">И-мэйл</div><div class="pf-row-val" id="vc-email">—</div></div>
+          <div class="pf-row-rhs" id="vc-email-status"></div>
+        </div>
+        <div class="pf-verify-prompt" id="verify-email-prompt">
+          <p>И-мэйл рүү баталгаажуулах код илгээлээ</p>
+          <div class="pf-otp-row">
+            <input class="pf-otp-inp" placeholder="Код" maxlength="6" id="email-otp-inp" />
+            <button class="pf-otp-confirm" onclick="confirmEmailOTP()">Баталгаажуулах</button>
+          </div>
+        </div>
+        <div class="pf-row">
+          <div class="pf-row-lhs"><div class="pf-row-label">Утас</div><div class="pf-row-val" id="vc-phone">—</div></div>
+          <div class="pf-row-rhs" id="vc-phone-status"></div>
+        </div>
+        <div class="pf-verify-prompt" id="verify-phone-prompt">
+          <p>Утас руу баталгаажуулах SMS код илгээлээ</p>
+          <div class="pf-otp-row">
+            <input class="pf-otp-inp" placeholder="Код" maxlength="6" id="phone-otp-inp" />
+            <button class="pf-otp-confirm" onclick="confirmPhoneOTP()">Баталгаажуулах</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Edit form -->
+    <div class="pf-edit-form" id="edit-contact">
+      <div class="pf-field">
+        <label class="pf-field-label">И-мэйл</label>
+        <input class="pf-inp" type="email" id="ec-email" placeholder="email@example.com" />
+      </div>
+      <div class="pf-field">
+        <label class="pf-field-label">Утасны дугаар</label>
+        <input class="pf-inp" type="tel" id="ec-phone" placeholder="+976 9911-2233" />
+      </div>
+      <div class="pf-form-actions">
+        <button class="pf-cancel-btn" onclick="cancelContactEdit()">Цуцлах</button>
+        <button class="pf-save-btn" onclick="requestPin()">Хадгалах</button>
       </div>
     </div>
   </div>
+
+  <!-- LOGOUT -->
+  
 
 </div>
 
+<!-- PIN MODAL -->
+<div class="pf-overlay" id="pin-overlay" onclick="if(event.target===this)closePinModal()">
+  <div class="pf-modal">
+    <div class="pf-modal-title">ПИН код оруулна уу</div>
+    <div class="pf-modal-sub">Өөрчлөлтийг баталгаажуулахын тулд<br>4 оронтой ПИН кодоо оруулна уу</div>
+    <div class="pf-pin-dots" id="pin-dots">
+      <div class="pf-pin-dot" id="dot-0"></div>
+      <div class="pf-pin-dot" id="dot-1"></div>
+      <div class="pf-pin-dot" id="dot-2"></div>
+      <div class="pf-pin-dot" id="dot-3"></div>
+    </div>
+    <div class="pf-pin-err" id="pin-err"></div>
+    <div class="pf-numpad">
+      <button class="pf-num-btn" onclick="pinInput('1')">1</button>
+      <button class="pf-num-btn" onclick="pinInput('2')">2</button>
+      <button class="pf-num-btn" onclick="pinInput('3')">3</button>
+      <button class="pf-num-btn" onclick="pinInput('4')">4</button>
+      <button class="pf-num-btn" onclick="pinInput('5')">5</button>
+      <button class="pf-num-btn" onclick="pinInput('6')">6</button>
+      <button class="pf-num-btn" onclick="pinInput('7')">7</button>
+      <button class="pf-num-btn" onclick="pinInput('8')">8</button>
+      <button class="pf-num-btn" onclick="pinInput('9')">9</button>
+      <button class="pf-num-btn" style="visibility:hidden"></button>
+      <button class="pf-num-btn" onclick="pinInput('0')">0</button>
+      <button class="pf-num-btn del" onclick="pinDelete()">⌫</button>
+    </div>
+  </div>
+</div>
+
+<div class="pf-toast" id="pf-toast"></div>
+
 <script src="../../data/static.js"></script>
-<script src="../scripts/components.js"></script>
 <script>
-  function go(key) {
-    try { window.parent.navigateTo(key); } catch (e) {}
-  }
+/* ── Mock state ── */
+const state = {
+  lastName:      'Батбаяр',
+  firstName:     'Б',
+  dob:           '1999-11-22',
+  nat:           'Монгол',
+  gender:        'Эрэгтэй',
+  address:       'УБ хот, БЗД, 14-р хороо',
+  email:         PROFILE?.email || 'batbayar@example.com',
+  phone:         PROFILE?.phone || '+976 9911-2233',
+  emailVerified: true,
+  phoneVerified: false,
+};
+const MOCK_PIN = '1234';
+let pinBuffer = '';
 
-  function toggleAccordion(id) {
-    document.getElementById(id).classList.toggle('open');
-  }
+/* ── Accordion ── */
+function toggleAcc(id) {
+  const el = document.getElementById('acc-' + id);
+  el.classList.toggle('open');
+}
 
-  document.getElementById('profile-name').textContent = USER.name;
-  document.getElementById('profile-acct').textContent = WALLET?.accountNo || '';
-  document.getElementById('profile-initials').textContent = USER.initials;
-  document.getElementById('pf-email').textContent = PROFILE.email;
-  document.getElementById('pf-phone').textContent = PROFILE.phone;
-  document.getElementById('pf-reg').textContent = PROFILE.registerNo;
-  document.getElementById('pf-nat').textContent = PROFILE.nationality;
-  document.getElementById('pf-acct-main').textContent = WALLET?.accountNo || '—';
-  document.getElementById('pf-acct-ipo').textContent = WALLET?.ipoAccount || '—';
-  document.getElementById('pf-acct-bond').textContent = WALLET?.bondAccount || '—';
-  document.getElementById('pf-acct-csd').textContent = WALLET?.csdAccount || '—';
+/* ── Toast / Copy ── */
+function showToast(msg) {
+  const el = document.getElementById('pf-toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+function copyText(t) {
+  if (!t || t === '—') return;
+  navigator.clipboard?.writeText(t).then(() => showToast('Хуулагдлаа')).catch(() => {});
+}
+function go(key) { try { window.parent.navigateTo(key); } catch(e) {} }
 
-  const steps = [
-    { key: 'account', title: 'Данс нээсэн', done: PROFILE.accountOpened, page: 'open-account' },
-    { key: 'kyc', title: 'KYC баталгаажсан', done: PROFILE.kycStatus === 'approved', page: 'kyc' },
-    { key: 'fee', title: 'Хураамж төлсөн', done: PROFILE.feePaid, page: 'fee' },
-  ];
-  const doneCount = steps.filter(s => s.done).length;
+/* ── Contact edit ── */
+function toggleContactEdit() {
+  const isOpen = document.getElementById('edit-contact').classList.contains('active');
+  if (isOpen) { cancelContactEdit(); return; }
+  document.getElementById('ec-email').value = state.email;
+  document.getElementById('ec-phone').value = state.phone;
+  document.getElementById('view-contact').style.opacity = '0.4';
+  document.getElementById('edit-contact').classList.add('active');
+  document.getElementById('btn-edit-contact').innerHTML =
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg> Болих`;
+}
+function cancelContactEdit() {
+  document.getElementById('view-contact').style.opacity = '';
+  document.getElementById('edit-contact').classList.remove('active');
+  document.getElementById('btn-edit-contact').innerHTML =
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Засах`;
+}
 
-  const pillEl = document.getElementById('profile-status-pill');
-  const pillSubEl = document.getElementById('profile-status-sub');
-  if (doneCount === steps.length) {
-    pillEl.className = 'status-pill online';
-    pillEl.innerHTML = '<i data-lucide="check-circle"></i> Баталгаажсан харилцагч';
-    pillSubEl.textContent = 'Бүх шаардлага хангагдсан';
+/* ── PIN modal ── */
+function requestPin() {
+  const email = document.getElementById('ec-email').value.trim();
+  const phone = document.getElementById('ec-phone').value.trim();
+  if (!email) { showToast('И-мэйл оруулна уу'); return; }
+  if (!phone) { showToast('Утасны дугаар оруулна уу'); return; }
+  pinBuffer = '';
+  document.getElementById('pin-err').textContent = '';
+  updatePinDots();
+  document.getElementById('pin-overlay').classList.add('open');
+}
+function closePinModal() {
+  document.getElementById('pin-overlay').classList.remove('open');
+  pinBuffer = '';
+}
+function pinInput(digit) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += digit;
+  updatePinDots();
+  if (pinBuffer.length === 4) setTimeout(checkPin, 120);
+}
+function pinDelete() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  document.getElementById('pin-err').textContent = '';
+  updatePinDots();
+}
+function updatePinDots() {
+  for (let i = 0; i < 4; i++)
+    document.getElementById('dot-' + i).classList.toggle('filled', i < pinBuffer.length);
+}
+function checkPin() {
+  if (pinBuffer === MOCK_PIN) {
+    closePinModal(); commitContactSave();
   } else {
-    pillEl.className = 'status-pill pending';
-    pillEl.innerHTML = '<i data-lucide="clock"></i> Бүртгэл дуусаагүй';
-    pillSubEl.textContent = doneCount + ' / ' + steps.length + ' алхам дууссан';
+    document.getElementById('pin-err').textContent = 'Буруу ПИН код. Дахин оруулна уу.';
+    setTimeout(() => { pinBuffer = ''; updatePinDots(); }, 500);
   }
+}
+function commitContactSave() {
+  const newEmail = document.getElementById('ec-email').value.trim();
+  const newPhone = document.getElementById('ec-phone').value.trim();
+  const ec = newEmail !== state.email, pc = newPhone !== state.phone;
+  if (ec) { state.email = newEmail; state.emailVerified = false; }
+  if (pc) { state.phone = newPhone; state.phoneVerified = false; }
+  cancelContactEdit(); renderContact();
+  showToast(ec || pc ? 'Хадгалагдлаа — баталгаажуулалт шаардлагатай' : 'Өөрчлөлт хадгалагдлаа');
+}
 
-  document.getElementById('status-steps').innerHTML = steps.map(s => `
-    <div class="status-step${s.done ? ' done' : ''}" onclick="go('${s.page}')">
-      <div class="status-step-icon"><i data-lucide="${s.done ? 'check' : 'circle'}"></i></div>
-      <div class="status-step-info">
-        <div class="status-step-title">${s.title}</div>
-        <div class="status-step-sub${s.done ? '' : ' pending'}">${s.done ? 'Дууссан' : 'Хийгдээгүй'}</div>
+/* ── OTP ── */
+function requestVerify(type) {
+  document.getElementById('verify-' + type + '-prompt').classList.add('show');
+  showToast(type === 'email' ? 'И-мэйл рүү код илгээлээ' : 'SMS код илгээлээ');
+}
+function confirmEmailOTP() {
+  if (document.getElementById('email-otp-inp').value.length < 4) { showToast('Код оруулна уу'); return; }
+  state.emailVerified = true;
+  document.getElementById('verify-email-prompt').classList.remove('show');
+  renderContact(); showToast('И-мэйл баталгаажлаа ✓');
+}
+function confirmPhoneOTP() {
+  if (document.getElementById('phone-otp-inp').value.length < 4) { showToast('Код оруулна уу'); return; }
+  state.phoneVerified = true;
+  document.getElementById('verify-phone-prompt').classList.remove('show');
+  renderContact(); showToast('Утас баталгаажлаа ✓');
+}
+
+/* ── Badge helpers ── */
+function vBadge(ok) {
+  return ok
+    ? `<span class="pf-vbadge ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Баталгаажсан</span>`
+    : `<span class="pf-vbadge no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Баталгаагүй</span>`;
+}
+function statusBadge(ok, okLabel, noLabel) {
+  return ok
+    ? `<span class="pf-status ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${okLabel}</span>`
+    : `<span class="pf-status no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${noLabel}</span>`;
+}
+
+/* ── Renderers ── */
+function renderHero() {
+  document.getElementById('pf-avatar').textContent = USER?.initials || (state.lastName[0] + state.firstName[0]);
+  document.getElementById('pf-name').textContent   = state.lastName + ' ' + state.firstName;
+  document.getElementById('pf-acct-no').textContent = WALLET?.accountNo || '—';
+  const kycOk = localStorage.getItem('bdsec-kyc-done') !== '0';
+  const feeOk = localStorage.getItem('bdsec-fee-done') !== '0';
+  const allOk = kycOk && feeOk;
+  document.getElementById('pf-badge').innerHTML = allOk
+    ? `<span class="pf-hbadge ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Баталгаажсан харилцагч</span>`
+    : `<span class="pf-hbadge pending"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Бүртгэл дуусаагүй</span>`;
+}
+
+function renderSteps() {
+  const genDone = localStorage.getItem('bdsec-general-done') !== '0';
+  const kycDone = localStorage.getItem('bdsec-kyc-done')     !== '0';
+  const feeDone = localStorage.getItem('bdsec-fee-done')      !== '0';
+  const steps = [
+    { title: 'Данс нээх хүсэлт',    done: genDone, page: 'open-account', sub: genDone ? 'Дууссан'      : 'Шаардлагатай' },
+    { title: 'KYC баталгаажуулалт', done: kycDone, page: 'kyc',          sub: kycDone ? 'Баталгаажсан' : 'Хийгдээгүй'   },
+    { title: 'Хураамж төлсөн',      done: feeDone, page: 'fee',          sub: feeDone ? 'Төлөгдсөн'    : 'Төлөгдөөгүй'  },
+  ];
+  const done = steps.filter(s => s.done).length;
+  document.getElementById('steps-pct').textContent = done + ' / ' + steps.length;
+  document.getElementById('steps-fill').style.width = Math.round(done / steps.length * 100) + '%';
+  const checkSvg  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const circleSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
+  const arrSvg    = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+  document.getElementById('pf-steps-body').innerHTML = steps.map(s =>
+    `<div class="pf-step${s.done ? ' done' : ''}" onclick="${!s.done ? `go('${s.page}')` : ''}">
+      <div class="pf-step-ico">${s.done ? checkSvg : circleSvg}</div>
+      <div class="pf-step-info"><div class="pf-step-name">${s.title}</div><div class="pf-step-sub">${s.sub}</div></div>
+      ${!s.done ? `<div style="color:var(--color-text-disabled)">${arrSvg}</div>` : ''}
+    </div>`
+  ).join('');
+}
+
+function renderGeneralInfo() {
+  const kycOk = localStorage.getItem('bdsec-kyc-done') !== '0';
+  const feeOk = localStorage.getItem('bdsec-fee-done') !== '0';
+  document.getElementById('gi-csd-no').textContent    = WALLET?.csdAccount || 'CSD-220819';
+  document.getElementById('gi-opened').textContent    = '2022.08.19';
+  document.getElementById('gi-acct-type').textContent = 'Хувьцааны данс';
+  document.getElementById('gi-kyc-status').innerHTML  = statusBadge(kycOk, 'Баталгаажсан', 'Хийгдээгүй');
+  document.getElementById('gi-fee-status').innerHTML  = statusBadge(feeOk, 'Төлөгдсөн', 'Төлөгдөөгүй');
+}
+
+function renderPersonalInfo() {
+  document.getElementById('pi-lastname').textContent    = state.lastName;
+  document.getElementById('pi-firstname').textContent   = state.firstName;
+  document.getElementById('pi-reg').textContent         = PROFILE?.registerNo || '—';
+  document.getElementById('pi-dob').textContent         = state.dob ? state.dob.replace(/-/g, '.') : '—';
+  document.getElementById('pi-gender').textContent      = state.gender;
+  document.getElementById('pi-nat').textContent         = state.nat;
+  document.getElementById('pi-addr').textContent        = state.address;
+  const kycData = (() => { try { return JSON.parse(localStorage.getItem('bdsec-kyc-data') || 'null'); } catch(e) { return null; } })();
+  document.getElementById('pi-doc-type').textContent    = kycData?.docType   || 'Иргэний үнэмлэх';
+  document.getElementById('pi-doc-no').textContent      = kycData?.docNo     || 'УБ99112233';
+  document.getElementById('pi-doc-issued').textContent  = kycData?.issued    || '2018.05.12';
+  document.getElementById('pi-doc-expiry').textContent  = kycData?.expiry    || '2028.05.11';
+  document.getElementById('pi-doc-issuer').textContent  = kycData?.issuer    || 'УБ хот, 1-р хороолол';
+}
+
+function renderContracts() {
+  const contracts = [
+    { name: 'Үнэт цаасны данс нээх гэрээ',      date: '2022.08.19' },
+    { name: 'Брокерийн үйлчилгээний гэрээ',     date: '2022.08.19' },
+    { name: 'KYC баталгаажуулалтын гэрээ',      date: '2022.09.01' },
+    { name: 'Хураамж төлбөрийн нөхцөл',         date: '2022.08.19' },
+  ];
+  const dlSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+  const docSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+  document.getElementById('contracts-body').innerHTML = contracts.map(c =>
+    `<div class="pf-contract">
+      <div class="pf-contract-ico">${docSvg}</div>
+      <div class="pf-contract-info">
+        <div class="pf-contract-name">${c.name}</div>
+        <div class="pf-contract-date">${c.date}</div>
       </div>
-      ${s.done ? '' : '<div class="chevron-icon"><i data-lucide="chevron-right"></i></div>'}
-    </div>`).join('');
+      <button class="pf-dl-btn" onclick="showToast('Татаж байна…')">${dlSvg} Татах</button>
+    </div>`
+  ).join('');
+}
 
-  lucide.createIcons();
+function renderContact() {
+  document.getElementById('vc-email').textContent = state.email;
+  document.getElementById('vc-phone').textContent = state.phone;
+  document.getElementById('vc-email-status').innerHTML = vBadge(state.emailVerified) +
+    (!state.emailVerified ? ` <button class="pf-verify-link" onclick="requestVerify('email')">Баталгаажуулах</button>` : '');
+  document.getElementById('vc-phone-status').innerHTML = vBadge(state.phoneVerified) +
+    (!state.phoneVerified ? ` <button class="pf-verify-link" onclick="requestVerify('phone')">Баталгаажуулах</button>` : '');
+}
+
+function handleLogout() {
+  try { window.parent.logout(); } catch(e) { showToast('Гарч байна…'); }
+}
+
+/* ── Init ── */
+renderHero();
+renderSteps();
+renderGeneralInfo();
+renderPersonalInfo();
+renderContracts();
+renderContact();
 </script>
 </body>
 </html>

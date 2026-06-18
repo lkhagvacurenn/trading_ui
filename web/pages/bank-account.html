@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Банкны данс — BDSec</title>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--color-bg); color: var(--color-text-primary); font-family: 'Manrope', sans-serif; }
+    .ba-page { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 16px; }
+
+    .ba-title { font-size: 22px; font-weight: 800; margin: 0 0 4px; }
+    .ba-sub   { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 4px; }
+
+    /* Add button */
+    .ba-add-btn { display: flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 11px; border: 1.5px dashed var(--color-border); background: transparent; font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; color: var(--color-primary); cursor: pointer; transition: all 0.15s; width: 100%; justify-content: center; }
+    .ba-add-btn svg { width: 16px; height: 16px; }
+    .ba-add-btn:hover { border-color: var(--color-primary); background: rgba(73,73,170,0.06); }
+
+    /* Bank card */
+    .ba-card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; margin-bottom: 10px; }
+    .ba-card:last-child { margin-bottom: 0; }
+    .ba-card.primary {  }
+
+    .ba-card-head { display: flex; align-items: center; gap: 14px; padding: 16px; }
+    .ba-bank-logo { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; overflow: hidden; border: 1px solid var(--color-border); }
+    .ba-bank-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ba-bank-info { flex: 1; min-width: 0; }
+    .ba-bank-name { font-size: 14px; font-weight: 800; margin-bottom: 3px; }
+    .ba-bank-no   { font-size: 13px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-secondary); letter-spacing: 0.06em; }
+    .ba-bank-holder { font-size: 11px; color: var(--color-text-disabled); margin-top: 2px; }
+
+    /* Primary badge — yellow/gold, prominent */
+    .ba-primary-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800;
+      background: rgba(245,158,11,0.15); color: #F59E0B;
+      border: 1px solid rgba(245,158,11,0.35);
+      flex-shrink: 0;
+    }
+    .ba-primary-tag svg { width: 11px; height: 11px; }
+
+    .ba-card-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+    .ba-action-btn { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--color-border); background: transparent; font-size: 11px; font-weight: 700; font-family: 'Manrope', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.13s; }
+    .ba-action-btn svg { width: 11px; height: 11px; }
+    .ba-action-btn.set-primary { color: #F59E0B; border-color: rgba(245,158,11,0.3); }
+    .ba-action-btn.set-primary:hover { background: rgba(245,158,11,0.08); border-color: #F59E0B; }
+    .ba-action-btn.remove { color: var(--color-sell); }
+    .ba-action-btn.remove:hover { border-color: var(--color-sell); background: rgba(239,68,68,0.06); }
+
+    /* Info box */
+    .ba-info-box { background: rgba(73,73,170,0.06); border: 1px solid rgba(73,73,170,0.18); border-radius: 12px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+    .ba-info-ico { flex-shrink: 0; color: var(--color-primary); margin-top: 1px; }
+    .ba-info-ico svg { width: 14px; height: 14px; }
+    .ba-info-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+    .ba-info-text strong { color: var(--color-text-primary); font-weight: 700; }
+
+    /* ── ADD MODAL ── */
+    .ba-overlay { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px; }
+    .ba-overlay.open { display: flex; }
+    .ba-modal { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+    .ba-modal::-webkit-scrollbar { display: none; }
+    .ba-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; background: var(--color-bg-card); z-index: 1; }
+    .ba-modal-title { font-size: 16px; font-weight: 800; }
+    .ba-modal-close { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--color-border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); }
+    .ba-modal-close svg { width: 13px; height: 13px; }
+    .ba-modal-close:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .ba-modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .ba-field { display: flex; flex-direction: column; gap: 6px; }
+    .ba-field-label { font-size: 10px; font-weight: 700; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: 0.05em; }
+    .ba-inp { background: var(--color-bg); border: 1.5px solid var(--color-border); border-radius: 10px; padding: 10px 13px; font-size: 14px; font-weight: 600; color: var(--color-text-primary); font-family: 'Manrope', sans-serif; outline: none; transition: border-color 0.15s; width: 100%; }
+    .ba-inp:focus { border-color: var(--color-primary); }
+
+    /* Bank icon picker (same style as open-account) */
+    .bank-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 6px; margin: 0 -2px; scrollbar-width: none; }
+    .bank-scroll::-webkit-scrollbar { display: none; }
+    .bank-card { flex-shrink: 0; width: 54px; height: 54px; border-radius: 12px; overflow: hidden; border: 2px solid var(--color-border); cursor: pointer; position: relative; transition: border-color 0.15s, transform 0.1s; }
+    .bank-card:hover { border-color: rgba(73,73,170,0.4); }
+    .bank-card:active { transform: scale(0.96); }
+    .bank-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .bank-card.selected { border-color: var(--color-primary); }
+    .bank-card .bank-check { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; border-radius: 50%; background: var(--color-primary); color: #fff; display: none; align-items: center; justify-content: center; border: 2px solid var(--color-bg-card); }
+    .bank-card.selected .bank-check { display: flex; }
+    .bank-card .bank-check svg { width: 9px; height: 9px; }
+    .bank-selected-name { font-size: 12px; font-weight: 700; color: var(--color-primary); min-height: 16px; margin-top: 2px; }
+
+    .ba-modal-footer { padding: 0 20px 20px; display: flex; gap: 10px; }
+    .ba-submit-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--color-primary); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif; transition: opacity 0.15s; }
+    .ba-submit-btn:hover { opacity: 0.88; }
+    .ba-cancel-btn { padding: 12px 20px; border-radius: 10px; border: 1.5px solid var(--color-border); background: transparent; color: var(--color-text-secondary); font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif; transition: all 0.13s; }
+    .ba-cancel-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* REMOVE CONFIRM */
+    .ba-confirm-modal { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 20px; width: 320px; padding: 24px; text-align: center; }
+    .ba-confirm-ico { width: 48px; height: 48px; border-radius: 50%; background: rgba(239,68,68,0.1); margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; }
+    .ba-confirm-ico svg { width: 20px; height: 20px; color: var(--color-sell); }
+    .ba-confirm-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+    .ba-confirm-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 20px; line-height: 1.5; }
+    .ba-confirm-btns { display: flex; gap: 10px; }
+    .ba-confirm-cancel { flex: 1; padding: 11px; border-radius: 10px; border: 1.5px solid var(--color-border); background: transparent; font-size: 13px; font-weight: 700; color: var(--color-text-secondary); cursor: pointer; font-family: 'Manrope', sans-serif; transition: all 0.13s; }
+    .ba-confirm-cancel:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .ba-confirm-delete { flex: 1; padding: 11px; border-radius: 10px; border: none; background: var(--color-sell); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Manrope', sans-serif; transition: opacity 0.15s; }
+    .ba-confirm-delete:hover { opacity: 0.88; }
+
+    /* Toast */
+    .ba-toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 12px); z-index: 500; background: var(--color-text-primary); color: var(--color-bg); padding: 8px 18px; border-radius: 99px; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.22s; white-space: nowrap; }
+    .ba-toast.show { opacity: 1; transform: translate(-50%, 0); }
+  </style>
+</head>
+<body>
+<div class="ba-page">
+
+  <div>
+    <h1 class="ba-title">Банкны данс</h1>
+    <p class="ba-sub">Татан авах болон шилжүүлэх дансуудаа удирдах</p>
+  </div>
+
+  <div id="ba-list"></div>
+
+  <button class="ba-add-btn" onclick="openAddModal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Банкны данс нэмэх
+  </button>
+
+  <div class="ba-info-box">
+    <div class="ba-info-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div class="ba-info-text">
+      <strong>Анхаар:</strong> Нэмсэн данс таны нэр дээр байх ёстой. Үндсэн данс руу таны татан авалт автоматаар орно.
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD BANK MODAL -->
+<div class="ba-overlay" id="add-modal" onclick="if(event.target===this)closeAddModal()">
+  <div class="ba-modal">
+    <div class="ba-modal-head">
+      <span class="ba-modal-title">Банкны данс нэмэх</span>
+      <button class="ba-modal-close" onclick="closeAddModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="ba-modal-body">
+      <div class="ba-field">
+        <label class="ba-field-label">Банк сонгох</label>
+        <div class="bank-scroll" id="add-bank-scroll"></div>
+        <div class="bank-selected-name" id="add-bank-selected-name"></div>
+      </div>
+      <div class="ba-field">
+        <label class="ba-field-label">Дансны дугаар</label>
+        <input class="ba-inp" type="text" id="add-account-no" placeholder="1234567890" maxlength="20" oninput="autoFillName(this.value)" />
+      </div>
+      <div class="ba-field">
+        <label class="ba-field-label">Дансны нэр (эзэмшигч)</label>
+        <div style="position:relative">
+          <input class="ba-inp" type="text" id="add-account-name" placeholder="Овог Нэр" style="padding-right:36px" />
+          <div id="add-name-spinner" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;border:2px solid var(--color-border);border-top-color:var(--color-primary);border-radius:50%;animation:spin 0.7s linear infinite"></div>
+        </div>
+      </div>
+      <style>@keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}</style>
+      </div>
+    </div>
+    <div class="ba-modal-footer">
+      <button class="ba-cancel-btn" onclick="closeAddModal()">Цуцлах</button>
+      <button class="ba-submit-btn" onclick="submitAddBank()">Нэмэх</button>
+    </div>
+  </div>
+</div>
+
+<!-- REMOVE CONFIRM MODAL -->
+<div class="ba-overlay" id="remove-modal" onclick="if(event.target===this)closeRemoveModal()">
+  <div class="ba-confirm-modal">
+    <div class="ba-confirm-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </div>
+    <div class="ba-confirm-title">Данс устгах уу?</div>
+    <div class="ba-confirm-sub" id="remove-modal-sub">Энэ данс устгагдах болно.</div>
+    <div class="ba-confirm-btns">
+      <button class="ba-confirm-cancel" onclick="closeRemoveModal()">Цуцлах</button>
+      <button class="ba-confirm-delete" onclick="confirmRemove()">Устгах</button>
+    </div>
+  </div>
+</div>
+
+<div class="ba-toast" id="ba-toast"></div>
+
+<script src="../../data/static.js"></script>
+<script>
+const BANK_NAMES = [
+  'Хаан Банк', 'Голомт Банк', 'Хас Банк', 'Төрийн Банк',
+  'Капитрон Банк', 'Богд Банк', 'Ариг Банк', 'Транс Банк',
+  'Чингис Хаан Банк', 'M банк', 'Инвестмент Банк', 'Бизнес Банк',
+];
+
+/* ── State ── */
+let banks = [
+  { id: 1, bankIdx: 0, accountNo: '5011 2345 6789', accountName: 'Б.Батбаяр', primary: true  },
+  { id: 2, bankIdx: 1, accountNo: '4600 9988 7766', accountName: 'Б.Батбаяр', primary: false },
+];
+let nextId = 3;
+let removeTargetId = null;
+let selectedBankIdx = null;
+
+/* ── Render bank list ── */
+function renderBanks() {
+  const list = document.getElementById('ba-list');
+  if (!banks.length) {
+    list.innerHTML = `<div class="ba-card" style="text-align:center;padding:40px 20px">
+      <div style="font-size:13px;color:var(--color-text-disabled)">Данс байхгүй байна</div>
+    </div>`;
+    return;
+  }
+  const starSvg  = `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+  const trashSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+  const outStarSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+  list.innerHTML = banks.map(b => {
+    const logoSrc = `../../public/bank logo/bank${String(b.bankIdx + 1).padStart(2, '0')}.png`;
+    const bankName = BANK_NAMES[b.bankIdx] || 'Банк';
+    return `<div class="ba-card${b.primary ? ' primary' : ''}">
+      <div class="ba-card-head">
+        <div class="ba-bank-logo">
+          <img src="${logoSrc}" alt="${bankName}" onerror="this.parentNode.style.background='#4949AA';this.style.display='none'" />
+        </div>
+        <div class="ba-bank-info">
+          <div class="ba-bank-name">${bankName}</div>
+          <div class="ba-bank-no">${b.accountNo}</div>
+          <div class="ba-bank-holder">${b.accountName}</div>
+        </div>
+        <div class="ba-card-actions">
+          ${b.primary
+            ? `<div class="ba-primary-tag">${starSvg} Үндсэн данс</div>`
+            : `<button class="ba-action-btn set-primary" onclick="setPrimary(${b.id})" title="Үндсэн болгох">${outStarSvg}</button>
+               <button class="ba-action-btn remove" onclick="openRemoveModal(${b.id})" title="Устгах">${trashSvg}</button>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Bank icon picker ── */
+function buildBankPicker() {
+  const scroll = document.getElementById('add-bank-scroll');
+  scroll.innerHTML = '';
+  selectedBankIdx = null;
+  document.getElementById('add-bank-selected-name').textContent = '';
+  BANK_NAMES.forEach((name, i) => {
+    const src = `../../public/bank logo/bank${String(i + 1).padStart(2, '0')}.png`;
+    const card = document.createElement('div');
+    card.className = 'bank-card';
+    card.innerHTML = `<img src="${src}" alt="${name}" /><span class="bank-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>`;
+    card.addEventListener('click', () => {
+      document.querySelectorAll('#add-bank-scroll .bank-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedBankIdx = i;
+      document.getElementById('add-bank-selected-name').textContent = name;
+    });
+    scroll.appendChild(card);
+  });
+}
+
+/* ── Auto-fill account holder name ── */
+const MOCK_LOOKUP = {
+  '5011234567':  'Б.Батбаяр',
+  '46009988':    'О.Оюунтунгалаг',
+  '1234567890':  'Д.Дэлгэрмаа',
+};
+let autoFillTimer = null;
+function autoFillName(val) {
+  const nameEl    = document.getElementById('add-account-name');
+  const spinner   = document.getElementById('add-name-spinner');
+  clearTimeout(autoFillTimer);
+  const digits = val.replace(/\D/g, '');
+  if (digits.length < 8) { nameEl.value = ''; return; }
+  spinner.style.display = 'block';
+  nameEl.value = '';
+  autoFillTimer = setTimeout(() => {
+    spinner.style.display = 'none';
+    // Mock lookup — in production this would be an API call
+    const match = MOCK_LOOKUP[digits] || 'Б.Батбаяр';
+    nameEl.value = match;
+    nameEl.style.color = 'var(--color-buy)';
+    setTimeout(() => nameEl.style.color = '', 1200);
+  }, 700);
+}
+
+/* ── Add modal ── */
+function openAddModal() {
+  buildBankPicker();
+  document.getElementById('add-account-no').value = '';
+  const nameEl = document.getElementById('add-account-name');
+  nameEl.value = ''; nameEl.style.color = '';
+  document.getElementById('add-name-spinner').style.display = 'none';
+  document.getElementById('add-modal').classList.add('open');
+}
+function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
+
+function submitAddBank() {
+  if (selectedBankIdx === null) { showToast('Банк сонгоно уу'); return; }
+  const no   = document.getElementById('add-account-no').value.trim();
+  const name = document.getElementById('add-account-name').value.trim();
+  if (!no)   { showToast('Дансны дугаар оруулна уу'); return; }
+  if (!name) { showToast('Дансны нэр оруулна уу'); return; }
+  banks.push({ id: nextId++, bankIdx: selectedBankIdx, accountNo: no, accountName: name, primary: false });
+  closeAddModal();
+  renderBanks();
+  showToast('Данс нэмэгдлээ');
+}
+
+/* ── Set primary ── */
+function setPrimary(id) {
+  banks.forEach(b => b.primary = b.id === id);
+  renderBanks();
+  showToast('Үндсэн данс шинэчлэгдлээ');
+}
+
+/* ── Remove ── */
+function openRemoveModal(id) {
+  removeTargetId = id;
+  const b = banks.find(x => x.id === id);
+  const bankName = BANK_NAMES[b.bankIdx] || 'Банк';
+  document.getElementById('remove-modal-sub').textContent = `${bankName} — ${b.accountNo} дансыг устгах уу?`;
+  document.getElementById('remove-modal').classList.add('open');
+}
+function closeRemoveModal() { document.getElementById('remove-modal').classList.remove('open'); removeTargetId = null; }
+function confirmRemove() {
+  banks = banks.filter(b => b.id !== removeTargetId);
+  closeRemoveModal();
+  renderBanks();
+  showToast('Данс устгагдлаа');
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const el = document.getElementById('ba-toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+renderBanks();
+</script>
+</body>
+</html>

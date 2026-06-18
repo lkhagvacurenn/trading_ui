@@ -43,7 +43,6 @@
                style="background:var(--gradient-avatar)">ББ</div>
           <div class="flex-1 min-w-0">
             <p id="sidebar-user-name" class="text-sm font-semibold truncate">Б.Батбаяр</p>
-            <p id="sidebar-user-acct" class="text-xs truncate mono" style="color:var(--color-text-disabled)">4453728992</p>
           </div>
           <i data-lucide="chevron-right" class="w-4 h-4 flex-shrink-0" style="color:var(--color-text-disabled)"></i>
         </div>
@@ -77,9 +76,6 @@
         </a>
 
 
-        <a href="pages/portfolio.html" class="nav-link" data-page="portfolio" data-title="My Portfolio">
-          <i data-lucide="briefcase" class="w-4 h-4"></i> My Portfolio
-        </a>
         <a href="pages/all-orders.html" class="nav-link" data-page="all-orders" data-title="Order History">
           <i data-lucide="list-ordered" class="w-4 h-4"></i> Order History
         </a>
@@ -89,8 +85,8 @@
         <a href="pages/withdrawal.html" class="nav-link" data-page="withdrawal" data-title="Withdraw">
           <i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Withdraw
         </a>
-        <a href="pages/history.html" class="nav-link" data-page="history" data-title="Transaction History">
-          <i data-lucide="history" class="w-4 h-4"></i> Transaction History
+        <a href="pages/bank-account.html" class="nav-link" data-page="bank-account" data-title="Bank Account">
+          <i data-lucide="building-2" class="w-4 h-4"></i> Bank Account
         </a>
         <a href="pages/faq.html" class="nav-link" data-page="faq" data-title="FAQ">
           <i data-lucide="help-circle" class="w-4 h-4"></i> FAQ
@@ -112,12 +108,16 @@
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-1.5 text-xs font-medium" style="color:var(--color-buy)">
             <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:var(--color-buy)"></span>
-            Market Open
+            Арилжаа нээлттэй
           </div>
 
           <button onclick="navigateTo('recharge')" class="header-deposit-btn">
-            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Deposit
+            <i data-lucide="arrow-down-from-line" class="w-3.5 h-3.5"></i> Данс цэнэглэх
           </button>
+          <button onclick="navigateTo('withdrawal')" class="header-withdraw-btn">
+            <i data-lucide="arrow-up-from-line" class="w-3.5 h-3.5"></i> Мөнгө хүсэх
+          </button>
+
         </div>
 
         <div class="flex items-center gap-4">
@@ -134,10 +134,22 @@
 
           <div class="w-px h-4 hidden sm:block" style="background:var(--color-border)"></div>
 
-          <button id="hdr-notifications" onclick="navigateTo('notifications')" class="relative hover:opacity-70 transition-opacity" style="color:var(--color-text-secondary)" title="Notifications">
-            <i data-lucide="bell" class="w-5 h-5"></i>
-            <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style="background:var(--color-primary-red)"></span>
-          </button>
+          <div class="notif-dropdown-wrap" id="notif-dropdown-wrap">
+            <button id="hdr-notifications" onclick="toggleNotifDropdown()" class="relative hover:opacity-70 transition-opacity" style="color:var(--color-text-secondary)" title="Мэдэгдэл">
+              <svg id="notif-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+              <span id="notif-bell-badge" class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style="background:var(--color-primary-red)"></span>
+            </button>
+            <div class="notif-dropdown" id="notif-dropdown">
+              <div class="nd-header">
+                <span class="nd-title">Мэдэгдэл</span>
+                <button class="nd-mark-all" onclick="markAllNotifRead()">Бүгдийг уншсан</button>
+              </div>
+              <div class="nd-list" id="nd-list"></div>
+              <div class="nd-footer">
+                <button class="nd-view-all" onclick="navigateTo('notifications');toggleNotifDropdown()">Бүгдийг харах →</button>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -148,8 +160,8 @@
     </div>
   </div>
 
-  <div id="signout-modal" class="modal-overlay">
-    <div class="modal-sheet" style="max-width:360px;text-align:center">
+  <div id="signout-modal" class="modal-overlay" style="align-items:center">
+    <div class="modal-sheet" style="max-width:360px;text-align:center;border-radius:20px;border-bottom:1px solid var(--color-border);transform:none">
       <div class="modal-handle"></div>
       <h3 class="text-base font-semibold mb-2">Sign Out</h3>
       <p class="text-sm mb-5" style="color:var(--color-text-secondary)">Are you sure you want to sign out of BDSec?</p>
@@ -163,5 +175,157 @@
   <script src="../data/static.js"></script>
   <script src="scripts/web.js"></script>
   <script>lucide.createIcons();</script>
+  <style>
+    /* ── Notification dropdown ── */
+    .notif-dropdown-wrap { position: relative; }
+    .notif-dropdown {
+      display: none;
+      position: absolute; top: calc(100% + 12px); right: 0;
+      width: 360px; z-index: 999;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+    .notif-dropdown.open { display: block; }
+    .nd-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .nd-title { font-size: 14px; font-weight: 800; }
+    .nd-mark-all {
+      font-size: 11px; font-weight: 700; color: var(--color-primary);
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    .nd-mark-all:hover { opacity: 0.7; }
+    .nd-list { max-height: 340px; overflow-y: auto; }
+    .nd-list::-webkit-scrollbar { width: 3px; }
+    .nd-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+    .nd-item {
+      display: flex; align-items: flex-start; gap: 11px;
+      padding: 11px 16px; cursor: pointer; transition: background 0.12s;
+      border-bottom: 1px solid rgba(51,51,92,0.4);
+    }
+    .nd-item:last-child { border-bottom: none; }
+    .nd-item:hover { background: rgba(73,73,170,0.07); }
+    .nd-item.unread { background: rgba(73,73,170,0.05); }
+    .nd-icon {
+      width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nd-icon svg { width: 16px; height: 16px; }
+    .ni-alert  { background: rgba(245,158,11,0.14); color: #F59E0B; }
+    .ni-order  { background: rgba(73,73,170,0.14);  color: var(--color-primary); }
+    .ni-system { background: rgba(99,102,241,0.14); color: #818CF8; }
+    .ni-account{ background: rgba(0,192,118,0.14);  color: var(--color-buy); }
+    .nd-body { flex: 1; min-width: 0; }
+    .nd-item-title { font-size: 12px; font-weight: 700; margin-bottom: 2px; line-height: 1.4; }
+    .nd-item-msg { font-size: 11px; color: var(--color-text-secondary); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .nd-item-time { font-size: 10px; color: var(--color-text-disabled); margin-top: 3px; }
+    .nd-unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-primary); flex-shrink: 0; margin-top: 4px; }
+    .nd-footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+    }
+    .nd-view-all {
+      font-size: 12px; font-weight: 700; color: var(--color-primary);
+      background: none; border: none; cursor: pointer; padding: 0;
+      width: 100%;
+    }
+    .nd-view-all:hover { opacity: 0.7; }
+    .nd-empty { padding: 32px 16px; text-align: center; font-size: 13px; color: var(--color-text-disabled); }
+  </style>
+  <script>
+  // ── Notification dropdown logic ──────────────────────────────────────────────
+  const NOTIF_ICONS = {
+    alert:   { cls: 'ni-alert',   svg: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>' },
+    order:   { cls: 'ni-order',   svg: '<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/>' },
+    system:  { cls: 'ni-system',  svg: '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>' },
+    account: { cls: 'ni-account', svg: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+  };
+
+  let _notifUnread = [];
+
+  function buildNotifDropdown() {
+    const list = document.getElementById('nd-list');
+    if (!list) return;
+    const data = (typeof NOTIFICATIONS !== 'undefined') ? NOTIFICATIONS : [];
+    _notifUnread = data.filter(n => !n.read).map(n => n.id);
+    if (!data.length) {
+      list.innerHTML = '<div class="nd-empty">Мэдэгдэл байхгүй</div>';
+      return;
+    }
+    list.innerHTML = data.slice(0, 8).map(n => {
+      const icon = NOTIF_ICONS[n.type] || NOTIF_ICONS.system;
+      const ago = ndTimeAgo(n.time);
+      return `<div class="nd-item${n.read ? '' : ' unread'}" onclick="markNotifRead('${n.id}', this)">
+        <div class="nd-icon ${icon.cls}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icon.svg}</svg>
+        </div>
+        <div class="nd-body">
+          <div class="nd-item-title">${n.title}</div>
+          <div class="nd-item-msg">${n.message}</div>
+          <div class="nd-item-time">${ago}</div>
+        </div>
+        ${!n.read ? '<div class="nd-unread-dot"></div>' : ''}
+      </div>`;
+    }).join('');
+    updateBellBadge();
+  }
+
+  function ndTimeAgo(str) {
+    const diff = (Date.now() - new Date(str)) / 60000;
+    if (diff < 1) return 'Дөнгөж сая';
+    if (diff < 60) return Math.floor(diff) + ' мин өмнө';
+    if (diff < 1440) return Math.floor(diff / 60) + ' цаг өмнө';
+    return Math.floor(diff / 1440) + ' өдөр өмнө';
+  }
+
+  function updateBellBadge() {
+    const badge = document.getElementById('notif-bell-badge');
+    if (badge) badge.style.display = _notifUnread.length ? '' : 'none';
+  }
+
+  function markNotifRead(id, el) {
+    _notifUnread = _notifUnread.filter(x => x !== id);
+    el.classList.remove('unread');
+    const dot = el.querySelector('.nd-unread-dot');
+    if (dot) dot.remove();
+    updateBellBadge();
+  }
+
+  function markAllNotifRead() {
+    _notifUnread = [];
+    document.querySelectorAll('.nd-item.unread').forEach(el => {
+      el.classList.remove('unread');
+      const dot = el.querySelector('.nd-unread-dot');
+      if (dot) dot.remove();
+    });
+    updateBellBadge();
+  }
+
+  function toggleNotifDropdown() {
+    const dd = document.getElementById('notif-dropdown');
+    if (!dd) return;
+    const isOpen = dd.classList.contains('open');
+    if (!isOpen) {
+      buildNotifDropdown();
+      dd.classList.add('open');
+    } else {
+      dd.classList.remove('open');
+    }
+  }
+
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('notif-dropdown-wrap');
+    const dd = document.getElementById('notif-dropdown');
+    if (dd && dd.classList.contains('open') && wrap && !wrap.contains(e.target)) {
+      dd.classList.remove('open');
+    }
+  });
+  </script>
 </body>
 </html>

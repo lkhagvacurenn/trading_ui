@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Өгөөж — BDSec</title>
+  <title>Portfolio — BDSec</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -11,137 +11,643 @@
   <link rel="stylesheet" href="../styles/web.css" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+
   <style>
-    body { margin:0; font-family:'Manrope', sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
-    * { box-sizing:border-box; }
-    .hero-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-    .hero-label { font-size:12px; color:rgba(255,255,255,0.7); }
-    .hero-value { font-size:28px; font-weight:800; color:#fff; font-family:'IBM Plex Mono', monospace; margin-bottom:16px; }
-    .stats-row { background:rgba(0,0,0,0.2); border-radius:12px; padding:12px 14px; }
-    .stat-line { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
-    .stat-line-label { color:rgba(255,255,255,0.65); }
-    .stat-line-value { font-family:'IBM Plex Mono', monospace; font-weight:600; color:#fff; }
-    .view-tabs { display:flex; border-bottom:1px solid var(--color-border); }
-    .view-tab { padding:10px 14px; font-size:12px; font-weight:600; color:var(--color-text-disabled); border:none; background:transparent; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; display:flex; align-items:center; gap:6px; }
-    .view-tab.active { color:var(--color-primary); border-bottom-color:var(--color-primary); }
-    .legend-item { display:flex; justify-content:space-between; padding:6px 0; font-size:12px; }
-    .legend-dot { width:10px; height:10px; border-radius:3px; margin-right:8px; }
-    .holding-row { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--color-border); }
-    .hr-avatar { width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,#2d2d6e,#4949AA); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:#fff; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); }
+
+    /* ── Page layout ── */
+    .pf-page { padding: 22px 24px 32px; max-width: 1200px; }
+
+    /* ── Hero card ── */
+    .pf-hero {
+      background: linear-gradient(135deg, #1e1d52 0%, #32308d 30%, var(--color-primary) 65%, #6f63e8 100%);
+      border-radius: 20px; padding: 28px 32px;
+      display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: center;
+      margin-bottom: 20px; position: relative; overflow: hidden;
+    }
+    .pf-hero::before {
+      content: ''; position: absolute; top: -60px; right: 280px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+    .pf-hero::after {
+      content: ''; position: absolute; bottom: -40px; left: -40px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .pf-hero-left { position: relative; z-index: 1; }
+    .pf-hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.65);
+      text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px;
+    }
+    .pf-hero-eyebrow-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5);
+    }
+    .pf-hero-value {
+      font-size: 40px; font-weight: 800; color: #fff;
+      font-family: 'IBM Plex Mono', monospace; letter-spacing: -1px;
+      margin-bottom: 6px; line-height: 1;
+    }
+    .pf-hero-change {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 22px;
+    }
+    .pf-hero-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(0,192,118,0.2); border: 1px solid rgba(0,192,118,0.35);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 12px; font-weight: 700; color: #00e08f;
+    }
+    .pf-hero-badge.negative {
+      background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.35); color: #ff7070;
+    }
+    .pf-hero-badge svg { width: 12px; height: 12px; }
+    .pf-hero-sub { font-size: 13px; color: rgba(255,255,255,0.6); }
+
+    .pf-hero-stats { display: flex; gap: 28px; }
+    .pf-hero-stat-label { font-size: 11px; color: rgba(255,255,255,0.55); margin-bottom: 3px; }
+    .pf-hero-stat-val {
+      font-size: 15px; font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace; color: #fff;
+    }
+    .pf-hero-stat-val.up { color: #00e08f; }
+    .pf-hero-stat-sep { width: 1px; background: rgba(255,255,255,0.15); align-self: stretch; }
+
+    /* Sparkline */
+    .pf-hero-chart { position: relative; z-index: 1; }
+    .pf-sparkline-wrap {
+      background: rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px; padding: 14px 16px;
+    }
+    .pf-sparkline-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+    }
+    .pf-sparkline-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); }
+    .pf-tf-btns { display: flex; gap: 4px; }
+    .pf-tf-btn {
+      padding: 3px 9px; border-radius: 6px; border: none;
+      font-size: 11px; font-weight: 700;
+      background: transparent; color: rgba(255,255,255,0.4); cursor: pointer;
+    }
+    .pf-tf-btn.active { background: rgba(255,255,255,0.14); color: #fff; }
+
+    /* ── KPI row ── */
+    .pf-kpi-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; margin-bottom: 20px;
+    }
+    .pf-kpi {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 14px; padding: 16px 18px;
+      position: relative; overflow: hidden;
+    }
+    .pf-kpi-icon-bg {
+      position: absolute; top: -12px; right: -12px;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(73,73,170,0.08);
+    }
+    .pf-kpi-icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: rgba(73,73,170,0.12);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+    }
+    .pf-kpi-icon svg { width: 15px; height: 15px; color: var(--color-primary); }
+    .pf-kpi-label { font-size: 11px; font-weight: 600; color: var(--color-text-disabled); margin-bottom: 4px; }
+    .pf-kpi-value {
+      font-size: 17px; font-weight: 800;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--color-text-primary);
+    }
+    .pf-kpi-value.up { color: var(--color-buy); }
+    .pf-kpi-sub { font-size: 11px; color: var(--color-text-disabled); margin-top: 2px; }
+
+    /* ── Main grid ── */
+    .pf-main { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+
+    /* ── Holdings ── */
+    .pf-holdings-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 16px; overflow: hidden; min-width: 0;
+    }
+    .pf-holdings-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid var(--color-border);
+    }
+    .pf-table-scroll { overflow-x: auto; }
+    .pf-holdings-title { font-size: 15px; font-weight: 800; }
+    .pf-sort-btns { display: flex; gap: 6px; }
+    .pf-sort-btn {
+      padding: 5px 12px; border-radius: 8px; border: 1px solid var(--color-border);
+      background: var(--color-bg-input); font-size: 11px; font-weight: 600;
+      color: var(--color-text-secondary); cursor: pointer; transition: all .15s;
+    }
+    .pf-sort-btn.active { background: rgba(73,73,170,0.12); border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* Table */
+    .pf-table { width: 100%; border-collapse: collapse; min-width: 620px; }
+    .pf-table thead th {
+      padding: 9px 12px; text-align: left;
+      font-size: 10px; font-weight: 700; color: var(--color-text-disabled);
+      text-transform: uppercase; letter-spacing: .06em;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg); white-space: nowrap; cursor: pointer;
+    }
+    .pf-table thead th:hover { color: var(--color-text-primary); }
+    .pf-table thead th.sort-active { color: var(--color-primary); }
+    .pf-table thead th .sort-arrow { margin-left: 4px; opacity: 0.5; }
+    .pf-table tbody tr {
+      border-bottom: 1px solid var(--color-border);
+      transition: background .1s; cursor: pointer;
+    }
+    .pf-table tbody tr:last-child { border-bottom: none; }
+    .pf-table tbody tr:hover { background: rgba(73,73,170,0.05); }
+    .pf-table td { padding: 11px 12px; vertical-align: middle; }
+    .pf-table td.num { text-align: right; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; }
+
+    .stock-badge {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .stock-symbol { font-size: 13px; font-weight: 800; }
+    .stock-name { font-size: 11px; color: var(--color-text-disabled); margin-top: 1px; }
+
+    .weight-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .weight-bar-bg { flex: 1; height: 4px; background: var(--color-bg-input); border-radius: 99px; overflow: hidden; }
+    .weight-bar-fill { height: 100%; border-radius: 99px; }
+    .weight-pct { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-disabled); width: 32px; text-align: right; flex-shrink: 0; }
+
+    .pnl-amount { font-size: 13px; font-weight: 700; }
+    .pnl-pct { font-size: 11px; font-weight: 600; margin-top: 1px; }
+    .up { color: var(--color-buy); }
+    .dn { color: var(--color-sell); }
+
+    /* ── Right column ── */
+    .pf-right { display: flex; flex-direction: column; gap: 14px; }
+
+    /* Allocation card */
+    .pf-alloc-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 16px; padding: 18px 20px;
+    }
+    .pf-card-title { font-size: 14px; font-weight: 800; margin-bottom: 16px; }
+
+    /* SVG donut */
+    .pf-donut-wrap { position: relative; display: flex; justify-content: center; margin-bottom: 16px; }
+    .pf-donut-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      text-align: center; pointer-events: none;
+    }
+    .pf-donut-center-val {
+      font-size: 16px; font-weight: 800;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--color-text-primary); line-height: 1;
+    }
+    .pf-donut-center-label {
+      font-size: 10px; color: var(--color-text-disabled);
+      margin-top: 3px; font-weight: 600;
+    }
+
+    .pf-alloc-list { display: flex; flex-direction: column; gap: 0; }
+    .pf-alloc-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 0; border-bottom: 1px solid var(--color-border);
+    }
+    .pf-alloc-row:last-child { border-bottom: none; }
+    .pf-alloc-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .pf-alloc-sym { font-size: 12px; font-weight: 700; flex: 1; }
+    .pf-alloc-val { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-disabled); }
+    .pf-alloc-pct { font-size: 11px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; width: 38px; text-align: right; }
+
+    /* Sector card */
+    .pf-sector-card {
+      background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 16px; padding: 18px 20px;
+    }
+    .pf-sector-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 0; border-bottom: 1px solid var(--color-border);
+    }
+    .pf-sector-row:last-child { border-bottom: none; }
+    .pf-sector-icon {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: rgba(73,73,170,0.1);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .pf-sector-icon svg { width: 13px; height: 13px; color: var(--color-primary); }
+    .pf-sector-name { font-size: 12px; font-weight: 600; flex: 1; }
+    .pf-sector-bar-wrap { width: 64px; }
+    .pf-sector-bar-bg { height: 4px; background: var(--color-bg-input); border-radius: 99px; overflow: hidden; }
+    .pf-sector-bar-fill { height: 100%; border-radius: 99px; background: var(--color-primary); }
+    .pf-sector-pct { font-size: 11px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; width: 34px; text-align: right; color: var(--color-text-secondary); }
   </style>
 </head>
 <body>
-<div class="web-page">
+<div class="pf-page">
 
-  <div class="web-grid-2">
-    <div>
-      <div class="hero-card" style="margin-bottom:16px">
-        <div class="hero-header">
-          <div class="hero-label">Одоогийн үнэлгээ</div>
-          <button class="btn btn-ghost btn-sm" onclick="toggleVisibility()" style="color:#fff;border-color:rgba(255,255,255,0.2)">
-            <i data-lucide="eye" id="val-eye"></i>
-          </button>
+  <!-- ══════════════════════════════
+       HERO CARD
+  ══════════════════════════════ -->
+  <div class="pf-hero">
+    <div class="pf-hero-left">
+      <div class="pf-hero-eyebrow">
+        <span class="pf-hero-eyebrow-dot"></span>
+        Portfolio Overview
+      </div>
+      <div class="pf-hero-value" id="hero-total">—</div>
+      <div class="pf-hero-change">
+        <div class="pf-hero-badge" id="hero-alltime-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          <span id="hero-alltime-pct">+19.80%</span>
         </div>
-        <div class="hero-value" id="hero-val">—</div>
-        <div class="stats-row">
-          <div class="stat-line"><span class="stat-line-label">Нийт хөрөнгө оруулалт</span><span class="stat-line-value" id="stat-invest">—</span></div>
-          <div class="stat-line"><span class="stat-line-label">Ашиг (дүн)</span><span class="stat-line-value change-up" id="stat-pnl">—</span></div>
-          <div class="stat-line"><span class="stat-line-label">Ашиг (%)</span><span class="stat-line-value change-up" id="stat-pnl-pct">—</span></div>
+        <span class="pf-hero-sub">All-time return</span>
+      </div>
+      <div class="pf-hero-stats">
+        <div>
+          <div class="pf-hero-stat-label">Invested</div>
+          <div class="pf-hero-stat-val" id="hero-invested">—</div>
+        </div>
+        <div class="pf-hero-stat-sep"></div>
+        <div>
+          <div class="pf-hero-stat-label">Unrealized P&amp;L</div>
+          <div class="pf-hero-stat-val up" id="hero-pnl">—</div>
+        </div>
+        <div class="pf-hero-stat-sep"></div>
+        <div>
+          <div class="pf-hero-stat-label">Holdings</div>
+          <div class="pf-hero-stat-val" id="hero-count">5</div>
+        </div>
+        <div class="pf-hero-stat-sep"></div>
+        <div>
+          <div class="pf-hero-stat-label">Cash</div>
+          <div class="pf-hero-stat-val" id="hero-cash">—</div>
         </div>
       </div>
+    </div>
 
-      <div class="web-card">
-        <div class="view-tabs">
-          <button class="view-tab active" onclick="switchView('donut', this)"><i data-lucide="pie-chart"></i> Хуваарилалт</button>
-          <button class="view-tab" onclick="switchView('pnl', this)"><i data-lucide="trending-up"></i> Ашиг</button>
-        </div>
-        <div id="view-donut" class="web-card-pad">
-          <div style="display:flex;flex-direction:column;align-items:center">
-            <div id="donut-chart"></div>
-            <div id="donut-legend" style="width:100%;margin-top:14px"></div>
+    <!-- Sparkline -->
+    <div class="pf-hero-chart">
+      <div class="pf-sparkline-wrap">
+        <div class="pf-sparkline-header">
+          <span class="pf-sparkline-title">Portfolio Performance</span>
+          <div class="pf-tf-btns">
+            <button class="pf-tf-btn" onclick="setTF(this,'1M')">1M</button>
+            <button class="pf-tf-btn" onclick="setTF(this,'3M')">3M</button>
+            <button class="pf-tf-btn active" onclick="setTF(this,'6M')">6M</button>
+            <button class="pf-tf-btn" onclick="setTF(this,'1Y')">1Y</button>
           </div>
         </div>
-        <div id="view-pnl" class="web-card-pad" style="display:none">
-          <div id="pnl-list"></div>
+        <svg id="spark-svg" width="308" height="90" viewBox="0 0 308 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(0,224,143,0.28)"/>
+              <stop offset="100%" stop-color="rgba(0,224,143,0)"/>
+            </linearGradient>
+          </defs>
+          <polygon id="spark-fill" fill="url(#sparkGrad)" stroke="none"/>
+          <polyline id="spark-line" stroke="#00e08f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:10px;color:rgba(255,255,255,0.4);font-family:'IBM Plex Mono',monospace" id="spark-label-start"></span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.4);font-family:'IBM Plex Mono',monospace" id="spark-label-end"></span>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="web-card web-card-pad">
-      <div class="web-section-title" style="margin-bottom:12px">Портфелийн дэлгэрэнгүй</div>
-      <div id="detail-list"></div>
+  <!-- ══════════════════════════════
+       KPI ROW
+  ══════════════════════════════ -->
+  <div class="pf-kpi-row">
+    <div class="pf-kpi">
+      <div class="pf-kpi-icon-bg"></div>
+      <div class="pf-kpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="pf-kpi-label">Today's Change</div>
+      <div class="pf-kpi-value up" id="kpi-today-val">+180,000₮</div>
+      <div class="pf-kpi-sub" id="kpi-today-pct">+0.35%</div>
+    </div>
+    <div class="pf-kpi">
+      <div class="pf-kpi-icon-bg"></div>
+      <div class="pf-kpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="pf-kpi-label">Total Invested</div>
+      <div class="pf-kpi-value" id="kpi-invested">—</div>
+      <div class="pf-kpi-sub">Cost basis</div>
+    </div>
+    <div class="pf-kpi">
+      <div class="pf-kpi-icon-bg"></div>
+      <div class="pf-kpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </div>
+      <div class="pf-kpi-label">Best Performer</div>
+      <div class="pf-kpi-value up" id="kpi-best-sym">BDS</div>
+      <div class="pf-kpi-sub" id="kpi-best-pct">+26.5%</div>
+    </div>
+    <div class="pf-kpi">
+      <div class="pf-kpi-icon-bg"></div>
+      <div class="pf-kpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="pf-kpi-label">Largest Position</div>
+      <div class="pf-kpi-value" id="kpi-largest-sym">BDS</div>
+      <div class="pf-kpi-sub" id="kpi-largest-pct">31.7% of portfolio</div>
     </div>
   </div>
+
+  <!-- ══════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════ -->
+  <div class="pf-main">
+
+    <!-- Holdings table -->
+    <div class="pf-holdings-card">
+      <div class="pf-holdings-head">
+        <div class="pf-holdings-title">Holdings</div>
+        <div class="pf-sort-btns">
+          <button class="pf-sort-btn active" onclick="sortHoldings('value',this)">By Value</button>
+          <button class="pf-sort-btn" onclick="sortHoldings('pnl',this)">By P&amp;L</button>
+          <button class="pf-sort-btn" onclick="sortHoldings('pct',this)">By Return</button>
+        </div>
+      </div>
+      <div class="pf-table-scroll">
+        <table class="pf-table">
+          <thead>
+            <tr>
+              <th style="min-width:140px">Asset</th>
+              <th class="num">Shares</th>
+              <th class="num">Avg Cost</th>
+              <th class="num">Current</th>
+              <th class="num">Mkt Value</th>
+              <th class="num">P&amp;L</th>
+              <th style="min-width:100px">Weight</th>
+            </tr>
+          </thead>
+          <tbody id="holdings-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="pf-right">
+
+      <!-- Allocation donut -->
+      <div class="pf-alloc-card">
+        <div class="pf-card-title">Allocation</div>
+        <div class="pf-donut-wrap">
+          <svg id="donut-svg" width="160" height="160" viewBox="0 0 160 160"></svg>
+          <div class="pf-donut-center">
+            <div class="pf-donut-center-val" id="donut-center-val">—</div>
+            <div class="pf-donut-center-label">Total</div>
+          </div>
+        </div>
+        <div class="pf-alloc-list" id="alloc-list"></div>
+      </div>
+
+      <!-- Sector breakdown -->
+      <div class="pf-sector-card">
+        <div class="pf-card-title">Sector Breakdown</div>
+        <div id="sector-list"></div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <script src="../../data/static.js"></script>
-<script src="../scripts/components.js"></script>
-<script src="../../mobile/scripts/chart.js"></script>
 <script>
-  const COLORS = ['#F59E0B','#00C076','#3B82F6','#EF4444','#8B5CF6','#6B7280'];
-  let SLICES = [];
-  let total = 0;
-  let visible = true;
-
-  function buildSlices() {
-    SLICES = PORTFOLIO.map((p, i) => {
-      const s = stockBySymbol(p.symbol);
-      const value = p.shares * p.currentPrice;
-      const cost = p.shares * p.avgCost;
-      const pct = ((p.currentPrice - p.avgCost) / p.avgCost) * 100;
-      return {
-        label: p.symbol,
-        value,
-        color: COLORS[i % COLORS.length],
-        shares: p.shares,
-        pct,
-        gain: value - cost,
-      };
-    });
-    SLICES.push({ label:'Мөнгө', value: WALLET.cashBalance, color:'#6B7280', shares:0, pct:0, gain:0 });
-    total = SLICES.reduce((s, sl) => s + sl.value, 0);
+/* ── Helpers ── */
+function fmtMNT(n, compact) {
+  if (compact) {
+    if (Math.abs(n) >= 1e9) return (n/1e9).toFixed(1) + 'B₮';
+    if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(1) + 'M₮';
+    if (Math.abs(n) >= 1e3) return (n/1e3).toFixed(0) + 'K₮';
+    return n.toLocaleString('mn-MN') + '₮';
   }
+  return n.toLocaleString('mn-MN') + '₮';
+}
+function fmtCompact(n) { return fmtMNT(n, true); }
 
-  function renderDonutChart() {
-    renderDonut('donut-chart', SLICES, 'Нийт', fmtMNT(WALLET.portfolioValue, { decimals: 0 }));
-    document.getElementById('donut-legend').innerHTML = SLICES.filter(s => s.label !== 'Мөнгө').map(s => {
-      const pct = ((s.value / total) * 100).toFixed(1);
-      return `<div class="legend-item"><div style="display:flex;align-items:center"><span class="legend-dot" style="background:${s.color}"></span>${s.label}</div><span class="mono">${pct}%</span></div>`;
-    }).join('');
-  }
+/* ── Slice colors ── */
+const COLORS = ['#6366f1','#8b5cf6','#0ea5e9','#f59e0b','#10b981','#f43f5e','#64748b'];
 
-  function renderPnL() {
-    const html = SLICES.filter(s => s.label !== 'Мөнгө').map(s => {
-      const isUp = s.gain >= 0;
-      const sign = isUp ? '+' : '';
-      return `<div class="holding-row"><div style="display:flex;align-items:center;gap:10px"><div class="hr-avatar">${s.label.slice(0,2)}</div><div><div style="font-weight:700">${s.label}</div><div style="font-size:11px;color:var(--color-text-disabled)">${s.shares.toLocaleString('mn-MN')} ширхэг</div></div></div><div style="text-align:right"><div class="mono">${sign}${fmtMNT(Math.abs(s.gain))}</div><div class="${isUp?'change-up':'change-down'}" style="font-size:11px">${sign}${s.pct.toFixed(1)}%</div></div></div>`;
-    }).join('');
-    document.getElementById('pnl-list').innerHTML = html;
-    document.getElementById('detail-list').innerHTML = html;
-  }
+/* ── Build holdings data ── */
+function buildHoldings() {
+  return PORTFOLIO.map((p, i) => {
+    const value = p.shares * p.currentPrice;
+    const cost  = p.shares * p.avgCost;
+    const gain  = value - cost;
+    const pct   = ((p.currentPrice - p.avgCost) / p.avgCost) * 100;
+    const stock = STOCKS.find(s => s.symbol === p.symbol) || {};
+    return {
+      symbol: p.symbol,
+      name:   stock.name || p.symbol,
+      sector: stock.sector || '—',
+      shares: p.shares,
+      avgCost: p.avgCost,
+      currentPrice: p.currentPrice,
+      value, cost, gain, pct,
+      color: COLORS[i % COLORS.length],
+    };
+  });
+}
 
-  function switchView(view, btn) {
-    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+let holdings = buildHoldings();
+const totalValue = holdings.reduce((s, h) => s + h.value, 0);
+
+/* ── Fill hero ── */
+document.getElementById('hero-total').textContent   = fmtMNT(WALLET.portfolioValue);
+document.getElementById('hero-invested').textContent = fmtCompact(WALLET.totalInvested);
+document.getElementById('hero-pnl').textContent     = '+' + fmtCompact(WALLET.totalPnL);
+document.getElementById('hero-cash').textContent    = fmtCompact(WALLET.cashBalance);
+
+/* ── Fill KPI ── */
+document.getElementById('kpi-invested').textContent = fmtCompact(WALLET.totalInvested);
+
+// Best performer
+const best = [...holdings].sort((a,b) => b.pct - a.pct)[0];
+document.getElementById('kpi-best-sym').textContent = best.symbol;
+document.getElementById('kpi-best-pct').textContent = '+' + best.pct.toFixed(1) + '% return';
+
+// Largest position
+const largest = [...holdings].sort((a,b) => b.value - a.value)[0];
+document.getElementById('kpi-largest-sym').textContent = largest.symbol;
+document.getElementById('kpi-largest-pct').textContent = ((largest.value / totalValue)*100).toFixed(1) + '% of portfolio';
+
+/* ── Sparkline ── */
+const SPARK_DATA = {
+  '1M': [44.2,44.8,45.1,43.9,44.5,45.3,46.1,46.8,47.2,46.5,47.8,48.3,49.0,49.7,50.1,49.8,50.4,50.9,51.1,51.13],
+  '3M': [38.5,39.2,38.8,40.1,40.8,41.2,40.6,42.0,43.1,43.8,44.2,44.8,45.1,45.8,46.5,47.2,48.3,49.0,50.1,51.13],
+  '6M': [32.0,33.1,32.6,34.5,35.2,36.0,36.8,37.5,38.5,39.2,40.1,40.8,42.0,43.1,44.2,45.3,47.2,49.0,50.4,51.13],
+  '1Y': [22.0,23.5,25.1,24.0,26.3,28.0,27.5,30.1,31.8,33.5,35.0,36.8,38.5,40.1,42.0,44.2,46.5,48.3,50.1,51.13],
+};
+const SPARK_LABELS = {
+  '1M': ['May 19','Jun 18'], '3M': ['Mar 18','Jun 18'],
+  '6M': ['Dec 18','Jun 18'], '1Y': ['Jun 25','Jun 26'],
+};
+let currentTF = '6M';
+function drawSparkline(tf) {
+  const data = SPARK_DATA[tf];
+  const W = 308, H = 90, PAD = 4;
+  const min = Math.min(...data), max = Math.max(...data);
+  const xStep = (W - PAD*2) / (data.length - 1);
+  const pts = data.map((v, i) => {
+    const x = PAD + i * xStep;
+    const y = PAD + (1 - (v - min) / (max - min)) * (H - PAD*2);
+    return [x, y];
+  });
+  const linePts = pts.map(([x,y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+  const fillPts = `${pts[0][0]},${H} ${linePts} ${pts[pts.length-1][0]},${H}`;
+  document.getElementById('spark-line').setAttribute('points', linePts);
+  document.getElementById('spark-fill').setAttribute('points', fillPts);
+  document.getElementById('spark-fill').setAttribute('fill', 'url(#sparkGrad)');
+  const [ls, le] = SPARK_LABELS[tf];
+  document.getElementById('spark-label-start').textContent = ls;
+  document.getElementById('spark-label-end').textContent = le;
+}
+function setTF(btn, tf) {
+  document.querySelectorAll('.pf-tf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTF = tf;
+  drawSparkline(tf);
+}
+drawSparkline('6M');
+
+/* ── Render holdings table ── */
+let sortKey = 'value', sortAsc = false;
+function sortHoldings(key, btn) {
+  if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = false; }
+  if (btn) {
+    document.querySelectorAll('.pf-sort-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('view-donut').style.display = view === 'donut' ? 'block' : 'none';
-    document.getElementById('view-pnl').style.display = view === 'pnl' ? 'block' : 'none';
   }
+  renderTable();
+}
+function renderTable() {
+  const sorted = [...holdings].sort((a, b) => {
+    const vA = sortKey === 'value' ? a.value : sortKey === 'pnl' ? a.gain : a.pct;
+    const vB = sortKey === 'value' ? b.value : sortKey === 'pnl' ? b.gain : b.pct;
+    return sortAsc ? vA - vB : vB - vA;
+  });
+  const tbody = document.getElementById('holdings-tbody');
+  tbody.innerHTML = sorted.map(h => {
+    const w = ((h.value / totalValue) * 100).toFixed(1);
+    const isUp = h.gain >= 0;
+    const sign = isUp ? '+' : '';
+    return `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="stock-badge" style="background:${h.color};width:30px;height:30px;border-radius:8px;font-size:9px">${h.symbol.slice(0,2)}</div>
+          <div>
+            <div class="stock-symbol" style="font-size:12px">${h.symbol}</div>
+            <div class="stock-name" style="font-size:10px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.name}</div>
+          </div>
+        </div>
+      </td>
+      <td class="num" style="font-size:12px;font-weight:600">${h.shares.toLocaleString()}</td>
+      <td class="num" style="font-size:12px;color:var(--color-text-secondary)">${h.avgCost.toLocaleString('mn-MN')}₮</td>
+      <td class="num" style="font-size:12px;font-weight:700">${h.currentPrice.toLocaleString('mn-MN')}₮</td>
+      <td class="num" style="font-size:12px;font-weight:700">${fmtCompact(h.value)}</td>
+      <td class="num">
+        <div class="pnl-amount ${isUp?'up':'dn'}" style="font-size:12px">${sign}${fmtCompact(h.gain)}</div>
+        <div class="pnl-pct ${isUp?'up':'dn'}">${sign}${h.pct.toFixed(1)}%</div>
+      </td>
+      <td>
+        <div class="weight-bar-wrap">
+          <div class="weight-bar-bg">
+            <div class="weight-bar-fill" style="width:${w}%;background:${h.color}"></div>
+          </div>
+          <span class="weight-pct">${w}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+renderTable();
 
-  function toggleVisibility() {
-    visible = !visible;
-    document.getElementById('hero-val').textContent = visible ? fmtMNT(WALLET.portfolioValue) : '••••••••';
-    document.getElementById('val-eye').setAttribute('data-lucide', visible ? 'eye' : 'eye-off');
-    lucide.createIcons();
-  }
+/* ── Donut chart (inline SVG) ── */
+function drawDonut() {
+  const cx = 80, cy = 80, R = 64, r = 44;
+  const slices = holdings.map(h => ({ label: h.symbol, value: h.value, color: h.color }));
+  const total = slices.reduce((s, sl) => s + sl.value, 0);
+  let angle = -Math.PI / 2;
+  let paths = '';
+  slices.forEach(sl => {
+    const sweep = (sl.value / total) * 2 * Math.PI;
+    const x1 = cx + R * Math.cos(angle);
+    const y1 = cy + R * Math.sin(angle);
+    const x2 = cx + R * Math.cos(angle + sweep);
+    const y2 = cy + R * Math.sin(angle + sweep);
+    const ix1 = cx + r * Math.cos(angle);
+    const iy1 = cy + r * Math.sin(angle);
+    const ix2 = cx + r * Math.cos(angle + sweep);
+    const iy2 = cy + r * Math.sin(angle + sweep);
+    const large = sweep > Math.PI ? 1 : 0;
+    paths += `<path d="M${ix1.toFixed(2)},${iy1.toFixed(2)} L${x1.toFixed(2)},${y1.toFixed(2)} A${R},${R} 0 ${large},1 ${x2.toFixed(2)},${y2.toFixed(2)} L${ix2.toFixed(2)},${iy2.toFixed(2)} A${r},${r} 0 ${large},0 ${ix1.toFixed(2)},${iy1.toFixed(2)} Z" fill="${sl.color}" opacity="0.92"/>`;
+    angle += sweep;
+  });
+  // gap ring
+  paths += `<circle cx="${cx}" cy="${cy}" r="${r-1}" fill="var(--color-bg-card)"/>`;
+  document.getElementById('donut-svg').innerHTML = paths;
+  document.getElementById('donut-center-val').textContent = fmtCompact(total);
+}
+drawDonut();
 
-  buildSlices();
-  document.getElementById('hero-val').textContent = fmtMNT(WALLET.portfolioValue);
-  document.getElementById('stat-invest').textContent = fmtMNT(WALLET.totalInvested);
-  document.getElementById('stat-pnl').textContent = '+' + fmtMNT(WALLET.totalPnL);
-  document.getElementById('stat-pnl-pct').textContent = '+' + WALLET.pnlPct.toFixed(2) + '%';
-  renderDonutChart();
-  renderPnL();
-  lucide.createIcons();
+/* ── Allocation list ── */
+function renderAllocList() {
+  const sorted = [...holdings].sort((a,b) => b.value - a.value);
+  const total = sorted.reduce((s,h) => s+h.value, 0);
+  document.getElementById('alloc-list').innerHTML = sorted.map(h => {
+    const pct = ((h.value/total)*100).toFixed(1);
+    return `<div class="pf-alloc-row">
+      <div class="pf-alloc-dot" style="background:${h.color}"></div>
+      <span class="pf-alloc-sym">${h.symbol}</span>
+      <span class="pf-alloc-val">${fmtCompact(h.value)}</span>
+      <span class="pf-alloc-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+renderAllocList();
+
+/* ── Sector breakdown ── */
+function renderSectors() {
+  const sectorMap = {};
+  holdings.forEach(h => {
+    sectorMap[h.sector] = (sectorMap[h.sector] || 0) + h.value;
+  });
+  const total = Object.values(sectorMap).reduce((s,v) => s+v, 0);
+  const sectors = Object.entries(sectorMap).sort((a,b) => b[1]-a[1]);
+  const icons = {
+    'Банк': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    'Брокер': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+    'Хүнс': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+    'Барилга': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+    'Даатгал': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    'Үйлчилгээ': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>',
+  };
+  const defaultIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/></svg>';
+  document.getElementById('sector-list').innerHTML = sectors.map(([name, val]) => {
+    const pct = ((val/total)*100).toFixed(1);
+    const barW = Math.round((val/total)*100);
+    return `<div class="pf-sector-row">
+      <div class="pf-sector-icon">${icons[name]||defaultIcon}</div>
+      <span class="pf-sector-name">${name}</span>
+      <div class="pf-sector-bar-wrap">
+        <div class="pf-sector-bar-bg"><div class="pf-sector-bar-fill" style="width:${barW}%"></div></div>
+      </div>
+      <span class="pf-sector-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+renderSectors();
+
+lucide.createIcons();
 </script>
 </body>
 </html>

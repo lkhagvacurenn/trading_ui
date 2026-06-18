@@ -41,7 +41,7 @@
     .oa-section-info strong { display:block; font-size:14.5px; font-weight:700; margin-bottom:2px; }
     .oa-section-info span { font-size:12.5px; color:var(--color-text-secondary); line-height:1.5; }
 
-    .oa-form-card { flex:1; min-width:0; }
+    .oa-form-card { flex:1; min-width:0; overflow:visible; }
     .oa-form-inner { max-width:640px; margin:0 auto; }
 
     /* ── Form step progress bar (like mobile wizard) ── */
@@ -56,7 +56,7 @@
 
     /* ── Embedded KYC / Tripartite forms ── */
     .oa-iframe-wrap { margin:-20px; border-radius:inherit; overflow:hidden; }
-    .oa-iframe-wrap iframe { width:100%; height:1700px; border:0; display:block; }
+    .oa-iframe-wrap iframe { width:100%; height:500px; border:0; display:block; transition:height 0.15s ease; }
     .oa-section-content { display:none; }
     .oa-section-content.active { display:block; }
 
@@ -224,9 +224,6 @@
 
     <!-- ════ LEFT — steps overview ════ -->
     <div class="oa-overview">
-      <h1 class="oa-overview-title">Become an Online Trader</h1>
-      <p class="oa-overview-sub">Complete the three sections below to verify your identity, open your BDSec securities account and start trading the Mongolian markets.</p>
-
       <!-- ── Section 1: Open Account ── -->
       <div class="oa-section active" data-section="account">
         <div class="oa-section-hdr">
@@ -291,28 +288,30 @@
           </div>
         </div>
 
-        <div class="field-wrap">
-          <label class="field-label">Date of Birth</label>
-          <input class="inp" type="date" id="oa-dob" />
+        <div class="field-row">
+          <div class="field-wrap">
+            <label class="field-label">Date of Birth</label>
+            <input class="inp" type="date" id="oa-dob" />
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Gender</label>
+            <select class="inp inp-select" id="oa-gender">
+              <option value="">Select gender</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
         </div>
 
-        <div class="field-wrap">
-          <label class="field-label">Gender</label>
-          <select class="inp inp-select" id="oa-gender">
-            <option value="">Select gender</option>
-            <option>Male</option>
-            <option>Female</option>
-          </select>
-        </div>
-
-        <div class="field-wrap">
-          <label class="field-label">Phone Number</label>
-          <input class="inp" type="tel" id="oa-phone" placeholder="+976 ···" />
-        </div>
-
-        <div class="field-wrap">
-          <label class="field-label">Home Address</label>
-          <input class="inp" type="text" id="oa-address" placeholder="Address" />
+        <div class="field-row">
+          <div class="field-wrap">
+            <label class="field-label">Phone Number</label>
+            <input class="inp" type="tel" id="oa-phone" placeholder="+976 ···" />
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Home Address</label>
+            <input class="inp" type="text" id="oa-address" placeholder="Address" />
+          </div>
         </div>
 
         <div class="btn-row">
@@ -339,14 +338,15 @@
           </select>
         </div>
 
-        <div class="field-wrap">
-          <label class="field-label">Account Number</label>
-          <input class="inp" type="tel" id="acct-number" placeholder="Enter 8-digit account number" maxlength="8" oninput="handleAcctNumberInput(this)" />
-        </div>
-
-        <div class="field-wrap">
-          <label class="field-label">Account Holder Name</label>
-          <input class="inp" type="text" id="acct-holder" placeholder="Account holder name" readonly />
+        <div class="field-row">
+          <div class="field-wrap">
+            <label class="field-label">Account Number</label>
+            <input class="inp" type="tel" id="acct-number" placeholder="8-digit account number" maxlength="8" oninput="handleAcctNumberInput(this)" />
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Account Holder Name</label>
+            <input class="inp" type="text" id="acct-holder" placeholder="Auto-filled" readonly />
+          </div>
         </div>
 
         <div class="btn-row">
@@ -617,6 +617,15 @@ function checkPayment() {
 let currentSection = 'account';
 let kycLoaded = false, tripartiteLoaded = false;
 
+/* Auto-resize embedded iframes when they report their content height */
+window.addEventListener('message', e => {
+  if (e.data?.type === 'iframe-height') {
+    const id = e.data.id;
+    const iframe = document.getElementById(id);
+    if (iframe) iframe.style.height = (e.data.height + 24) + 'px';
+  }
+});
+
 function goSection(name) {
   if (name === currentSection) return;
   document.querySelectorAll('.oa-section').forEach(s => s.classList.toggle('active', s.dataset.section === name));
@@ -739,8 +748,42 @@ function redoSignature() {
   document.getElementById('sig-pad').style.display = 'block';
 }
 
+/* ── Drag-to-scroll for horizontal containers ── */
+function addDragScroll(el) {
+  if (!el) return;
+  let isDown = false, startX = 0, scrollLeft = 0;
+  el.addEventListener('mousedown', e => { isDown = true; el.style.cursor = 'grabbing'; startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft; });
+  el.addEventListener('mouseleave', () => { isDown = false; el.style.cursor = ''; });
+  el.addEventListener('mouseup', () => { isDown = false; el.style.cursor = ''; });
+  el.addEventListener('mousemove', e => { if (!isDown) return; e.preventDefault(); const x = e.pageX - el.offsetLeft; el.scrollLeft = scrollLeft - (x - startX); });
+}
+addDragScroll(document.getElementById('bank-scroll'));
+
 updateOverview();
 refreshSectionStatus();
+
+/* Restore success states and auto-switch sections */
+(function () {
+  /* If account step was already completed, show success view inside account section */
+  if (localStorage.getItem('bdsec-account-opened') === '1') {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`step-${i}`);
+      if (el) el.classList.remove('active');
+    }
+    document.getElementById('step-success').style.display = 'flex';
+    document.getElementById('oa-step-bar').style.display = 'none';
+    document.getElementById('oa-step-meta').style.display = 'none';
+  }
+
+  const target = sessionStorage.getItem('bdsec-open-account-section');
+  if (target) {
+    sessionStorage.removeItem('bdsec-open-account-section');
+    goSection(target);
+  } else if (localStorage.getItem('bdsec-account-opened') === '1' && localStorage.getItem('bdsec-kyc-done') !== '1') {
+    goSection('kyc');
+  }
+})();
+
 lucide.createIcons();
 </script>
 </body>
