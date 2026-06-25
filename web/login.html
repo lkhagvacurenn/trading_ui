@@ -30,9 +30,8 @@
     }
     /* phone screenshot as contained image */
     .al-phone-img {
-      width: 90%; 
+      width: 70%; 
       object-fit: contain; border-radius: 24px;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.55);
       display: block; flex-shrink: 0;
       position: relative; z-index: 1;
     }
@@ -90,7 +89,7 @@
     :root .auth-card-logo #ac-logo-dark { display: none; }
     [data-theme="dark"] .auth-card-logo #ac-logo-dark { display: block; }
 
-    .auth-heading { font-size: 24px; font-weight: 800; margin: 0 0 6px; }
+    .auth-heading { font-size: 24px; font-weight: 800; margin: 0 0 8px; text-align: center; }
     .auth-subheading { font-size: 13.5px; color: var(--color-text-secondary); margin: 0 0 28px; line-height: 1.6; }
 
     /* ── Auth toggle ── */
@@ -292,7 +291,7 @@
 
   <!-- ════ LEFT — app showcase ════ -->
   <div class="auth-left">
-    <img class="al-phone-img" src="../public/login.png" alt="BDSec mobile app" />
+    <img class="al-phone-img" src="../public/login2.png" alt="BDSec mobile app" />
     <div class="al-overlay"></div>
     <div class="al-download">
       <span class="al-dl-label">Апп татаж авах</span>
@@ -446,7 +445,7 @@
               <label class="field-label">Нууц үг баталгаажуулах</label>
               <div class="inp-wrap">
                 <span class="field-icon"><i data-lucide="lock"></i></span>
-                <input class="inp has-icon has-eye" type="password" id="reg-pw2" placeholder="Re-enter password" />
+                <input class="inp has-icon has-eye" type="password" id="reg-pw2" placeholder="Нууц үгийг дахин оруулна уу" />
                 <button class="field-eye" onclick="togglePw('reg-pw2',this)"><i data-lucide="eye"></i></button>
               </div>
             </div>
@@ -591,7 +590,7 @@
             <label class="field-label">Шинэ нууц үг баталгаажуулах</label>
             <div class="inp-wrap">
               <span class="field-icon"><i data-lucide="lock"></i></span>
-              <input class="inp has-icon has-eye" type="password" id="fp-pw2" placeholder="Re-enter new password" />
+              <input class="inp has-icon has-eye" type="password" id="fp-pw2" placeholder="Нууц үгийг дахин оруулна уу" />
               <button class="field-eye" onclick="togglePw('fp-pw2',this)"><i data-lucide="eye"></i></button>
             </div>
           </div>
@@ -641,7 +640,7 @@
     <div class="auth-modal">
       <div class="success-circle"><i data-lucide="check"></i></div>
       <div class="success-title">Бүртгэл амжилттай!</div>
-      <div class="success-msg">Таны данс үүслээ. Шинэ хэрэглэгчийн нэр болон PIN кодоороо нэвтэрч болно.</div>
+      <div class="success-msg">Таны данс үүслээ. Шинэ хэрэглэгчийн нэр болон нууц үгээрээ нэвтрэн арилжаагаа эхлээрэй.</div>
       <button class="btn-primary" style="width:100%;margin:0" onclick="closeRegisterSuccess()">Нэвтрэх</button>
     </div>
   </div>
@@ -680,10 +679,10 @@ function switchAuth(tab) {
   document.getElementById('toggle-register').classList.toggle('active', tab === 'register');
   document.getElementById('panel-login').classList.toggle('active', tab === 'login');
   document.getElementById('panel-register').classList.toggle('active', tab === 'register');
-  document.getElementById('auth-heading').textContent = tab === 'login' ? 'Тавтай морил' : 'Данс үүсгэх';
+  document.getElementById('auth-heading').textContent = tab === 'login' ? 'Тавтай морил' : 'Бүртгэл үүсгэх';
   document.getElementById('auth-subheading').textContent = tab === 'login'
-    ? 'Портфолио харах, захиалга өгөх, данс удирдахын тулд нэвтэрнэ үү.'
-    : 'Open a BDSec account in minutes болон start trading the Mongolian markets.';
+    ? ''
+    : '';
   if (tab === 'register') setRegStep(1);
 }
 

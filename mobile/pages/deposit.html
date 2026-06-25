@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Deposit — TradeX</title>
+  <title>Цэнэглэх — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -46,17 +46,16 @@
       font-size: 11px; color: var(--color-sell);
       margin-top: 6px; display: none;
     }
-    .field-error.show { display: block; }
-
-    .btn-primary {
-      width: 100%; padding: 14px; background: var(--color-primary);
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      color: #fff; cursor: pointer; transition: opacity 0.15s;
-      margin-top: 8px; margin-bottom: 18px;
+    .field-error.show { display: block; }    .btn-primary {
+      width: 100%; min-height: 52px; padding: 14px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ── Account toggle ── */
+    /* ── Данс toggle ── */
     .acct-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .acct-toggle-btn {
       min-height: 58px; padding: 10px 12px; border-radius: 14px;
@@ -84,7 +83,7 @@
     .acct-toggle-btn.active .acct-icon { background: var(--color-primary); color: #fff; }
     .acct-toggle-btn.active .acct-check { border: 5px solid var(--color-primary); background: #fff; }
 
-    /* ── Amount input ── */
+    /* ── Дүн input ── */
     .amount-field { position: relative; }
     .amount-field .inp { padding-right: 44px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 18px; }
     .amount-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--color-text-secondary); }
@@ -165,7 +164,7 @@
     .pay-app-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .pay-app-name { font-size: 10px; color: var(--color-text-secondary); text-align: center; }
 
-    /* ── Card form / saved card ── */
+    /* ── Карт form / saved card ── */
     .saved-card {
       display: flex; align-items: center; gap: 12px;
       background: var(--color-bg); border: 1px solid var(--color-border);
@@ -226,42 +225,42 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Deposit</div>
+    <div class="sub-title">Цэнэглэх</div>
   </div>
 
   <div class="form-body">
 
     <div class="field-wrap">
-      <label class="field-label">Select Account</label>
+      <label class="field-label">Данс сонгох</label>
       <div class="acct-toggle">
         <button class="acct-toggle-btn active" data-acct="nominal" onclick="selectDepAccount('nominal')">
           <span class="acct-icon"><i data-lucide="wallet"></i></span>
-          <span class="acct-text">Nominal Account</span>
+          <span class="acct-text">Номинал Данс</span>
           <span class="acct-check"></span>
         </button>
         <button class="acct-toggle-btn" data-acct="mcsd" onclick="selectDepAccount('mcsd')">
           <span class="acct-icon"><i data-lucide="landmark"></i></span>
-          <span class="acct-text">MCSD Account</span>
+          <span class="acct-text">ҮЦТХТ данс</span>
           <span class="acct-check"></span>
         </button>
       </div>
     </div>
 
     <div class="field-wrap">
-      <label class="field-label">Deposit Amount</label>
+      <label class="field-label">Цэнэглэх дүн</label>
       <div class="amount-field">
         <input class="inp" type="number" id="dep-amount" placeholder="0" min="0" oninput="clearAmountError()" />
         <span class="amount-suffix">₮</span>
       </div>
-      <div class="field-error" id="dep-amount-error">Please enter an amount</div>
+      <div class="field-error" id="dep-amount-error">Дүн оруулна уу</div>
     </div>
 
-    <button class="btn-primary" onclick="startCharge()">Charge</button>
+    <button class="btn-primary" onclick="startCharge()">Цэнэглэх</button>
   </div>
 
-  <!-- Deposit history -->
+  <!-- Цэнэглэх history -->
   <div class="form-body">
-    <div class="info-section-title">Deposit History</div>
+    <div class="info-section-title">Цэнэглэлтийн түүх</div>
     <div class="hist-card" id="dep-history"></div>
     <div class="hist-pagination" id="dep-history-pagination"></div>
   </div>
@@ -273,40 +272,40 @@
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="charge-info">
-        <div class="charge-info-label">Charging <span id="modal-account-label">Nominal</span> Account</div>
+        <div class="charge-info-label">Цэнэглэх данс: <span id="modal-account-label">Номинал</span> Данс</div>
         <div class="charge-info-amount" id="modal-amount">0 ₮</div>
       </div>
 
-      <label class="field-label">Choose a payment channel</label>
+      <label class="field-label">Төлбөрийн суваг сонгох</label>
       <div class="channel-list">
         <div class="channel-row" data-channel="transfer" onclick="selectChannel('transfer')">
           <div class="channel-row-icon"><i data-lucide="banknote"></i></div>
-          <span class="channel-row-label">Bank Transfer</span>
+          <span class="channel-row-label">Банкны шилжүүлэг</span>
           <i data-lucide="chevron-right" class="channel-row-chevron"></i>
         </div>
         <div class="channel-row" data-channel="app" onclick="selectChannel('app')">
           <div class="channel-row-icon"><i data-lucide="smartphone"></i></div>
-          <span class="channel-row-label">Banking App</span>
+          <span class="channel-row-label">Банкны апп</span>
           <i data-lucide="chevron-right" class="channel-row-chevron"></i>
         </div>
         <div class="channel-row" data-channel="card" onclick="selectChannel('card')">
           <div class="channel-row-icon"><i data-lucide="credit-card"></i></div>
-          <span class="channel-row-label" id="card-channel-label">Connect Card</span>
+          <span class="channel-row-label" id="card-channel-label">Карт холбох</span>
           <i data-lucide="chevron-right" class="channel-row-chevron"></i>
         </div>
       </div>
 
       <div class="channel-panel" id="channel-panel"></div>
 
-      <button class="btn-check-payment" id="check-payment-btn" onclick="checkPayment()" style="display:none">Verify Payment</button>
+      <button class="btn-check-payment" id="check-payment-btn" onclick="checkPayment()" style="display:none">Төлбөр шалгах</button>
     </div>
   </div>
 
-  <!-- Deposit detail modal -->
+  <!-- Цэнэглэх detail modal -->
   <div class="modal-overlay" id="detail-modal-overlay" onclick="if(event.target===this) closeDetailModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="info-section-title">Deposit Details</div>
+      <div class="info-section-title">Цэнэглэлтийн дэлгэрэнгүй</div>
       <div class="verify-card" id="detail-content"></div>
     </div>
   </div>
@@ -341,14 +340,14 @@
 
     function startCharge() {
       const amt = parseFloat(document.getElementById('dep-amount').value);
-      if (!amt || amt <= 0) { showAmountError('Please enter an amount'); return; }
+      if (!amt || amt <= 0) { showAmountError('Дүн оруулна уу'); return; }
       clearAmountError();
       depRef = 'DEP-' + Math.random().toString(36).slice(2, 8).toUpperCase();
       openChargeModal(amt);
     }
 
     /* ── Modal ── */
-    const ACCOUNT_DISPLAY = { nominal: 'Nominal', mcsd: 'MCSD' };
+    const ACCOUNT_DISPLAY = { nominal: 'Номинал', mcsd: 'MCSD' };
 
     function openChargeModal(amount) {
       document.getElementById('modal-account-label').textContent = ACCOUNT_DISPLAY[depAccount];
@@ -391,18 +390,18 @@
               </div>
             </div>
             <div class="copy-row">
-              <div><div class="copy-label">Account Number</div><div class="copy-value">${acc.number}</div></div>
+              <div><div class="copy-label">Дансны дугаар</div><div class="copy-value">${acc.number}</div></div>
               <button class="copy-btn" onclick="copyText('${acc.number}')"><i data-lucide="copy"></i></button>
             </div>
             <div class="copy-row">
-              <div><div class="copy-label">Transfer Amount</div><div class="copy-value">${formatMNT(amount)}</div></div>
+              <div><div class="copy-label">Шилжүүлэх дүн</div><div class="copy-value">${formatMNT(amount)}</div></div>
               <button class="copy-btn" onclick="copyText('${amount}')"><i data-lucide="copy"></i></button>
             </div>
             <div class="copy-row">
-              <div><div class="copy-label">Reference</div><div class="copy-value">${depRef}</div></div>
+              <div><div class="copy-label">Гүйлгээний утга</div><div class="copy-value">${depRef}</div></div>
               <button class="copy-btn" onclick="copyText('${depRef}')"><i data-lucide="copy"></i></button>
             </div>
-            <p class="transfer-note">After transferring to the account above, tap "Verify Payment" below.</p>
+            <p class="transfer-note">Дээрх данс руу шилжүүлсний дараа доорх "Төлбөр шалгах" товчийг дарна уу.</p>
           </div>`;
       } else if (depChannel === 'app') {
         panel.innerHTML = `<div class="pay-apps-grid" id="pay-apps-grid"></div>`;
@@ -427,17 +426,17 @@
               </div>
               <button class="card-remove-btn" onclick="removeCard()"><i data-lucide="x"></i></button>
             </div>
-            <p class="transfer-note">Tap "Verify Payment" below to pay by card.</p>`;
+            <p class="transfer-note">Картаар төлөхийн тулд доорх "Төлбөр шалгах" товчийг дарна уу.</p>`;
         } else {
           panel.innerHTML = `
             <div class="card-form">
               <div class="field-wrap">
-                <label class="field-label">Card Number</label>
+                <label class="field-label">Картын дугаар</label>
                 <input class="inp" id="card-number" maxlength="19" placeholder="0000 0000 0000 0000" oninput="formatCardNumber(this)" />
               </div>
               <div class="field-row">
                 <div class="field-wrap">
-                  <label class="field-label">Expiry Date</label>
+                  <label class="field-label">Дуусах огноо</label>
                   <input class="inp" id="card-expiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)" />
                 </div>
                 <div class="field-wrap">
@@ -446,10 +445,10 @@
                 </div>
               </div>
               <div class="field-wrap">
-                <label class="field-label">Cardholder Name</label>
-                <input class="inp" id="card-name" placeholder="Name on card" />
+                <label class="field-label">Карт эзэмшигчийн нэр</label>
+                <input class="inp" id="card-name" placeholder="Карт эзэмшигчийн нэр" />
               </div>
-              <button class="btn-primary" style="margin-bottom:0" onclick="connectCard()">Connect Card</button>
+              <button class="btn-primary" style="margin-bottom:0" onclick="connectCard()">Карт холбох</button>
             </div>`;
         }
       }
@@ -472,17 +471,17 @@
       const cvv    = document.getElementById('card-cvv').value;
       const name   = document.getElementById('card-name').value.trim();
       if (num.length < 12 || expiry.length < 5 || cvv.length < 3 || !name) {
-        showToast('Please fill in your card details');
+        showToast('Картын мэдээллээ бүрэн оруулна уу');
         return;
       }
       setSavedCard({ last4: num.slice(-4), name, expiry });
-      document.getElementById('card-channel-label').textContent = 'Pay by Card';
+      document.getElementById('card-channel-label').textContent = 'Картаар төлөх';
       renderChannelPanel();
     }
 
     function removeCard() {
       setSavedCard(null);
-      document.getElementById('card-channel-label').textContent = 'Connect Card';
+      document.getElementById('card-channel-label').textContent = 'Карт холбох';
       renderChannelPanel();
     }
 
@@ -506,8 +505,8 @@
 
     function checkPayment() {
       const amount = parseFloat(document.getElementById('dep-amount').value) || 0;
-      if (!depChannel) { showToast('Please choose a payment channel'); return; }
-      if (depChannel === 'card' && !getSavedCard()) { showToast('Please connect a card first'); return; }
+      if (!depChannel) { showToast('Төлбөрийн суваг сонгоно уу'); return; }
+      if (depChannel === 'card' && !getSavedCard()) { showToast('Эхлээд карт холбоно уу'); return; }
 
       const balances = getBalances();
       balances[depAccount] = (balances[depAccount] || 0) + amount;
@@ -525,7 +524,7 @@
       setDepositHistory(history);
 
       closeChargeModal();
-      showToast('Deposit successful!');
+      showToast('Цэнэглэлт амжилттай!');
       document.getElementById('dep-amount').value = '';
       depChannel = null;
       renderDepositHistory();
@@ -539,7 +538,7 @@
         new Date(b.date.replace(' ', 'T')) - new Date(a.date.replace(' ', 'T')));
       const el = document.getElementById('dep-history');
       if (!list.length) {
-        el.innerHTML = '<div class="hist-empty">No deposit history yet</div>';
+        el.innerHTML = '<div class="hist-empty">Цэнэглэлтийн түүх одоогоор алга</div>';
         document.getElementById('dep-history-pagination').innerHTML = '';
         return;
       }
@@ -557,7 +556,7 @@
           </div>
           <div class="hist-right">
             <div class="hist-amount deposit">+${formatMNT(d.amount)}</div>
-            <div class="hist-detail-link" onclick="showDepositDetail('${d.id}')">Details <i data-lucide="chevron-right"></i></div>
+            <div class="hist-detail-link" onclick="showDepositDetail('${d.id}')">Дэлгэрэнгүй <i data-lucide="chevron-right"></i></div>
           </div>
         </div>`).join('');
 
@@ -595,7 +594,7 @@
     }
 
     if (getSavedCard()) {
-      document.getElementById('card-channel-label').textContent = 'Pay by Card';
+      document.getElementById('card-channel-label').textContent = 'Картаар төлөх';
     }
     renderDepositHistory();
     lucide.createIcons();

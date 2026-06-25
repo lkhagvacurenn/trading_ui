@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Open Account</title>
+  <title>Данс нээх</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -88,29 +88,24 @@
     .field-row { display: flex; gap: 10px; }
     .field-row .field-wrap { flex: 1; }
 
-    /* ── Btn ── */
-    .btn-primary {
-      width: 100%; padding: 14px;
-      background: var(--color-primary);
-      border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 700;
-      color: #fff; cursor: pointer;
-      transition: opacity 0.15s;
-      margin-top: 8px; margin-bottom: 24px;
+    /* ── Btn ── */    .btn-primary {
+      width: 100%; min-height: 52px; padding: 14px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* ── Back + Continue row ── */
-    .btn-row { display: flex; gap: 10px; margin-bottom: 24px; }
-    .btn-outline {
-      flex: 1; padding: 13px; background: transparent;
-      border: 1.5px solid var(--color-border); border-radius: 10px;
-      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+    .btn-row { display: flex; gap: 10px; margin-bottom: 24px; }    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
       cursor: pointer; transition: border-color 0.15s;
       display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .btn-outline:hover { border-color: var(--color-primary); }
-    .btn-outline svg { width: 16px; height: 16px; }
     .btn-row .btn-primary,
     .btn-row .btn-check-payment { flex: 1.3; margin: 0; }
 
@@ -192,7 +187,7 @@
       color: var(--color-text-secondary); white-space: pre-line;
     }
 
-    /* ── Signature ── */
+    /* ── Гарын үсэг ── */
     .sig-section { margin-top: 20px; margin-bottom: 8px; }
     .sig-placeholder {
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
@@ -325,7 +320,7 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Open Securities Account</div>
+    <div class="sub-title">Үнэт цаас Дансны данс нээх</div>
   </div>
 
   <!-- Step progress -->
@@ -342,40 +337,40 @@
 
       <div class="field-row">
         <div class="field-wrap">
-          <label class="field-label">First Name</label>
-          <input class="inp" type="text" id="oa-first-name" placeholder="First name" />
+          <label class="field-label">Нэр</label>
+          <input class="inp" type="text" id="oa-first-name" placeholder="Нэр" />
         </div>
         <div class="field-wrap">
-          <label class="field-label">Last Name</label>
-          <input class="inp" type="text" id="oa-last-name" placeholder="Last name" />
+          <label class="field-label">Овог</label>
+          <input class="inp" type="text" id="oa-last-name" placeholder="Овог" />
         </div>
       </div>
 
       <div class="field-wrap">
-        <label class="field-label">Date of Birth</label>
+        <label class="field-label">Төрсөн огноо</label>
         <input class="inp" type="date" id="oa-dob" />
       </div>
 
       <div class="field-wrap">
-        <label class="field-label">Gender</label>
+        <label class="field-label">Хүйс</label>
         <select class="inp inp-select" id="oa-gender">
-          <option value="">Select gender</option>
-          <option>Male</option>
-          <option>Female</option>
+          <option value="">Хүйс сонгох</option>
+          <option>Эрэгтэй</option>
+          <option>Эмэгтэй</option>
         </select>
       </div>
 
       <div class="field-wrap">
-        <label class="field-label">Phone Number</label>
+        <label class="field-label">Утасны дугаар</label>
         <input class="inp" type="tel" id="oa-phone" placeholder="+976 ···" />
       </div>
 
       <div class="field-wrap">
-        <label class="field-label">Home Address</label>
-        <input class="inp" type="text" id="oa-address" placeholder="Address" />
+        <label class="field-label">Гэрийн Хаяг</label>
+        <input class="inp" type="text" id="oa-address" placeholder="Хаяг" />
       </div>
 
-      <button class="btn-primary" onclick="oaStep1Continue()">Continue</button>
+      <button class="btn-primary" onclick="oaStep1Continue()">Үргэлжлүүлэх</button>
     </div>
   </div>
 
@@ -384,38 +379,38 @@
     <div class="form-body">
 
       <div class="field-wrap">
-        <label class="field-label">Select Bank</label>
+        <label class="field-label">Банк сонгох</label>
         <div class="bank-scroll" id="bank-scroll"></div>
       </div>
 
       <div class="field-wrap">
-        <label class="field-label">Currency</label>
+        <label class="field-label">Валют</label>
         <select class="inp inp-select" id="acct-currency">
-          <option>MNT — Mongolian Tögrög</option>
-          <option>USD — US Dollar</option>
-          <option>EUR — Euro</option>
-          <option>CNY — Chinese Yuan</option>
+          <option>MNT — Монгол төгрөг</option>
+          <option>USD — АНУ доллар</option>
+          <option>EUR — Евро</option>
+          <option>CNY — Хятад юань</option>
         </select>
       </div>
 
       <div class="field-wrap">
-        <label class="field-label">Account Number</label>
-        <input class="inp" type="tel" id="acct-number" placeholder="Enter 8-digit account number" maxlength="8" oninput="handleAcctNumberInput(this)" />
+        <label class="field-label">Дансны дугаар</label>
+        <input class="inp" type="tel" id="acct-number" placeholder="Дансны дугаар" maxlength="8" oninput="handleAcctNumberInput(this)" />
       </div>
 
       <div class="field-wrap">
-        <label class="field-label">Account Holder Name</label>
-        <input class="inp" type="text" id="acct-holder" placeholder="Account holder name" readonly />
+        <label class="field-label">Данс эзэмшигчийн нэр</label>
+        <input class="inp" type="text" id="acct-holder" placeholder="Данс эзэмшигчийн нэр" readonly />
       </div>
 
       <div class="btn-row">
-        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Back</span></button>
-        <button class="btn-primary" onclick="goStep(3)">Continue</button>
+        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
+        <button class="btn-primary" onclick="goStep(3)">Үргэлжлүүлэх</button>
       </div>
     </div>
   </div>
 
-  <!-- ══ STEP 3: Agreements & Signature ══ -->
+  <!-- ══ STEP 3: Гэрээ ба гарын үсэг ══ -->
   <div class="step-panel" id="step-3">
     <div class="form-body">
 
@@ -423,7 +418,7 @@
       <div class="agreement-item" onclick="openAgreement('acc-open')">
         <div class="ag-left">
           <div class="agreement-check" id="ac-acc-open"><i data-lucide="file-text"></i></div>
-          <span class="agreement-name">Account Opening Agreement</span>
+          <span class="agreement-name">Данс нээх гэрээ</span>
         </div>
         <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
       </div>
@@ -431,7 +426,7 @@
       <div class="agreement-item" onclick="openAgreement('nominal')">
         <div class="ag-left">
           <div class="agreement-check" id="ac-nominal"><i data-lucide="file-text"></i></div>
-          <span class="agreement-name">Nominal Account Service Agreement</span>
+          <span class="agreement-name">Номинал дансны үйлчилгээний гэрээ</span>
         </div>
         <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
       </div>
@@ -439,40 +434,40 @@
       <div class="agreement-item" onclick="openAgreement('broker')">
         <div class="ag-left">
           <div class="agreement-check" id="ac-broker"><i data-lucide="file-text"></i></div>
-          <span class="agreement-name">Online Broker Service Agreement</span>
+          <span class="agreement-name">Онлайн брокерын үйлчилгээний гэрээ</span>
         </div>
         <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
       </div>
 
-      <!-- Signature -->
+      <!-- Гарын үсэг -->
       <div class="sig-section">
-        <label class="field-label">Signature</label>
+        <label class="field-label">Гарын үсэг</label>
 
         <div class="sig-placeholder" id="sig-placeholder" onclick="openSignaturePad()">
           <div class="sig-placeholder-icon"><i data-lucide="pen-line"></i></div>
-          <div class="sig-placeholder-text">Tap to draw your signature</div>
+          <div class="sig-placeholder-text">Гарын үсгээ зурахын тулд товшино уу</div>
         </div>
 
         <div class="sig-pad" id="sig-pad" style="display:none">
           <canvas id="sig-canvas"></canvas>
           <div class="sig-pad-actions">
-            <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Clear</span></button>
-            <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Done</span></button>
+            <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Арилгах</span></button>
+            <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Дуусгах</span></button>
           </div>
         </div>
 
         <div class="sig-done" id="sig-done" style="display:none">
           <div class="sig-done-left">
             <i data-lucide="check-circle"></i>
-            <span>Signature captured</span>
+            <span>Гарын үсэг хадгалагдлаа</span>
           </div>
-          <button class="sig-redo-btn" onclick="redoSignature()">Redo</button>
+          <button class="sig-redo-btn" onclick="redoSignature()">Дахин зурах</button>
         </div>
       </div>
 
       <div class="btn-row" style="margin-top:20px">
-        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Back</span></button>
-        <button class="btn-primary" onclick="goStep(4)">Continue</button>
+        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
+        <button class="btn-primary" onclick="goStep(4)">Үргэлжлүүлэх</button>
       </div>
     </div>
   </div>
@@ -485,7 +480,7 @@
         <img src="../../public/qr.png" alt="Payment QR code" style="width:180px;height:180px;object-fit:contain;border-radius:8px" />
       </div>
 
-      <div class="qr-fee-label">Account opening fee: 5,000₮</div>
+      <div class="qr-fee-label">Данс нээх хураамж: 5,000₮</div>
 
       <!-- Payment apps -->
       <div class="pay-apps-grid" id="pay-apps-grid">
@@ -493,8 +488,8 @@
       </div>
 
       <div class="btn-row" style="margin-bottom:14px">
-        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Back</span></button>
-        <button class="btn-check-payment" onclick="checkPayment()">Check Payment</button>
+        <button class="btn-outline" onclick="goBack()"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
+        <button class="btn-check-payment" onclick="checkPayment()">Төлбөр шалгах</button>
       </div>
     </div>
   </div>
@@ -502,11 +497,11 @@
   <!-- ══ SUCCESS ══ -->
   <div id="step-success">
     <div class="success-icon"><i data-lucide="check"></i></div>
-    <div class="success-title">Payment Successful!</div>
+    <div class="success-title">Төлбөр амжилттай!</div>
     <div class="success-msg">
-      Your account opening request has been submitted. Since you do not yet have a securities account, we will proceed with the opening process.
+       Таны данс нээх хүсэлтийг амжилттай илгээлээ. Данс нээх хүсэлт ажлын 3 өдөрт багтаан хийгдэх болно.
     </div>
-    <button class="btn-home" onclick="goHome()">Back to Home</button>
+    <button class="btn-home" onclick="goHome()">Нүүр рүү буцах</button>
   </div>
 
   <!-- ══ AGREEMENT READER MODAL ══ -->
@@ -517,7 +512,7 @@
         <button class="agreement-modal-close" onclick="closeAgreement()"><i data-lucide="x"></i></button>
       </div>
       <div id="agreement-modal-body" class="agreement-modal-body"></div>
-      <button class="btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">I've Read This</button>
+      <button class="btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">Уншиж танилцлаа</button>
     </div>
   </div>
 
@@ -541,18 +536,18 @@ for (let i = 1; i <= 12; i++) {
   bankScroll.appendChild(card);
 }
 
-/* ── Account number → auto-fill account holder name ── */
+/* ── Данс number → auto-fill account holder name ── */
 function handleAcctNumberInput(inp) {
   inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 8);
   const holder = document.getElementById('acct-holder');
-  holder.value = inp.value.length === 8 ? 'Lkhagvasuren Battsengel' : '';
+  holder.value = inp.value.length === 8 ? 'Лхагвасүрэн Батцэнгэл' : '';
 }
 
 /* ── Agreements: unread → reader modal → read ── */
 const AGREEMENTS = {
   'acc-open': {
-    name: 'Account Opening Agreement',
-    content: `This Account Opening Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client").
+    name: 'Данс нээх гэрээ',
+    content: `This Данс нээх гэрээ ("Agreement") is entered into between BDSec Үнэт цаас JSC ("Company") and the undersigned client ("Client").
 
 1. By submitting this application, the Client confirms that all information provided is accurate, complete, and up to date, and agrees to notify the Company promptly of any changes.
 
@@ -565,10 +560,10 @@ const AGREEMENTS = {
 5. This Agreement remains in effect until terminated in writing by either party, subject to settlement of any outstanding obligations.`
   },
   'nominal': {
-    name: 'Nominal Account Service Agreement',
-    content: `This Nominal Account Service Agreement governs the holding of securities on the Client's behalf through a nominal (omnibus) account maintained by the Company at the Securities Clearing House and Central Depository.
+    name: 'Номинал дансны үйлчилгээний гэрээ',
+    content: `This Номинал дансны үйлчилгээний гэрээ governs the holding of securities огноо the Client's behalf through a nominal (omnibus) account maintained by the Company at the Үнэт цаас Clearing House and Central Depository.
 
-1. Securities purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
+1. Үнэт цаас purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
 
 2. The Company will maintain accurate sub-records identifying the Client's beneficial Interest in any securities held in the nominal account.
 
@@ -579,12 +574,12 @@ const AGREEMENTS = {
 5. Any corporate actions (dividends, rights issues, voting) relating to securities in the nominal account will be passed through to the Client in accordance with regulatory requirements.`
   },
   'broker': {
-    name: 'Online Broker Service Agreement',
-    content: `This Online Broker Service Agreement sets out the terms under which the Company provides electronic trading and brokerage services to the Client through its online and mobile platforms.
+    name: 'Онлайн брокерын үйлчилгээний гэрээ',
+    content: `This Онлайн брокерын үйлчилгээний гэрээ sets out the terms under which the Company provides electronic trading and brokerage services to the Client through its online and mobile platforms.
 
 1. The Client agrees to keep login credentials, PIN codes, and authentication methods confidential and to notify the Company immediately of any unauthorized access.
 
-2. Orders placed through the platform are executed on a best-efforts basis at prevailing market prices and may be subject to delays, market conditions, or exchange rules beyond the Company's control.
+2. Orders placed through the platform are executed огноо a best-efforts basis at prevailing market prices and may be subject to delays, market conditions, or exchange rules beyond the Company's control.
 
 3. The Company may charge brokerage commissions, settlement fees, and other charges as disclosed in its published fee schedule, which may be updated from time to time.
 
@@ -683,7 +678,7 @@ OA_PAY_APPS.forEach((name, i) => {
   grid.appendChild(div);
 });
 
-/* ── Signature canvas ── */
+/* ── Гарын үсэг canvas ── */
 const canvas = document.getElementById('sig-canvas');
 const ctx = canvas.getContext('2d');
 let drawing = false;
@@ -728,7 +723,7 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-/* ── Signature pad: open / save / redo ── */
+/* ── Гарын үсэг pad: open / save / redo ── */
 function openSignaturePad() {
   document.getElementById('sig-placeholder').style.display = 'none';
   document.getElementById('sig-pad').style.display = 'block';

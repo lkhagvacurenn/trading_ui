@@ -1,4 +1,4 @@
-/* =============================================
+﻿/* =============================================
    Wallet data & helpers — shared across
    balance / deposit / withdraw / bank-account pages
    ============================================= */
@@ -15,16 +15,16 @@ const PROFILE_KEY          = 'bdsec-user-profile';
 const DEFAULT_BALANCES = { nominal: 50000, mcsd: 0 };
 
 const DEFAULT_BANK_ACCOUNTS = [
-  { id: 'b1', bank: 'Khan Bank',   logo: 'bank01.png', number: '5012345678', holder: 'Lkhagvasuren Battsengel', isDefault: true  },
-  { id: 'b2', bank: 'Golomt Bank', logo: 'bank02.png', number: '1234567890', holder: 'Lkhagvasuren Battsengel', isDefault: false },
+  { id: 'b1', bank: 'Хаан банк',   logo: 'bank01.png', number: '5012345678', holder: 'Лхагвасүрэн Батцэнгэл', isDefault: true  },
+  { id: 'b2', bank: 'Голомт банк', logo: 'bank02.png', number: '1234567890', holder: 'Лхагвасүрэн Батцэнгэл', isDefault: false },
 ];
 
 // Receiving account shown for bank-transfer deposits
 const COMPANY_BANK_ACCOUNT = {
-  bank: 'Khan Bank', logo: 'bank01.png', number: '5000123456', holder: 'BDSec Securities LLC'
+  bank: 'Хаан банк', logo: 'bank01.png', number: '5000123456', holder: 'БиДиСек ҮЦК ХХК'
 };
 
-const PAY_APPS = ['QPay','Socialpay','iPay','Storepay','Lendpay','Nomad','MBank','MobiFinance'];
+const PAY_APPS = ['Хаан банк','ХХБ Банк','Голомт Банк','Хас Банк','M Банк','Төрийн Банк','Ариг Банк','Toki'];
 
 const WITHDRAW_FEE = 500; // flat fee per withdrawal request, ₮
 
@@ -80,19 +80,19 @@ function setUserProfile(p) { saveJSON(PROFILE_KEY, { ...getUserProfile(), ...p }
 const PRICE_ALERTS_KEY = 'bdsec-price-alerts';
 
 const PRICE_TYPE_LABELS = {
-  open:   'Opening Price',
-  close:  'Closing Price',
-  high:   'High Price',
-  low:    'Low Price',
-  last:   'Last Traded Price',
+  open:   'Нээлтийн үнэ',
+  close:  'Хаалтын үнэ',
+  high:   'Дээд үнэ',
+  low:    'Доод үнэ',
+  last:   'Сүүлийн арилжсан үнэ',
 };
 
 const ALERT_CONDITION_LABELS = {
-  gt:  'Greater than',
-  lt:  'Less than',
-  eq:  'Equal to',
-  gte: 'Greater than or equal to',
-  lte: 'Less than or equal to',
+  gt:  'Их',
+  lt:  'Бага',
+  eq:  'Тэнцүү',
+  gte: 'Их буюу тэнцүү',
+  lte: 'Бага буюу тэнцүү',
 };
 
 function getPriceAlerts()    { return loadJSON(PRICE_ALERTS_KEY, []); }
@@ -120,9 +120,9 @@ function formatMNT(v) {
 }
 
 const STATUS_LABELS = {
-  pending:   'Pending',
-  completed: 'Completed',
-  cancelled: 'Cancelled',
+  pending:   'Хүлээгдэж буй',
+  completed: 'Биелсэн',
+  cancelled: 'Цуцлагдсан',
 };
 const STATUS_BADGE_CLASS = {
   pending:   'badge-warning',
@@ -144,8 +144,8 @@ function statusIconLarge(status) {
   return `<div class="hist-icon status-${status}" title="${STATUS_LABELS[status] || status}"><i data-lucide="${STATUS_ICONS[status] || 'circle'}"></i></div>`;
 }
 
-const ACCOUNT_LABELS = { nominal: 'Nominal Account', mcsd: 'MCSD Account' };
-const CHANNEL_LABELS = { transfer: 'Bank Transfer', app: 'Banking App', card: 'Card' };
+const ACCOUNT_LABELS = { nominal: 'Номинал Данс', mcsd: 'ҮЦТХТ данс' };
+const CHANNEL_LABELS = { transfer: 'Банкны шилжүүлэг', app: 'Банкны апп', card: 'Карт' };
 
 function maskAccountNumber(num) {
   const s = String(num);
@@ -155,11 +155,11 @@ function maskAccountNumber(num) {
 /* ── Detail modal content ── */
 function renderDepositDetail(d) {
   return `
-    <div class="verify-row"><span>Account</span><span>${ACCOUNT_LABELS[d.account]}</span></div>
-    <div class="verify-row"><span>Amount</span><span>${formatMNT(d.amount)}</span></div>
-    <div class="verify-row"><span>Payment Channel</span><span>${CHANNEL_LABELS[d.channel] || d.channel}</span></div>
-    <div class="verify-row"><span>Date</span><span>${d.date}</span></div>
-    <div class="verify-row"><span>Status</span><span>${STATUS_LABELS[d.status] || d.status}</span></div>
+    <div class="verify-row"><span>Данс</span><span>${ACCOUNT_LABELS[d.account]}</span></div>
+    <div class="verify-row"><span>Дүн</span><span>${formatMNT(d.amount)}</span></div>
+    <div class="verify-row"><span>Төлбөрийн суваг</span><span>${CHANNEL_LABELS[d.channel] || d.channel}</span></div>
+    <div class="verify-row"><span>Огноо</span><span>${d.date}</span></div>
+    <div class="verify-row"><span>Төлөв</span><span>${STATUS_LABELS[d.status] || d.status}</span></div>
   `;
 }
 function renderWithdrawDetail(w) {
@@ -167,14 +167,14 @@ function renderWithdrawDetail(w) {
   const accName = acc ? `${acc.bank} · ${maskAccountNumber(acc.number)}` : '—';
   const holder  = acc ? acc.holder : '—';
   return `
-    <div class="verify-row"><span>Account</span><span>${ACCOUNT_LABELS[w.account]}</span></div>
-    <div class="verify-row"><span>Amount</span><span>${formatMNT(w.amount)}</span></div>
-    <div class="verify-row"><span>Fee</span><span>${formatMNT(w.fee)}</span></div>
-    <div class="verify-row total"><span>Total Deducted</span><span>${formatMNT(w.amount)}</span></div>
-    <div class="verify-row"><span>Receiving Account</span><span>${accName}</span></div>
-    <div class="verify-row"><span>Account Holder</span><span>${holder}</span></div>
-    <div class="verify-row"><span>Date</span><span>${w.date}</span></div>
-    <div class="verify-row"><span>Status</span><span>${STATUS_LABELS[w.status] || w.status}</span></div>
+    <div class="verify-row"><span>Данс</span><span>${ACCOUNT_LABELS[w.account]}</span></div>
+    <div class="verify-row"><span>Дүн</span><span>${formatMNT(w.amount)}</span></div>
+    <div class="verify-row"><span>Шимтгэл</span><span>${formatMNT(w.fee)}</span></div>
+    <div class="verify-row total"><span>Нийт суутгасан</span><span>${formatMNT(w.amount)}</span></div>
+    <div class="verify-row"><span>Хүлээн авах данс</span><span>${accName}</span></div>
+    <div class="verify-row"><span>Данс Holder</span><span>${holder}</span></div>
+    <div class="verify-row"><span>Огноо</span><span>${w.date}</span></div>
+    <div class="verify-row"><span>Төлөв</span><span>${STATUS_LABELS[w.status] || w.status}</span></div>
   `;
 }
 

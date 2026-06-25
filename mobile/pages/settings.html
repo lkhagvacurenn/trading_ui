@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Settings — TradeX</title>
+  <title>Тохиргоо — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -89,7 +89,7 @@
     [data-theme="dark"] .ts-knob .icon-sun { display: none; }
     [data-theme="dark"] .ts-knob .icon-moon { display: block; }
 
-    /* ── Language toggle ── */
+    /* ── Хэл toggle ── */
     .lang-toggle {
       display: flex; background: var(--color-bg-input); border: 1px solid var(--color-border);
       border-radius: 99px; padding: 2px; flex-shrink: 0;
@@ -126,17 +126,19 @@
     .req-item.met { color: #00C076; }
     .req-item.met svg { color: #00C076; }
 
-    /* ── Buttons ── */
-    .btn-primary {
-      width: 100%; padding: 14px; border-radius: 12px; border: none;
-      background: var(--color-primary); color: #fff; font-size: 14px; font-weight: 700;
-      cursor: pointer; transition: opacity 0.15s; margin-top: 4px;
+    /* ── Buttons ── */    .btn-primary {
+      width: 100%; min-height: 52px; padding: 14px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:hover { opacity: 0.88; }
-    .btn-outline {
-      padding: 14px; border-radius: 12px; border: 1.5px solid var(--color-border);
-      background: transparent; color: var(--color-text-primary); font-size: 14px; font-weight: 700;
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
       cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .btn-outline:hover { border-color: var(--color-primary); }
     .btn-row { display: flex; gap: 10px; margin-top: 6px; }
@@ -175,17 +177,17 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Settings</div>
+    <div class="sub-title">Тохиргоо</div>
   </div>
 
   <div class="form-body">
-    <div class="info-section-title first">Appearance</div>
+    <div class="info-section-title first">Харагдах байдал</div>
     <div class="settings-card">
       <div class="settings-row">
         <div class="settings-row-icon"><i data-lucide="palette"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">Dark Mode</div>
-          <div class="settings-row-sub">Switch between light and dark theme</div>
+          <div class="settings-row-title">Шөнийн горим</div>
+          <div class="settings-row-sub">Өдрийн болон шөнийн горим солих</div>
         </div>
         <div class="theme-switch" id="theme-switch" onclick="onToggleTheme()">
           <div class="ts-icons">
@@ -201,8 +203,8 @@
       <div class="settings-row">
         <div class="settings-row-icon"><i data-lucide="languages"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">Language</div>
-          <div class="settings-row-sub">Choose your preferred language</div>
+          <div class="settings-row-title">Хэл</div>
+          <div class="settings-row-sub">Ашиглах хэлээ сонгоно уу</div>
         </div>
         <div class="lang-toggle">
           <button class="lang-opt" id="lang-en" onclick="setLang('en')">EN</button>
@@ -211,65 +213,65 @@
       </div>
     </div>
 
-    <div class="info-section-title">Security</div>
+    <div class="info-section-title">Үнэт цаас</div>
     <div class="settings-card">
       <div class="settings-row clickable" onclick="openPinModal()">
         <div class="settings-row-icon"><i data-lucide="key-round"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">Change PIN Code</div>
-          <div class="settings-row-sub">Update your 4-digit security PIN</div>
+          <div class="settings-row-title">PIN код солих</div>
+          <div class="settings-row-sub">4 оронтой хамгаалалтын PIN кодоо шинэчлэх</div>
         </div>
         <i data-lucide="chevron-right" class="chev"></i>
       </div>
       <div class="settings-row clickable" onclick="openPasswordModal()">
         <div class="settings-row-icon"><i data-lucide="lock"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">Change Password</div>
-          <div class="settings-row-sub">Update your account password</div>
+          <div class="settings-row-title">Нууц үг солих</div>
+          <div class="settings-row-sub">Дансны нууц үгээ шинэчлэх</div>
         </div>
         <i data-lucide="chevron-right" class="chev"></i>
       </div>
       <div class="settings-row">
         <div class="settings-row-icon"><i data-lucide="fingerprint"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">Biometric Login</div>
-          <div class="settings-row-sub">Use Face ID / fingerprint to sign in</div>
+          <div class="settings-row-title">Биометрээр нэвтрэх</div>
+          <div class="settings-row-sub">Face ID / хурууны хээгээр нэвтрэх</div>
         </div>
         <div class="toggle-switch on" id="toggle-biometric" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
       </div>
     </div>
 
-    <div class="info-section-title">Notifications</div>
+    <div class="info-section-title">Мэдэгдэл</div>
     <div class="settings-card">
       <div class="settings-row">
         <div class="settings-row-icon"><i data-lucide="bell"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">Push Notifications</div>
-          <div class="settings-row-sub">Receive alerts on this device</div>
+          <div class="settings-row-title">Push мэдэгдэл</div>
+          <div class="settings-row-sub">Энэ төхөөрөмж дээр мэдэгдэл хүлээн авах</div>
         </div>
         <div class="toggle-switch on" id="toggle-push" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
       </div>
       <div class="settings-row">
         <div class="settings-row-icon"><i data-lucide="mail"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">Email Notifications</div>
-          <div class="settings-row-sub">Account activity and statements</div>
+          <div class="settings-row-title">E-mail мэдэгдэл</div>
+          <div class="settings-row-sub">Цахим шуудангаар мэдэгдэл хүлээн авах</div>
         </div>
         <div class="toggle-switch on" id="toggle-email" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
       </div>
       <div class="settings-row">
         <div class="settings-row-icon"><i data-lucide="message-square"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">SMS Notifications</div>
-          <div class="settings-row-sub">Important security codes and alerts</div>
+          <div class="settings-row-title">SMS мэдэгдэл</div>
+          <div class="settings-row-sub">Чухал хамгаалалтын код болон мэдэгдэл</div>
         </div>
         <div class="toggle-switch" id="toggle-sms" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
       </div>
       <div class="settings-row">
         <div class="settings-row-icon"><i data-lucide="trending-up"></i></div>
         <div class="settings-row-text">
-          <div class="settings-row-title">Price Alerts</div>
-          <div class="settings-row-sub">Notify me when watchlist prices move</div>
+          <div class="settings-row-title">Үнийн мэдэгдэл</div>
+          <div class="settings-row-sub">Хувьцааны үнэ өөрчлөгдөхөд мэдэгдэх</div>
         </div>
         <div class="toggle-switch on" id="toggle-price-alerts" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
       </div>
@@ -282,56 +284,56 @@
   <div class="modal-overlay" id="pin-modal-overlay" onclick="if(event.target===this) closePinModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">Change PIN Code</div>
+      <div class="modal-title">PIN код солих</div>
       <div class="field-wrap">
-        <label class="field-label">Current PIN</label>
+        <label class="field-label">Одоогийн PIN</label>
         <input class="inp" id="pin-current" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" />
       </div>
       <div class="field-wrap">
-        <label class="field-label">New PIN</label>
+        <label class="field-label">Шинэ PIN</label>
         <input class="inp" id="pin-new" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" />
       </div>
       <div class="field-wrap" style="margin-bottom:0">
-        <label class="field-label">Confirm New PIN</label>
+        <label class="field-label">Шинэ PIN давтах</label>
         <input class="inp" id="pin-confirm" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" />
       </div>
       <div class="btn-row">
-        <button class="btn-outline" onclick="closePinModal()">Cancel</button>
-        <button class="btn-primary" onclick="submitPinChange()">Update PIN</button>
+        <button class="btn-outline" onclick="closePinModal()">Цуцлах</button>
+        <button class="btn-primary" onclick="submitPinChange()">PIN шинэчлэх</button>
       </div>
     </div>
   </div>
 
-  <!-- Change Password modal -->
+  <!-- Нууц үг солих modal -->
   <div class="modal-overlay" id="password-modal-overlay" onclick="if(event.target===this) closePasswordModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">Change Password</div>
+      <div class="modal-title">Нууц үг солих</div>
       <div class="field-wrap">
-        <label class="field-label">Current Password</label>
-        <input class="inp" id="pwd-current" type="password" placeholder="Enter current password" autocomplete="current-password" />
+        <label class="field-label">Одоогийн нууц үг</label>
+        <input class="inp" id="pwd-current" type="password" placeholder="Одоогийн нууц үгээ оруулна уу" autocomplete="current-password" />
       </div>
       <div class="field-wrap">
-        <label class="field-label">New Password</label>
-        <input class="inp" id="pwd-new" type="password" placeholder="Enter new password" autocomplete="new-password"
+        <label class="field-label">Шинэ нууц үг</label>
+        <input class="inp" id="pwd-new" type="password" placeholder="Шинэ нууц үгээ оруулна уу" autocomplete="new-password"
           oninput="checkPasswordReq(this.value)"
           onfocus="document.getElementById('password-req').classList.add('open')"
           onblur="document.getElementById('password-req').classList.remove('open')" />
         <div class="field-req" id="password-req">
-          <div class="req-item" id="preq-len"><i data-lucide="check"></i><span>At least 8 characters</span></div>
-          <div class="req-item" id="preq-upper"><i data-lucide="check"></i><span>At least 1 uppercase letter</span></div>
-          <div class="req-item" id="preq-lower"><i data-lucide="check"></i><span>At least 1 lowercase letter</span></div>
-          <div class="req-item" id="preq-digit"><i data-lucide="check"></i><span>At least 1 digit</span></div>
-          <div class="req-item" id="preq-special"><i data-lucide="check"></i><span>At least 1 special character</span></div>
+          <div class="req-item" id="preq-len"><i data-lucide="check"></i><span>Доод тал нь 8 тэмдэгт</span></div>
+          <div class="req-item" id="preq-upper"><i data-lucide="check"></i><span>Доод тал нь 1 том үсэг</span></div>
+          <div class="req-item" id="preq-lower"><i data-lucide="check"></i><span>Доод тал нь 1 жижиг үсэг</span></div>
+          <div class="req-item" id="preq-digit"><i data-lucide="check"></i><span>Доод тал нь 1 тоо</span></div>
+          <div class="req-item" id="preq-special"><i data-lucide="check"></i><span>Доод тал нь 1 тусгай тэмдэгт</span></div>
         </div>
       </div>
       <div class="field-wrap" style="margin-bottom:0">
-        <label class="field-label">Confirm New Password</label>
-        <input class="inp" id="pwd-confirm" type="password" placeholder="Re-enter new password" autocomplete="new-password" />
+        <label class="field-label">Шинэ нууц үг давтах</label>
+        <input class="inp" id="pwd-confirm" type="password" placeholder="Нууц үгийг дахин оруулна уу" autocomplete="new-password" />
       </div>
       <div class="btn-row">
-        <button class="btn-outline" onclick="closePasswordModal()">Cancel</button>
-        <button class="btn-primary" onclick="submitPasswordChange()">Update Password</button>
+        <button class="btn-outline" onclick="closePasswordModal()">Цуцлах</button>
+        <button class="btn-primary" onclick="submitPasswordChange()">Нууц үг шинэчлэх</button>
       </div>
     </div>
   </div>
@@ -366,7 +368,7 @@
       try { window.parent.toggleTheme(); } catch (e) {}
     }
 
-    /* ── Language ── */
+    /* ── Хэл ── */
     function setLang(lang) {
       localStorage.setItem('tradex-lang', lang);
       document.getElementById('lang-en').classList.toggle('active', lang === 'en');
@@ -395,14 +397,14 @@
         return;
       }
       if (next !== confirm) {
-        showToast('New PINs do not match');
+        showToast('Шинэ PIN таарахгүй байна');
         return;
       }
       closePinModal();
       showToast('PIN code updated');
     }
 
-    /* ── Change Password ── */
+    /* ── Нууц үг солих ── */
     function openPasswordModal() {
       document.getElementById('pwd-current').value = '';
       document.getElementById('pwd-new').value = '';
@@ -432,21 +434,21 @@
       const next = document.getElementById('pwd-new').value;
       const confirm = document.getElementById('pwd-confirm').value;
       if (!cur || !next) {
-        showToast('Please fill in all fields');
+        showToast('Бүх талбарыг бөглөнө үү');
         return;
       }
       const reqsMet = next.length >= 8 && /[A-Z]/.test(next) && /[a-z]/.test(next)
         && /[0-9]/.test(next) && /[^A-Za-z0-9]/.test(next);
       if (!reqsMet) {
-        showToast('Password does not meet requirements');
+        showToast('Нууц үг шаардлага хангахгүй байна');
         return;
       }
       if (next !== confirm) {
-        showToast('New passwords do not match');
+        showToast('Шинэ нууц үг таарахгүй байна');
         return;
       }
       closePasswordModal();
-      showToast('Password updated');
+      showToast('Нууц үг шинэчлэгдлээ');
     }
 
     lucide.createIcons();

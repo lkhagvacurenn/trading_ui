@@ -680,7 +680,7 @@ function renderSteps() {
   const steps = [
     { title: 'Данс нээх хүсэлт',    done: genDone, page: 'open-account', sub: genDone ? 'Дууссан'      : 'Шаардлагатай' },
     { title: 'KYC баталгаажуулалт', done: kycDone, page: 'kyc',          sub: kycDone ? 'Баталгаажсан' : 'Хийгдээгүй'   },
-    { title: 'Хураамж төлсөн',      done: feeDone, page: 'fee',          sub: feeDone ? 'Төлөгдсөн'    : 'Төлөгдөөгүй'  },
+    { title: 'Гуравласан гэрээ',      done: feeDone, page: 'fee',          sub: feeDone ? 'Хийгдсэн'    : 'Хийгдээгүй'  },
   ];
   const done = steps.filter(s => s.done).length;
   document.getElementById('steps-pct').textContent = done + ' / ' + steps.length;

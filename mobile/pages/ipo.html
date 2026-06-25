@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
@@ -14,7 +14,7 @@
     body { margin:0; font-family:'Manrope',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
     * { box-sizing:border-box; }
 
-    /* ── Account balance card ── */
+    /* ── Данс balance card ── */
     .balance-card {
       margin: 14px 16px 0;
       background: linear-gradient(135deg, #3a3a8c 0%, #4949AA 50%, #5b5bd6 100%);
@@ -77,7 +77,7 @@
     .empty-title { font-size:15px; font-weight:600; margin-bottom:6px; }
     .empty-msg { font-size:13px; color:var(--color-text-secondary); line-height:1.5; }
 
-    /* IPO card (for "Listed IPOs" when data exists) */
+    /* IPO card (for "IPO жагсаалт" when data exists) */
     .ipo-card {
       background:var(--color-bg-card);
       border:1px solid var(--color-border);
@@ -127,94 +127,94 @@
 </head>
 <body>
 
-  <!-- Account Balance Card -->
+  <!-- Данс Balance Карт -->
   <div class="balance-card">
     <div class="bc-left">
-      <div class="bc-label">Securities Account Balance</div>
+      <div class="bc-label">ҮЦТХТ дансны үлдэгдэл</div>
       <div class="bc-value">24,850.00 ₮</div>
     </div>
-    <button class="bc-btn" onclick="openDeposit()">Deposit</button>
+    <button class="bc-btn" onclick="openDeposit()">Цэнэглэх</button>
   </div>
 
   <!-- Tabs -->
   <div class="tabs-bar" style="margin-top:16px">
-    <button class="tab-btn active" onclick="switchTab('listed', this)">Listed IPOs</button>
-    <button class="tab-btn" onclick="switchTab('orders', this)">My Orders</button>
+    <button class="tab-btn active" onclick="switchTab('listed', this)">IPO жагсаалт</button>
+    <button class="tab-btn" onclick="switchTab('orders', this)">Миний захиалга</button>
   </div>
 
-  <!-- Listed IPOs -->
+  <!-- IPO жагсаалт -->
   <div id="tab-listed" class="tab-content" style="padding-top:16px">
     <!-- Active IPO example -->
     <div class="ipo-card">
       <div class="ipo-card-header">
         <div>
           <div class="ipo-company">NovaTech Corp.</div>
-          <div style="font-size:11px;color:var(--color-text-disabled);margin-top:2px">NVTC · Technology</div>
+          <div style="font-size:11px;color:var(--color-text-disabled);margin-top:2px">NVTC · Технологи</div>
         </div>
-        <span class="ipo-status-badge open">Open</span>
+        <span class="ipo-status-badge open">Нээлт</span>
       </div>
       <div class="ipo-detail-row">
-        <span class="ipo-detail-label">Offer Price</span>
+        <span class="ipo-detail-label">Санал болгох үнэ</span>
         <span class="ipo-detail-val">$18.00</span>
       </div>
       <div class="ipo-detail-row">
-        <span class="ipo-detail-label">Total Shares</span>
+        <span class="ipo-detail-label">Нийт ширхэг</span>
         <span class="ipo-detail-val">5,000,000</span>
       </div>
       <div class="ipo-detail-row">
-        <span class="ipo-detail-label">Closes</span>
+        <span class="ipo-detail-label">Хаагдах</span>
         <span class="ipo-detail-val">2026-06-20</span>
       </div>
       <div class="ipo-detail-row">
-        <span class="ipo-detail-label">Subscribed</span>
+        <span class="ipo-detail-label">Захиалсан</span>
         <span class="ipo-detail-val" style="color:var(--color-buy)">73.4%</span>
       </div>
       <div class="ipo-progress-bar">
         <div class="ipo-progress-fill" style="width:73.4%"></div>
       </div>
-      <button class="ipo-order-btn" onclick="orderIPO('NVTC')">Place Order</button>
+      <button class="ipo-order-btn" onclick="orderIPO('NVTC')">Захиалга өгөх</button>
     </div>
 
     <div class="ipo-card">
       <div class="ipo-card-header">
         <div>
           <div class="ipo-company">GreenEnergy Holdings</div>
-          <div style="font-size:11px;color:var(--color-text-disabled);margin-top:2px">GRNH · Energy</div>
+          <div style="font-size:11px;color:var(--color-text-disabled);margin-top:2px">GRNH · Эрчим хүч</div>
         </div>
-        <span class="ipo-status-badge soon">Upcoming</span>
+        <span class="ipo-status-badge soon">Тун удахгүй</span>
       </div>
       <div class="ipo-detail-row">
-        <span class="ipo-detail-label">Offer Price</span>
+        <span class="ipo-detail-label">Санал болгох үнэ</span>
         <span class="ipo-detail-val">$24.50</span>
       </div>
       <div class="ipo-detail-row">
-        <span class="ipo-detail-label">Total Shares</span>
+        <span class="ipo-detail-label">Нийт ширхэг</span>
         <span class="ipo-detail-val">8,000,000</span>
       </div>
       <div class="ipo-detail-row">
-        <span class="ipo-detail-label">Opens</span>
+        <span class="ipo-detail-label">Нээгдэх</span>
         <span class="ipo-detail-val">2026-06-15</span>
       </div>
       <div class="ipo-detail-row">
-        <span class="ipo-detail-label">Status</span>
-        <span class="ipo-detail-val" style="color:var(--color-warning)">Pre-open</span>
+        <span class="ipo-detail-label">Төлөв</span>
+        <span class="ipo-detail-val" style="color:var(--color-warning)">Урьдчилсан нээлт</span>
       </div>
       <div class="ipo-progress-bar">
         <div class="ipo-progress-fill" style="width:0%;background:var(--color-warning)"></div>
       </div>
       <button class="ipo-order-btn" style="background:var(--color-bg-input);color:var(--color-text-secondary);cursor:not-allowed">
-        Not yet open
+        Хараахан нээгдээгүй
       </button>
     </div>
   </div>
 
-  <!-- My Orders -->
+  <!-- Миний захиалга -->
   <div id="tab-orders" class="tab-content" style="display:none;padding-top:0">
     <div class="orders-empty">
       <div class="empty-state">
         <div class="empty-icon"><i data-lucide="file-x"></i></div>
-        <div class="empty-title">No IPO Orders Yet</div>
-        <div class="empty-msg">You haven't placed any IPO orders.<br/>Browse listed IPOs to get started.</div>
+        <div class="empty-title">IPO захиалга одоогоор алга</div>
+        <div class="empty-msg">Та IPO захиалга өгөөгүй байна.<br/>Эхлэхийн тулд IPO жагсаалтыг үзнэ үү.</div>
       </div>
     </div>
   </div>

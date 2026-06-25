@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Tripartite Agreement — TradeX</title>
+  <title>Гурвалсан гэрээ — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -57,7 +57,7 @@
     .status-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
     .status-sub { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 16px; }
 
-    /* ── Account card (radio selectable) ── */
+    /* ── Данс card (radio selectable) ── */
     .acct-card {
       display: flex; align-items: center; gap: 12px;
       background: var(--color-bg-card); border: 1.5px solid var(--color-border);
@@ -131,7 +131,7 @@
       color: var(--color-text-secondary); white-space: pre-line;
     }
 
-    /* ── Signature ── */
+    /* ── Гарын үсэг ── */
     .sig-section { margin-bottom: 8px; }
     .sig-placeholder {
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
@@ -192,25 +192,21 @@
     .saved-sig-check { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
     .saved-sig-check input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--color-primary); margin-top: 1px; }
 
-    /* ── Buttons ── */
-    .btn-primary {
-      width: 100%; padding: 14px; background: var(--color-primary);
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      color: #fff; cursor: pointer; transition: opacity 0.15s;
-      margin-top: 8px; margin-bottom: 18px;
+    /* ── Buttons ── */    .btn-primary {
+      width: 100%; min-height: 52px; padding: 14px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:hover { opacity: 0.88; }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-outline {
-      width: 100%; padding: 13px; background: transparent;
-      border: 1.5px solid var(--color-border); border-radius: 10px;
-      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
       cursor: pointer; transition: border-color 0.15s;
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      margin-bottom: 18px;
     }
     .btn-outline:hover { border-color: var(--color-primary); }
-    .btn-outline svg { width: 16px; height: 16px; }
 
     /* ── Toast ── */
     .toast {
@@ -226,7 +222,7 @@
 
     /* ── View switching ── */
     #setup-view, #active-view { display: none; }
-    #setup-view.show, #active-view.show { display: block; }
+    #setup-view.show, #active-view.show { display: block; Padding: 0 16px; }
   </style>
 </head>
 <body>
@@ -234,54 +230,56 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Tripartite Agreement</div>
+    <div class="sub-title">Гурвалсан гэрээ</div>
   </div>
 
   <div class="form-body">
     <div class="intro-card">
       <div class="intro-icon"><i data-lucide="repeat"></i></div>
-      <div>The Tripartite Agreement links your bank account, brokerage (Nominal) account and MCSD account so cash can be transferred between them online. Choose one bank account, read the agreement and sign it to activate.</div>
+      <div>Энэхүү гурвалсан гэрээ нь таны банкны данс, брокерийн данс болон МҮЦТХ дансыг холбож, бэлэн мөнгийг онлайнаар шилжүүлэх боломжийг олгоно. 
+         Та нэг банкны дансыг сонгож, гэрээг уншиж, гарын үсэг зурснаар гэрээг идэвхжүүлнэ.</div>
+        </div>
     </div>
 
     <!-- ══ ACTIVE VIEW ══ -->
     <div id="active-view">
-      <div class="info-section-title first">Status</div>
+      <div class="info-section-title first">Төлөв</div>
       <div class="status-card">
         <div class="status-badge-icon"><i data-lucide="check"></i></div>
-        <div class="status-title">Agreement Active</div>
-        <div class="status-sub" id="active-since">Signed on —</div>
+        <div class="status-title">Гэрээ идэвхтэй</div>
+        <div class="status-sub" id="active-since">Гэрээ байгуулсан огноо —</div>
       </div>
 
-      <div class="info-section-title">Linked Bank Account</div>
+      <div class="info-section-title">Холбосон банкны данс</div>
       <div id="active-acct"></div>
 
       <button class="btn-outline" onclick="openChangeAccount()">
-        <i data-lucide="repeat"></i> Change Bank Account
+        <i data-lucide="repeat"></i> Банкны данс солих
       </button>
     </div>
 
     <!-- ══ SETUP VIEW ══ -->
     <div id="setup-view">
-      <div class="info-section-title first">1. Select Bank Account</div>
+      <div class="info-section-title first">1. Банкны данс сонгох</div>
       <div id="acct-list"></div>
 
-      <div class="info-section-title">2. Read Agreement</div>
+      <div class="info-section-title">2. Гэрээ унших</div>
       <div class="agreement-item" onclick="openAgreement()">
         <div class="ag-left">
           <div class="agreement-check" id="ac-tripartite"><i data-lucide="file-text"></i></div>
-          <span class="agreement-name">Tripartite Cash Transfer Agreement</span>
+          <span class="agreement-name">Гурвалсан гэрээ</span>
         </div>
         <span class="chevron-icon"><i data-lucide="chevron-right"></i></span>
       </div>
 
-      <div class="info-section-title">3. Signature</div>
+      <div class="info-section-title">3. Гарын үсэг</div>
 
-      <!-- Saved signature on file -->
+      <!-- Saved signature огноо file -->
       <div class="saved-sig-card" id="saved-sig-card" style="display:none">
         <div class="saved-sig-preview"><img id="saved-sig-img" alt="Your signature" /></div>
         <label class="saved-sig-check">
           <input type="checkbox" id="use-saved-sig" onchange="onSavedSigToggle()" />
-          <span>Use my signature on file to sign this Tripartite Agreement.</span>
+          <span>Хадгалсан гарын үсгээрээ энэ Гурвалсан гэрээнд гарын үсэг зурна.</span>
         </label>
       </div>
 
@@ -289,22 +287,22 @@
       <div class="sig-section" id="draw-sig-section" style="display:none">
         <div class="sig-placeholder" id="sig-placeholder" onclick="openSignaturePad()">
           <div class="sig-placeholder-icon"><i data-lucide="pen-line"></i></div>
-          <div class="sig-placeholder-text">Tap to draw your signature</div>
+          <div class="sig-placeholder-text">Гарын үсгээ зурахын тулд товшино уу</div>
         </div>
         <div class="sig-pad" id="sig-pad" style="display:none">
           <canvas id="sig-canvas"></canvas>
           <div class="sig-pad-actions">
-            <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Clear</span></button>
-            <button class="sig-action-btn primary" onclick="saveSignatureLocal()"><i data-lucide="check"></i><span>Done</span></button>
+            <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Арилгах</span></button>
+            <button class="sig-action-btn primary" onclick="saveSignatureLocal()"><i data-lucide="check"></i><span>Дуусгах</span></button>
           </div>
         </div>
         <div class="sig-done" id="sig-done" style="display:none">
-          <div class="sig-done-left"><i data-lucide="check-circle"></i><span>Signature captured</span></div>
-          <button class="sig-redo-btn" onclick="redoSignature()">Redo</button>
+          <div class="sig-done-left"><i data-lucide="check-circle"></i><span>Гарын үсэг хадгалагдлаа</span></div>
+          <button class="sig-redo-btn" onclick="redoSignature()">Дахин зурах</button>
         </div>
       </div>
 
-      <button class="btn-primary" id="complete-btn" onclick="completeAgreement()" disabled>Complete Agreement</button>
+      <button class="btn-primary" id="complete-btn" onclick="completeAgreement()" disabled>Гэрээ дуусгах</button>
     </div>
   </div>
 
@@ -315,9 +313,9 @@
   <div class="modal-overlay" id="change-acct-overlay" onclick="if(event.target===this) closeChangeAccount()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="info-section-title" style="margin-top:0">Select Bank Account</div>
+      <div class="info-section-title" style="margin-top:0">Банкны данс сонгох</div>
       <div id="change-acct-list"></div>
-      <button class="btn-primary" style="margin-bottom:0" onclick="saveChangedAccount()">Save</button>
+      <button class="btn-primary" style="margin-bottom:0" onclick="saveChangedAccount()">Хадгалах</button>
     </div>
   </div>
 
@@ -325,19 +323,19 @@
   <div id="agreement-modal" class="agreement-modal-overlay">
     <div class="agreement-modal-card">
       <div class="agreement-modal-hdr">
-        <span class="agreement-modal-title">Tripartite Cash Transfer Agreement</span>
+        <span class="agreement-modal-title">Гурвалсан гэрээ</span>
         <button class="agreement-modal-close" onclick="closeAgreement()"><i data-lucide="x"></i></button>
       </div>
-      <div class="agreement-modal-body">This Tripartite Cash Transfer Agreement ("Agreement") is entered into between the Client, BDSec Securities LLC ("Broker"), and the Mongolian Central Securities Depository ("MCSD").
+      <div class="agreement-modal-body">This Гурвалсан гэрээ ("Agreement") is entered into between the Client, БиДиСек ҮЦК ХХК ("Broker"), and the Mongolian Central Үнэт цаас Depository ("MCSD").
 
 1. Purpose
-This Agreement enables the Client to transfer cash electronically between their designated bank account, their Nominal (brokerage) account held with the Broker, and their account at the MCSD.
+This Agreement enables the Client to transfer cash electronically between their designated bank account, their Номинал (brokerage) account held with the Broker, and their account at the MCSD.
 
-2. Designated Bank Account
+2. Designated Bank Данс
 The Client shall designate one (1) bank account to be used for all transfers under this Agreement. The Client may change the designated bank account at any time by submitting a request through the trading platform.
 
 3. Transfers
-Funds may be transferred from the designated bank account to the Nominal account for the purpose of securities trading, and from the Nominal account back to the designated bank account upon withdrawal request.
+Funds may be transferred from the designated bank account to the Номинал account for the purpose of securities trading, and from the Номинал account back to the designated bank account upon withdrawal request.
 
 4. Authorization
 By signing this Agreement, the Client authorizes the Broker and the MCSD to process transfer instructions issued through the trading platform without requiring a separate physical signature for each transaction.
@@ -349,7 +347,7 @@ The Client is responsible for ensuring that the designated bank account remains 
 This Agreement remains in effect until the Client closes their trading account or requests termination in writing.
 
 By signing below, the Client acknowledges they have read, understood, and agree to the terms above.</div>
-      <button class="btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">I've Read This</button>
+      <button class="btn-primary" style="margin:16px 0 0" onclick="closeAgreement()">Уншиж танилцлаа</button>
     </div>
   </div>
 
@@ -395,7 +393,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       const accounts = getBankAccounts();
       const el = document.getElementById('acct-list');
       if (!accounts.length) {
-        el.innerHTML = '<div class="hist-empty">No linked bank accounts. Add one from Bank Accounts first.</div>';
+        el.innerHTML = '<div class="hist-empty">Холбосон банкны данс алга. Эхлээд Банкны данс хэсгээс нэмнэ үү.</div>';
         return;
       }
       el.innerHTML = accounts.map(a => acctCardHTML(a, a.id === selectedAccountId)).join('');
@@ -425,7 +423,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       }
     }
 
-    /* ── Signature ── */
+    /* ── Гарын үсэг ── */
     function onSavedSigToggle() {
       sigConfirmed = document.getElementById('use-saved-sig').checked;
       updateCompleteBtn();
@@ -537,7 +535,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       setTripartiteAgreement({ ...current, bankAccountId: changeSelectedId });
       closeChangeAccount();
       renderView();
-      showToast('Bank account updated');
+      showToast('Банкны данс амжилттай солигдлоо');
     }
 
     /* ── View rendering ── */
@@ -546,9 +544,9 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       if (agreement && agreement.signed) {
         document.getElementById('setup-view').classList.remove('show');
         document.getElementById('active-view').classList.add('show');
-        document.getElementById('active-since').textContent = `Signed on ${agreement.date}`;
+        document.getElementById('active-since').textContent = `Гэрээ байгуулсан огноо ${agreement.date}`;
         const acct = getBankAccounts().find(a => a.id === agreement.bankAccountId);
-        document.getElementById('active-acct').innerHTML = acct ? acctCardHTML(acct, true).replace('onclick="selectAccount(\'' + acct.id + '\')"', '') : '<div class="hist-empty">No bank account linked</div>';
+        document.getElementById('active-acct').innerHTML = acct ? acctCardHTML(acct, true).replace('onclick="selectAccount(\'' + acct.id + '\')"', '') : '<div class="hist-empty">Банкны данс холбогдоогүй</div>';
         lucide.createIcons();
         return;
       }

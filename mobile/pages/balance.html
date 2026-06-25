@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Balance — TradeX</title>
+  <title>Үлдэгдэл — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -159,7 +159,7 @@
     }
     .search-bar input::placeholder { color: var(--color-text-disabled); }
 
-    /* ── Holdings list ── */
+    /* ── хувьцаа list ── */
     .holdings-card {
       margin: 0 16px;
       background: var(--color-bg-card);
@@ -255,7 +255,7 @@
     .trade-date { font-size: 10px; color: var(--color-text-disabled); font-family: 'IBM Plex Mono', monospace; }
     .trade-amount { text-align: right; font-size: 12px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
 
-    /* ── Account history (Nominal / ҮЦТХТ) ── */
+    /* ── Данс history (Номинал / ҮЦТХТ) ── */
     .hist-toolbar { margin: 0 16px 10px; display: flex; flex-direction: column; gap: 8px; }
     .hist-filters { display: flex; gap: 8px; }
     .hist-select {
@@ -330,10 +330,10 @@
 <body>
 <div id="balance-main-view">
 
-  <!-- Hero Balance Card -->
+  <!-- Hero Balance Карт -->
   <div class="hero-card">
     <div class="hero-top">
-      <div class="hero-label">Total Assets</div>
+      <div class="hero-label">Нийт хөрөнгө</div>
       <button  onclick="toggleBalance()">
         <i data-lucide="eye" id="eye-icon"></i>
       </button>
@@ -341,20 +341,20 @@
     <div class="hero-value" id="total-value">2,000,000.45₮</div>
     <div class="hero-subrow">
       <div class="hero-sub-item">
-        <div class="hero-sub-label">Nominal Balance</div>
+        <div class="hero-sub-label">Номинал үлдэгдэл</div>
         <div class="hero-sub-value" id="nominal-val">50,000₮</div>
       </div>
       <div class="hero-sub-item">
-        <div class="hero-sub-label">MCSD Balance</div>
+        <div class="hero-sub-label">ҮЦТХТ үлдэгдэл</div>
         <div class="hero-sub-value" id="mcsd-val">0₮</div>
       </div>
     </div>
     <div class="hero-actions">
       <button class="hero-action-btn" onclick="goDeposit()">
-        <i data-lucide="wallet"></i> Deposit
+        <i data-lucide="wallet"></i> Цэнэглэх
       </button>
       <button class="hero-action-btn" onclick="goWithdraw()">
-        <i data-lucide="banknote"></i> Withdraw
+        <i data-lucide="banknote"></i> Мөнгө хүсэх
       </button>
     </div>
   </div>
@@ -363,11 +363,11 @@
   <div class="filter-row">
     <div class="filter-left">
       <div class="dd-trigger" id="acct-type-trigger" onclick="toggleAcctTypeMenu(event)">
-        <span id="acct-type-label">Securities</span>
+        <span id="acct-type-label">Үнэт цаас</span>
         <i data-lucide="chevron-down" class="chev"></i>
         <div class="dd-menu" id="acct-type-menu">
-          <div class="dd-item active" data-acct="securities" onclick="selectAcctType(event,'securities')">Securities</div>
-          <div class="dd-item" data-acct="nominal" onclick="selectAcctType(event,'nominal')">Nominal</div>
+          <div class="dd-item active" data-acct="securities" onclick="selectAcctType(event,'securities')">Үнэт цаас</div>
+          <div class="dd-item" data-acct="nominal" onclick="selectAcctType(event,'nominal')">Номинал</div>
           <div class="dd-item" data-acct="mcsd" onclick="selectAcctType(event,'mcsd')">MCSD</div>
         </div>
       </div>
@@ -379,51 +379,51 @@
     </button> -->
   </div>
 
-  <!-- Securities: Search -->
+  <!-- Үнэт цаас: Search -->
   <div class="search-bar" id="securities-search">
     <i data-lucide="search"></i>
-    <input type="text" id="securities-search-input" placeholder="Search securities…" oninput="applySecuritiesFilter()" />
+    <input type="text" id="securities-search-input" placeholder="Үнэт цаас хайх…" oninput="applySecuritiesFilter()" />
   </div>
 
-  <!-- Securities: Filters -->
+  <!-- Үнэт цаас: Filters -->
   <div class="hist-filters" id="securities-filters" style="margin:0 16px 10px">
     <select class="hist-select" id="sec-filter" onchange="applySecuritiesFilter()">
-      <option value="all">All Holdings</option>
-      <option value="gainers">Gainers</option>
-      <option value="losers">Losers</option>
+      <option value="all">Бүх хувьцаа</option>
+      <option value="gainers">Өссөн</option>
+      <option value="losers">Буурсан</option>
     </select>
     <select class="hist-select" id="sec-sort" onchange="applySecuritiesFilter()">
-      <option value="value-desc">Value: High to Low</option>
-      <option value="value-asc">Value: Low to High</option>
-      <option value="symbol">Symbol A-Z</option>
-      <option value="change">% Change</option>
+      <option value="value-desc">Үнэлгээ: Ихээс бага</option>
+      <option value="value-asc">Үнэлгээ: Багаас их</option>
+      <option value="symbol">Симбол A-Z</option>
+      <option value="change">% өөрчлөлт</option>
     </select>
   </div>
 
-  <!-- Securities: Holdings List -->
+  <!-- Үнэт цаас: хувьцаа List -->
   <div class="holdings-card" id="holdings-list"></div>
 
-  <!-- Account history (Nominal / ҮЦТХТ) -->
+  <!-- Данс history (Номинал / ҮЦТХТ) -->
   <div id="history-section" style="display:none">
     <div class="hist-toolbar">
       <div class="search-bar" style="margin:0">
         <i data-lucide="search"></i>
-        <input type="text" id="hist-search" placeholder="Search transactions…" oninput="renderHistory()" />
+        <input type="text" id="hist-search" placeholder="Гүйлгээ хайх…" oninput="renderHistory()" />
       </div>
       <div class="hist-filters">
         <select class="hist-select" id="hist-type-filter" onchange="renderHistory()">
-          <option value="all">All Types</option>
-          <option value="deposit">Deposit</option>
-          <option value="withdraw">Withdrawal</option>
+          <option value="all">Бүх төрөл</option>
+          <option value="deposit">Орлого</option>
+          <option value="withdraw">Зарлага</option>
         </select>
         <select class="hist-select" id="hist-status-filter" onchange="renderHistory()">
-          <option value="all">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="all">Бүх төлөв</option>
+          <option value="pending">Хүлээгдэж буй</option>
+          <option value="completed">Биелсэн</option>
+          <option value="cancelled">Цуцлагдсан</option>
         </select>
         <button class="hist-sort-btn desc" id="hist-sort-btn" onclick="toggleHistSort()">
-          <i data-lucide="arrow-down"></i> Date
+          <i data-lucide="arrow-down"></i> Огноо
         </button>
       </div>
     </div>
@@ -434,11 +434,11 @@
   <div style="height:20px"></div>
 </div>
 
-  <!-- Securities detail page -->
+  <!-- Үнэт цаас detail page -->
   <div class="security-detail-page" id="security-detail-view">
     <div class="sub-header">
       <button class="back-btn" onclick="closeSecurityDetail()"><i data-lucide="chevron-left"></i></button>
-      <div class="sub-title" id="security-detail-title">Security</div>
+      <div class="sub-title" id="security-detail-title">Үнэт цаас</div>
     </div>
     <div class="security-detail-body" id="security-detail-content"></div>
   </div>
@@ -447,7 +447,7 @@
   <div class="modal-overlay" id="detail-modal-overlay" onclick="if(event.target===this) closeDetailModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="info-section-title" id="detail-modal-title">Details</div>
+      <div class="info-section-title" id="detail-modal-title">Дэлгэрэнгүй</div>
       <div class="verify-card" id="detail-content"></div>
     </div>
   </div>
@@ -455,11 +455,11 @@
   <script src="../scripts/wallet-data.js"></script>
   <script>
     const HOLDINGS = [
-      { symbol:'AAPL',  abbr:'AP', name:'Apple Inc.',     shares:50,   exchange:'NASDAQ', pct:+0.65, value:9492.00 },
-      { symbol:'MSFT',  abbr:'MS', name:'Microsoft Corp.',shares:20,   exchange:'NASDAQ', pct:+0.62, value:8306.00 },
-      { symbol:'NVDA',  abbr:'NV', name:'NVIDIA Corp.',   shares:10,   exchange:'NASDAQ', pct:+1.77, value:8754.00 },
-      { symbol:'TSLA',  abbr:'TS', name:'Tesla Inc.',     shares:30,   exchange:'NASDAQ', pct:-1.26, value:7452.60 },
-      { symbol:'GOOGL', abbr:'GO', name:'Alphabet Inc.',  shares:15,   exchange:'NASDAQ', pct:+0.51, value:2589.45 },
+      { symbol:'BDS',  abbr:'БД', name:'БДСек ХК',        shares:8,    exchange:'МХБ', pct:+1.23, value:9920 },
+      { symbol:'TDB',  abbr:'ХХ', name:'ХХБ ХК',          shares:6,    exchange:'МХБ', pct:+0.62, value:8490 },
+      { symbol:'KHAN', abbr:'ХА', name:'Хаан Банк ХК',    shares:2,    exchange:'МХБ', pct:+1.77, value:7840 },
+      { symbol:'APU',  abbr:'АП', name:'АПУ ХК',          shares:12,   exchange:'МХБ', pct:-1.26, value:7344 },
+      { symbol:'GOLO', abbr:'ГО', name:'Голомт Банк ХК',  shares:3,    exchange:'МХБ', pct:+0.51, value:6504 },
     ];
 
     const balances = getBalances();
@@ -473,7 +473,7 @@
     function renderHoldings(data) {
       const el = document.getElementById('holdings-list');
       if (!data.length) {
-        el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--color-text-disabled);font-size:13px">No holdings found</div>';
+        el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--color-text-disabled);font-size:13px">хувьцаа олдсонгүй</div>';
         return;
       }
       el.innerHTML = data.map(h => {
@@ -485,7 +485,7 @@
             <div class="holding-info">
               <div class="holding-top">
                 <span class="holding-symbol">${h.symbol}</span>
-                <span class="holding-shares">${h.shares.toLocaleString()} shares</span>
+                <span class="holding-shares">${h.shares.toLocaleString()} ширхэг</span>
               </div>
               <div class="holding-bottom">
                 <span class="holding-exchange">${h.exchange}</span>
@@ -494,7 +494,7 @@
             </div>
             <div class="holding-right">
               <div class="holding-value">$${h.value.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
-              <div class="holding-link">Details <i data-lucide="chevron-right"></i></div>
+              <div class="holding-link">Дэлгэрэнгүй <i data-lucide="chevron-right"></i></div>
             </div>
           </div>`;
       }).join('');
@@ -547,7 +547,7 @@
       try { window.parent.navigateTo('withdraw'); } catch(e) { window.location.href = 'withdraw.html'; }
     }
 
-    /* ── Account type dropdown (Securities / Nominal / ҮЦТХТ) ── */
+    /* ── Данс type dropdown (Үнэт цаас / Номинал / ҮЦТХТ) ── */
     function closeAllDropdowns(except) {
       document.querySelectorAll('.dd-trigger.open').forEach(t => { if (t.id !== except) t.classList.remove('open'); });
       document.querySelectorAll('.dd-menu.open').forEach(m => { if (!except || m.closest('.dd-trigger').id !== except) m.classList.remove('open'); });
@@ -565,7 +565,7 @@
       e.stopPropagation();
       currentAcctType = key;
       document.querySelectorAll('#acct-type-menu .dd-item').forEach(it => it.classList.toggle('active', it.dataset.acct === key));
-      const labels = { securities: 'Securities', nominal: 'Nominal', mcsd: 'MCSD' };
+      const labels = { securities: 'Үнэт цаас', nominal: 'Номинал', mcsd: 'MCSD' };
       document.getElementById('acct-type-label').textContent = labels[key];
       closeAllDropdowns();
 
@@ -581,15 +581,15 @@
       }
     }
 
-    /* ── Account history (Nominal / ҮЦТХТ): search, filter, sort, paginate ── */
+    /* ── Данс history (Номинал / ҮЦТХТ): search, filter, sort, paginate ── */
     const SECURITY_TRADE_HISTORY = [
-      { symbol:'AAPL', side:'buy',  qty:20, price:181.20, date:'2026-06-04 10:18' },
-      { symbol:'AAPL', side:'sell', qty:5,  price:189.75, date:'2026-06-08 14:32' },
-      { symbol:'AAPL', side:'buy',  qty:35, price:176.40, date:'2026-05-22 11:05' },
-      { symbol:'MSFT', side:'buy',  qty:20, price:411.80, date:'2026-05-29 15:16' },
-      { symbol:'NVDA', side:'buy',  qty:10, price:862.10, date:'2026-06-03 12:44' },
-      { symbol:'TSLA', side:'buy',  qty:30, price:252.60, date:'2026-05-31 10:40' },
-      { symbol:'GOOGL', side:'buy', qty:15, price:171.25, date:'2026-05-27 13:21' },
+      { symbol:'BDS',  side:'buy',  qty:5,  price:1220, date:'2026-06-04 10:18' },
+      { symbol:'BDS',  side:'sell', qty:2,  price:1245, date:'2026-06-08 14:32' },
+      { symbol:'BDS',  side:'buy',  qty:8,  price:1198, date:'2026-05-22 11:05' },
+      { symbol:'TDB',  side:'buy',  qty:4,  price:1402, date:'2026-05-29 15:16' },
+      { symbol:'KHAN', side:'buy',  qty:1,  price:3865,   date:'2026-06-03 12:44' },
+      { symbol:'APU',  side:'buy',  qty:10, price:618,  date:'2026-05-31 10:40' },
+      { symbol:'GOLO', side:'buy',  qty:2,  price:2155, date:'2026-05-27 13:21' },
     ];
 
     function formatUSD(v) {
@@ -621,27 +621,27 @@
           </div>
           <div class="security-summary">
             <div class="security-stat">
-              <div class="security-stat-label">Shares</div>
+              <div class="security-stat-label">Ширхэг</div>
               <div class="security-stat-value">${holding.shares.toLocaleString()}</div>
             </div>
             <div class="security-stat">
-              <div class="security-stat-label">Exchange</div>
+              <div class="security-stat-label">Бирж</div>
               <div class="security-stat-value">${holding.exchange}</div>
             </div>
           </div>
         </div>
-        <div class="trade-history-title">Trading History</div>
+        <div class="trade-history-title">Арилжааны түүх</div>
         <div class="trade-history-card">
           ${trades.length ? trades.map(t => `
             <div class="trade-row">
               <div class="trade-side ${t.side}">${t.side.toUpperCase()}</div>
               <div class="trade-main">
-                <div class="trade-title">${t.qty.toLocaleString()} shares at ${formatUSD(t.price)}</div>
+                <div class="trade-title">${t.qty.toLocaleString()} ширхэг, үнэ ${formatUSD(t.price)}</div>
                 <div class="trade-date">${t.date}</div>
               </div>
               <div class="trade-amount">${formatUSD(t.qty * t.price)}</div>
             </div>
-          `).join('') : '<div class="hist-empty">No buy/sell history for this security</div>'}
+          `).join('') : '<div class="hist-empty">Энэ үнэт цаасны авах/зарах түүх алга</div>'}
         </div>
       `;
       document.getElementById('balance-main-view').style.display = 'none';
@@ -693,12 +693,12 @@
 
       const el = document.getElementById('hist-list');
       if (!pageItems.length) {
-        el.innerHTML = '<div class="hist-empty">No transactions found</div>';
+        el.innerHTML = '<div class="hist-empty">Гүйлгээ олдсонгүй</div>';
       } else {
         el.innerHTML = pageItems.map(i => {
           const isDep  = i.type === 'deposit';
           const sign   = isDep ? '+' : '-';
-          const title  = isDep ? 'Deposit' : 'Withdrawal Request';
+          const title  = isDep ? 'Цэнэглэх' : 'Зарлагын хүсэлт';
           return `
             <div class="hist-item">
               ${statusIconLarge(i.status)}
@@ -708,7 +708,7 @@
               </div>
               <div class="hist-right">
                 <div class="hist-amount ${i.type}">${sign}${formatMNT(i.amount)}</div>
-                <div class="hist-detail-link" onclick="showHistoryDetail('${i.id}','${i.type}')">Details <i data-lucide="chevron-right"></i></div>
+                <div class="hist-detail-link" onclick="showHistoryDetail('${i.id}','${i.type}')">Дэлгэрэнгүй <i data-lucide="chevron-right"></i></div>
               </div>
             </div>`;
         }).join('');
@@ -745,7 +745,7 @@
         ? getDepositHistory().find(x => x.id === id)
         : getWithdrawHistory().find(x => x.id === id);
       if (!item) return;
-      document.getElementById('detail-modal-title').textContent = type === 'deposit' ? 'Deposit Details' : 'Withdrawal Details';
+      document.getElementById('detail-modal-title').textContent = type === 'deposit' ? 'Цэнэглэлтийн дэлгэрэнгүй' : 'Зарлагын дэлгэрэнгүй';
       document.getElementById('detail-content').innerHTML = type === 'deposit' ? renderDepositDetail(item) : renderWithdrawDetail(item);
       document.getElementById('detail-modal-overlay').classList.add('show');
       notifyModalOpen();

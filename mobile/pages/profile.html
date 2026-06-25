@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>My Profile — TradeX</title>
+  <title>Миний профайл — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -30,7 +30,7 @@
     .info-section-title { font-size: 14px; font-weight: 700; margin: 18px 0 10px; }
     .info-section-title.first { margin-top: 6px; }
 
-    /* ── Profile header card ── */
+    /* ── Профайл header card ── */
     .profile-card {
       background: var(--color-bg-card); border: 1px solid var(--color-border);
       border-radius: 16px; padding: 22px 16px; text-align: center;
@@ -191,19 +191,19 @@
     .inp:focus { border-color: var(--color-primary); }
     .inp.error { border-color: var(--color-sell); }
     .field-error { font-size: 11px; color: var(--color-sell); margin-top: 6px; display: none; }
-    .field-error.show { display: block; }
-
-    .btn-primary {
-      width: 100%; padding: 14px; background: var(--color-primary);
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      color: #fff; cursor: pointer; transition: opacity 0.15s;
+    .field-error.show { display: block; }    .btn-primary {
+      width: 100%; min-height: 52px; padding: 14px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:hover { opacity: 0.88; }
-    .btn-outline {
-      padding: 12px; background: transparent;
-      border: 1.5px solid var(--color-border); border-radius: 10px;
-      font-size: 13px; font-weight: 700; color: var(--color-text-primary);
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
       cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .btn-outline:hover { border-color: var(--color-primary); }
 
@@ -249,12 +249,12 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">My Profile</div>
+    <div class="sub-title">Миний профайл</div>
   </div>
 
   <div class="form-body">
 
-    <!-- Profile header -->
+    <!-- Профайл header -->
     <div class="profile-card">
       <div class="profile-avatar" id="profile-avatar">LB</div>
       <div class="profile-name" id="profile-name">—</div>
@@ -263,18 +263,18 @@
       <div class="status-pill-sub" id="profile-status-sub"></div>
     </div>
 
-    <!-- Online Trader status steps -->
-    <div class="info-section-title">Online Trader Status</div>
+    <!-- Онлайн арилжаачин status steps -->
+    <div class="info-section-title">Онлайн  төлөв</div>
     <div id="status-list"></div>
 
     <!-- Collapsible info sections -->
-    <div class="info-section-title">Account Details</div>
+    <div class="info-section-title">Данс Дэлгэрэнгүй</div>
 
-    <!-- General Information (editable) -->
+    <!-- Ерөнхий мэдээлэл (editable) -->
     <div class="accordion-item" id="acc-general">
       <div class="accordion-header" onclick="toggleAccordion('general')">
         <div class="accordion-icon"><i data-lucide="id-card"></i></div>
-        <div class="accordion-title">General Information</div>
+        <div class="accordion-title">Ерөнхий мэдээлэл</div>
         <span class="accordion-chevron"><i data-lucide="chevron-right"></i></span>
       </div>
       <div class="accordion-body">
@@ -282,27 +282,27 @@
       </div>
     </div>
 
-    <!-- Personal Information (read-only) -->
+    <!-- Хувийн мэдээлэл (read-only) -->
     <div class="accordion-item" id="acc-personal">
       <div class="accordion-header" onclick="toggleAccordion('personal')">
         <div class="accordion-icon"><i data-lucide="user-circle"></i></div>
-        <div class="accordion-title">Personal Information</div>
+        <div class="accordion-title">Хувийн мэдээлэл</div>
         <span class="accordion-chevron"><i data-lucide="chevron-right"></i></span>
       </div>
       <div class="accordion-body">
         <div class="locked-note">
           <i data-lucide="lock"></i>
-          <div>This information was collected during account opening and KYC verification. To correct any of these details, please contact your broker.</div>
+          <div>Мэдээллээ засуулах бол та брокертой холбогдоно уу.</div>
         </div>
         <div class="info-card" id="personal-info-list"></div>
       </div>
     </div>
 
-    <!-- My Contracts -->
+    <!-- Миний гэрээнүүд -->
     <div class="accordion-item" id="acc-contracts">
       <div class="accordion-header" onclick="toggleAccordion('contracts')">
         <div class="accordion-icon"><i data-lucide="file-text"></i></div>
-        <div class="accordion-title">My Contracts</div>
+        <div class="accordion-title">Миний гэрээнүүд</div>
         <span class="accordion-chevron"><i data-lucide="chevron-right"></i></span>
       </div>
       <div class="accordion-body" id="contracts-list"></div>
@@ -312,18 +312,18 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- Edit field modal -->
+  <!-- Засах field modal -->
   <div class="modal-overlay" id="edit-overlay" onclick="if(event.target===this) closeEditModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="info-section-title" style="margin-top:0" id="edit-modal-title">Edit</div>
+      <div class="info-section-title" style="margin-top:0" id="edit-modal-title">Засах</div>
       <div class="field-wrap">
-        <label class="field-label" id="edit-modal-label">Value</label>
+        <label class="field-label" id="edit-modal-label">Утга</label>
         <input class="inp" id="edit-modal-input" />
         <div class="field-error" id="edit-modal-error"></div>
       </div>
       <div style="height:14px"></div>
-      <button class="btn-primary" onclick="saveEditModal()">Save</button>
+      <button class="btn-primary" onclick="saveEditModal()">Хадгалах</button>
       <div style="height:6px"></div>
     </div>
   </div>
@@ -332,8 +332,8 @@
   <div class="modal-overlay" id="otp-overlay" onclick="if(event.target===this) closeOtpModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="pin-modal-title" id="otp-modal-title">Verify New Email</div>
-      <div style="font-size:12px;color:var(--color-text-secondary);text-align:center;margin-bottom:2px;line-height:1.5">A 6-digit one-time code was sent to</div>
+      <div class="pin-modal-title" id="otp-modal-title">Шинэ и-мэйл баталгаажуулах</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);text-align:center;margin-bottom:2px;line-height:1.5">6 оронтой нэг удаагийн код илгээгдлээ:</div>
       <div class="otp-email" id="otp-modal-target"></div>
       <div class="otp-grid" id="otp-grid">
         <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
@@ -343,10 +343,10 @@
         <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
         <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this)" />
       </div>
-      <div class="field-error" id="otp-error">Please enter all 6 digits.</div>
+      <div class="field-error" id="otp-error">6 оронг бүрэн оруулна уу.</div>
       <div style="height:14px"></div>
-      <button class="btn-primary" onclick="verifyOtp()">Verify Code</button>
-      <button class="btn-outline" style="width:100%;margin:10px 0 6px" onclick="sendOtp()">Resend Code</button>
+      <button class="btn-primary" onclick="verifyOtp()">Код баталгаажуулах</button>
+      <button class="btn-outline" style="width:100%;margin:10px 0 6px" onclick="sendOtp()">Код дахин илгээх</button>
     </div>
   </div>
 
@@ -354,17 +354,17 @@
   <div class="modal-overlay" id="pin-overlay" onclick="if(event.target===this) closePinModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="pin-modal-title">Confirm Your Identity</div>
-      <div class="pin-modal-sub" id="pin-modal-sub">Enter your 4-digit PIN code to confirm this change.</div>
+      <div class="pin-modal-title">Өөрийгөө баталгаажуулах</div>
+      <div class="pin-modal-sub" id="pin-modal-sub">Энэ өөрчлөлтийг батлахын тулд 4 оронтой PIN кодоо оруулна уу.</div>
       <div class="pin-grid" id="pin-grid">
         <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
         <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
         <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
         <input class="pin-box" maxlength="1" type="password" inputmode="numeric" oninput="pinAdvance(this)" />
       </div>
-      <div class="field-error" id="pin-error">Please enter all 4 digits.</div>
+      <div class="field-error" id="pin-error">4 оронг бүрэн оруулна уу.</div>
       <div style="height:14px"></div>
-      <button class="btn-primary" onclick="confirmPin()">Confirm</button>
+      <button class="btn-primary" onclick="confirmPin()">Батлах</button>
       <div style="height:6px"></div>
     </div>
   </div>
@@ -377,7 +377,7 @@
         <button class="agreement-modal-close" onclick="closeContractModal()"><i data-lucide="x"></i></button>
       </div>
       <div class="agreement-modal-body" id="contract-modal-body"></div>
-      <button class="btn-primary" style="margin:16px 0 0" onclick="closeContractModal()">Close</button>
+      <button class="btn-primary" style="margin:16px 0 0" onclick="closeContractModal()">Хаалт</button>
     </div>
   </div>
 
@@ -414,9 +414,9 @@
     /* ── Contract texts ── */
     const CONTRACTS = [
       {
-        id: 'acc-open', name: 'Account Opening Agreement',
+        id: 'acc-open', name: 'Данс нээх гэрээ',
         signed: () => getAccountOpened(), date: () => getAccountOpenedDate(),
-        content: `This Account Opening Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client").
+        content: `This Данс нээх гэрээ ("Agreement") is entered into between BDSec Үнэт цаас JSC ("Company") and the undersigned client ("Client").
 
 1. By submitting this application, the Client confirms that all information provided is accurate, complete, and up to date, and agrees to notify the Company promptly of any changes.
 
@@ -429,11 +429,11 @@
 5. This Agreement remains in effect until terminated in writing by either party, subject to settlement of any outstanding obligations.`
       },
       {
-        id: 'nominal', name: 'Nominal Account Service Agreement',
+        id: 'nominal', name: 'Номинал дансны үйлчилгээний гэрээ',
         signed: () => getAccountOpened(), date: () => getAccountOpenedDate(),
-        content: `This Nominal Account Service Agreement governs the holding of securities on the Client's behalf through a nominal (omnibus) account maintained by the Company at the Securities Clearing House and Central Depository.
+        content: `This Номинал дансны үйлчилгээний гэрээ governs the holding of securities огноо the Client's behalf through a nominal (omnibus) account maintained by the Company at the Үнэт цаас Clearing House and Central Depository.
 
-1. Securities purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
+1. Үнэт цаас purchased through the Company may be recorded under a nominal account while beneficial ownership remains with the Client at all times.
 
 2. The Company will maintain accurate sub-records identifying the Client's beneficial interest in any securities held in the nominal account.
 
@@ -444,13 +444,13 @@
 5. Any corporate actions (dividends, rights issues, voting) relating to securities in the nominal account will be passed through to the Client in accordance with regulatory requirements.`
       },
       {
-        id: 'broker', name: 'Online Broker Service Agreement',
+        id: 'broker', name: 'Онлайн брокерын үйлчилгээний гэрээ',
         signed: () => getAccountOpened(), date: () => getAccountOpenedDate(),
-        content: `This Online Broker Service Agreement sets out the terms under which the Company provides electronic trading and brokerage services to the Client through its online and mobile platforms.
+        content: `This Онлайн брокерын үйлчилгээний гэрээ sets out the terms under which the Company provides electronic trading and brokerage services to the Client through its online and mobile platforms.
 
 1. The Client agrees to keep login credentials, PIN codes, and authentication methods confidential and to notify the Company immediately of any unauthorized access.
 
-2. Orders placed through the platform are executed on a best-efforts basis at prevailing market prices and may be subject to delays, market conditions, or exchange rules beyond the Company's control.
+2. Orders placed through the platform are executed огноо a best-efforts basis at prevailing market prices and may be subject to delays, market conditions, or exchange rules beyond the Company's control.
 
 3. The Company may charge brokerage commissions, settlement fees, and other charges as disclosed in its published fee schedule, which may be updated from time to time.
 
@@ -461,7 +461,7 @@
       {
         id: 'brokerage', name: 'Online Brokerage Agreement (KYC)',
         signed: () => getKycDone(), date: () => getKycDoneDate(),
-        content: `This Online Brokerage Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client") in connection with the provision of online brokerage and trading services.
+        content: `This Online Brokerage Agreement ("Agreement") is entered into between BDSec Үнэт цаас JSC ("Company") and the undersigned client ("Client") in connection with the provision of online brokerage and trading services.
 
 1. The Client confirms that the personal, financial, and identification information provided in this KYC form is true, accurate, and complete, and agrees to update the Company promptly of any material changes.
 
@@ -474,11 +474,11 @@
 5. The Company may decline, suspend, or terminate brokerage services where verification cannot be completed or where regulatory obligations so require.`
       },
       {
-        id: 'nominee', name: 'Nominee Account Agreement (KYC)',
+        id: 'nominee', name: 'Nominee Данс Agreement (KYC)',
         signed: () => getKycDone(), date: () => getKycDoneDate(),
-        content: `This Nominee Account Agreement governs the manner in which the Client's securities may be held through a nominee (omnibus) structure maintained by the Company with the Securities Clearing House and Central Depository.
+        content: `This Nominee Данс Agreement governs the manner in which the Client's securities may be held through a nominee (omnibus) structure maintained by the Company with the Үнэт цаас Clearing House and Central Depository.
 
-1. Securities recorded under the nominee account remain beneficially owned by the Client at all times, and the Company will maintain accurate sub-ledger records reflecting the Client's interest.
+1. Үнэт цаас recorded under the nominee account remain beneficially owned by the Client at all times, and the Company will maintain accurate sub-ledger records reflecting the Client's interest.
 
 2. The Client may, at any time and subject to applicable processing fees, request transfer of securities from the nominee account into an individually registered account.
 
@@ -489,18 +489,18 @@
 5. This Agreement remains effective for as long as the Client maintains an account with the Company, unless terminated earlier in accordance with its terms.`
       },
       {
-        id: 'tripartite', name: 'Tripartite Cash Transfer Agreement',
+        id: 'tripartite', name: 'Гурвалсан гэрээ',
         signed: () => !!(getTripartiteAgreement() && getTripartiteAgreement().signed), date: () => (getTripartiteAgreement() || {}).date || '',
-        content: `This Tripartite Cash Transfer Agreement ("Agreement") is entered into between the Client, BDSec Securities LLC ("Broker"), and the Mongolian Central Securities Depository ("MCSD").
+        content: `This Гурвалсан гэрээ ("Agreement") is entered into between the Client, БиДиСек ҮЦК ХХК ("Broker"), and the Mongolian Central Үнэт цаас Depository ("MCSD").
 
 1. Purpose
-This Agreement enables the Client to transfer cash electronically between their designated bank account, their Nominal (brokerage) account held with the Broker, and their account at the MCSD.
+This Agreement enables the Client to transfer cash electronically between their designated bank account, their Номинал (brokerage) account held with the Broker, and their account at the MCSD.
 
-2. Designated Bank Account
+2. Designated Bank Данс
 The Client shall designate one (1) bank account to be used for all transfers under this Agreement. The Client may change the designated bank account at any time by submitting a request through the trading platform.
 
 3. Transfers
-Funds may be transferred from the designated bank account to the Nominal account for the purpose of securities trading, and from the Nominal account back to the designated bank account upon withdrawal request.
+Funds may be transferred from the designated bank account to the Номинал account for the purpose of securities trading, and from the Номинал account back to the designated bank account upon withdrawal request.
 
 4. Authorization
 By signing this Agreement, the Client authorizes the Broker and the MCSD to process transfer instructions issued through the trading platform without requiring a separate physical signature for each transaction.
@@ -532,10 +532,10 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       const pillEl = document.getElementById('profile-status-pill');
       const subEl = document.getElementById('profile-status-sub');
       if (doneCount === 3) {
-        pillEl.innerHTML = `<span class="status-pill online"><i data-lucide="badge-check"></i>Online Trader</span>`;
-        subEl.textContent = 'All verification steps completed';
+        pillEl.innerHTML = `<span class="status-pill online"><i data-lucide="badge-check"></i>Онлайн арилжаа</span>`;
+        subEl.textContent = 'Бүх баталгаажуулалт амжилттай хийгдсэн';
       } else {
-        pillEl.innerHTML = `<span class="status-pill pending"><i data-lucide="clock"></i>Setup In Progress</span>`;
+        pillEl.innerHTML = `<span class="status-pill pending"><i data-lucide="clock"></i>Тохиргоо хийгдэж байна</span>`;
         subEl.textContent = `${doneCount} of 3 steps completed`;
       }
     }
@@ -544,14 +544,14 @@ By signing below, the Client acknowledges they have read, understood, and agree 
     function renderStatus() {
       const tri = getTripartiteAgreement();
       const steps = [
-        { title: 'Open MCSD Account', icon: 'building-2', done: getAccountOpened(),
-          doneSub: getAccountOpenedDate() ? `Completed on ${getAccountOpenedDate()}` : 'Completed',
+        { title: 'ҮЦТХТ данс нээх', icon: 'building-2', done: getAccountOpened(),
+          doneSub: getAccountOpenedDate() ? `Баталгаажсан огноо ${getAccountOpenedDate()}` : 'Биелсэн',
           todoSub: 'Not started — tap to open your account', page: 'open-account' },
-        { title: 'Complete KYC Verification', icon: 'shield-check', done: getKycDone(),
-          doneSub: getKycDoneDate() ? `Completed on ${getKycDoneDate()}` : 'Completed',
+        { title: 'KYC баталгаажуулалт', icon: 'shield-check', done: getKycDone(),
+          doneSub: getKycDoneDate() ? `Баталгаажсан огноо ${getKycDoneDate()}` : 'Биелсэн',
           todoSub: 'Required before you can trade — tap to start', page: 'kyc' },
         { title: 'Sign Tripartite Agreement', icon: 'file-signature', done: !!(tri && tri.signed),
-          doneSub: tri && tri.date ? `Signed on ${tri.date}` : 'Signed',
+          doneSub: tri && tri.date ? `Гэрээ байгуулсан огноо ${tri.date}` : 'Гарын үсэг зурсан',
           todoSub: 'Link your bank, brokerage and MCSD accounts', page: 'tripartite' },
       ];
       const el = document.getElementById('status-list');
@@ -577,29 +577,29 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       const dob     = localStorage.getItem('oa-dob')        || '';
       const gender  = localStorage.getItem('oa-gender')     || '';
       const address = localStorage.getItem('oa-address')    || '';
-      const country = (localStorage.getItem('reg-country') || 'Mongolia').trim();
+      const country = (localStorage.getItem('reg-country') || 'Монгол').trim();
 
       const rows = [
-        { label: 'Full Name', value: [first, last].filter(Boolean).join(' ') },
-        { label: 'Date of Birth', value: dob },
-        { label: 'Gender', value: gender },
-        { label: 'Citizenship', value: country === 'Mongolia' ? 'Mongolia' : 'Foreign Citizen' },
-        { label: 'Home Address', value: address },
+        { label: 'Бүтэн нэр', value: [first, last].filter(Boolean).join(' ') },
+        { label: 'Төрсөн огноо', value: dob },
+        { label: 'Хүйс', value: gender },
+        { label: 'Иргэншил', value: country === 'Монгол' ? 'Монгол' : 'Гадаад иргэн' },
+        { label: 'Гэрийн Хаяг', value: address },
       ];
       document.getElementById('personal-info-list').innerHTML = rows.map(r => `
         <div class="info-row">
           <div class="info-row-text">
             <div class="info-row-label">${r.label}</div>
-            <div class="info-row-value ${r.value ? '' : 'muted'}">${r.value || 'Not provided yet'}</div>
+            <div class="info-row-value ${r.value ? '' : 'muted'}">${r.value || 'Одоогоор оруулаагүй'}</div>
           </div>
         </div>`).join('');
     }
 
-    /* ── Account & login (editable) ── */
+    /* ── Данс & login (editable) ── */
     const EDITABLE_FIELDS = {
-      username: { label: 'Username', type: 'text', validate: v => v.trim().length >= 3 ? '' : 'Username must be at least 3 characters.' },
-      email:    { label: 'Email',    type: 'email', validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Please enter a valid email address.' },
-      phone:    { label: 'Phone Number', type: 'tel', validate: v => /^[0-9+\s-]{6,}$/.test(v.trim()) ? '' : 'Please enter a valid phone number.' },
+      username: { label: 'Хэрэглэгчийн нэр', type: 'text', validate: v => v.trim().length >= 3 ? '' : 'Хэрэглэгчийн нэр доод тал нь 3 тэмдэгт байх ёстой.' },
+      email:    { label: 'И-мэйл',    type: 'email', validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Зөв и-мэйл хаяг оруулна уу.' },
+      phone:    { label: 'Утасны дугаар', type: 'tel', validate: v => /^[0-9+\s-]{6,}$/.test(v.trim()) ? '' : 'Зөв утасны дугаар оруулна уу.' },
     };
     function renderAccountInfo() {
       const profile = getUserProfile();
@@ -612,7 +612,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
         <div class="info-row">
           <div class="info-row-text">
             <div class="info-row-label">${f.label}</div>
-            <div class="info-row-value ${val ? '' : 'muted'}">${val || 'Not set'}</div>
+            <div class="info-row-value ${val ? '' : 'muted'}">${val || 'Тохируулаагүй'}</div>
           </div>
           <button class="edit-btn" onclick="openEditModal('${key}')"><i data-lucide="pencil"></i></button>
         </div>`;
@@ -626,7 +626,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       const f = EDITABLE_FIELDS[key];
       const profile = getUserProfile();
       const current = key === 'phone' ? (profile.phone || localStorage.getItem('oa-phone') || '') : profile[key];
-      document.getElementById('edit-modal-title').textContent = `Edit ${f.label}`;
+      document.getElementById('edit-modal-title').textContent = `Засах ${f.label}`;
       document.getElementById('edit-modal-label').textContent = f.label;
       const input = document.getElementById('edit-modal-input');
       input.type = f.type;
@@ -675,7 +675,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
     }
     function openOtpModal() {
       const kind = pendingEdit.field;
-      document.getElementById('otp-modal-title').textContent = `Verify New ${pendingEdit.label}`;
+      document.getElementById('otp-modal-title').textContent = `Шинэ ${pendingEdit.label} баталгаажуулах`;
       document.getElementById('otp-modal-target').textContent = maskContact(pendingEdit.value, kind);
       const boxes = document.querySelectorAll('#otp-grid .otp-box');
       boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
@@ -707,7 +707,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       const errEl = document.getElementById('otp-error');
       if (code.length !== 6) {
         boxes.forEach(b => { if (!b.value) b.classList.add('error'); });
-        errEl.textContent = 'Please enter all 6 digits.';
+        errEl.textContent = '6 оронг бүрэн оруулна уу.';
         errEl.classList.add('show');
         return;
       }
@@ -715,10 +715,10 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       openPinModal();
     }
 
-    /* ── PIN verification (required before saving General Information changes) ── */
+    /* ── PIN verification (required before saving Ерөнхий мэдээлэл changes) ── */
     let pendingEdit = null;
     function openPinModal() {
-      document.getElementById('pin-modal-sub').textContent = `Enter your 4-digit PIN code to confirm updating your ${pendingEdit.label.toLowerCase()}.`;
+      document.getElementById('pin-modal-sub').textContent = `${pendingEdit.label.toLowerCase()} шинэчлэхийг батлахын тулд 4 оронтой PIN кодоо оруулна уу.`;
       const boxes = document.querySelectorAll('#pin-grid .pin-box');
       boxes.forEach(b => { b.value = ''; b.classList.remove('error'); });
       document.getElementById('pin-error').classList.remove('show');
@@ -747,7 +747,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       const errEl = document.getElementById('pin-error');
       if (pin.length !== 4) {
         boxes.forEach(b => { if (!b.value) b.classList.add('error'); });
-        errEl.textContent = 'Please enter all 4 digits.';
+        errEl.textContent = '4 оронг бүрэн оруулна уу.';
         errEl.classList.add('show');
         return;
       }
@@ -771,7 +771,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
             <div class="agreement-check ${signed ? 'signed' : ''}"><i data-lucide="${signed ? 'check' : 'file-text'}"></i></div>
             <div class="ag-text">
               <div class="agreement-name">${c.name}</div>
-              <div class="agreement-sub ${signed ? '' : 'pending'}">${signed ? `Signed${date ? ' on ' + date : ''}` : 'Not signed yet'}</div>
+              <div class="agreement-sub ${signed ? '' : 'pending'}">${signed ? `Гарын үсэг зурсан${date ? ' огноо ' + date : ''}` : 'Гарын үсэг зураагүй'}</div>
             </div>
           </div>
           <div class="ag-right"><span class="chevron-icon"><i data-lucide="chevron-right"></i></span></div>

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>KYC Verification</title>
+  <title>KYC баталгаажуулалт</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -29,7 +29,7 @@
     .kyc-intro { padding: 0 16px 6px; }
     .kyc-intro p { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin: 0; }
 
-    /* ── Form basics (shared with Open Account patterns) ── */
+    /* ── Form basics (shared with Данс нээх patterns) ── */
     .form-body { padding: 0 16px 24px; }
     .field-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
     .field-wrap { margin-bottom: 14px; }
@@ -50,20 +50,27 @@
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); opacity: 0.85; cursor: pointer; }
     [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.35); }
     .field-row { display: flex; gap: 10px; }
-    .field-row .field-wrap { flex: 1; }
-
-    .btn-primary {
-      width: 100%; padding: 14px; background: var(--color-primary); border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; transition: opacity 0.15s;
-      margin-top: 8px; margin-bottom: 24px;
+    .field-row .field-wrap { flex: 1; }    .btn-primary {
+      width: 100%; min-height: 52px; padding: 14px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-home {
       width: 100%; padding: 14px; background: var(--color-bg-card); border: 1.5px solid var(--color-border);
       border-radius: 10px; font-size: 15px; font-weight: 700; color: var(--color-text-primary); cursor: pointer;
     }
     .btn-row { display: flex; gap: 10px; margin-top: 8px; margin-bottom: 24px; }
-    .btn-row .btn-primary, .btn-row .btn-outline { margin: 0; }
+    .btn-row .btn-primary, .btn-row    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
+      cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-outline:hover { border-color: var(--color-primary); }
     .btn-outline {
       flex: 1; padding: 13px; background: transparent;
       border: 1.5px solid var(--color-border); border-radius: 10px;
@@ -136,7 +143,7 @@
       margin: 6px 0 12px; padding-top: 16px; border-top: 1px dashed var(--color-border);
     }
 
-    /* ── Conditional reveal blocks ── */
+    /* ── Нөхцөлт reveal blocks ── */
     .cond-block { overflow: hidden; }
     .cond-inner {
       margin-top: 2px; margin-bottom: 14px; padding: 14px; border-radius: 12px;
@@ -242,7 +249,7 @@
     .agreement-modal-close svg { width: 16px; height: 16px; }
     .agreement-modal-body { overflow-y: auto; font-size: 13px; line-height: 1.75; color: var(--color-text-secondary); white-space: pre-line; }
 
-    /* ── Signature ── */
+    /* ── Гарын үсэг ── */
     .sig-section { margin-top: 8px; margin-bottom: 8px; }
     .sig-placeholder {
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
@@ -297,7 +304,7 @@
   <!-- Sub-page header -->
   <div class="sub-header" id="kyc-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">KYC Verification</div>
+    <div class="sub-title">KYC баталгаажуулалт</div>
   </div>
 
   <div class="kyc-intro" id="kyc-intro">
@@ -315,17 +322,17 @@
     <div class="success-msg">
       Thank you. Your KYC information has been submitted for review. We will notify you once your verification is complete and your account is ready for online trading.
     </div>
-    <button class="btn-home" id="kyc-success-btn" onclick="goHome()">Back to Home</button>
+    <button class="btn-home" id="kyc-success-btn" onclick="goHome()">Нүүр рүү буцах</button>
   </div>
 
   <!-- ══ OTP VERIFICATION MODAL (phone / email) ══ -->
   <div id="kyc-otp-modal" class="agreement-modal-overlay">
     <div class="agreement-modal-card" style="max-height:none">
       <div class="agreement-modal-hdr">
-        <span id="kyc-otp-title" class="agreement-modal-title">Verify Phone Number</span>
+        <span id="kyc-otp-title" class="agreement-modal-title">Утасны дугаар баталгаажуулах</span>
         <button class="agreement-modal-close" onclick="closeKycOtp()"><i data-lucide="x"></i></button>
       </div>
-      <p style="font-size:13px;color:var(--color-text-secondary);text-align:center;margin:0 0 4px;line-height:1.6">A 6-digit one-time code was sent to</p>
+      <p style="font-size:13px;color:var(--color-text-secondary);text-align:center;margin:0 0 4px;line-height:1.6">6 оронтой нэг удаагийн код илгээгдлээ:</p>
       <div class="otp-email" id="kyc-otp-target"></div>
       <div class="otp-grid" id="kyc-otp-grid">
         <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
@@ -335,9 +342,9 @@
         <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
         <input class="otp-box" maxlength="1" type="tel" inputmode="numeric" oninput="kycOtpAdvance(this)" />
       </div>
-      <div class="verify-hint" id="kyc-otp-error" style="text-align:center">Please enter all 6 digits.</div>
-      <button class="btn-primary" style="margin:6px 0 10px" onclick="kycVerifyOtp()">Verify Code</button>
-      <button class="btn-outline" style="width:100%;margin-bottom:0" onclick="kycSendOtp(kycOtpFieldId, kycOtpKind, kycOtpLabel)">Resend Code</button>
+      <div class="verify-hint" id="kyc-otp-error" style="text-align:center">6 оронг бүрэн оруулна уу.</div>
+      <button class="btn-primary" style="margin:6px 0 10px" onclick="kycVerifyOtp()">Код баталгаажуулах</button>
+      <button class="btn-outline" style="width:100%;margin-bottom:0" onclick="kycSendOtp(kycOtpFieldId, kycOtpKind, kycOtpLabel)">Код дахин илгээх</button>
     </div>
   </div>
 
@@ -349,7 +356,7 @@
         <button class="agreement-modal-close" onclick="closeKycAgreement()"><i data-lucide="x"></i></button>
       </div>
       <div id="kyc-agreement-body" class="agreement-modal-body"></div>
-      <button class="btn-primary" style="margin:16px 0 0" onclick="closeKycAgreement()">I've Read This</button>
+      <button class="btn-primary" style="margin:16px 0 0" onclick="closeKycAgreement()">Уншиж танилцлаа</button>
     </div>
   </div>
 
@@ -361,12 +368,12 @@
 const PROVINCES = ['Ulaanbaatar','Darkhan-Uul','Orkhon','Töv','Selenge','Khövsgöl','Arkhangai','Bayan-Ölgii','Bayankhongor','Bulgan','Dornod','Dornogovi','Dundgovi','Govi-Altai','Govisümber','Khentii','Khovd','Ömnögovi','Övörkhangai','Sükhbaatar','Uvs','Zavkhan'];
 const DISTRICTS = ['Bayangol','Bayanzürkh','Chingeltei','Khan-Uul','Nalaikh','Songinokhairkhan','Sükhbaatar','Baganuur','Bagakhangai'];
 const COUNTRIES = ['United States','United Kingdom','China','Japan','South Korea','Russia','Germany','France','Singapore','Canada','Australia','Other'];
-const COUNTRIES_WITH_MN = ['Mongolia', ...COUNTRIES];
+const COUNTRIES_WITH_MN = ['Монгол', ...COUNTRIES];
 
 const KYC_AGREEMENTS = {
   brokerage: {
     name: 'Online Brokerage Agreement',
-    content: `This Online Brokerage Agreement ("Agreement") is entered into between BDSec Securities JSC ("Company") and the undersigned client ("Client") in connection with the provision of online brokerage and trading services.
+    content: `This Online Brokerage Agreement ("Agreement") is entered into between BDSec Үнэт цаас JSC ("Company") and the undersigned client ("Client") in connection with the provision of online brokerage and trading services.
 
 1. The Client confirms that the personal, financial, and identification information provided in this KYC form is true, accurate, and complete, and agrees to update the Company promptly of any material changes.
 
@@ -379,10 +386,10 @@ const KYC_AGREEMENTS = {
 5. The Company may decline, suspend, or terminate brokerage services where verification cannot be completed or where regulatory obligations so require.`
   },
   nominee: {
-    name: 'Nominee Account Agreement',
-    content: `This Nominee Account Agreement governs the manner in which the Client's securities may be held through a nominee (omnibus) structure maintained by the Company with the Securities Clearing House and Central Depository.
+    name: 'Nominee Данс Agreement',
+    content: `This Nominee Данс Agreement governs the manner in which the Client's securities may be held through a nominee (omnibus) structure maintained by the Company with the Үнэт цаас Clearing House and Central Depository.
 
-1. Securities recorded under the nominee account remain beneficially owned by the Client at all times, and the Company will maintain accurate sub-ledger records reflecting the Client's Interest.
+1. Үнэт цаас recorded under the nominee account remain beneficially owned by the Client at all times, and the Company will maintain accurate sub-ledger records reflecting the Client's Interest.
 
 2. The Client may, at any time and subject to applicable processing fees, request transfer of securities from the nominee account into an individually registered account.
 
@@ -396,7 +403,7 @@ const KYC_AGREEMENTS = {
 const kycReadAgreements = new Set();
 const REPEAT_TEMPLATES = {};
 let _kycUid = 0;
-/* ids of email/phone inputs on the current step that require OTP verification before continuing */
+/* ids of email/phone inputs огноо the current step that require OTP verification before continuing */
 let kycVerifyFieldIds = [];
 let kycOtpFieldId = null, kycOtpKind = null, kycOtpLabel = null;
 function uid(prefix) { return `${prefix}-${_kycUid++}`; }
@@ -415,7 +422,7 @@ function sectionHeader(icon, title, subtitle, isFirst) {
 }
 function subHeader(label) { return `<div class="kyc-subhdr">${label}</div>`; }
 
-const LOCKED_BADGE = ` <span class="locked-badge"><i data-lucide="lock"></i>From your profile</span>`;
+const LOCKED_BADGE = ` <span class="locked-badge"><i data-lucide="lock"></i>Өөрчлөх боломжгүй</span>`;
 
 function fText(id, label, opts = {}) {
   const val = opts.value ? ` value="${opts.value}"` : '';
@@ -436,9 +443,9 @@ function fSelect(id, label, options, opts = {}) {
   }
   const optsHtml = options.map(o => `<option${o === opts.value ? ' selected' : ''}>${o}</option>`).join('');
   return `<div class="field-wrap"><label class="field-label">${label}</label>
-    <select class="inp inp-select" id="${id}" onchange="kycEvalConditionals()"><option value="">Select…</option>${optsHtml}</select></div>`;
+    <select class="inp inp-select" id="${id}" onchange="kycEvalConditionals()"><option value="">Сонгох…</option>${optsHtml}</select></div>`;
 }
-/* Email / mobile phone field with an OTP "Verify" action — id is the input id,
+/* И-мэйл / mobile phone field with an OTP "Verify" action — id is the input id,
    kind is 'email' or 'phone' (controls masking + modal copy). */
 function fVerifiable(id, label, kind, opts = {}) {
   const val = opts.value ? ` value="${opts.value}"` : '';
@@ -448,7 +455,7 @@ function fVerifiable(id, label, kind, opts = {}) {
   return `<div class="field-wrap"><label class="field-label">${label}${badge}</label>
     <div class="verify-field-row">
       <input class="inp" type="${opts.type || 'text'}" id="${id}" placeholder="${opts.placeholder || ''}"${readonlyAttr}${val} />
-      <button type="button" class="verify-btn" id="${id}-vbtn" onclick="kycSendOtp('${id}','${kind}','${label}')">Verify</button>
+      <button type="button" class="verify-btn" id="${id}-vbtn" onclick="kycSendOtp('${id}','${kind}','${label}')">Баталгаажуулах</button>
     </div>
     <div class="verify-status" id="${id}-vstatus" style="display:none"><i data-lucide="check-circle"></i><span>Verified</span></div>
     <div class="verify-hint" id="${id}-vhint">Please verify your ${label.toLowerCase()} to continue.</div>
@@ -473,7 +480,7 @@ function fUpload(label) {
       <div class="upload-card-label">${label}</div>
       <div class="upload-card-status" id="${id}-status">Tap to upload file</div>
     </div>
-    <button type="button" class="upload-card-btn" onclick="document.getElementById('${id}').click()">Choose</button>
+    <button type="button" class="upload-card-btn" onclick="document.getElementById('${id}').click()">Сонгох</button>
   </div>`;
 }
 function condBlock(showIfId, showIfValue, innerHtml) {
@@ -516,7 +523,7 @@ function kycAddRow(containerId) {
   const idx = container.children.length;
   const row = document.createElement('div');
   row.className = 'repeat-row';
-  row.innerHTML = fn(idx) + `<button type="button" class="repeat-remove" onclick="this.parentElement.remove()"><i data-lucide="trash-2"></i><span>Remove</span></button>`;
+  row.innerHTML = fn(idx) + `<button type="button" class="repeat-remove" onclick="this.parentElement.remove()"><i data-lucide="trash-2"></i><span>Устгах</span></button>`;
   container.appendChild(row);
   lucide.createIcons();
 }
@@ -525,8 +532,8 @@ function kycAddRow(containerId) {
    PROFILE DETECTION
 ════════════════════════════════════════════════════════ */
 function getProfile() {
-  const usertype = (localStorage.getItem('reg-usertype') || 'Individual').trim();
-  const country  = (localStorage.getItem('reg-country')  || 'Mongolia').trim();
+  const usertype = (localStorage.getItem('reg-usertype') || 'Хувь хүн').trim();
+  const country  = (localStorage.getItem('reg-country')  || 'Монгол').trim();
   const dobStr   = localStorage.getItem('oa-dob') || '';
   let age = 30;
   if (dobStr) {
@@ -539,8 +546,8 @@ function getProfile() {
     }
   }
   return {
-    isCorporate: usertype === 'Corporate',
-    isMongolian: country === 'Mongolia',
+    isCorporate: usertype === 'Байгууллага',
+    isMongolian: country === 'Монгол',
     isChild: age < 16,
     age, dobStr,
   };
@@ -557,49 +564,49 @@ function renderGeneralInfo(profile, isFirst) {
   const phone     = localStorage.getItem('oa-phone')      || '';
   const address   = localStorage.getItem('oa-address')    || '';
 
-  let html = sectionHeader('user-circle', 'General Information', null, isFirst);
-  html += `<div class="field-row">${fText(uid('gi-family'), 'Family Name')}${fText('kyc-surname', 'Surname', { value: surname, locked: !!surname })}</div>`;
-  html += fText('kyc-given', 'Given Name', { value: givenName, locked: !!givenName });
-  html += `<div class="field-row">${fText('kyc-citizenship', 'Citizenship', { value: profile.isMongolian ? 'Mongolia' : 'Foreign Citizen', readonly: true })}${fSelect('kyc-gender', 'Gender', ['Male', 'Female'], { value: gender, locked: !!gender })}</div>`;
+  let html = sectionHeader('user-circle', 'Ерөнхий мэдээлэл', null, isFirst);
+  html += `<div class="field-row">${fText(uid('gi-family'), 'Ургийн овог')}${fText('kyc-surname', 'Овог', { value: surname, locked: !!surname })}</div>`;
+  html += fText('kyc-given', 'Нэр', { value: givenName, locked: !!givenName });
+  html += `<div class="field-row">${fText('kyc-citizenship', 'Иргэншил', { value: profile.isMongolian ? 'Монгол' : 'Гадаад иргэн', readonly: true })}${fSelect('kyc-gender', 'Хүйс', ['Эрэгтэй', 'Эмэгтэй'], { value: gender, locked: !!gender })}</div>`;
   const regnumField = profile.isMongolian
-    ? fText(uid('gi-regnum'), 'Register Number', { placeholder: 'АА00000000' })
-    : fText(uid('gi-passport'), 'Passport Number', { placeholder: 'Passport number' });
-  html += `<div class="field-row">${regnumField}${fText('kyc-dob', 'Date of Birth', { type: 'date', value: profile.dobStr, readonly: !!profile.dobStr })}</div>`;
-  html += fVerifiable(uid('gi-email'), 'Email', 'email', { type: 'email', placeholder: 'name@example.com' });
-  html += `<div class="field-row">${fVerifiable('kyc-mobile', 'Mobile Phone', 'phone', { type: 'tel', value: phone, locked: !!phone })}${fText(uid('gi-secphone'), 'Secondary Phone', { type: 'tel' })}</div>`;
+    ? fText(uid('gi-regnum'), 'Регистрийн дугаар', { placeholder: 'АА00000000' })
+    : fText(uid('gi-passport'), 'Passport Number', { placeholder: 'Паспортын дугаар' });
+  html += `<div class="field-row">${regnumField}${fText('kyc-dob', 'Төрсөн огноо', { type: 'date', value: profile.dobStr, readonly: !!profile.dobStr })}</div>`;
+  html += fVerifiable(uid('gi-email'), 'И-мэйл', 'email', { type: 'email', placeholder: 'name@example.com' });
+  html += `<div class="field-row">${fVerifiable('kyc-mobile', 'Гар утас', 'phone', { type: 'tel', value: phone, locked: !!phone })}${fText(uid('gi-secphone'), 'Нэмэлт утас', { type: 'tel' })}</div>`;
   return html;
 }
 
 function renderAddressInfo(profile) {
   const address = localStorage.getItem('oa-address') || '';
-  let html = sectionHeader('map-pin', 'Permanent Address');
+  let html = sectionHeader('map-pin', 'Байнгын Оршин суугаа Хаяг');
   if (profile.isMongolian) {
-    html += `<div class="field-row">${fSelect(uid('gi-province'), 'Province / City', PROVINCES)}${fSelect(uid('gi-district'), 'District / Soum', DISTRICTS)}</div>`;
-    html += fText('kyc-address', 'Address', { value: address, locked: !!address });
+    html += `<div class="field-row">${fSelect(uid('gi-province'), 'Аймаг / Хот', PROVINCES)}${fSelect(uid('gi-district'), 'Дүүрэг / Сум', DISTRICTS)}</div>`;
+    html += fText('kyc-address', 'Хаяг', { value: address, locked: !!address });
   } else {
     html += fSelect(uid('gi-country'), 'Country', COUNTRIES);
-    html += fTextarea(uid('gi-address'), 'Address');
+    html += fTextarea(uid('gi-address'), 'Хаяг');
   }
 
   const tempId = uid('gi-temp');
   let tempInner;
   if (profile.isMongolian) {
-    tempInner = fSelect(uid('gi-tprovince'), 'Province / City', PROVINCES) +
-                fSelect(uid('gi-tdistrict'), 'District / Soum', DISTRICTS) +
-                fText(uid('gi-taddress'), 'Address');
+    tempInner = fSelect(uid('gi-tprovince'), 'Аймаг / Хот', PROVINCES) +
+                fSelect(uid('gi-tdistrict'), 'Дүүрэг / Сум', DISTRICTS) +
+                fText(uid('gi-taddress'), 'Хаяг');
   } else {
-    tempInner = fSelect(uid('gi-tcountry'), 'Country', COUNTRIES) + fTextarea(uid('gi-taddress'), 'Address');
+    tempInner = fSelect(uid('gi-tcountry'), 'Country', COUNTRIES) + fTextarea(uid('gi-taddress'), 'Хаяг');
   }
-  html += fRadio(tempId, 'Do you have a temporary residence?');
-  html += condBlock(tempId, 'Yes', tempInner);
+  html += fRadio(tempId, 'Та түр оршин суугч уу?');
+  html += condBlock(tempId, 'Тийм', tempInner);
   return html;
 }
 
 function renderEmployment() {
   let html = sectionHeader('briefcase', 'Employment');
   html += fSelect(uid('emp-type'), 'Employment Type', ['Civil Servant', 'State Owned Enterprise', 'Private Sector', 'Foreign Registered Entity', 'Transnational Organization', 'Self Employed', 'Student', 'Unemployed', 'Pensioner', 'Other']);
-  html += `<div class="field-row">${fText(uid('emp-employer'), 'Employer Name')}${fText(uid('emp-industry'), 'Industry Type')}</div>`;
-  html += `<div class="field-row">${fText(uid('emp-position'), 'Position')}${fText(uid('emp-address'), 'Employer Address')}</div>`;
+  html += `<div class="field-row">${fText(uid('emp-employer'), 'Ажил олгогчийн нэр')}${fText(uid('emp-industry'), 'Салбарын төрөл')}</div>`;
+  html += `<div class="field-row">${fText(uid('emp-position'), 'Албан тушаал')}${fText(uid('emp-address'), 'Employer Хаяг')}</div>`;
   return html;
 }
 
@@ -610,19 +617,19 @@ function renderPepInfo() {
   html += fRadio(famId, 'Does a family member relate to a PEP?');
   const listId = uid('pep-list');
   REPEAT_TEMPLATES[listId] = (i) => `
-    <div class="field-row">${fText(`${listId}-name-${i}`, 'PEP Full Name')}${fText(`${listId}-rel-${i}`, 'Relationship')}</div>
-    ${fText(`${listId}-pos-${i}`, 'Position')}
-    <div class="field-row">${fText(`${listId}-start-${i}`, 'Start Date', { type: 'date' })}${fText(`${listId}-end-${i}`, 'End Date', { type: 'date' })}</div>`;
+    <div class="field-row">${fText(`${listId}-name-${i}`, 'PEP бүтэн нэр')}${fText(`${listId}-rel-${i}`, 'Хамаарал')}</div>
+    ${fText(`${listId}-pos-${i}`, 'Албан тушаал')}
+    <div class="field-row">${fText(`${listId}-start-${i}`, 'Эхлэх огноо', { type: 'date' })}${fText(`${listId}-end-${i}`, 'Дуусах огноо', { type: 'date' })}</div>`;
   html += condBlock(famId, 'Yes',
     `<div class="repeat-list" id="${listId}"></div>
-     <button type="button" class="repeat-add-btn" onclick="kycAddRow('${listId}')"><i data-lucide="plus"></i><span>Add PEP Relation</span></button>`);
+     <button type="button" class="repeat-add-btn" onclick="kycAddRow('${listId}')"><i data-lucide="plus"></i><span>PEP хамаарал нэмэх</span></button>`);
   return html;
 }
 
 function renderFinancialInfo() {
   let html = sectionHeader('wallet', 'Financial Information');
   const incomeId = uid('fin-income');
-  html += fSelect(incomeId, 'Monthly Income', ['Less than 1,000,000₮', '1,000,000 – 5,000,000₮', '5,000,000 – 10,000,000₮', '10,000,000 – 20,000,000₮', '20,000,000 – 50,000,000₮', '50,000,000 – 100,000,000₮', 'More than 100,000,000₮', 'Irregular Income']);
+  html += fSelect(incomeId, 'Monthly Income', ['Бага 1,000,000₮', '1,000,000 – 5,000,000₮', '5,000,000 – 10,000,000₮', '10,000,000 – 20,000,000₮', '20,000,000 – 50,000,000₮', '50,000,000 – 100,000,000₮', 'More than 100,000,000₮', 'Irregular Income']);
   const irregularInner = fText(uid('fin-last12'), 'Last 12 Months Income') +
     fChips(uid('fin-sources'), 'Income Sources', ['Salary', 'Business Income', 'Pension', 'Inheritance', 'Other']);
   html += condBlock(incomeId, 'Irregular Income', irregularInner);
@@ -632,10 +639,10 @@ function renderFinancialInfo() {
 function renderActingOnBehalf(profile) {
   let html = sectionHeader('user-cog', 'Acting On Behalf Of Another Person');
   const aobId = uid('aob');
-  html += fRadio(aobId, 'Are you acting on behalf of another person?');
-  let inner = fSelect(uid('aob-citizenship'), 'Citizenship', COUNTRIES_WITH_MN);
-  inner += fText(uid('aob-regnum'), 'Register Number');
-  inner += `<div class="field-row">${fText(uid('aob-surname'), 'Surname')}${fText(uid('aob-given'), 'Given Name')}</div>`;
+  html += fRadio(aobId, 'Are you acting огноо behalf of another person?');
+  let inner = fSelect(uid('aob-citizenship'), 'Иргэншил', COUNTRIES_WITH_MN);
+  inner += fText(uid('aob-regnum'), 'Регистрийн дугаар');
+  inner += `<div class="field-row">${fText(uid('aob-surname'), 'Овог')}${fText(uid('aob-given'), 'Нэр')}</div>`;
   inner += fText(uid('aob-employment'), 'Employment');
   inner += fText(uid('aob-phone'), 'Phone', { type: 'tel' });
   inner += fRadio(uid('aob-pep'), 'Is this person a Politically Exposed Person?');
@@ -650,10 +657,10 @@ function renderEducation() {
 }
 
 function renderEmergencyContact() {
-  let html = sectionHeader('phone-call', 'Emergency Contact');
-  html += `<div class="field-row">${fSelect(uid('ec-rel'), 'Relationship', ['Parent', 'Spouse', 'Sibling', 'Child', 'Relative', 'Friend', 'Other'])}${fText(uid('ec-name'), 'Full Name')}</div>`;
-  html += `<div class="field-row">${fText(uid('ec-regnum'), 'Register Number')}${fText(uid('ec-phone'), 'Mobile Phone', { type: 'tel' })}</div>`;
-  html += fText(uid('ec-address'), 'Address');
+  let html = sectionHeader('phone-call', 'Emergency Холбоо барих');
+  html += `<div class="field-row">${fSelect(uid('ec-rel'), 'Хамаарал', ['Эцэг/эх', 'Эхнэр/нөхөр', 'Ах/эгч/дүү', 'Хүүхэд', 'Хамаатан', 'Найз', 'Other'])}${fText(uid('ec-name'), 'Бүтэн нэр')}</div>`;
+  html += `<div class="field-row">${fText(uid('ec-regnum'), 'Регистрийн дугаар')}${fText(uid('ec-phone'), 'Гар утас', { type: 'tel' })}</div>`;
+  html += fText(uid('ec-address'), 'Хаяг');
   return html;
 }
 
@@ -661,19 +668,19 @@ function renderAttorneyInfo() {
   let html = sectionHeader('scale', 'Attorney Information', 'Only if represented by Power of Attorney');
   const poaId = uid('poa-rep');
   html += fRadio(poaId, 'Are you represented by a Power of Attorney (POA)?');
-  const inner = fText(uid('poa-name'), 'Representative Full Name') +
-    fText(uid('poa-regnum'), 'Register Number') +
-    `<div class="field-row">${fText(uid('poa-issue'), 'POA Issue Date', { type: 'date' })}${fText(uid('poa-expiry'), 'POA Expiry Date', { type: 'date' })}</div>` +
+  const inner = fText(uid('poa-name'), 'Representative Бүтэн нэр') +
+    fText(uid('poa-regnum'), 'Регистрийн дугаар') +
+    `<div class="field-row">${fText(uid('poa-issue'), 'Итгэмжлэл олгосон огноо', { type: 'date' })}${fText(uid('poa-expiry'), 'POA Дуусах огноо', { type: 'date' })}</div>` +
     fText(uid('poa-regno2'), 'POA Registration Number');
   html += condBlock(poaId, 'Yes', inner);
   return html;
 }
 
 function renderGuardianInfo() {
-  let html = sectionHeader('users', 'Guardian Information');
-  html += `<div class="field-row">${fSelect(uid('g-rel'), 'Relationship', ['Father', 'Mother', 'Guardian', 'Other'])}${fText(uid('g-name'), 'Full Name')}</div>`;
-  html += `<div class="field-row">${fText(uid('g-regnum'), 'Register Number')}${fText(uid('g-phone'), 'Mobile Phone', { type: 'tel' })}</div>`;
-  html += fText(uid('g-address'), 'Address');
+  let html = sectionHeader('users', 'Асран хамгаалагч Information');
+  html += `<div class="field-row">${fSelect(uid('g-rel'), 'Хамаарал', ['Эцэг', 'Эх', 'Асран хамгаалагч', 'Other'])}${fText(uid('g-name'), 'Бүтэн нэр')}</div>`;
+  html += `<div class="field-row">${fText(uid('g-regnum'), 'Регистрийн дугаар')}${fText(uid('g-phone'), 'Гар утас', { type: 'tel' })}</div>`;
+  html += fText(uid('g-address'), 'Хаяг');
   return html;
 }
 
@@ -698,27 +705,27 @@ function renderAgreements() {
 }
 
 function renderSignature(title, opts = {}) {
-  let html = `<div class="kyc-section-hdr"><div class="kyc-section-icon"><i data-lucide="signature"></i></div><div><div class="kyc-section-title">Signature</div></div></div>`;
+  let html = `<div class="kyc-section-hdr"><div class="kyc-section-icon"><i data-lucide="signature"></i></div><div><div class="kyc-section-title">Гарын үсэг</div></div></div>`;
   html += `<div class="sig-section">
     <label class="field-label">${title}</label>
     <div class="sig-placeholder" id="sig-placeholder" onclick="openSignaturePad()">
       <div class="sig-placeholder-icon"><i data-lucide="pen-line"></i></div>
-      <div class="sig-placeholder-text">Tap to draw your signature</div>
+      <div class="sig-placeholder-text">Гарын үсгээ зурахын тулд товшино уу</div>
     </div>
     <div class="sig-pad" id="sig-pad" style="display:none">
       <canvas id="sig-canvas"></canvas>
       <div class="sig-pad-actions">
-        <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Clear</span></button>
-        <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Done</span></button>
+        <button class="sig-action-btn" onclick="clearCanvas()"><i data-lucide="eraser"></i><span>Арилгах</span></button>
+        <button class="sig-action-btn primary" onclick="saveSignature()"><i data-lucide="check"></i><span>Дуусгах</span></button>
       </div>
     </div>
     <div class="sig-done" id="sig-done" style="display:none">
-      <div class="sig-done-left"><i data-lucide="check-circle"></i><span>Signature captured</span></div>
-      <button class="sig-redo-btn" onclick="redoSignature()">Redo</button>
+      <div class="sig-done-left"><i data-lucide="check-circle"></i><span>Гарын үсэг хадгалагдлаа</span></div>
+      <button class="sig-redo-btn" onclick="redoSignature()">Дахин зурах</button>
     </div>
   </div>`;
   if (opts.stamp) {
-    html += `<div style="margin-top:6px"><label class="field-label">Company Stamp <span style="font-weight:400;color:var(--color-text-disabled)">(optional)</span></label>${fUpload('Company stamp image')}</div>`;
+    html += `<div style="margin-top:6px"><label class="field-label">Компанийн тамга <span style="font-weight:400;color:var(--color-text-disabled)">(заавал биш)</span></label>${fUpload('Компанийн тамганы зураг')}</div>`;
   }
   return html;
 }
@@ -729,33 +736,33 @@ function renderSignature(title, opts = {}) {
 function renderCompanyInfo() {
   let html = sectionHeader('building-2', 'Company Information', null, true);
   html += fText(uid('co-name'), 'Company Name');
-  html += `<div class="field-row">${fText(uid('co-regnum'), 'Registration Number')}${fText(uid('co-tax'), 'Tax Number')}</div>`;
-  html += `<div class="field-row">${fText(uid('co-incorp-date'), 'Date of Incorporation', { type: 'date' })}${fSelect(uid('co-incorp-country'), 'Country of Incorporation', COUNTRIES_WITH_MN)}</div>`;
+  html += `<div class="field-row">${fText(uid('co-regnum'), 'Registration Number')}${fText(uid('co-tax'), 'Татварын дугаар')}</div>`;
+  html += `<div class="field-row">${fText(uid('co-incorp-date'), 'Байгуулагдсан огноо', { type: 'date' })}${fSelect(uid('co-incorp-country'), 'Байгуулагдсан улс', COUNTRIES_WITH_MN)}</div>`;
   html += fText(uid('co-state-regnum'), 'State Registration Number');
   html += fSelect(uid('co-legal-type'), 'Legal Entity Type', ['Government Organization', 'State Owned Enterprise', 'Private Company', 'Listed Company', 'Closed Company', 'LLC', 'NGO', 'Non Profit', 'Partnership', 'Cooperative', 'Foreign Registered Company', 'Transnational Organization', 'Other']);
 
-  html += subHeader('Company Address');
+  html += subHeader('Company Хаяг');
   const locId = uid('co-loc');
-  html += fRadio(locId, 'Is the company registered in Mongolia?');
+  html += fRadio(locId, 'Is the company registered in Монгол?');
   html += condBlock(locId, 'Yes',
-    fSelect(uid('co-province'), 'Province / City', PROVINCES) +
-    fSelect(uid('co-district'), 'District / Soum', DISTRICTS) +
-    fText(uid('co-address'), 'Address'));
+    fSelect(uid('co-province'), 'Аймаг / Хот', PROVINCES) +
+    fSelect(uid('co-district'), 'Дүүрэг / Сум', DISTRICTS) +
+    fText(uid('co-address'), 'Хаяг'));
   html += condBlock(locId, 'No',
     fSelect(uid('co-country'), 'Country', COUNTRIES) +
-    fTextarea(uid('co-faddress'), 'Address'));
+    fTextarea(uid('co-faddress'), 'Хаяг'));
 
-  html += subHeader('Contact Information');
-  html += `<div class="field-row">${fText(uid('co-phone'), 'Phone', { type: 'tel' })}${fText(uid('co-secphone'), 'Secondary Phone', { type: 'tel' })}</div>`;
+  html += subHeader('Холбоо барих мэдээлэл');
+  html += `<div class="field-row">${fText(uid('co-phone'), 'Phone', { type: 'tel' })}${fText(uid('co-secphone'), 'Нэмэлт утас', { type: 'tel' })}</div>`;
   html += fText(uid('co-website'), 'Website');
-  html += fText(uid('co-cp-name'), 'Contact Person Name');
-  html += `<div class="field-row">${fText(uid('co-cp-phone'), 'Contact Person Phone', { type: 'tel' })}${fText(uid('co-cp-email'), 'Contact Person Email', { type: 'email' })}</div>`;
+  html += fText(uid('co-cp-name'), 'Холбоо барих хүний нэр');
+  html += `<div class="field-row">${fText(uid('co-cp-phone'), 'Холбоо барих хүний утас', { type: 'tel' })}${fText(uid('co-cp-email'), 'Холбоо барих хүний и-мэйл', { type: 'email' })}</div>`;
   return html;
 }
 
 function renderFinancialResources() {
   let html = sectionHeader('landmark', 'Financial Resources');
-  html += fSelect(uid('fr-revenue'), 'Operating Revenue Range', ['Less than 1,000,000,000₮', '1,000,000,000 – 5,000,000,000₮', '5,000,000,000 – 15,000,000,000₮', '15,000,000,000 – 30,000,000,000₮', '30,000,000,000 – 50,000,000,000₮', 'More than 50,000,000,000₮']);
+  html += fSelect(uid('fr-revenue'), 'Operating Revenue Range', ['Бага 1,000,000,000₮', '1,000,000,000 – 5,000,000,000₮', '5,000,000,000 – 15,000,000,000₮', '15,000,000,000 – 30,000,000,000₮', '30,000,000,000 – 50,000,000,000₮', 'More than 50,000,000,000₮']);
   html += fChips(uid('fr-sources'), 'Fund Sources', ['Business Income', 'Project Finance', 'State Budget', 'Donations', 'Other']);
   return html;
 }
@@ -764,17 +771,17 @@ function renderComplianceQuestions() {
   let html = sectionHeader('clipboard-check', 'Corporate Compliance Questions');
   const regId = uid('cq-regulated');
   html += fRadio(regId, 'Is the entity regulated by a financial authority?');
-  html += condBlock(regId, 'Yes', fText(uid('cq-reg-name'), 'Regulator Name') + fText(uid('cq-reg-address'), 'Regulator Address'));
+  html += condBlock(regId, 'Yes', fText(uid('cq-reg-name'), 'Regulator Name') + fText(uid('cq-reg-address'), 'Regulator Хаяг'));
 
   const renamedId = uid('cq-renamed');
   html += fRadio(renamedId, 'Has the entity merged or been renamed in the last 5 years?');
-  html += condBlock(renamedId, 'Yes', fTextarea(uid('cq-renamed-details'), 'Details'));
+  html += condBlock(renamedId, 'Yes', fTextarea(uid('cq-renamed-details'), 'Дэлгэрэнгүй'));
 
   html += fRadio(uid('cq-russia'), 'Has the entity received funds from Russia?');
 
   const structId = uid('cq-structure');
   html += fRadio(structId, 'Has the management or shareholder structure changed within the last 6 months?');
-  html += condBlock(structId, 'Yes', fTextarea(uid('cq-structure-details'), 'Details'));
+  html += condBlock(structId, 'Yes', fTextarea(uid('cq-structure-details'), 'Дэлгэрэнгүй'));
   return html;
 }
 
@@ -822,53 +829,53 @@ function renderRepeatSection(icon, title, addLabel, makeTemplate) {
 
 function renderAdultSteps(profile) {
   const docs = profile.isMongolian
-    ? ['ID Card — Front', 'ID Card — Back', 'Selfie Photo']
+    ? ['ID Карт — Front', 'ID Карт — Back', 'Selfie Photo']
     : ['Passport — Front Page', 'Selfie Photo'];
   return [
-    { title: 'General Information', html: renderGeneralInfo(profile, true), requireVerify: true },
-    { title: 'Address Information', html: renderAddressInfo(profile) },
+    { title: 'Ерөнхий мэдээлэл', html: renderGeneralInfo(profile, true), requireVerify: true },
+    { title: 'Хаягийн мэдээлэл', html: renderAddressInfo(profile) },
     { title: 'Employment & PEP', html: renderEmployment() + renderPepInfo() },
     { title: 'Financial & Representation', html: renderFinancialInfo() + renderActingOnBehalf(profile) },
-    { title: 'Education & Contacts', html: renderEducation() + renderEmergencyContact() },
+    { title: 'Боловсрол ба холбоо барих', html: renderEducation() + renderEmergencyContact() },
     { title: 'Attorney Information', html: renderAttorneyInfo() },
-    { title: 'Document Upload', html: renderUploads(docs) },
-    { title: 'Agreements & Signature', html: renderAgreements() + renderSignature('Digital Signature') },
+    { title: 'Баримт бичиг оруулах', html: renderUploads(docs) },
+    { title: 'Гэрээ ба гарын үсэг', html: renderAgreements() + renderSignature('Цахим гарын үсэг') },
   ];
 }
 
 function renderChildSteps(profile) {
   const docs = profile.isMongolian
-    ? ['Guardian ID Card — Front', 'Guardian ID Card — Back', 'Guardian Selfie Photo', 'Child Birth Certificate']
-    : ['Guardian Passport — Front Page', 'Guardian Selfie Photo', 'Child Birth Certificate'];
+    ? ['Асран хамгаалагч ID Карт — Front', 'Асран хамгаалагч ID Карт — Back', 'Асран хамгаалагч Selfie Photo', 'Хүүхэд Birth Certificate']
+    : ['Асран хамгаалагч Passport — Front Page', 'Асран хамгаалагч Selfie Photo', 'Хүүхэд Birth Certificate'];
   return [
-    { title: 'General Information', html: renderGeneralInfo(profile, true), requireVerify: true },
-    { title: 'Address Information', html: renderAddressInfo(profile) },
-    { title: 'Education & Emergency Contact', html: renderEducation() + renderEmergencyContact() },
-    { title: 'Guardian Information', html: renderGuardianInfo() },
-    { title: 'Document Upload', html: renderUploads(docs) },
-    { title: 'Agreements & Signature', html: renderAgreements() + renderSignature('Guardian Signature') },
+    { title: 'Ерөнхий мэдээлэл', html: renderGeneralInfo(profile, true), requireVerify: true },
+    { title: 'Хаягийн мэдээлэл', html: renderAddressInfo(profile) },
+    { title: 'Боловсрол ба яаралтай холбоо барих', html: renderEducation() + renderEmergencyContact() },
+    { title: 'Асран хамгаалагч Information', html: renderGuardianInfo() },
+    { title: 'Баримт бичиг оруулах', html: renderUploads(docs) },
+    { title: 'Гэрээ ба гарын үсэг', html: renderAgreements() + renderSignature('Асран хамгаалагчийн гарын үсэг') },
   ];
 }
 
 function buildCorporateSteps() {
   const mgmtSection = renderRepeatSection('briefcase', 'Senior Management', 'Add Manager', (mgmtId) => (i) => `
-    ${fText(`${mgmtId}-name-${i}`, 'Full Name')}
-    ${fText(`${mgmtId}-position-${i}`, 'Position')}
+    ${fText(`${mgmtId}-name-${i}`, 'Бүтэн нэр')}
+    ${fText(`${mgmtId}-position-${i}`, 'Албан тушаал')}
     ${fText(`${mgmtId}-phone-${i}`, 'Phone', { type: 'tel' })}
     ${fRadio(`${mgmtId}-pep-${i}`, 'Is a Politically Exposed Person?')}`);
 
   const shSection = renderRepeatSection('users', 'Shareholders', 'Add Shareholder', (shId) => (i) => `
-    ${fSelect(`${shId}-citizenship-${i}`, 'Citizenship', COUNTRIES_WITH_MN)}
-    ${fText(`${shId}-regnum-${i}`, 'Register Number / Passport Number')}
-    ${fText(`${shId}-name-${i}`, 'Full Name')}
+    ${fSelect(`${shId}-citizenship-${i}`, 'Иргэншил', COUNTRIES_WITH_MN)}
+    ${fText(`${shId}-regnum-${i}`, 'Регистрийн дугаар / Passport Number')}
+    ${fText(`${shId}-name-${i}`, 'Бүтэн нэр')}
     ${fText(`${shId}-phone-${i}`, 'Phone', { type: 'tel' })}
     ${fText(`${shId}-employment-${i}`, 'Employment')}
     ${fRadio(`${shId}-pep-${i}`, 'Is a Politically Exposed Person?')}`);
 
   const uboSection = renderRepeatSection('eye', 'Ultimate Beneficial Owners (UBO)', 'Add UBO', (uboId) => (i) => `
-    ${fSelect(`${uboId}-citizenship-${i}`, 'Citizenship', COUNTRIES_WITH_MN)}
-    ${fText(`${uboId}-regnum-${i}`, 'Register Number / Passport Number')}
-    ${fText(`${uboId}-name-${i}`, 'Full Name')}
+    ${fSelect(`${uboId}-citizenship-${i}`, 'Иргэншил', COUNTRIES_WITH_MN)}
+    ${fText(`${uboId}-regnum-${i}`, 'Регистрийн дугаар / Passport Number')}
+    ${fText(`${uboId}-name-${i}`, 'Бүтэн нэр')}
     ${fText(`${uboId}-employment-${i}`, 'Employment')}
     ${fText(`${uboId}-phone-${i}`, 'Phone', { type: 'tel' })}
     ${fRadio(`${uboId}-pep-${i}`, 'Is a Politically Exposed Person?')}`);
@@ -878,8 +885,8 @@ function buildCorporateSteps() {
     { title: 'Financial Resources & Management', html: renderFinancialResources() + mgmtSection },
     { title: 'Shareholders & UBO', html: shSection + uboSection },
     { title: 'Compliance Questions', html: renderComplianceQuestions() },
-    { title: 'Document Upload', html: renderCorporateUploads() },
-    { title: 'Agreements & Signature', html: renderAgreements() + renderSignature('Authorized Person Signature', { stamp: true }) },
+    { title: 'Баримт бичиг оруулах', html: renderCorporateUploads() },
+    { title: 'Гэрээ ба гарын үсэг', html: renderAgreements() + renderSignature('Эрх бүхий хүний гарын үсэг', { stamp: true }) },
   ];
 }
 
@@ -944,7 +951,7 @@ function kycMarkVerified(fieldId) {
   if (hint) hint.style.display = 'none';
   lucide.createIcons();
 }
-/* Returns true if every email/phone field on the active step is verified; otherwise
+/* Returns true if every email/phone field огноо the active step is verified; otherwise
    reveals an inline hint under the first unverified field and scrolls to it. */
 function kycVerifyGateOk() {
   let firstBad = null;
@@ -1059,9 +1066,9 @@ function renderStepShell(steps) {
     const num = idx + 1;
     const isLast = idx === steps.length - 1;
     const primaryAction = isLast ? 'submitKyc()' : (step.requireVerify ? `kycContinue(${num + 1})` : `kycGoStep(${num + 1})`);
-    const primaryBtn = `<button type="button" class="btn-primary" onclick="${primaryAction}">${isLast ? 'Submit KYC' : 'Continue'}</button>`;
+    const primaryBtn = `<button type="button" class="btn-primary" onclick="${primaryAction}">${isLast ? 'KYC илгээх' : 'Continue'}</button>`;
     const nav = num === 1 ? primaryBtn : `<div class="btn-row">
-        <button type="button" class="btn-outline" onclick="kycGoStep(${num - 1})"><i data-lucide="arrow-left"></i><span>Back</span></button>
+        <button type="button" class="btn-outline" onclick="kycGoStep(${num - 1})"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
         ${primaryBtn}
       </div>`;
     return `<div class="step-panel${num === 1 ? ' active' : ''}" id="kyc-step-${num}">${step.html}${nav}</div>`;
@@ -1109,7 +1116,7 @@ function goBack() {
 function goHome() {
   try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
 }
-/* True when embedded inside the combined Open Account / KYC / Tripartite flow
+/* True when embedded inside the combined Данс нээх / KYC / Tripartite flow
    (web/pages/open-account.html), as opposed to opened standalone from the menu. */
 const kycEmbeddedInFlow = (function () { try { return window.parent !== window.top; } catch (e) { return false; } })();
 function submitKyc() {

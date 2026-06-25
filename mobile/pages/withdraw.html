@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Withdraw — TradeX</title>
+  <title>Мөнгө хүсэх — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -40,27 +40,25 @@
     .inp::placeholder { color: var(--color-text-disabled); }
     .inp.error { border-color: var(--color-sell); }
     .field-error { font-size: 11px; color: var(--color-sell); margin-top: 6px; display: none; }
-    .field-error.show { display: block; }
-
-    .btn-primary {
-      width: 100%; padding: 14px; background: var(--color-primary);
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      color: #fff; cursor: pointer; transition: opacity 0.15s;
-      margin-top: 8px; margin-bottom: 18px;
+    .field-error.show { display: block; }    .btn-primary {
+      width: 100%; min-height: 52px; padding: 14px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:hover { opacity: 0.88; }
-
-    .btn-outline {
-      flex: 1; padding: 13px; background: transparent;
-      border: 1.5px solid var(--color-border); border-radius: 10px;
-      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
       cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .btn-outline:hover { border-color: var(--color-primary); }
     .btn-row { display: flex; gap: 10px; margin-bottom: 18px; }
     .btn-row .btn-primary { flex: 1.3; margin: 0; }
 
-    /* ── Account toggle ── */
+    /* ── Данс toggle ── */
     .acct-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .acct-toggle-btn {
       min-height: 58px; padding: 10px 12px; border-radius: 14px;
@@ -126,7 +124,7 @@
     .dd-item.active { color: var(--color-primary); font-weight: 700; }
     .dd-empty { padding: 14px; font-size: 12px; color: var(--color-text-disabled); text-align: center; }
 
-    /* ── Amount input ── */
+    /* ── Дүн input ── */
     .amount-field { position: relative; }
     .amount-field .inp { padding-right: 90px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 18px; }
     .amount-suffix { position: absolute; right: 70px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--color-text-secondary); font-size: 14px; }
@@ -229,22 +227,22 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Withdraw</div>
+    <div class="sub-title">Мөнгө хүсэх</div>
   </div>
 
-  <!-- Withdraw form -->
+  <!-- Мөнгө хүсэх form -->
   <div class="form-body" id="form-view">
     <div class="field-wrap">
-      <label class="field-label">Select Account</label>
+      <label class="field-label">Данс сонгох</label>
       <div class="acct-toggle">
         <button class="acct-toggle-btn active" data-acct="nominal" onclick="selectWdAccount('nominal')">
           <span class="acct-icon"><i data-lucide="wallet"></i></span>
-          <span class="acct-text">Nominal Account</span>
+          <span class="acct-text">Номинал Данс</span>
           <span class="acct-check"></span>
         </button>
         <button class="acct-toggle-btn" data-acct="mcsd" onclick="selectWdAccount('mcsd')">
           <span class="acct-icon"><i data-lucide="landmark"></i></span>
-          <span class="acct-text">MCSD Account</span>
+          <span class="acct-text">ҮЦТХТ данс</span>
           <span class="acct-check"></span>
         </button>
       </div>
@@ -252,31 +250,31 @@
     </div>
 
     <div class="field-wrap" style="position:relative">
-      <label class="field-label">Receiving Account</label>
+      <label class="field-label">Хүлээн авах данс</label>
       <div class="dd-trigger" id="bank-acct-trigger" onclick="toggleBankAcctMenu(event)">
-        <span id="bank-acct-label">Select</span>
+        <span id="bank-acct-label">Сонгох</span>
         <i data-lucide="chevron-down" class="chev"></i>
       </div>
       <div class="dd-menu" id="bank-acct-menu"></div>
-      <div class="field-error" id="bank-acct-error">Please select a receiving account</div>
+      <div class="field-error" id="bank-acct-error">Хүлээн авах данс сонгоно уу</div>
     </div>
 
     <div class="field-wrap">
-      <label class="field-label">Withdraw Amount</label>
+      <label class="field-label">Хүсэлтийн дүн</label>
       <div class="amount-field">
         <input class="inp" type="number" id="wd-amount" placeholder="0" min="0" oninput="onAmountInput()" />
         <span class="amount-suffix">₮</span>
-        <button class="amount-max-btn" onclick="setMaxAmount()">Max</button>
+        <button class="amount-max-btn" onclick="setMaxAmount()">Дээд</button>
       </div>
-      <div class="field-error" id="wd-amount-error">Please enter an amount</div>
+      <div class="field-error" id="wd-amount-error">Дүн оруулна уу</div>
     </div>
 
-    <button class="btn-primary" onclick="goVerify()">Submit Withdrawal Request</button>
+    <button class="btn-primary" onclick="goVerify()">Хүсэлт илгээх</button>
   </div>
 
-  <!-- Withdraw history -->
+  <!-- Хүсэлтийн түүх -->
   <div class="form-body">
-    <div class="info-section-title">Withdrawal History</div>
+    <div class="info-section-title">Хүсэлтийн түүх</div>
     <div class="hist-card" id="wd-history"></div>
     <div class="hist-pagination" id="wd-history-pagination"></div>
   </div>
@@ -290,12 +288,12 @@
       <div class="modal-handle"></div>
       <div class="confirm-modal-body">
         <div class="confirm-modal-icon"><i data-lucide="trash-2"></i></div>
-        <div class="confirm-modal-title">Cancel Withdrawal Request?</div>
-        <div class="confirm-modal-text">This action cannot be undone. The withdrawn amount will be returned to your balance.</div>
+        <div class="confirm-modal-title">Мөнгө хүсэх хүсэлтийг цуцлах уу?</div>
+        <div class="confirm-modal-text">Энэ үйлдлийг буцаах боломжгүйг анхаарна уу.</div>
       </div>
       <div class="btn-row" style="margin-bottom:0">
-        <button class="btn-outline" onclick="closeCancelModal()">Keep Request</button>
-        <button class="btn-primary" style="margin:0;background:var(--color-sell)" onclick="confirmCancelWithdraw()">Cancel Request</button>
+        <button class="btn-outline" onclick="closeCancelModal()">Хүсэлтийг үлдээх</button>
+        <button class="btn-primary" style="margin:0;background:var(--color-sell)" onclick="confirmCancelWithdraw()">Хүсэлт цуцлах</button>
       </div>
     </div>
   </div>
@@ -304,27 +302,27 @@
   <div class="modal-overlay" id="verify-modal-overlay" onclick="if(event.target===this) cancelVerify()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="info-section-title">Verify Your Request</div>
+      <div class="info-section-title">Хүсэлтээ баталгаажуулах</div>
       <div class="verify-card">
-        <div class="verify-row"><span>Account</span><span id="v-account"></span></div>
-        <div class="verify-row"><span>Receiving Account</span><span id="v-bank"></span></div>
-        <div class="verify-row"><span>Account Number</span><span id="v-bank-num"></span></div>
-        <div class="verify-row"><span>Amount</span><span id="v-amount"></span></div>
-        <div class="verify-row"><span>Fee</span><span id="v-fee"></span></div>
-        <div class="verify-row total"><span>Total Deduction</span><span id="v-total"></span></div>
+        <div class="verify-row"><span>Данс</span><span id="v-account"></span></div>
+        <div class="verify-row"><span>Хүлээн авах данс</span><span id="v-bank"></span></div>
+        <div class="verify-row"><span>Дансны дугаар</span><span id="v-bank-num"></span></div>
+        <div class="verify-row"><span>Дүн</span><span id="v-amount"></span></div>
+        <div class="verify-row"><span>Шимтгэл</span><span id="v-fee"></span></div>
+        <div class="verify-row total"><span>Нийт суутгал</span><span id="v-total"></span></div>
       </div>
       <div class="btn-row" style="margin-bottom:0">
-        <button class="btn-outline" onclick="cancelVerify()">Back</button>
-        <button class="btn-primary" style="margin:0" onclick="submitWithdraw()">Confirm</button>
+        <button class="btn-outline" onclick="cancelVerify()">Буцах</button>
+        <button class="btn-primary" style="margin:0" onclick="submitWithdraw()">Баталгаажуулах</button>
       </div>
     </div>
   </div>
 
-  <!-- Withdrawal detail modal -->
+  <!-- Мөнгө хүсэх дэлгэрэнгүй modal -->
   <div class="modal-overlay" id="detail-modal-overlay" onclick="if(event.target===this) closeDetailModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="info-section-title">Withdrawal Details</div>
+      <div class="info-section-title"> Мөнгө хүсэх дэлгэрэнгүй</div>
       <div class="verify-card" id="detail-content"></div>
     </div>
   </div>
@@ -381,7 +379,7 @@
       clearAmountError();
     }
 
-    /* ── Account toggle ── */
+    /* ── Данс toggle ── */
     function selectWdAccount(acct) {
       wdAccount = acct;
       document.querySelectorAll('.acct-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.acct === acct));
@@ -391,7 +389,7 @@
 
     function updateBalanceHint() {
       const balances = getBalances();
-      document.getElementById('wd-balance-hint').textContent = `Available Balance: ${formatMNT(balances[wdAccount] || 0)}`;
+      document.getElementById('wd-balance-hint').textContent = `Боломжит үлдэгдэл: ${formatMNT(balances[wdAccount] || 0)}`;
     }
 
     /* ── Bank account dropdown ── */
@@ -399,7 +397,7 @@
       const accounts = getBankAccounts();
       const menu = document.getElementById('bank-acct-menu');
       if (!accounts.length) {
-        menu.innerHTML = '<div class="dd-empty">No linked accounts yet</div>';
+        menu.innerHTML = '<div class="dd-empty">Холбосон данс одоогоор алга</div>';
         return;
       }
       menu.innerHTML = accounts.map(a =>
@@ -440,7 +438,7 @@
     }
     document.addEventListener('click', () => closeAllDropdowns());
 
-    /* ── Amount / summary ── */
+    /* ── Дүн / summary ── */
     function setMaxAmount() {
       const balances = getBalances();
       document.getElementById('wd-amount').value = balances[wdAccount] || 0;
@@ -460,12 +458,12 @@
       clearBankAcctError();
 
       if (!selectedBankAccountId) { showBankAcctError(); return; }
-      if (!amount || amount <= 0) { showAmountError('Please enter an amount'); return; }
-      if (amount <= WITHDRAW_FEE) { showAmountError(`Amount must be greater than the fee (${formatMNT(WITHDRAW_FEE)})`); return; }
+      if (!amount || amount <= 0) { showAmountError('Дүн оруулна уу'); return; }
+      if (amount <= WITHDRAW_FEE) { showAmountError(`Дүн шимтгэлээс их байх ёстой (${formatMNT(WITHDRAW_FEE)})`); return; }
 
       const oldAmount = editingId ? (getWithdrawHistory().find(h => h.id === editingId)?.amount || 0) : 0;
       const available = (balances[wdAccount] || 0) + oldAmount;
-      if (amount > available) { showAmountError(`Amount exceeds your available balance (${formatMNT(available)})`); return; }
+      if (amount > available) { showAmountError(`Дүн боломжит үлдэгдлээс их байна (${formatMNT(available)})`); return; }
 
       const acc = getBankAccounts().find(a => a.id === selectedBankAccountId);
       document.getElementById('v-account').textContent = ACCOUNT_LABELS[wdAccount];
@@ -519,7 +517,7 @@
       updateBalanceHint();
       updateWdSummary();
       renderHistory();
-      showToast('Request submitted successfully');
+      showToast('Хүсэлт амжилттай илгээгдлээ');
     }
 
     /* ── History ── */
@@ -531,7 +529,7 @@
         new Date(b.date.replace(' ', 'T')) - new Date(a.date.replace(' ', 'T')));
       const el = document.getElementById('wd-history');
       if (!history.length) {
-        el.innerHTML = '<div class="hist-empty">No withdrawal history yet</div>';
+        el.innerHTML = '<div class="hist-empty">Зарлагын түүх одоогоор алга</div>';
         document.getElementById('wd-history-pagination').innerHTML = '';
         return;
       }
@@ -543,8 +541,8 @@
       el.innerHTML = pageItems.map(h => {
         const actions = h.status === 'pending' ? `
           <div class="hist-actions">
-            <button class="hist-action-btn" title="Edit" onclick="editWithdraw('${h.id}')"><i data-lucide="pencil"></i></button>
-            <button class="hist-action-btn danger" title="Cancel" onclick="cancelWithdraw('${h.id}')"><i data-lucide="trash-2"></i></button>
+            <button class="hist-action-btn" title="Засах" onclick="editWithdraw('${h.id}')"><i data-lucide="pencil"></i></button>
+            <button class="hist-action-btn danger" title="Цуцлах" onclick="cancelWithdraw('${h.id}')"><i data-lucide="trash-2"></i></button>
           </div>` : '';
         return `
         <div class="hist-item">
@@ -556,7 +554,7 @@
           <div class="hist-right">
             ${actions}
             <div class="hist-amount withdraw">-${formatMNT(h.amount)}</div>
-            <div class="hist-detail-link" onclick="showWithdrawDetail('${h.id}')">Details <i data-lucide="chevron-right"></i></div>
+            <div class="hist-detail-link" onclick="showWithdrawDetail('${h.id}')">Дэлгэрэнгүй <i data-lucide="chevron-right"></i></div>
           </div>
         </div>`;
       }).join('');
@@ -627,7 +625,7 @@
       updateBalanceHint();
       updateWdSummary();
       renderHistory();
-      showToast('Request cancelled');
+      showToast('Хүсэлт амжилттай цуцлагдлаа');
     }
 
     function editWithdraw(id) {
@@ -643,7 +641,7 @@
       clearAmountError();
       updateWdSummary();
       document.getElementById('form-view').scrollIntoView({ behavior: 'smooth' });
-      showToast('Edit your request and submit again');
+      showToast('Засах your request and submit again');
     }
 
     /* ── Init ── */

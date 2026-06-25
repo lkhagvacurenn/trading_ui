@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -49,7 +49,7 @@
       overflow: hidden;
     }
 
-    /* ── Desktop "phone frame" presentation only (not on real mobile devices) ── */
+    /* ── Desktop "phone frame" presentation only (not огноо real mobile devices) ── */
     @media (min-width: 431px) {
       #app {
         height: min(100%, 900px);
@@ -183,7 +183,7 @@
       z-index: 5;
     }
 
-    /* Individual tab button */
+    /* Хувь хүн tab button */
     .nav-tab {
       display: flex; flex-direction: column; align-items: center;
       justify-content: flex-end; gap: 3px;
@@ -286,18 +286,18 @@
     </div>
 
     <div class="header-actions">
-      <button class="hbtn" onclick="openNotifications()" aria-label="Notifications">
+      <button class="hbtn" onclick="openNotifications()" aria-label="Мэдэгдэл">
         <i data-lucide="bell"></i>
         <span class="notif-dot"></span>
       </button>
-      <button class="hbtn" onclick="openMenu()" aria-label="Menu">
+      <button class="hbtn" onclick="openMenu()" aria-label="Цэс">
         <i data-lucide="menu"></i>
       </button>
     </div>
   </header>
 
   <!-- ════ PAGE CONTENT ══════════════════════════ -->
-  <iframe id="page-frame" src="pages/home.html" title="Page content"></iframe>
+  <iframe id="page-frame" src="pages/home.html" title="Хуудасны агуулга"></iframe>
 
   <!-- ════ BOTTOM NAV — Wave notch ══════════════ -->
   <div id="nav-outer">
@@ -344,9 +344,9 @@
       <button class="nav-fab"
               data-page="trade"
               data-href="pages/trade.html"
-              data-title="Trade"
+              data-title="Арилжаа"
               onclick="navigateToTrade()"
-              aria-label="Trade">
+              aria-label="Арилжаа">
         <i data-lucide="arrow-left-right"></i>
       </button>
     </div>
@@ -354,23 +354,23 @@
     <!-- ── Tab buttons ── -->
     <div id="nav-grid">
       <button class="nav-tab active"
-              data-page="home" data-href="pages/home.html" data-title="Home">
+              data-page="home" data-href="pages/home.html" data-title="Нүүр">
         <i data-lucide="home"></i>
-        <span>Home</span>
+        <span>Нүүр</span>
       </button>
 
       <button class="nav-tab"
-              data-page="balance" data-href="pages/balance.html" data-title="Balance">
+              data-page="balance" data-href="pages/balance.html" data-title="Үлдэгдэл">
         <i data-lucide="credit-card"></i>
-        <span>Balance</span>
+        <span>Үлдэгдэл</span>
       </button>
 
       <div id="nav-center-space"></div>
 
       <button class="nav-tab"
-              data-page="returns" data-href="pages/returns.html" data-title="Portfolio">
+              data-page="returns" data-href="pages/returns.html" data-title="Өгөөж">
         <i data-lucide="pie-chart"></i>
-        <span>Portfolio</span>
+        <span>Өгөөж</span>
       </button>
 
       <button class="nav-tab"
@@ -389,54 +389,54 @@
   <div id="menu-panel">
 
     <div class="menu-hdr">
-      <span class="menu-hdr-title">Menu</span>
+      <span class="menu-hdr-title">Цэс</span>
       <button class="menu-close-btn" onclick="closeMenu()"><i data-lucide="x"></i></button>
     </div>
 
-    <!-- My Profile -->
+    <!-- Миний профайл -->
     <button class="menu-item" onclick="menuNav('profile'); closeMenu()" style="padding:16px 20px">
       <i data-lucide="user-circle"></i>
-      <span class="menu-item-label" style="font-weight:600">My Profile</span>
+      <span class="menu-item-label" style="font-weight:600">Миний профайл</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
 
     <div class="menu-divider"></div>
 
-    <div class="menu-section-lbl">My Section</div>
+    <div class="menu-section-lbl">Миний хэсэг</div>
 
     <button class="menu-item" onclick="menuNav('order-history'); closeMenu()">
       <i data-lucide="history"></i>
-      <span class="menu-item-label">Order History</span>
+      <span class="menu-item-label">Захиалгын түүх</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('returns'); closeMenu()">
       <i data-lucide="pie-chart"></i>
-      <span class="menu-item-label">Portfolio</span>
+      <span class="menu-item-label">Өгөөж</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('bank-account'); closeMenu()">
       <i data-lucide="building-2"></i>
-      <span class="menu-item-label">Bank Account</span>
+      <span class="menu-item-label">Банкны данс</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('deposit'); closeMenu()">
       <i data-lucide="arrow-down-to-line"></i>
-      <span class="menu-item-label">Deposit</span>
+      <span class="menu-item-label">Цэнэглэх</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('withdraw'); closeMenu()">
       <i data-lucide="arrow-up-from-line"></i>
-      <span class="menu-item-label">Withdraw</span>
+      <span class="menu-item-label">Мөнгө хүсэх</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('tripartite'); closeMenu()">
       <i data-lucide="file-signature"></i>
-      <span class="menu-item-label">Tripartite Agreement</span>
+      <span class="menu-item-label">Гурвалсан гэрээ</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('alerts'); closeMenu()">
       <i data-lucide="bell"></i>
-      <span class="menu-item-label">Alert</span>
+      <span class="menu-item-label">Үнийн мэдэгдэл</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
 
@@ -445,37 +445,37 @@
 
     <button class="menu-item" onclick="menuNav('balance'); closeMenu()">
       <i data-lucide="wallet"></i>
-      <span class="menu-item-label">Portfolio</span>
+      <span class="menu-item-label">Үлдэгдэл</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('trade'); closeMenu()">
       <i data-lucide="arrow-left-right"></i>
-      <span class="menu-item-label">Secondary Trading</span>
+      <span class="menu-item-label">Хоёрдогч арилжаа</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
-    <button class="menu-item" onclick="menuNav('returns'); closeMenu()">
+    <button class="menu-item" onclick="menuNav('ipo'); closeMenu()">
       <i data-lucide="trending-up"></i>
-      <span class="menu-item-label">Primary Trading</span>
+      <span class="menu-item-label">Анхдагч арилжаа</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="closeMenu()">
       <i data-lucide="landmark"></i>
-      <span class="menu-item-label">Bonds</span>
+      <span class="menu-item-label">Бонд</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('contact'); closeMenu()">
       <i data-lucide="phone"></i>
-      <span class="menu-item-label">Contact Us</span>
+      <span class="menu-item-label">Холбоо барих</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('faq'); closeMenu()">
       <i data-lucide="info"></i>
-      <span class="menu-item-label">FAQ</span>
+      <span class="menu-item-label">Түгээмэл асуулт</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
     <button class="menu-item" onclick="menuNav('settings'); closeMenu()">
       <i data-lucide="settings"></i>
-      <span class="menu-item-label">Settings</span>
+      <span class="menu-item-label">Тохиргоо</span>
       <span class="menu-chevron"><i data-lucide="chevron-right"></i></span>
     </button>
 
@@ -483,7 +483,7 @@
 
     <button class="menu-item menu-signout" onclick="signOut()">
       <i data-lucide="log-out"></i>
-      <span class="menu-item-label">Sign Out</span>
+      <span class="menu-item-label">Гарах</span>
     </button>
 
     <div style="height:30px"></div>
@@ -553,11 +553,11 @@ function updateNavGeometry() {
   document.getElementById('nav-bg-path').setAttribute('d', fill);
   document.getElementById('nav-border-path').setAttribute('d', border);
 
-  // Position FAB wrapper
+  // Албан тушаал FAB wrapper
   const fw = document.getElementById('fab-wrapper');
   fw.style.top = `${FAB_TOP}px`;
 
-  // Position glow ellipse at center of notch
+  // Албан тушаал glow ellipse at center of notch
   const glow = document.getElementById('notch-glow');
   glow.setAttribute('cx', cx);
   glow.setAttribute('cy', NAV_ND * 0.3);

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Order History — TradeX</title>
+  <title>Захиалгын түүх — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -135,31 +135,31 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Order History</div>
+    <div class="sub-title">Захиалгын түүх</div>
   </div>
 
   <!-- Search -->
   <div class="search-bar">
     <i data-lucide="search"></i>
-    <input type="text" id="oh-search" placeholder="Search by symbol…" oninput="renderOrders()" />
+    <input type="text" id="oh-search" placeholder="Симболоор хайх..." oninput="renderOrders()" />
   </div>
 
   <!-- Filters / sort -->
   <div class="hist-toolbar">
     <div class="hist-filters">
       <select class="hist-select" id="oh-side-filter" onchange="renderOrders()">
-        <option value="all">All Sides</option>
-        <option value="buy">Buy</option>
-        <option value="sell">Sell</option>
+        <option value="all">Бүгд</option>
+        <option value="buy">Авах</option>
+        <option value="sell">Зарах</option>
       </select>
       <select class="hist-select" id="oh-status-filter" onchange="renderOrders()">
-        <option value="all">All Statuses</option>
-        <option value="pending">Pending</option>
-        <option value="filled">Completed</option>
-        <option value="cancelled">Cancelled</option>
+        <option value="all">Бүх төлөв</option>
+        <option value="pending">Хүлээгдэж буй</option>
+        <option value="filled">Биелсэн</option>
+        <option value="cancelled">Цуцлагдсан</option>
       </select>
       <button class="hist-sort-btn desc" id="oh-sort-btn" onclick="toggleSort()">
-        <i data-lucide="arrow-down"></i> Date
+        <i data-lucide="arrow-down"></i> Огноо
       </button>
     </div>
   </div>
@@ -172,7 +172,7 @@
   <div class="modal-overlay" id="detail-modal-overlay" onclick="if(event.target===this) closeDetailModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">Order Details</div>
+      <div class="modal-title">Захиалгын дэлгэрэнгүй</div>
       <div class="verify-card" id="detail-content"></div>
     </div>
   </div>
@@ -181,19 +181,19 @@
 
   <script>
     const ORDER_HISTORY = [
-      { id:'ORD-1042', symbol:'AAPL',  side:'buy',  qty:50,  price:189.84, total:9492.00,  fee:18.98, date:'2026-06-09 09:31', status:'pending',   orderType:'Market', duration:'Day Order' },
-      { id:'ORD-1041', symbol:'NVDA',  side:'buy',  qty:10,  price:862.10, total:8621.00,  fee:17.24, date:'2026-06-08 14:32', status:'filled',    orderType:'Market', duration:'Day Order' },
-      { id:'ORD-1040', symbol:'AAPL',  side:'sell', qty:5,   price:189.75, total:948.75,   fee:1.90,  date:'2026-06-08 14:32', status:'filled',    orderType:'Limit',  duration:'Day Order' },
-      { id:'ORD-1039', symbol:'TSLA',  side:'buy',  qty:30,  price:252.60, total:7578.00,  fee:15.16, date:'2026-06-06 09:31', status:'filled',    orderType:'Market', duration:'Day Order' },
-      { id:'ORD-1038', symbol:'MSFT',  side:'buy',  qty:20,  price:411.80, total:8236.00,  fee:16.47, date:'2026-06-04 10:18', status:'filled',    orderType:'Limit',  duration:'GTC' },
-      { id:'ORD-1037', symbol:'AAPL',  side:'buy',  qty:20,  price:181.20, total:3624.00,  fee:7.25,  date:'2026-06-04 10:18', status:'filled',    orderType:'Market', duration:'Day Order' },
-      { id:'ORD-1036', symbol:'GOOGL', side:'buy',  qty:15,  price:171.25, total:2568.75,  fee:5.14,  date:'2026-06-02 10:05', status:'filled',    orderType:'Market', duration:'Day Order' },
-      { id:'ORD-1035', symbol:'AMZN',  side:'buy',  qty:25,  price:178.40, total:4460.00,  fee:8.92,  date:'2026-05-31 11:20', status:'cancelled', orderType:'Limit',  duration:'Day Order' },
-      { id:'ORD-1034', symbol:'TSLA',  side:'sell', qty:10,  price:191.20, total:1912.00,  fee:3.82,  date:'2026-05-28 13:47', status:'filled',    orderType:'Market', duration:'Day Order' },
-      { id:'ORD-1033', symbol:'AAPL',  side:'buy',  qty:15,  price:185.40, total:2781.00,  fee:5.56,  date:'2026-05-20 11:12', status:'cancelled', orderType:'Limit',  duration:'Day Order' },
-      { id:'ORD-1032', symbol:'NVDA',  side:'sell', qty:4,   price:845.30, total:3381.20,  fee:6.76,  date:'2026-05-18 15:02', status:'filled',    orderType:'Market', duration:'Day Order' },
-      { id:'ORD-1031', symbol:'MSFT',  side:'buy',  qty:8,   price:402.10, total:3216.80,  fee:6.43,  date:'2026-05-15 09:48', status:'pending',   orderType:'Limit',  duration:'GTC' },
-      { id:'ORD-1030', symbol:'AMZN',  side:'sell', qty:12,  price:182.90, total:2194.80,  fee:4.39,  date:'2026-05-12 13:10', status:'filled',    orderType:'Market', duration:'Day Order' },
+      { id:'ORD-1042', symbol:'BDS',  side:'buy',  qty:50,  price:1240, total:6200000,  fee:31000, date:'2026-06-09 09:31', status:'pending',   orderType:'Зах зээлийн', duration:'Өдрийн захиалга' },
+      { id:'ORD-1041', symbol:'KHAN',  side:'buy',  qty:10,  price:3865, total:8621.00,  fee:17.24, date:'2026-06-08 14:32', status:'filled',    orderType:'Зах зээлийн', duration:'Өдрийн захиалга' },
+      { id:'ORD-1040', symbol:'BDS',  side:'sell', qty:5,   price:189.75, total:948.75,   fee:1.90,  date:'2026-06-08 14:32', status:'filled',    orderType:'Limit',  duration:'Өдрийн захиалга' },
+      { id:'ORD-1039', symbol:'APU',  side:'buy',  qty:30,  price:252.60, total:7578.00,  fee:15.16, date:'2026-06-06 09:31', status:'filled',    orderType:'Зах зээлийн', duration:'Өдрийн захиалга' },
+      { id:'ORD-1038', symbol:'TDB',  side:'buy',  qty:20,  price:411.80, total:8236.00,  fee:16.47, date:'2026-06-04 10:18', status:'filled',    orderType:'Limit',  duration:'GTC' },
+      { id:'ORD-1037', symbol:'BDS',  side:'buy',  qty:20,  price:181.20, total:3624.00,  fee:7.25,  date:'2026-06-04 10:18', status:'filled',    orderType:'Зах зээлийн', duration:'Өдрийн захиалга' },
+      { id:'ORD-1036', symbol:'GOLO', side:'buy',  qty:15,  price:171.25, total:2568.75,  fee:5.14,  date:'2026-06-02 10:05', status:'filled',    orderType:'Зах зээлийн', duration:'Өдрийн захиалга' },
+      { id:'ORD-1035', symbol:'AMZN',  side:'buy',  qty:25,  price:178.40, total:4460.00,  fee:8.92,  date:'2026-05-31 11:20', status:'cancelled', orderType:'Limit',  duration:'Өдрийн захиалга' },
+      { id:'ORD-1034', symbol:'APU',  side:'sell', qty:10,  price:191.20, total:1912.00,  fee:3.82,  date:'2026-05-28 13:47', status:'filled',    orderType:'Зах зээлийн', duration:'Өдрийн захиалга' },
+      { id:'ORD-1033', symbol:'BDS',  side:'buy',  qty:15,  price:185.40, total:2781.00,  fee:5.56,  date:'2026-05-20 11:12', status:'cancelled', orderType:'Limit',  duration:'Өдрийн захиалга' },
+      { id:'ORD-1032', symbol:'KHAN',  side:'sell', qty:4,   price:845.30, total:3381.20,  fee:6.76,  date:'2026-05-18 15:02', status:'filled',    orderType:'Зах зээлийн', duration:'Өдрийн захиалга' },
+      { id:'ORD-1031', symbol:'TDB',  side:'buy',  qty:8,   price:402.10, total:3216.80,  fee:6.43,  date:'2026-05-15 09:48', status:'pending',   orderType:'Limit',  duration:'GTC' },
+      { id:'ORD-1030', symbol:'AMZN',  side:'sell', qty:12,  price:182.90, total:2194.80,  fee:4.39,  date:'2026-05-12 13:10', status:'filled',    orderType:'Зах зээлийн', duration:'Өдрийн захиалга' },
     ];
 
     const HIST_PAGE_SIZE = 5;
@@ -227,20 +227,20 @@
 
       const el = document.getElementById('oh-list');
       if (!pageItems.length) {
-        el.innerHTML = '<div class="hist-empty">No orders found</div>';
+        el.innerHTML = '<div class="hist-empty">Захиалга олдсонгүй</div>';
       } else {
         el.innerHTML = pageItems.map(o => `
           <div class="hist-item">
             <div class="hist-icon side-${o.side}"><i data-lucide="${o.side === 'buy' ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
             <div class="hist-info">
-              <div class="hist-title">${o.side === 'buy' ? 'Buy' : 'Sell'} ${o.symbol}</div>
-              <div class="hist-sub">${o.qty} shares @ ${formatUSD(o.price)}</div>
+              <div class="hist-title">${o.side === 'buy' ? 'Авах' : 'Зарах'} ${o.symbol}</div>
+              <div class="hist-sub">${o.qty} ширхэг  ${formatUSD(o.price)}</div>
               <div class="hist-date">${o.date}</div>
             </div>
             <div class="hist-right">
               <div class="hist-amount">${formatUSD(o.total)}</div>
-              <div class="hist-status status-${o.status}">${o.status === 'filled' ? 'Completed' : o.status.charAt(0).toUpperCase() + o.status.slice(1)}</div>
-              <div class="hist-detail-link" onclick="showOrderDetail('${o.id}')">Details <i data-lucide="chevron-right"></i></div>
+              <div class="hist-status status-${o.status}">${o.status === 'filled' ? 'Биелсэн' : STATUS_LABELS?.[o.status] || o.status}</div>
+              <div class="hist-detail-link" onclick="showOrderDetail('${o.id}')">Дэлгэрэнгүй <i data-lucide="chevron-right"></i></div>
             </div>
           </div>`).join('');
       }
@@ -276,17 +276,17 @@
       const o = ORDER_HISTORY.find(x => x.id === id);
       if (!o) return;
       document.getElementById('detail-content').innerHTML = `
-        <div class="verify-row"><span>Order ID</span><span>${o.id}</span></div>
-        <div class="verify-row"><span>Symbol</span><span>${o.symbol}</span></div>
-        <div class="verify-row"><span>Side</span><span>${o.side === 'buy' ? 'Buy' : 'Sell'}</span></div>
-        <div class="verify-row"><span>Order Type</span><span>${o.orderType}</span></div>
-        <div class="verify-row"><span>Duration</span><span>${o.duration}</span></div>
-        <div class="verify-row"><span>Quantity</span><span>${o.qty.toLocaleString()}</span></div>
-        <div class="verify-row"><span>Price</span><span>${formatUSD(o.price)}</span></div>
-        <div class="verify-row"><span>Fee</span><span>${formatUSD(o.fee)}</span></div>
-        <div class="verify-row total"><span>Total</span><span>${formatUSD(o.total + o.fee)}</span></div>
-        <div class="verify-row"><span>Date</span><span>${o.date}</span></div>
-        <div class="verify-row"><span>Status</span><span>${o.status === 'filled' ? 'Completed' : o.status.charAt(0).toUpperCase() + o.status.slice(1)}</span></div>
+        <div class="verify-row"><span>Захиалгын ID</span><span>${o.id}</span></div>
+        <div class="verify-row"><span>Симбол</span><span>${o.symbol}</span></div>
+        <div class="verify-row"><span>Тал</span><span>${o.side === 'buy' ? 'Авах' : 'Зарах'}</span></div>
+        <div class="verify-row"><span>Захиалгын төрөл</span><span>${o.orderType}</span></div>
+        <div class="verify-row"><span>Хугацаа</span><span>${o.duration}</span></div>
+        <div class="verify-row"><span>Тоо хэмжээ</span><span>${o.qty.toLocaleString()}</span></div>
+        <div class="verify-row"><span>Үнэ</span><span>${formatUSD(o.price)}</span></div>
+        <div class="verify-row"><span>Шимтгэл</span><span>${formatUSD(o.fee)}</span></div>
+        <div class="verify-row total"><span>Нийт</span><span>${formatUSD(o.total + o.fee)}</span></div>
+        <div class="verify-row"><span>Огноо</span><span>${o.date}</span></div>
+        <div class="verify-row"><span>Төлөв</span><span>${o.status === 'filled' ? 'Биелсэн' : STATUS_LABELS?.[o.status] || o.status}</span></div>
       `;
       document.getElementById('detail-modal-overlay').classList.add('show');
       notifyModalOpen();

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Trade — TradeX</title>
+  <title>Арилжаа — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -276,7 +276,7 @@
     .submit-btn.buy-btn  { background:linear-gradient(90deg,#00C076,#00E08F); }
     .submit-btn.sell-btn { background:linear-gradient(90deg,#EF4444,#FF5B5B); }
 
-    /* ── Trading history (this stock) ── */
+    /* ── Арилжаа history (this stock) ── */
     .info-section-title { font-size:14px; font-weight:700; margin:6px 0 10px; }
     .hist-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:16px; overflow:hidden; }
     .hist-item { display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid var(--color-border); }
@@ -297,7 +297,7 @@
     .hist-status.status-cancelled { background:rgba(239,68,68,0.15); color:var(--color-sell); }
     .hist-empty { padding:32px; text-align:center; color:var(--color-text-disabled); font-size:13px; }
 
-    /* ── Trading history header / tabs ── */
+    /* ── Арилжаа history header / tabs ── */
     .hist-header { display:flex; align-items:center; justify-content:space-between; margin:6px 0 10px; }
     .hist-header .info-section-title { margin:0; }
     .view-all-btn {
@@ -317,13 +317,14 @@
 
     /* ── Modal title ── */
     .modal-title { font-size:15px; font-weight:700; margin-bottom:14px; text-align:center; }
-    .btn-row { display:flex; gap:10px; margin-top:6px; }
-    .btn-outline {
-      flex:1; padding:14px; border-radius:12px; border:1.5px solid var(--color-border);
-      background:transparent; color:var(--color-text-primary); font-size:14px; font-weight:700;
-      cursor:pointer; transition:border-color 0.15s;
+    .btn-row { display:flex; gap:10px; margin-top:6px; }    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
+      cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .btn-outline:hover { border-color:var(--color-primary); }
+    .btn-outline:hover { border-color: var(--color-primary); }
     .btn-row .submit-btn { flex:1; margin:0; }
 
     /* ── Toast ── */
@@ -403,9 +404,9 @@
   <div class="stock-header">
     <div class="selector-pill" onclick="showSymbolSearch()">
       <i data-lucide="search" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
-      <span class="sel-symbol">AAPL</span>
+      <span class="sel-symbol">BDS</span>
       <span class="sel-dot"></span>
-      <span class="sel-name">Apple Inc.</span>
+      <span class="sel-name">БДСек ХК</span>
       <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
     </div>
     <div class="price-info">
@@ -418,39 +419,39 @@
   <!-- Content Tabs + Actions -->
   <div class="content-tabs">
     <div class="ct-tabs-group">
-      <button class="ct-tab active" onclick="switchTab('book', this)">Order Book</button>
-      <button class="ct-tab" onclick="switchTab('chart', this)">Chart</button>
+      <button class="ct-tab active" onclick="switchTab('book', this)">Захиалгын сан</button>
+      <button class="ct-tab" onclick="switchTab('chart', this)">График</button>
     </div>
     <div class="detail-actions">
-      <button class="icon-btn active" id="watch-btn" onclick="toggleWatchlist()" title="Watchlist">
+      <button class="icon-btn active" id="watch-btn" onclick="toggleWatchlist()" title="Ажиглах жагсаалт">
         <i data-lucide="star"></i>
       </button>
-      <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Add price alert">
+      <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Үнийн мэдэгдэл нэмэх">
         <i data-lucide="bell-plus"></i>
       </button>
     </div>
   </div>
 
-  <!-- Order Book Tab -->
+  <!-- Захиалгын сан Tab -->
   <div id="tab-book">
     <div class="orderbook-grid">
       <div class="ob-panel">
         <div class="ob-header">
-          <span>Qty (Buy)</span>
-          <span>Bid</span>
-          <span>Ask</span>
-          <span>Qty (Sell)</span>
+          <span>Тоо (авах)</span>
+          <span>Авах үнэ</span>
+          <span>Зарах үнэ</span>
+          <span>Тоо (зарах)</span>
         </div>
         <div id="orderbook-rows"></div>
       </div>
 
-      <!-- Executed Orders -->
+      <!-- Биелсэн захиалгууд -->
       <div class="exec-panel">
-        <div class="exec-header">Executed Orders</div>
+        <div class="exec-header">Биелсэн захиалгууд</div>
         <div class="exec-cols">
-          <span>Qty</span>
-          <span>Price</span>
-          <span>Time</span>
+          <span>Тоо</span>
+          <span>Үнэ</span>
+          <span>Цаг</span>
         </div>
         <div id="exec-rows"></div>
       </div>
@@ -458,7 +459,7 @@
     <div style="height:10px"></div>
   </div>
 
-  <!-- Chart Tab (hidden) -->
+  <!-- График Tab (hidden) -->
   <div id="tab-chart" style="display:none;padding:12px 16px">
     <div id="trade-chart" style="height:240px"></div>
   </div>
@@ -468,41 +469,41 @@
     <!-- Order type + Buy/Sell -->
     <div class="form-row">
       <div class="dd-trigger" id="order-type-trigger" onclick="toggleDropdown('order-type', event)">
-        <span id="order-type-label">Market</span>
+        <span id="order-type-label">Зах зээлийн</span>
         <i data-lucide="chevron-down" class="chev"></i>
         <div class="dd-menu" id="order-type-menu">
-          <div class="dd-item active" onclick="selectOrderType(event,'market','Market')">
-            <span>Market</span>
-            <span class="dd-item-sub">Execute immediately at best price</span>
+          <div class="dd-item active" onclick="selectOrderType(event,'market','Зах зээлийн')">
+            <span>Зах зээлийн</span>
+            <span class="dd-item-sub">Хамгийн боломжит үнээр шууд биелүүлэх</span>
           </div>
-          <div class="dd-item" onclick="selectOrderType(event,'conditional','Conditional')">
-            <span>Conditional</span>
-            <span class="dd-item-sub">Execute only when your price is met</span>
+          <div class="dd-item" onclick="selectOrderType(event,'conditional','Нөхцөлт')">
+            <span>Нөхцөлт</span>
+            <span class="dd-item-sub">Таны үнэ биелэх үед л гүйцэтгэх</span>
           </div>
         </div>
       </div>
       <div class="buy-sell-toggle">
-        <button class="bst-btn active-buy" id="btn-buy"  onclick="setSide('buy')">Buy</button>
-        <button class="bst-btn"           id="btn-sell" onclick="setSide('sell')">Sell</button>
+        <button class="bst-btn active-buy" id="btn-buy"  onclick="setSide('buy')">Авах</button>
+        <button class="bst-btn"           id="btn-sell" onclick="setSide('sell')">Зарах</button>
       </div>
     </div>
 
-    <!-- Duration -->
+    <!-- Хугацаа -->
     <div class="dd-trigger" id="duration-trigger" onclick="toggleDropdown('duration', event)">
-      <span id="duration-label">Day Order</span>
+      <span id="duration-label">Өдрийн захиалга</span>
       <i data-lucide="chevron-down" class="chev"></i>
       <div class="dd-menu" id="duration-menu">
-        <div class="dd-item active" onclick="selectDuration(event,'day','Day Order')">
-          <span>Day Order</span>
-          <span class="dd-item-sub">Valid until end of today's session</span>
+        <div class="dd-item active" onclick="selectDuration(event,'day','Өдрийн захиалга')">
+          <span>Өдрийн захиалга</span>
+          <span class="dd-item-sub">Өнөөдрийн арилжаа дуусах хүртэл хүчинтэй</span>
         </div>
-        <div class="dd-item" onclick="selectDuration(event,'date','Good Till Date')">
-          <span>Good Till Date</span>
-          <span class="dd-item-sub">Valid until a date you specify</span>
+        <div class="dd-item" onclick="selectDuration(event,'date','Заасан өдөр хүртэл')">
+          <span>Заасан өдөр хүртэл</span>
+          <span class="dd-item-sub">Таны заасан өдөр хүртэл хүчинтэй</span>
         </div>
-        <div class="dd-item" onclick="selectDuration(event,'gtc','Good Till Cancelled')">
-          <span>Good Till Cancelled</span>
-          <span class="dd-item-sub">Stays active until you cancel it</span>
+        <div class="dd-item" onclick="selectDuration(event,'gtc','Цуцлах хүртэл')">
+          <span>Цуцлах хүртэл</span>
+          <span class="dd-item-sub">Та цуцлах хүртэл идэвхтэй байна</span>
         </div>
       </div>
     </div>
@@ -514,121 +515,121 @@
 
     <!-- Balance -->
     <div class="balance-row">
-      <span class="bal-label">Available Balance:</span>
+      <span class="bal-label">Боломжит үлдэгдэл:</span>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="bal-value">$24,850.00</span>
-        <span class="bal-link" onclick="openDeposit()">Deposit</span>
+        <span class="bal-link" onclick="openDeposit()">Цэнэглэх</span>
       </div>
     </div>
 
-    <!-- Quantity -->
-    <input class="num-input" type="number" min="1" id="qty-input" placeholder="Quantity" oninput="updateOrderSummary(); clearFieldError('qty-input','qty-error')" />
-    <div class="field-error" id="qty-error">Please enter a valid quantity</div>
+    <!-- Тоо хэмжээ -->
+    <input class="num-input" type="number" min="1" id="qty-input" placeholder="Тоо хэмжээ" oninput="updateOrderSummary(); clearFieldError('qty-input','qty-error')" />
+    <div class="field-error" id="qty-error">Зөв тоо хэмжээ оруулна уу</div>
 
     <!-- Price -->
     <div class="price-row">
       <button class="pm-btn" onclick="adjustPrice(-1)">−</button>
-      <input class="num-input" type="number" id="price-input" placeholder="Price" value="189.84" oninput="updateOrderSummary(); clearFieldError('price-input','price-error')" />
+      <input class="num-input" type="number" id="price-input" placeholder="Үнэ" value="189.84" oninput="updateOrderSummary(); clearFieldError('price-input','price-error')" />
       <button class="pm-btn" onclick="adjustPrice(+1)">+</button>
     </div>
-    <div class="field-error" id="price-error">Please enter a valid price</div>
+    <div class="field-error" id="price-error">Зөв үнэ оруулна уу</div>
 
     <!-- Step -->
     <div class="step-row">
-      <span>Step: $0.01</span>
-      <button class="step-btn" onclick="setMarketPrice()">Use Market Price</button>
+      <span>Алхам: $0.01</span>
+      <button class="step-btn" onclick="setMarketPrice()">Зах зээлийн үнэ ашиглах</button>
     </div>
 
     <!-- Order summary -->
     <div class="verify-card order-summary">
-      <div class="verify-row"><span>Total</span><span id="ord-total">$0.00</span></div>
-      <div class="verify-row"><span>Fee (0.2%)</span><span id="ord-fee">$0.00</span></div>
-      <div class="verify-row total"><span>Total with Fee</span><span id="ord-total-fee">$0.00</span></div>
+      <div class="verify-row"><span>Нийт</span><span id="ord-total">$0.00</span></div>
+      <div class="verify-row"><span>Шимтгэл (0.2%)</span><span id="ord-fee">$0.00</span></div>
+      <div class="verify-row total"><span>Шимтгэлтэй нийт</span><span id="ord-total-fee">$0.00</span></div>
     </div>
 
     <!-- Submit -->
     <button class="submit-btn buy-btn" id="submit-btn" onclick="placeOrder()">
-      Buy AAPL
+      BDS авах
     </button>
   </div>
 
-  <!-- Trading History (this stock) -->
+  <!-- Арилжааны түүх (this stock) -->
   <div class="trade-form" style="padding-top:0">
     <div class="hist-header">
-      <div class="info-section-title">Trading History — AAPL</div>
+      <div class="info-section-title">Арилжааны түүх — BDS</div>
       <button class="view-all-btn" onclick="viewAllHistory()">
-        View All <i data-lucide="chevron-right"></i>
+        Бүгдийг харах <i data-lucide="chevron-right"></i>
       </button>
     </div>
     <div class="hist-tabs">
-      <button class="hist-tab active" id="hist-tab-pending"   onclick="switchHistTab('pending', this)">Pending</button>
-      <button class="hist-tab"        id="hist-tab-completed" onclick="switchHistTab('completed', this)">Completed</button>
-      <button class="hist-tab"        id="hist-tab-cancelled" onclick="switchHistTab('cancelled', this)">Cancelled</button>
+      <button class="hist-tab active" id="hist-tab-pending"   onclick="switchHistTab('pending', this)">Хүлээгдэж буй</button>
+      <button class="hist-tab"        id="hist-tab-completed" onclick="switchHistTab('completed', this)">Биелсэн</button>
+      <button class="hist-tab"        id="hist-tab-cancelled" onclick="switchHistTab('cancelled', this)">Цуцлагдсан</button>
     </div>
     <div class="hist-card" id="trade-history"></div>
   </div>
 
-  <!-- Verify Order modal -->
+  <!-- Захиалга баталгаажуулах modal -->
   <div class="modal-overlay" id="verify-modal-overlay" onclick="if(event.target===this) closeVerifyModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">Verify Order</div>
+      <div class="modal-title">Захиалга баталгаажуулах</div>
       <div class="verify-card">
-        <div class="verify-row"><span>Side</span><span id="vf-side">Buy</span></div>
-        <div class="verify-row"><span>Symbol</span><span id="vf-symbol">AAPL</span></div>
-        <div class="verify-row"><span>Order Type</span><span id="vf-order-type">Market</span></div>
-        <div class="verify-row"><span>Duration</span><span id="vf-duration">Day Order</span></div>
-        <div class="verify-row"><span>Quantity</span><span id="vf-qty">0</span></div>
-        <div class="verify-row"><span>Price</span><span id="vf-price">$0.00</span></div>
-        <div class="verify-row"><span>Total</span><span id="vf-total">$0.00</span></div>
-        <div class="verify-row"><span>Fee (0.2%)</span><span id="vf-fee">$0.00</span></div>
-        <div class="verify-row total"><span>Total with Fee</span><span id="vf-total-fee">$0.00</span></div>
+        <div class="verify-row"><span>Тал</span><span id="vf-side">Авах</span></div>
+        <div class="verify-row"><span>Симбол</span><span id="vf-symbol">BDS</span></div>
+        <div class="verify-row"><span>Захиалгын төрөл</span><span id="vf-order-type">Зах зээлийн</span></div>
+        <div class="verify-row"><span>Хугацаа</span><span id="vf-duration">Өдрийн захиалга</span></div>
+        <div class="verify-row"><span>Тоо хэмжээ</span><span id="vf-qty">0</span></div>
+        <div class="verify-row"><span>Үнэ</span><span id="vf-price">$0.00</span></div>
+        <div class="verify-row"><span>Нийт</span><span id="vf-total">$0.00</span></div>
+        <div class="verify-row"><span>Шимтгэл (0.2%)</span><span id="vf-fee">$0.00</span></div>
+        <div class="verify-row total"><span>Шимтгэлтэй нийт</span><span id="vf-total-fee">$0.00</span></div>
       </div>
       <div class="btn-row">
-        <button class="btn-outline" onclick="closeVerifyModal()">Cancel</button>
-        <button class="submit-btn buy-btn" id="vf-confirm-btn" onclick="confirmOrder()">Confirm Order</button>
+        <button class="btn-outline" onclick="closeVerifyModal()">Цуцлах</button>
+        <button class="submit-btn buy-btn" id="vf-confirm-btn" onclick="confirmOrder()">Захиалга батлах</button>
       </div>
     </div>
   </div>
 
-  <!-- Add Price Alert modal -->
+  <!-- Үнийн мэдэгдэл нэмэх modal -->
   <div class="alert-modal-overlay" id="alert-modal">
     <div class="alert-modal-card">
       <div class="alert-modal-hdr">
-        <span class="alert-modal-title">Add Price Alert</span>
+        <span class="alert-modal-title">Үнийн мэдэгдэл нэмэх</span>
         <button class="alert-modal-close" onclick="closeAlertModal()"><i data-lucide="x"></i></button>
       </div>
       <div class="am-field">
-        <label class="am-label">Symbol</label>
+        <label class="am-label">Симбол</label>
         <input class="am-inp" id="alert-symbol" readonly />
       </div>
       <div class="am-field">
-        <label class="am-label">Price Type</label>
+        <label class="am-label">Үнийн төрөл</label>
         <select class="am-inp am-select" id="alert-price-type">
-          <option value="open">Opening Price</option>
-          <option value="close">Closing Price</option>
-          <option value="high">High Price</option>
-          <option value="low">Low Price</option>
-          <option value="last" selected>Last Traded Price</option>
+          <option value="open">Нээлтийн үнэ</option>
+          <option value="close">Хаалтын үнэ</option>
+          <option value="high">Дээд үнэ</option>
+          <option value="low">Доод үнэ</option>
+          <option value="last" selected>Сүүлийн арилжсан үнэ</option>
         </select>
       </div>
       <div class="am-row">
         <div class="am-field">
-          <label class="am-label">Condition</label>
+          <label class="am-label">Нөхцөл</label>
           <select class="am-inp am-select" id="alert-condition">
-            <option value="gt">Greater than</option>
-            <option value="lt">Less than</option>
-            <option value="eq">Equal to</option>
-            <option value="gte" selected>Greater than or equal to</option>
-            <option value="lte">Less than or equal to</option>
+            <option value="gt">Их</option>
+            <option value="lt">Бага</option>
+            <option value="eq">Тэнцүү</option>
+            <option value="gte" selected>Их буюу тэнцүү</option>
+            <option value="lte">Бага буюу тэнцүү</option>
           </select>
         </div>
         <div class="am-field">
-          <label class="am-label">Target Value</label>
+          <label class="am-label">Зорилтот утга</label>
           <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
         </div>
       </div>
-      <button class="am-btn-primary" onclick="saveAlert()">Create Alert</button>
+      <button class="am-btn-primary" onclick="saveAlert()">Мэдэгдэл үүсгэх</button>
     </div>
   </div>
 
@@ -698,7 +699,7 @@
         </div>`).join('');
     }
 
-    // ── Trading history for this stock (sample) ──
+    // ── Арилжаа history for this stock (sample) ──
     const TRADE_HISTORY = [
       { side:'buy',  qty:50,  price:189.84, total:9492.00,  date:'2026-06-06 09:31', status:'filled'    },
       { side:'buy',  qty:20,  price:182.10, total:3642.00,  date:'2026-06-02 10:05', status:'filled'    },
@@ -724,15 +725,15 @@
       const statusKey = currentHistTab === 'completed' ? 'filled' : currentHistTab;
       const items = TRADE_HISTORY.filter(t => t.status === statusKey).slice(0, 5);
       if (!items.length) {
-        el.innerHTML = `<div class="hist-empty">No ${currentHistTab} orders for this stock</div>`;
+        el.innerHTML = `<div class="hist-empty">Энэ хувьцаанд ${currentHistTab} захиалга алга</div>`;
         return;
       }
       el.innerHTML = items.map(t => `
         <div class="hist-item">
           <div class="hist-icon side-${t.side}"><i data-lucide="${t.side === 'buy' ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
           <div class="hist-info">
-            <div class="hist-title">${t.side === 'buy' ? 'Buy' : 'Sell'} AAPL</div>
-            <div class="hist-sub">${t.qty} shares @ $${t.price.toFixed(2)}</div>
+            <div class="hist-title">${t.side === 'buy' ? 'Авах' : 'Зарах'} BDS</div>
+            <div class="hist-sub">${t.qty} ширхэг  $${t.price.toFixed(2)}</div>
             <div class="hist-date">${t.date}</div>
           </div>
           <div class="hist-right">
@@ -763,7 +764,7 @@
       document.getElementById('btn-sell').className = 'bst-btn' + (side==='sell' ? ' active-sell' : '');
       const sub = document.getElementById('submit-btn');
       sub.className = 'submit-btn ' + (side==='buy' ? 'buy-btn' : 'sell-btn');
-      sub.textContent = (side==='buy' ? 'Buy' : 'Sell') + ' AAPL';
+      sub.textContent = (side==='buy' ? 'Авах' : 'Зарах') + ' BDS';
     }
 
     // ── Order type / duration dropdowns ──
@@ -860,14 +861,14 @@
       let hasError = false;
 
       if (!qty || qty < 1) {
-        showFieldError('qty-input', 'qty-error', 'Please enter a valid quantity');
+        showFieldError('qty-input', 'qty-error', 'Зөв тоо хэмжээ оруулна уу');
         hasError = true;
       } else {
         clearFieldError('qty-input', 'qty-error');
       }
 
       if (!price || price <= 0) {
-        showFieldError('price-input', 'price-error', 'Please enter a valid price');
+        showFieldError('price-input', 'price-error', 'Зөв үнэ оруулна уу');
         hasError = true;
       } else {
         clearFieldError('price-input', 'price-error');
@@ -878,14 +879,14 @@
       openVerifyModal(qty, price);
     }
 
-    // ── Verify Order modal ──
+    // ── Захиалга баталгаажуулах modal ──
     function openVerifyModal(qty, price) {
-      const side  = currentSide === 'buy' ? 'Buy' : 'Sell';
+      const side  = currentSide === 'buy' ? 'Авах' : 'Зарах';
       const total = qty * price;
       const fee   = total * FEE_RATE;
 
       document.getElementById('vf-side').textContent = side;
-      document.getElementById('vf-symbol').textContent = 'AAPL';
+      document.getElementById('vf-symbol').textContent = 'BDS';
       document.getElementById('vf-order-type').textContent = document.getElementById('order-type-label').textContent;
       document.getElementById('vf-duration').textContent = document.getElementById('duration-label').textContent;
       document.getElementById('vf-qty').textContent = qty;
@@ -896,7 +897,7 @@
 
       const confirmBtn = document.getElementById('vf-confirm-btn');
       confirmBtn.className = 'submit-btn ' + (currentSide === 'buy' ? 'buy-btn' : 'sell-btn');
-      confirmBtn.textContent = `Confirm ${side}`;
+      confirmBtn.textContent = `${side} батлах`;
 
       document.getElementById('verify-modal-overlay').classList.add('show');
       notifyModalOpen();
@@ -907,13 +908,13 @@
     }
     function confirmOrder() {
       closeVerifyModal();
-      showToast('Order submitted successfully!');
+      showToast('Захиалга амжилттай илгээгдлээ!');
     }
 
     function toggleStar(btn) { btn.classList.toggle('star-active'); }
     function toggleWatchlist() { document.getElementById('watch-btn').classList.toggle('active'); }
 
-    // ── Add Price Alert modal (same as Home page) ──
+    // ── Үнийн мэдэгдэл нэмэх modal (same as Home page) ──
     function openAlertModal() {
       const symbol = document.querySelector('.sel-symbol').textContent.trim();
       document.getElementById('alert-symbol').value = symbol;
@@ -932,7 +933,7 @@
       const target = document.getElementById('alert-price').value;
       if (!target) return;
       addPriceAlert({ symbol, priceType, condition, target: Number(target), active: true });
-      showToast(`Alert created: ${symbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
+      showToast(`Мэдэгдэл үүслээ: ${symbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
       closeAlertModal();
     }
 

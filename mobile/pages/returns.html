@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Portfolio - TradeX</title>
+  <title>Өгөөж — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -153,7 +153,7 @@
     .up { color:var(--color-buy); }
     .down { color:var(--color-sell); }
 
-    /* ── Holdings table/chart toggle ── */
+    /* ── хувьцаа table/chart toggle ── */
     .view-toggle { display:flex; gap:4px; background:var(--color-bg-input); padding:3px; border-radius:10px; }
     .view-toggle-btn {
       width:28px; height:28px; border:none; border-radius:7px;
@@ -163,7 +163,7 @@
     .view-toggle-btn svg { width:14px; height:14px; }
     .view-toggle-btn.active { background:var(--color-primary); color:#fff; }
 
-    /* ── Holdings P&L diverging bar chart ── */
+    /* ── хувьцаа P&L diverging bar chart ── */
     .pl-axis { display:flex; justify-content:space-between; padding:12px 14px 0; font-size:10px; font-weight:700; color:var(--color-text-disabled); text-transform:uppercase; letter-spacing:0.05em; }
     .pl-axis .mid { color:var(--color-text-disabled); }
     .pl-row { display:flex; align-items:center; gap:10px; padding:10px 14px; }
@@ -191,7 +191,7 @@
       <div class="hero-top">
         <div style="flex:1; min-width:0">
           <div class="eyebrow-row">
-            <div class="eyebrow">Current Valuation</div>
+            <div class="eyebrow">Одоогийн үнэлгээ</div>
             <button class="hero-eye-btn" onclick="toggleVisibility()" title="Toggle values"><i data-lucide="eye" id="val-eye"></i></button>
           </div>
           <div class="hero-value" id="hero-val">$112,680.00</div>
@@ -199,36 +199,36 @@
         </div>
       </div>
       <div class="hero-range-tabs">
-        <button class="range-btn" onclick="setRange('1M', this)">1M</button>
-        <button class="range-btn active" onclick="setRange('3M', this)">3M</button>
-        <button class="range-btn" onclick="setRange('6M', this)">6M</button>
-        <button class="range-btn" onclick="setRange('1Y', this)">1Y</button>
+        <button class="range-btn" onclick="setRange('1M', this)">1 сар</button>
+        <button class="range-btn active" onclick="setRange('3M', this)">3 сар</button>
+        <button class="range-btn" onclick="setRange('6M', this)">6 сар</button>
+        <button class="range-btn" onclick="setRange('1Y', this)">1 жил</button>
       </div>
       <div class="hero-mini-chart" id="hero-mini-chart"></div>
     </section>
 
     <!-- <section class="metric-grid">
       <div class="metric-card primary">
-        <div class="metric-label"><i data-lucide="line-chart"></i> Total P&L</div>
+        <div class="metric-label"><i data-lucide="line-chart"></i> Нийт ашиг/алдагдал</div>
         <div class="metric-value gain">+$25,340.00</div>
-        <div class="metric-sub">Realized + unrealized portfolio gain</div>
+        <div class="metric-sub">Бодит болон бодит бус Өгөөжын ашиг</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label"><i data-lucide="wallet"></i> Total Invested</div>
+        <div class="metric-label"><i data-lucide="wallet"></i> Нийт хөрөнгө оруулалт</div>
         <div class="metric-value">$87,340.00</div>
-        <div class="metric-sub">Net capital deployed</div>
+        <div class="metric-sub">Оруулсан цэвэр хөрөнгө</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label"><i data-lucide="badge-percent"></i> Return</div>
+        <div class="metric-label"><i data-lucide="badge-percent"></i> Өгөөж</div>
         <div class="metric-value gain">+29.01%</div>
-        <div class="metric-sub">Since inception</div>
+        <div class="metric-sub">Эхэлснээс хойш</div>
       </div>
     </section> -->
 
     <section class="section">
       <div class="section-head">
-        <div class="section-title">Allocation</div>
-        <div class="section-note">By market value</div>
+        <div class="section-title">Хуваарилалт</div>
+        <div class="section-note">Зах зээлийн үнэлгээгээр</div>
       </div>
       <div class="panel allocation-wrap">
         <div id="allocation-chart"></div>
@@ -238,39 +238,39 @@
 
     <!-- <section class="section">
       <div class="section-head">
-        <div class="section-title">Portfolio Health</div>
-        <div class="section-note">Risk snapshot</div>
+        <div class="section-title">Өгөөжын төлөв</div>
+        <div class="section-note">Эрсдэлийн тойм</div>
       </div>
       <div class="health-grid">
         <div class="health-card">
           <div class="health-icon"><i data-lucide="shield-check"></i></div>
-          <div class="health-value">Moderate</div>
-          <div class="health-label">Risk level</div>
+          <div class="health-value">Дунд</div>
+          <div class="health-label">Эрсдэлийн түвшин</div>
         </div>
         <div class="health-card">
           <div class="health-icon"><i data-lucide="layers-3"></i></div>
-          <div class="health-value">6 assets</div>
-          <div class="health-label">Diversification</div>
+          <div class="health-value">6 хөрөнгө</div>
+          <div class="health-label">Төрөлжүүлэлт</div>
         </div>
         <div class="health-card">
           <div class="health-icon"><i data-lucide="circle-dollar-sign"></i></div>
           <div class="health-value">66.6%</div>
-          <div class="health-label">Cash reserve</div>
+          <div class="health-label">Бэлэн мөнгөний нөөц</div>
         </div>
         <div class="health-card">
           <div class="health-icon"><i data-lucide="activity"></i></div>
           <div class="health-value">1.21</div>
-          <div class="health-label">Beta estimate</div>
+          <div class="health-label">Бета үнэлгээ</div>
         </div>
       </div>
     </section> -->
 
     <section class="section">
       <div class="section-head">
-        <div class="section-title">Holdings</div>
+        <div class="section-title">Миний хувьцаа</div>
         <div class="view-toggle">
-          <button class="view-toggle-btn active" id="holdings-view-table" onclick="setHoldingsView('table')" title="Table view"><i data-lucide="table"></i></button>
-          <button class="view-toggle-btn" id="holdings-view-chart" onclick="setHoldingsView('chart')" title="Chart view"><i data-lucide="bar-chart-3"></i></button>
+          <button class="view-toggle-btn active" id="holdings-view-table" onclick="setHoldingsView('table')" title="Хүснэгтээр харах"><i data-lucide="table"></i></button>
+          <button class="view-toggle-btn" id="holdings-view-chart" onclick="setHoldingsView('chart')" title="Графикаар харах"><i data-lucide="bar-chart-3"></i></button>
         </div>
       </div>
       <div class="panel" id="holdings-list"></div>
@@ -363,7 +363,7 @@
             <div class="holding-avatar">${h.label.slice(0,2)}</div>
             <div>
               <div class="holding-symbol">${h.label}</div>
-              <div class="holding-shares">${h.shares} shares · ${h.name}</div>
+              <div class="holding-shares">${h.shares} ширхэг · ${h.name}</div>
             </div>
           </div>
           <div class="holding-right">
@@ -410,7 +410,7 @@
       const maxAbs = Math.max(...items.map(i => Math.abs(i.value)), 1);
       const el = document.getElementById('holdings-chart');
       el.innerHTML = `
-        <div class="pl-axis"><span>Loss</span><span class="mid">P&amp;L %</span><span>Gain</span></div>
+        <div class="pl-axis"><span>Алдагдал</span><span class="mid">А/А %</span><span>Ашиг</span></div>
         ${items.map(i => `
         <div class="pl-row">
           <div class="pl-label">${i.label}</div>

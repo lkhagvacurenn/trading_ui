@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Price Alerts — TradeX</title>
+  <title>Үнийн мэдэгдэл — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -121,12 +121,12 @@
     .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; text-align: center; }
     .modal-sub { font-size: 13px; color: var(--color-text-secondary); text-align: center; margin: -8px 0 18px; line-height: 1.6; }
     .modal-btn-row { display: flex; gap: 10px; margin-top: 4px; }
-    .modal-btn-row .am-btn-primary { margin-top: 0; }
-    .btn-outline {
-      flex: 1; padding: 14px; background: transparent;
-      border: 1.5px solid var(--color-border); border-radius: 10px;
-      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+    .modal-btn-row .am-btn-primary { margin-top: 0; }    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
       cursor: pointer; transition: border-color 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .btn-outline:hover { border-color: var(--color-primary); }
 
@@ -146,62 +146,62 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Price Alerts</div>
+    <div class="sub-title">Үнийн мэдэгдэл</div>
   </div>
 
   <button class="add-alert-btn" onclick="openAlertForm()">
-    <i data-lucide="plus"></i> Add New Alert
+    <i data-lucide="plus"></i> Шинэ мэдэгдэл нэмэх
   </button>
 
   <div class="alert-card" id="alerts-list"></div>
 
   <div class="empty-state" id="alerts-empty" style="display:none">
-    <div class="empty-state-title">No alerts set up</div>
-    <div class="empty-state-sub">Add a new alert to get notified<br>about price changes.</div>
+    <div class="empty-state-title">Мэдэгдэл тохируулаагүй байна</div>
+    <div class="empty-state-sub">Үнийн өөрчлөлтийн талаар мэдэгдэх<br>шинэ мэдэгдэл нэмнэ үү.</div>
   </div>
 
   <div style="height:20px"></div>
 
-  <!-- Add / Edit Alert form -->
+  <!-- Add / Засах Alert form -->
   <div class="modal-overlay" id="alert-form-overlay" onclick="if(event.target===this) closeAlertForm()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title" id="alert-form-title">Add New Alert</div>
+      <div class="modal-title" id="alert-form-title">Шинэ мэдэгдэл нэмэх</div>
 
       <div class="am-field">
-        <label class="am-label">Symbol</label>
+        <label class="am-label">Симбол</label>
         <select class="am-inp am-select" id="af-symbol"></select>
       </div>
 
       <div class="am-field">
-        <label class="am-label">Price Type</label>
+        <label class="am-label">Үнийн төрөл</label>
         <select class="am-inp am-select" id="af-price-type">
-          <option value="open">Opening Price</option>
-          <option value="close">Closing Price</option>
-          <option value="high">High Price</option>
-          <option value="low">Low Price</option>
-          <option value="last">Last Traded Price</option>
+          <option value="open">Нээлтийн үнэ</option>
+          <option value="close">Хаалтын үнэ</option>
+          <option value="high">Дээд үнэ</option>
+          <option value="low">Доод үнэ</option>
+          <option value="last">Сүүлийн арилжсан үнэ</option>
         </select>
       </div>
 
       <div class="am-field">
-        <label class="am-label">Condition</label>
+        <label class="am-label">Нөхцөл</label>
         <select class="am-inp am-select" id="af-condition">
-          <option value="gt">Greater than</option>
-          <option value="lt">Less than</option>
-          <option value="eq">Equal to</option>
-          <option value="gte">Greater than or equal to</option>
-          <option value="lte">Less than or equal to</option>
+          <option value="gt">Их</option>
+          <option value="lt">Бага</option>
+          <option value="eq">Тэнцүү</option>
+          <option value="gte">Их буюу тэнцүү</option>
+          <option value="lte">Бага буюу тэнцүү</option>
         </select>
       </div>
 
       <div class="am-field">
-        <label class="am-label">Target Value</label>
+        <label class="am-label">Зорилтот утга</label>
         <input class="am-inp" id="af-target" type="number" placeholder="0.00" step="0.01" inputmode="decimal" />
-        <div class="field-error" id="af-target-error">Please enter a target value.</div>
+        <div class="field-error" id="af-target-error">Зорилтот утга оруулна уу.</div>
       </div>
 
-      <button class="am-btn-primary" onclick="saveAlertForm()" id="af-save-btn">Save</button>
+      <button class="am-btn-primary" onclick="saveAlertForm()" id="af-save-btn">Хадгалах</button>
     </div>
   </div>
 
@@ -209,11 +209,11 @@
   <div class="modal-overlay" id="delete-confirm-overlay" onclick="if(event.target===this) closeDeleteConfirm()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">Delete Alert</div>
-      <div class="modal-sub">Are you sure you want to delete this alert?<br>This action cannot be undone.</div>
+      <div class="modal-title">Мэдэгдэл устгах</div>
+      <div class="modal-sub">Та энэхүү мэдэгдлийг устгахдаа итгэлтэй байна уу?</div>
       <div class="modal-btn-row">
-        <button class="btn-outline" onclick="closeDeleteConfirm()">Cancel</button>
-        <button class="am-btn-primary am-btn-danger" onclick="confirmDelete()">Delete</button>
+        <button class="btn-outline" onclick="closeDeleteConfirm()">Цуцлах</button>
+        <button class="am-btn-primary am-btn-danger" onclick="confirmDelete()">Устгах</button>
       </div>
     </div>
   </div>
@@ -223,11 +223,11 @@
   <script src="../scripts/wallet-data.js"></script>
   <script>
     const ALERT_SYMBOLS = [
-      { symbol: 'AAPL',  name: 'Apple Inc.' },
-      { symbol: 'NVDA',  name: 'NVIDIA Corp.' },
-      { symbol: 'TSLA',  name: 'Tesla Inc.' },
-      { symbol: 'MSFT',  name: 'Microsoft Corp.' },
-      { symbol: 'GOOGL', name: 'Alphabet Inc.' },
+      { symbol: 'BDS',  name: 'БДСек ХК' },
+      { symbol: 'KHAN', name: 'Хаан Банк ХК' },
+      { symbol: 'APU',  name: 'АПУ ХК' },
+      { symbol: 'TDB',  name: 'ХХБ ХК' },
+      { symbol: 'GOLO', name: 'Голомт Банк ХК' },
     ];
 
     let editingAlertId = null;
@@ -279,7 +279,7 @@
       a.active = !a.active;
       setPriceAlerts(alerts);
       renderAlerts();
-      showToast(a.active ? 'Alert activated' : 'Alert deactivated');
+      showToast(a.active ? 'Мэдэгдэл идэвхжлээ' : 'Мэдэгдэл идэвхгүй боллоо');
     }
 
     function openAlertForm(id) {
@@ -290,13 +290,13 @@
 
       if (id) {
         const a = getPriceAlerts().find(x => x.id === id);
-        document.getElementById('alert-form-title').textContent = 'Edit Alert';
+        document.getElementById('alert-form-title').textContent = 'мэдэгдэл засах';
         document.getElementById('af-symbol').value = a.symbol;
         document.getElementById('af-price-type').value = a.priceType;
         document.getElementById('af-condition').value = a.condition;
         document.getElementById('af-target').value = a.target;
       } else {
-        document.getElementById('alert-form-title').textContent = 'Add New Alert';
+        document.getElementById('alert-form-title').textContent = 'Шинэ мэдэгдэл нэмэх';
         document.getElementById('af-symbol').selectedIndex = 0;
         document.getElementById('af-price-type').value = 'last';
         document.getElementById('af-condition').value = 'gte';
@@ -337,10 +337,10 @@
         const a = alerts.find(x => x.id === editingAlertId);
         Object.assign(a, data);
         setPriceAlerts(alerts);
-        showToast('Alert updated');
+        showToast('Мэдэгдэл шинэчлэгдлээ');
       } else {
         addPriceAlert({ ...data, active: true });
-        showToast('New alert created');
+        showToast('Шинэ мэдэгдэл үүслээ');
       }
 
       closeAlertForm();
@@ -365,7 +365,7 @@
       setPriceAlerts(alerts);
       closeDeleteConfirm();
       renderAlerts();
-      showToast('Alert deleted');
+      showToast('Мэдэгдэл устгагдлаа');
     }
 
     function showToast(msg) {

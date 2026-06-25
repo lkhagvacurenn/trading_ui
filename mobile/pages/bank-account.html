@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Bank Accounts — TradeX</title>
+  <title>Банкны данс — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -41,27 +41,21 @@
     .inp.error { border-color: var(--color-sell); }
     .field-error { font-size: 11px; color: var(--color-sell); margin-top: 6px; display: none; }
     .field-error.show { display: block; }
-    .bank-scroll.error { outline: 1.5px solid var(--color-sell); border-radius: 12px; }
-
-    .btn-primary {
-      width: 100%; padding: 14px; background: var(--color-primary);
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      color: #fff; cursor: pointer; transition: opacity 0.15s;
-      margin-top: 8px; margin-bottom: 18px;
+    .bank-scroll.error { outline: 1.5px solid var(--color-sell); border-radius: 12px; }    .btn-primary {
+      width: 100%; min-height: 52px; padding: 14px;
+      background: var(--color-primary); border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:hover { opacity: 0.88; }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .btn-outline {
-      width: 100%; padding: 13px; background: transparent;
-      border: 1.5px solid var(--color-border); border-radius: 10px;
-      font-size: 14px; font-weight: 700; color: var(--color-text-primary);
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }    .btn-outline {
+      width: 100%; min-height: 52px; padding: 14px; background: transparent;
+      border: 1.5px solid var(--color-border); border-radius: 12px;
+      font-size: 15px; font-weight: 700; color: var(--color-text-primary);
       cursor: pointer; transition: border-color 0.15s;
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      margin-bottom: 18px;
     }
     .btn-outline:hover { border-color: var(--color-primary); }
-    .btn-outline svg { width: 16px; height: 16px; }
     .btn-row { display: flex; gap: 10px; margin-bottom: 18px; }
     .btn-row .btn-outline,
     .btn-row .btn-primary { width: auto; flex: 1; margin: 0; }
@@ -104,7 +98,7 @@
     .bank-card.selected .bank-check { display: flex; }
     .bank-card .bank-check svg { width: 9px; height: 9px; }
 
-    /* ── Account list ── */
+    /* ── Данс list ── */
     .info-section-title { font-size: 14px; font-weight: 700; margin: 6px 0 10px; }
     .acct-card {
       display: flex; align-items: center; gap: 12px;
@@ -146,15 +140,15 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Bank Accounts</div>
+    <div class="sub-title">Банкны данс</div>
   </div>
 
   <div class="form-body">
-    <div class="info-section-title">Linked Accounts</div>
+    <div class="info-section-title">Холбосон дансууд</div>
     <div id="acct-list"></div>
 
     <button class="btn-outline" id="add-toggle-btn" onclick="openAddModal()">
-      <i data-lucide="plus"></i> Add New Account
+      <i data-lucide="plus"></i> Шинэ данс нэмэх
     </button>
   </div>
 
@@ -167,12 +161,11 @@
       <div class="modal-handle"></div>
       <div class="confirm-modal-body">
         <div class="confirm-modal-icon"><i data-lucide="trash-2"></i></div>
-        <div class="confirm-modal-title">Remove this bank account?</div>
-        <div class="confirm-modal-text">This action cannot be undone. You'll need to add it again to use it for deposits or withdrawals.</div>
+        <div class="confirm-modal-title">Та энэ дансыг устгахдаа итгэлтэй байна уу?</div>
       </div>
       <div class="btn-row" style="margin-bottom:0">
-        <button class="btn-outline" onclick="closeDeleteModal()">Keep Account</button>
-        <button class="btn-primary" style="margin:0;background:var(--color-sell)" onclick="confirmDeleteAccount()">Remove</button>
+        <button class="btn-outline" onclick="closeDeleteModal()">Дансыг үлдээх</button>
+        <button class="btn-primary" style="margin:0;background:var(--color-sell)" onclick="confirmDeleteAccount()">Устгах</button>
       </div>
     </div>
   </div>
@@ -181,22 +174,22 @@
   <div class="modal-overlay" id="add-modal-overlay" onclick="if(event.target===this) closeAddModal()">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="info-section-title">Add New Account</div>
+      <div class="info-section-title">Шинэ данс нэмэх</div>
       <div class="field-wrap">
-        <label class="field-label">Select Bank</label>
+        <label class="field-label">Банк сонгох</label>
         <div class="bank-scroll" id="bank-scroll"></div>
-        <div class="field-error" id="bank-select-error">Please select a bank</div>
+        <div class="field-error" id="bank-select-error">Банк сонгоно уу</div>
       </div>
       <div class="field-wrap">
-        <label class="field-label">Account Number</label>
-        <input class="inp" id="new-acct-number" placeholder="Enter your account number" inputmode="numeric" oninput="onAcctNumberInput()" />
-        <div class="field-error" id="number-error">Please enter a valid account number</div>
+        <label class="field-label">Дансны дугаар</label>
+        <input class="inp" id="new-acct-number" placeholder="Дансны дугаараа оруулна уу" inputmode="numeric" oninput="onAcctNumberInput()" />
+        <div class="field-error" id="number-error">Зөв дансны дугаар оруулна уу</div>
       </div>
       <div class="field-wrap">
-        <label class="field-label">Account Holder Name</label>
-        <input class="inp" id="new-acct-holder" placeholder="Account holder name" readonly/>
+        <label class="field-label">Данс эзэмшигчийн нэр</label>
+        <input class="inp" id="new-acct-holder" placeholder="Данс эзэмшигчийн нэр" readonly/>
       </div>
-      <button class="btn-primary" style="margin-bottom:0" onclick="saveBankAccount()">Save</button>
+      <button class="btn-primary" style="margin-bottom:0" onclick="saveBankAccount()">Хадгалах</button>
     </div>
   </div>
 
@@ -206,7 +199,7 @@
       try { window.parent.navigateTo('balance'); } catch (e) { window.history.back(); }
     }
 
-    const CURRENT_USER_NAME = 'Lkhagvasuren Battsengel';
+    const CURRENT_USER_NAME = 'Лхагвасүрэн Батцэнгэл';
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -238,7 +231,7 @@
       document.getElementById(inputId).classList.remove('error');
     }
 
-    /* ── Account holder name is derived from the account number, not typed by the user ── */
+    /* ── Данс эзэмшигчийн нэр is derived from the account number, not typed by the user ── */
     function onAcctNumberInput() {
       clearFieldError('new-acct-number', 'number-error');
       const number = document.getElementById('new-acct-number').value.trim();
@@ -271,7 +264,7 @@
       const accounts = getBankAccounts();
       const el = document.getElementById('acct-list');
       if (!accounts.length) {
-        el.innerHTML = '<div class="hist-empty">No linked accounts yet</div>';
+        el.innerHTML = '<div class="hist-empty">Холбосон данс одоогоор алга</div>';
         return;
       }
       el.innerHTML = accounts.map(a => `
@@ -283,7 +276,7 @@
             <div class="acct-holder">${a.holder}</div>
           </div>
           <div class="acct-actions">
-            <button class="acct-action-btn danger" title="Delete" onclick="deleteAccount('${a.id}')"><i data-lucide="trash-2"></i></button>
+            <button class="acct-action-btn danger" title="Устгах" onclick="deleteAccount('${a.id}')"><i data-lucide="trash-2"></i></button>
           </div>
         </div>`).join('');
       lucide.createIcons();
@@ -311,7 +304,7 @@
       setBankAccounts(accounts);
       closeDeleteModal();
       renderAccounts();
-      showToast('Account removed');
+      showToast('Данс устгагдлаа');
     }
 
     function saveBankAccount() {
@@ -343,7 +336,7 @@
 
       closeAddModal();
       renderAccounts();
-      showToast('New account added');
+      showToast('Шинэ данс нэмэгдлээ');
     }
 
     renderAccounts();

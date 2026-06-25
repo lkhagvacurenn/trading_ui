@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Notifications — TradeX</title>
+  <title>Мэдэгдэл — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -69,8 +69,8 @@
   <!-- Sub-page header -->
   <div class="sub-header" style="position:relative">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">Notifications</div>
-    <button class="mark-read-btn" onclick="markAllRead()">Mark all read</button>
+    <div class="sub-title">Мэдэгдэл</div>
+    <button class="mark-read-btn" onclick="markAllRead()">Бүгдийг уншсан болгох</button>
   </div>
 
   <div class="form-body">
@@ -85,12 +85,12 @@
     }
 
     const NOTIFICATIONS = [
-      { id: 'n1', type: 'deposit', icon: 'arrow-down-to-line', title: 'Deposit Completed', text: 'Your deposit of 500,000₮ has been credited to your Nominal Account.', time: '2026-06-11 09:24', unread: true },
-      { id: 'n2', type: 'withdraw', icon: 'arrow-up-from-line', title: 'Withdrawal Pending', text: 'Your withdrawal request of 200,000₮ is being processed.', time: '2026-06-10 16:05', unread: true },
-      { id: 'n3', type: 'trade', icon: 'arrow-left-right', title: 'Order Executed', text: 'Your buy order for 10 shares of MNDL has been filled at 3,250₮.', time: '2026-06-10 11:42', unread: true },
+      { id: 'n1', type: 'deposit', icon: 'arrow-down-to-line', title: 'Цэнэглэлт биелсэн', text: 'Таны 500,000₮ цэнэглэлт таны Номинал Данс.', time: '2026-06-11 09:24', unread: true },
+      { id: 'n2', type: 'withdraw', icon: 'arrow-up-from-line', title: ' Мөнгө хүсэх хүлээгдэж буй', text: 'Your withdrawal request of 200,000₮ is being processed.', time: '2026-06-10 16:05', unread: true },
+      { id: 'n3', type: 'trade', icon: 'arrow-left-right', title: 'Захиалга биелсэн', text: 'Your buy order for 10 ширхэг of MNDL has been filled at 3,250₮.', time: '2026-06-10 11:42', unread: true },
       { id: 'n4', type: 'system', icon: 'shield-check', title: 'KYC Verified', text: 'Your identity verification has been approved. You now have full account access.', time: '2026-06-08 14:10', unread: false },
-      { id: 'n5', type: 'system', icon: 'megaphone', title: 'New IPO Available', text: 'Subscription for "Erdenes Tavan Tolgoi" IPO is now open. Tap to view details.', time: '2026-06-06 08:00', unread: false },
-      { id: 'n6', type: 'deposit', icon: 'arrow-down-to-line', title: 'Deposit Completed', text: 'Your deposit of 1,000,000₮ has been credited to your MCSD Account.', time: '2026-06-02 10:18', unread: false },
+      { id: 'n5', type: 'system', icon: 'megaphone', title: 'Шинэ IPO нээгдлээ', text: 'Subscription for "Erdenes Tavan Tolgoi" IPO is now open. Tap to view details.', time: '2026-06-06 08:00', unread: false },
+      { id: 'n6', type: 'deposit', icon: 'arrow-down-to-line', title: 'Цэнэглэлт биелсэн', text: 'Таны 1,000,000₮ цэнэглэлт таны ҮЦТХТ данс.', time: '2026-06-02 10:18', unread: false },
     ];
 
     function timeAgo(dateStr) {
@@ -108,7 +108,7 @@
     function renderNotifications() {
       const el = document.getElementById('notif-list');
       if (!NOTIFICATIONS.length) {
-        el.innerHTML = '<div class="hist-empty"><i data-lucide="bell-off"></i>No notifications yet</div>';
+        el.innerHTML = '<div class="hist-empty"><i data-lucide="bell-off"></i>Мэдэгдэл одоогоор алга</div>';
         lucide.createIcons();
         return;
       }

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>FAQ — TradeX</title>
+  <title>Түгээмэл асуулт — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -29,7 +29,7 @@
     .form-body { padding: 0 16px; }
     .info-section-title { font-size: 14px; font-weight: 700; margin: 6px 0 10px; }
 
-    /* ── Category chips ── */
+    /* ── Ангилал chips ── */
     .cat-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 14px; margin: 0 -2px; scrollbar-width: none; }
     .cat-row::-webkit-scrollbar { display: none; }
     .cat-chip {
@@ -66,7 +66,7 @@
   <!-- Sub-page header -->
   <div class="sub-header">
     <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-    <div class="sub-title">FAQ</div>
+    <div class="sub-title">Түгээмэл асуулт</div>
   </div>
 
   <div class="form-body">
@@ -82,22 +82,22 @@
     }
 
     const FAQS = [
-      { cat: 'Account', q: 'How do I open a trading account?', a: 'Go to the menu and select "Open Account". Fill in your personal details, complete the KYC verification with a valid ID, and submit. Your account is usually approved within 1 business day.' },
-      { cat: 'Account', q: 'How do I complete KYC verification?', a: 'Navigate to the KYC page from your profile menu, upload a clear photo of your government-issued ID and a selfie, then submit for review. Verification typically takes a few hours.' },
-      { cat: 'Deposit', q: 'How long does a deposit take to process?', a: 'Bank transfer deposits are usually credited within 30 minutes during business hours. You can track the status of your deposit on the Deposit page under "Deposit History".' },
-      { cat: 'Deposit', q: 'Is there a minimum deposit amount?', a: 'The minimum deposit amount is 10,000₮. There is no maximum limit, but large deposits may require additional verification.' },
-      { cat: 'Withdraw', q: 'How long does a withdrawal take?', a: 'Withdrawal requests are processed within 1 business day. A small processing fee applies and is shown before you confirm your request.' },
-      { cat: 'Withdraw', q: 'Can I cancel a withdrawal request?', a: 'Yes, as long as the request status is still "Pending" you can cancel it from the Withdrawal History list, and the amount will be returned to your balance immediately.' },
-      { cat: 'Trading', q: 'What are the trading hours?', a: 'The secondary market is open Monday to Friday, 10:00 – 13:00 (UTC+8), excluding public holidays. Primary market (IPO) subscriptions follow their own announced schedules.' },
-      { cat: 'Trading', q: 'What fees apply to trades?', a: 'Brokerage commission is charged on each executed order. The exact rate depends on your account type and is shown in the order confirmation before you submit a trade.' },
-      { cat: 'Security', q: 'Is my account secure?', a: 'We use bank-level encryption and two-factor verification for sensitive actions. Never share your password or one-time codes with anyone, including BDSec staff.' },
-      { cat: 'Security', q: 'I forgot my password, what should I do?', a: 'On the login screen, tap "Forgot password" and follow the steps to reset it via your registered email or phone number.' },
+      { cat: 'Данс', q: 'Арилжааны данс хэрхэн нээх вэ?', a: 'Цэсээс "Данс нээх"-ийг сонгож, хувийн мэдээллээ бөглөн, хүчинтэй бичиг баримтаар KYC баталгаажуулалт хийж илгээнэ үү. Данс ихэвчлэн ажлын 1 өдөрт баталгаажна.' },
+      { cat: 'Данс', q: 'KYC баталгаажуулалтыг хэрхэн хийх вэ?', a: 'Профайлын цэсээс KYC хуудсанд орж, иргэний үнэмлэхийн тод зураг болон селфи оруулаад хянуулахын тулд илгээнэ үү. Баталгаажуулалт ихэвчлэн хэдэн цаг үргэлжилнэ.' },
+      { cat: 'Цэнэглэх', q: 'Цэнэглэлт хэр удах вэ?', a: 'Bank transfer deposits are usually credited within 30 minutes during business hours. You can track the status of your deposit огноо the Цэнэглэх page under "Цэнэглэсэн түүх".' },
+      { cat: 'Цэнэглэх', q: 'Цэнэглэх доод дүн бий юу?', a: 'Цэнэглэх доод дүн 10,000₮. Дээд хязгаар байхгүй боловч өндөр дүнтэй цэнэглэлтэд нэмэлт баталгаажуулалт шаардагдаж болно.' },
+      { cat: 'Мөнгө хүсэх', q: 'Мөнгө хүсэх хэр удах вэ?', a: 'Мөнгө хүсэх requests are processed within 1 business day. A small processing fee applies and is shown before you confirm your request.' },
+      { cat: 'Мөнгө хүсэх', q: 'Мөнгө хүсэхийн хүсэлтээ цуцалж болох уу?', a: 'Yes, as long as the request status is still "Хүлээгдэж буй" you can cancel it from the Мөнгө хүсэх түүх list, and the amount will be returned to your balance immediately.' },
+      { cat: 'Арилжаа', q: 'What are the trading hours?', a: 'The secondary market is open Monday to Friday, 10:00 – 13:00 (UTC+8), excluding public holidays. Primary market (IPO) subscriptions follow their own announced schedules.' },
+      { cat: 'Арилжаа', q: 'What fees apply to trades?', a: 'Brokerage commission is charged огноо each executed order. The exact rate depends огноо your account type and is shown in the order confirmation before you submit a trade.' },
+      { cat: 'Үнэт цаас', q: 'Миний данс аюулгүй юу?', a: 'We use bank-level encryption and two-factor verification for sensitive actions. Never share your password or one-time codes with anyone, including BDSec staff.' },
+      { cat: 'Үнэт цаас', q: 'Нууц үгээ мартсан бол яах вэ?', a: 'On the login screen, tap "Forgot password" and follow the steps to reset it via your registered email or phone number.' },
     ];
 
-    let activeCat = 'All';
+    let activeCat = 'Бүгд';
 
     function renderCats() {
-      const cats = ['All', ...new Set(FAQS.map(f => f.cat))];
+      const cats = ['Бүгд', ...new Set(FAQS.map(f => f.cat))];
       document.getElementById('cat-row').innerHTML = cats.map(c =>
         `<div class="cat-chip ${c === activeCat ? 'active' : ''}" onclick="selectCat('${c}')">${c}</div>`
       ).join('');
@@ -110,10 +110,10 @@
     }
 
     function renderFaqs() {
-      const items = activeCat === 'All' ? FAQS : FAQS.filter(f => f.cat === activeCat);
+      const items = activeCat === 'Бүгд' ? FAQS : FAQS.filter(f => f.cat === activeCat);
       const el = document.getElementById('faq-list');
       if (!items.length) {
-        el.innerHTML = '<div class="hist-empty">No questions in this category</div>';
+        el.innerHTML = '<div class="hist-empty">Энэ ангилалд асуулт алга</div>';
         return;
       }
       el.innerHTML = items.map((f, i) => `

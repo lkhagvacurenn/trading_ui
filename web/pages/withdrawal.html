@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Зарлага — BDSec</title>
+  <title>Мөнгө хүсэх — BDSec</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -16,7 +16,7 @@
     body { margin: 0; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); }
 
     /* ── Page layout ── */
-    .wd-page { padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .wd-page { padding: 1.75rem 2rem; max-width: 72rem; margin: 0 auto; }
     .wd-grid { display: grid; grid-template-columns: 580px 1fr; gap: 24px; align-items: start; }
     @media (max-width: 860px) { .wd-grid { grid-template-columns: 1fr; } }
 
@@ -394,7 +394,7 @@
 <!-- Verify modal -->
 <div class="overlay" id="verify-overlay" onclick="if(event.target===this)closeVerify()">
   <div class="modal-box">
-    <div class="modal-title">Зарлага баталгаажуулах</div>
+    <div class="modal-title">Мөнгө хүсэх баталгаажуулах</div>
     <div id="verify-body"></div>
     <div class="modal-btn-row">
       <button class="modal-btn-cancel" onclick="closeVerify()">Буцах</button>

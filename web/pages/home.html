@@ -115,7 +115,6 @@
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.72);text-transform:uppercase;letter-spacing:.05em">Нийт хөрөнгө</div>
       </div>
       <div id="bc-total" style="font-size:18px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#fff;margin-bottom:4px">—</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Номинал + ҮЦТХТ + Үнэт цаас</div>
     </div>
     <!-- Nominal -->
     <div class="web-card" style="padding:16px 18px;background:linear-gradient(135deg,#32308d 0%,var(--color-primary) 45%,#6f63e8 100%);border-color:rgba(255,255,255,0.14);position:relative;overflow:hidden">
@@ -127,7 +126,7 @@
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.72);text-transform:uppercase;letter-spacing:.05em">Номинал</div>
       </div>
       <div id="bc-nominal" style="font-size:18px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#fff;margin-bottom:4px">—</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Боломжит мөнгөн дүн</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Боломжит бэлэн мөнгө</div>
     </div>
     <!-- MCSD -->
     <div class="web-card" style="padding:16px 18px;background:linear-gradient(135deg,#32308d 0%,var(--color-primary) 45%,#6f63e8 100%);border-color:rgba(255,255,255,0.14);position:relative;overflow:hidden">
@@ -148,10 +147,10 @@
         <div style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <i data-lucide="trending-up" style="width:14px;height:14px;color:#fff"></i>
         </div>
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.72);text-transform:uppercase;letter-spacing:.05em">Үнэт цаас</div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.72);text-transform:uppercase;letter-spacing:.05em">Үнэт цаасны номинал</div>
       </div>
       <div id="bc-securities" style="font-size:18px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#fff;margin-bottom:4px">—</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Одоогийн зах зээлийн үнэ</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.52)">Нийт үнэт цаас</div>
     </div>
   </div>
 
@@ -197,16 +196,18 @@
 
       <div class="chart-tabs">
         <button class="chart-tab active" onclick="setChartType('line', this)" title="Шугаман график"><i data-lucide="chart-line"></i></button>
+        <button class="chart-tab" onclick="setChartType('area', this)" title="Талбайн график"><i data-lucide="area-chart"></i></button>
         <button class="chart-tab" onclick="setChartType('candle', this)" title="Лааны график"><i data-lucide="chart-candlestick"></i></button>
+        <button class="chart-tab" onclick="setChartType('bar', this)" title="Баарын график"><i data-lucide="chart-bar"></i></button>
       </div>
-      <div id="main-chart"></div>
+      <div id="main-chart" style="border-radius:10px;overflow:hidden;"></div>
       <div class="tf-tabs" id="tf-tabs">
-        <button class="tf-tab active" data-tf="1W" onclick="setTimeframe('1W', this)">1W</button>
-        <button class="tf-tab" data-tf="1M" onclick="setTimeframe('1M', this)">1M</button>
-        <button class="tf-tab" data-tf="3M" onclick="setTimeframe('3M', this)">3M</button>
-        <button class="tf-tab" data-tf="6M" onclick="setTimeframe('6M', this)">6M</button>
-        <button class="tf-tab" data-tf="1Y" onclick="setTimeframe('1Y', this)">1Y</button>
-        <button class="tf-tab" data-tf="All" onclick="setTimeframe('All', this)">Бүгд</button>
+        <button class="tf-tab active" data-tf="1W" onclick="setTimeframe('1W', this)">1 долоо хоног</button>
+        <button class="tf-tab" data-tf="1M" onclick="setTimeframe('1M', this)">1 сар</button>
+        <button class="tf-tab" data-tf="3M" onclick="setTimeframe('3M', this)">3 сар</button>
+        <button class="tf-tab" data-tf="6M" onclick="setTimeframe('6M', this)">6 сар</button>
+        <button class="tf-tab" data-tf="1Y" onclick="setTimeframe('1Y', this)">1 жил</button>
+        <button class="tf-tab" data-tf="All" onclick="setTimeframe('All', this)">Бүх</button>
       </div>
 
       <div class="home-trade-actions">
@@ -226,9 +227,9 @@
       </div>
 
       <div class="web-card web-card-pad">
-        <div class="web-section-title" style="margin-bottom:10px">Гүйцэтгэсэн захиалга</div>
+        <div class="web-section-title" style="margin-bottom:10px">Биелсэн захиалга</div>
         <div class="ob-mini ob-mini-h">
-          <span>Тикер</span><span>Төрөл</span>
+          <span>Цаг</span><span>Тикер</span>
           <span style="text-align:right">Тоо</span><span style="text-align:right">Үнэ</span>
         </div>
         <div id="executed-orders-body" class="ob-mini ob-mini-list"></div>
@@ -283,48 +284,60 @@
 
 <div class="web-modal-overlay" id="alert-modal">
   <div class="web-modal">
-    <h3 class="web-modal-title">Үнийн мэдэгдэл нэмэх</h3>
+    <h3 class="web-modal-title">Add Price Alert</h3>
     <div class="am-field">
-      <label class="am-label">Хувьцаа</label>
+      <label class="am-label">Symbol</label>
       <input class="am-inp" id="alert-symbol" readonly />
     </div>
     <div class="am-field">
-      <label class="am-label">Үнийн төрөл</label>
+      <label class="am-label">Price Type</label>
       <select class="am-inp am-select" id="alert-price-type">
-        <option value="open">Нээлтийн үнэ</option>
-        <option value="close">Хаалтын үнэ</option>
-        <option value="high">Хамгийн өндөр үнэ</option>
-        <option value="low">Хамгийн доод үнэ</option>
-        <option value="last" selected>Сүүлийн арилжааны үнэ</option>
+        <option value="open">Opening Price</option>
+        <option value="close">Closing Price</option>
+        <option value="high">High Price</option>
+        <option value="low">Low Price</option>
+        <option value="last" selected>Last Traded Price</option>
       </select>
     </div>
     <div class="am-row">
       <div class="am-field">
-        <label class="am-label">Нөхцөл</label>
+        <label class="am-label">Condition</label>
         <select class="am-inp am-select" id="alert-condition">
-          <option value="gt">Их байвал</option>
-          <option value="lt">Бага байвал</option>
-          <option value="eq">Тэнцүү байвал</option>
-          <option value="gte" selected>Их буюу тэнцүү байвал</option>
-          <option value="lte">Бага буюу тэнцүү байвал</option>
+          <option value="gt">Greater than</option>
+          <option value="lt">Less than</option>
+          <option value="eq">Equal to</option>
+          <option value="gte" selected>Greater than or equal to</option>
+          <option value="lte">Less than or equal to</option>
         </select>
       </div>
       <div class="am-field">
-        <label class="am-label">Зорилтот үнэ</label>
+        <label class="am-label">Target Value</label>
         <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
       </div>
     </div>
     <div class="web-modal-actions" style="margin-top:0">
-      <button class="btn btn-outline" onclick="closeAlertModal()">Цуцлах</button>
-      <button class="btn btn-primary" onclick="saveAlert()">Мэдэгдэл үүсгэх</button>
+      <button class="btn btn-outline" onclick="closeAlertModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAlert()">Create Alert</button>
     </div>
   </div>
 </div>
 
 <script src="../../data/static.js"></script>
 <script src="../scripts/components.js"></script>
-<script src="../../mobile/scripts/chart.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script src="../../mobile/scripts/wallet-data.js"></script>
+<script>
+/* ── Sparkline helper (inline for web) ── */
+function sparkline(data, color) {
+  color = color || '#3B82F6';
+  const W = 64, H = 30;
+  if (!data || !data.length) return '';
+  const min = Math.min(...data), max = Math.max(...data), range = max - min || 1;
+  const pts = data.map((v,i) => [(i/(data.length-1))*W, H - ((v-min)/range)*H*0.85 - H*0.075]);
+  const path = 'M' + pts.map(p => p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L');
+  return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'"><path d="'+path+'" fill="none" stroke="'+color+'" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+</script>
 <script>
   const AVATAR_COLORS = {
     BDS:'linear-gradient(135deg,#4949AA,#7c3aed)', KHAN:'linear-gradient(135deg,#0ea5e9,#4949AA)',
@@ -413,7 +426,7 @@
     const list = filteredList();
     const container = document.getElementById('stock-cards');
     if (!list.length) {
-      container.innerHTML = `<div style="padding:20px;color:var(--color-text-disabled);font-size:13px">Энэ харагдацад бараа алга.</div>`;
+      container.innerHTML = `<div style="padding:20px;color:var(--color-text-disabled);font-size:13px">No items in this view.</div>`;
       return;
     }
     container.innerHTML = list.map((s, i) => {
@@ -424,7 +437,7 @@
       const data = findIntraday(s.symbol);
       const isSelected = s.symbol === selectedSymbol;
       const pinned = currentFilter !== 'bonds' && i === 0 && isSelected;
-      const badge = s.isBond ? `${s.coupon.toFixed(1)}% купон` : `${sign}${s.changePct.toFixed(2)}%`;
+      const badge = s.isBond ? `${s.coupon.toFixed(1)}% coupon` : `${sign}${s.changePct.toFixed(2)}%`;
       return `<div class="stock-card${isSelected ? ' selected' : ''}${pinned ? ' pinned' : ''}" onclick="selectStock('${s.symbol}')">
         <div class="card-top">
           <div class="ticker-avatar" style="background:${AVATAR_COLORS[s.symbol] || AVATAR_COLORS.BDS}">${s.symbol.slice(0, 2)}</div>
@@ -496,16 +509,16 @@
     document.getElementById('info-title').textContent = `${s.name} — ${symbol}`;
     const items = [
       { label:'ISIN',               value: d.isin || '—' },
-      { label:'Тикер',             value: symbol },
-      { label:'Гаргасан хувьцаа', value: d.sharesOut || '—' },
-      { label:'Зах зээлийн үнэлгээ', value: d.marketCap ? d.marketCap + '₮' : '—' },
-      { label:'P/E харьцаа',    value: d.pe || '—' },
-      { label:'Өмнөх хаалт',     value: d.prevClose ? fmtMNT(d.prevClose) : '—' },
-      { label:'Нээлт',           value: d.open ? fmtMNT(d.open) : '—' },
-      { label:'Өдрийн өндөр',   value: d.dayHigh ? fmtMNT(d.dayHigh) : '—' },
-      { label:'Өдрийн доод',    value: d.dayLow  ? fmtMNT(d.dayLow)  : '—' },
-      { label:'52 долоо хоногийн өндөр', value: d.wkHigh52 ? fmtMNT(d.wkHigh52) : '—' },
-      { label:'52 долоо хоногийн доод',  value: d.wkLow52  ? fmtMNT(d.wkLow52)  : '—' },
+      { label:'Symbol',             value: symbol },
+      { label:'Shares Outstanding', value: d.sharesOut || '—' },
+      { label:'Market Cap',         value: d.marketCap ? d.marketCap + '₮' : '—' },
+      { label:'P/E Ratio',          value: d.pe || '—' },
+      { label:'Previous Close',     value: d.prevClose ? fmtMNT(d.prevClose) : '—' },
+      { label:'Open',               value: d.open ? fmtMNT(d.open) : '—' },
+      { label:'Day High',           value: d.dayHigh ? fmtMNT(d.dayHigh) : '—' },
+      { label:'Day Low',            value: d.dayLow  ? fmtMNT(d.dayLow)  : '—' },
+      { label:'52-Week High',       value: d.wkHigh52 ? fmtMNT(d.wkHigh52) : '—' },
+      { label:'52-Week Low',        value: d.wkLow52  ? fmtMNT(d.wkLow52)  : '—' },
     ];
     document.getElementById('stock-info-grid').innerHTML = items.map(i =>
       `<div class="sinfo-item"><span class="sinfo-label">${i.label}</span><span class="sinfo-value">${i.value}</span></div>`
@@ -525,7 +538,7 @@
     }
     empty.style.display = 'none';
     const statusMap = { FILLED:'filled', PENDING:'pending', PARTIAL:'partial', CANCELLED:'cancelled' };
-    const statusLbl = { FILLED:'Гүйцэтгэсэн', PENDING:'Хүлээгдэж буй', PARTIAL:'Хэсэгчлэн', CANCELLED:'Цуцлагдсан' };
+    const statusLbl = { FILLED:'Амжилттай', PENDING:'Хүлээгдэж буй', PARTIAL:'Хэсэгчлэн', CANCELLED:'Цуцлагдсан' };
     tbody.innerHTML = orders.map(o => {
       const typeCls = o.type === 'BUY' ? 'var(--color-buy)' : 'var(--color-sell)';
       const typeLbl = o.type === 'BUY' ? 'Авах' : 'Зарах';
@@ -540,30 +553,67 @@
     }).join('');
   }
 
-  /* ── Executed orders ── */
-  function renderExecutedOrders() {
-    const filled = ORDERS.filter(o => o.status === 'FILLED').slice().reverse();
-    document.getElementById('executed-orders-body').innerHTML = filled.map(o => `
+  /* ── Executed orders — generated per selected stock ── */
+  function buildExecutedTrades(symbol) {
+    const s = findCard(symbol);
+    const base = s ? s.price : 1000;
+    let seed = 0;
+    for (const c of ('exec'+symbol)) seed = (seed * 31 + c.charCodeAt(0)) % 233280;
+    function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    const trades = [];
+    let t = Date.now();
+    for (let i = 0; i < 8; i++) {
+      t -= Math.floor(rand() * 4 * 60000 + 60000);
+      const d = new Date(t);
+      const hh = String(d.getHours()).padStart(2,'0');
+      const mm = String(d.getMinutes()).padStart(2,'0');
+      const ss = String(d.getSeconds()).padStart(2,'0');
+      trades.push({
+        qty: Math.floor(rand() * 1500 + 10),
+        price: Math.round((base * (0.997 + rand() * 0.006)) * 10) / 10,
+        time: `${hh}:${mm}:${ss}`,
+      });
+    }
+    return trades;
+  }
+
+  function renderExecutedOrders(symbol) {
+    const trades = buildExecutedTrades(symbol || selectedSymbol);
+    document.getElementById('executed-orders-body').innerHTML = trades.map(o => `
       <div class="ob-mini-row">
-        <span style="font-weight:600">${o.symbol}</span>
-        <span style="color:${o.type === 'BUY' ? 'var(--color-buy)' : 'var(--color-sell)'};font-weight:600">${o.type === 'BUY' ? 'Авах' : 'Зарах'}</span>
+        <span style="color:var(--color-text-secondary);font-size:10px;font-family:'IBM Plex Mono',monospace">${o.time}</span>
+        <span style="font-weight:600">${(symbol||selectedSymbol)}</span>
         <span style="text-align:right;color:var(--color-text-secondary)">${o.qty.toLocaleString('mn-MN')}</span>
-        <span style="text-align:right;color:var(--color-text-secondary)">${fmtMNT(o.price)}</span>
+        <span style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtMNT(o.price)}</span>
       </div>`).join('');
   }
 
-  /* ── Order book ── */
-  function renderObMini() {
-    const len = Math.max(ORDER_BOOK.buy.length, ORDER_BOOK.sell.length);
+  /* ── Order book — dynamic per selected stock ── */
+  function buildDynamicOB(symbol) {
+    const s = findCard(symbol);
+    const base = s ? s.price : 1000;
+    let seed = 0;
+    for (const c of symbol) seed = (seed * 31 + c.charCodeAt(0)) % 233280;
+    function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    const spread = base * 0.002;
+    const buy = [], sell = [];
+    for (let i = 0; i < 8; i++) {
+      buy.push({ price: Math.round((base - spread * (i + 1)) * 10) / 10, quantity: Math.floor(rand() * 8000 + 100) });
+      sell.push({ price: Math.round((base + spread * (i + 1)) * 10) / 10, quantity: Math.floor(rand() * 8000 + 100) });
+    }
+    return { buy, sell };
+  }
+
+  function renderObMini(symbol) {
+    const ob = buildDynamicOB(symbol || selectedSymbol);
     let html = '';
-    for (let i = 0; i < Math.min(len, 8); i++) {
-      const bid = ORDER_BOOK.sell[i];
-      const ask = ORDER_BOOK.buy[i];
+    for (let i = 0; i < 8; i++) {
+      const bid = ob.buy[i], ask = ob.sell[i];
       html += `<div class="ob-mini-row">
-        <span style="text-align:right;color:var(--color-text-secondary)">${bid ? bid.quantity.toLocaleString('mn-MN') : ''}</span>
-        <span style="text-align:right;color:var(--color-buy);font-weight:600">${bid ? bid.price.toFixed(0) : ''}</span>
-        <span style="color:var(--color-sell);font-weight:600">${ask ? ask.price.toFixed(0) : ''}</span>
-        <span style="text-align:right;color:var(--color-text-secondary)">${ask ? ask.quantity.toLocaleString('mn-MN') : ''}</span>
+        <span style="text-align:right;color:var(--color-text-secondary)">${bid.quantity.toLocaleString('mn-MN')}</span>
+        <span style="text-align:right;color:var(--color-buy);font-weight:600">${bid.price.toFixed(0)}</span>
+        <span style="color:var(--color-sell);font-weight:600">${ask.price.toFixed(0)}</span>
+        <span style="text-align:right;color:var(--color-text-secondary)">${ask.quantity.toLocaleString('mn-MN')}</span>
       </div>`;
     }
     document.getElementById('ob-mini-body').innerHTML = html;
@@ -597,25 +647,96 @@
     renderCards();
     renderStockInfo(symbol);
     renderStockOrders(symbol);
+    renderObMini(symbol);
+    renderExecutedOrders(symbol);
   }
 
-  /* ── Chart ── */
+  /* ── TradingView Lightweight Charts ── */
+  let tvChart = null;
+  let tvSeries = null;
+
+  function getChartColors() {
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    return {
+      bg:        isDark ? '#1A1A32' : '#ffffff',
+      grid:      isDark ? '#33335C' : '#e5e7eb',
+      text:      isDark ? '#9CA3AF' : '#6B7280',
+      border:    isDark ? '#33335C' : '#e5e7eb',
+      upColor:   '#00C076',
+      downColor: '#EF4444',
+    };
+  }
+
+  function buildTVData(symbol) {
+    const raw = generateSeries(symbol, currentTimeframe);
+    const now = Date.now();
+    const intervalMs = currentTimeframe === '1W' ? 15 * 60 * 1000
+                     : currentTimeframe === '1M'  ? 60 * 60 * 1000
+                     : currentTimeframe === '3M'  ? 4 * 60 * 60 * 1000
+                     : currentTimeframe === '6M'  ? 8 * 60 * 60 * 1000
+                     : 24 * 60 * 60 * 1000;
+    return raw.map((p, i) => ({
+      time: Math.floor((now - (raw.length - 1 - i) * intervalMs) / 1000),
+      value: p,
+      open:  p * (1 - 0.005 + Math.random() * 0.01),
+      high:  p * (1 + 0.003 + Math.random() * 0.008),
+      low:   p * (1 - 0.003 - Math.random() * 0.008),
+      close: p,
+    }));
+  }
+
   function renderChart(symbol) {
-    const data = generateSeries(symbol, currentTimeframe);
+    const c = getChartColors();
+    const container = document.getElementById('main-chart');
     const s = findCard(symbol);
     const isUp = s && s.changePct >= 0;
-    const mn = Math.min(...data);
-    const mx = Math.max(...data);
-    const opts = {
-      height: 320,
-      showGrid: true,
-      yLabels: [mx.toFixed(0), ((mx + mn) / 2).toFixed(0), mn.toFixed(0)],
-    };
+    const mainColor = isUp ? c.upColor : c.downColor;
+    const data = buildTVData(symbol);
+
+    // Destroy old chart
+    if (tvChart) { tvChart.remove(); tvChart = null; tvSeries = null; }
+    container.innerHTML = '';
+
+    tvChart = LightweightCharts.createChart(container, {
+      width: container.clientWidth,
+      height: 300,
+      layout: { background: { color: c.bg }, textColor: c.text },
+      grid: { vertLines: { color: c.grid }, horzLines: { color: c.grid } },
+      crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+      rightPriceScale: { borderColor: c.border },
+      timeScale: { borderColor: c.border, timeVisible: true, secondsVisible: false },
+      handleScroll: true,
+      handleScale: true,
+    });
+
     if (chartType === 'candle') {
-      renderCandleChart('main-chart', data, { ...opts, upColor: '#00C076', downColor: '#EF4444' });
+      tvSeries = tvChart.addCandlestickSeries({
+        upColor: c.upColor, downColor: c.downColor,
+        borderUpColor: c.upColor, borderDownColor: c.downColor,
+        wickUpColor: c.upColor, wickDownColor: c.downColor,
+      });
+      tvSeries.setData(data.map(d => ({ time: d.time, open: d.open, high: d.high, low: d.low, close: d.close })));
+    } else if (chartType === 'bar') {
+      tvSeries = tvChart.addBarSeries({ upColor: c.upColor, downColor: c.downColor });
+      tvSeries.setData(data.map(d => ({ time: d.time, open: d.open, high: d.high, low: d.low, close: d.close })));
+    } else if (chartType === 'area') {
+      tvSeries = tvChart.addAreaSeries({
+        lineColor: mainColor, topColor: mainColor + '55', bottomColor: mainColor + '00',
+        lineWidth: 2,
+      });
+      tvSeries.setData(data.map(d => ({ time: d.time, value: d.value })));
     } else {
-      renderLineChart('main-chart', data, { ...opts, color: isUp ? '#00C076' : '#EF4444' });
+      tvSeries = tvChart.addLineSeries({ color: mainColor, lineWidth: 2 });
+      tvSeries.setData(data.map(d => ({ time: d.time, value: d.value })));
     }
+
+    tvChart.timeScale().fitContent();
+
+    // Resize on container width change
+    const ro = new ResizeObserver(() => {
+      if (tvChart) tvChart.applyOptions({ width: container.clientWidth });
+    });
+    ro.observe(container);
   }
 
   function setChartType(type, btn) {
@@ -666,7 +787,7 @@
     if (!target) return;
     addPriceAlert({ symbol: selectedSymbol, priceType, condition, target: Number(target), active: true });
     closeAlertModal();
-    showToast(`Мэдэгдэл үүслээ: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
+    showToast(`Alert created: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
   }
 
   /* ── Navigation helpers ── */
@@ -713,8 +834,6 @@
   renderFilterMenu();
   renderCards();
   renderMarketTable();
-  renderObMini();
-  renderExecutedOrders();
   selectStock('BDS');
   renderStockInfo('BDS');
   renderStockOrders('BDS');

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Home — TradeX</title>
+  <title>Нүүр — TradeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../../styles/tokens.css" />
@@ -101,10 +101,10 @@
     /* Stock cards horizontal scroll */
     .cards-scroll {
       display: flex; gap: 10px;
-      overflow-x: scroll;
+      overflow-x: auto;
       padding: 0 16px 4px;
       box-sizing: border-box;
-      max-width: 95%;
+      width: 100%;
       scrollbar-width: none;
     }
     .cards-scroll::-webkit-scrollbar { display: none; }
@@ -165,7 +165,7 @@
 
     .detail-meta { font-size: 11px; color: var(--color-text-disabled); margin-bottom: 12px; }
 
-    /* Chart type icon buttons */
+    /* График type icon buttons */
     .chart-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
     .chart-tab {
       width: 34px; height: 34px; border-radius: 10px;
@@ -178,7 +178,7 @@
       background: var(--color-primary); color: white;
     }
 
-    /* Chart container */
+    /* График container */
     #main-chart { width: 100%; overflow: hidden; }
 
     /* Timeframe filter */
@@ -306,7 +306,7 @@
 </head>
 <body>
 
-  <!-- ── Open Account Reminder Banner ── -->
+  <!-- ── Данс нээх Reminder Banner ── -->
   <div id="open-acct-banner" style="
     margin: 14px 16px 0;
     background: linear-gradient(135deg, rgba(73,73,170,0.18) 0%, rgba(91,91,214,0.12) 100%);
@@ -320,7 +320,7 @@
         <i data-lucide="info" id="acct-banner-icon" style="width:16px;height:16px"></i>
       </div>
       <p id="acct-banner-text" style="margin:0;font-size:13px;color:var(--color-text-secondary);line-height:1.55">
-        Open a securities account to participate in online trading on the stock exchange.
+        Та онлайн арилжаанд оролцохын тулд үнэт цаасны данс нээх шаардлагатай.
       </p>
     </div>
     <button id="acct-banner-btn" onclick="openAccountForm()" style="
@@ -330,15 +330,15 @@
       font-size:13px; font-weight:700; color:#fff;
       cursor:pointer; transition:opacity 0.15s;
     " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-      Open Account
+      Данс нээх
     </button>
   </div>
 
-  <!-- Account Balance Card (shown once account is opened & KYC complete) -->
+  <!-- Данс Balance Карт (shown once account is opened & KYC complete) -->
   <!-- Disabled for now — may bring this back in the future
   <div id="home-balance-card" class="balance-card" style="display:none">
     <div class="balance-card-top">
-      <span class="balance-card-label">Current Balance</span>
+      <span class="balance-card-label">Одоогийн үлдэгдэл</span>
       <button class="icon-btn" style="width:28px;height:28px" onclick="toggleHomeBalance()">
         <i data-lucide="eye" id="home-bal-eye"></i>
       </button>
@@ -346,27 +346,27 @@
     <div class="balance-card-row">
       <div class="balance-card-value" id="home-bal-value">₮0.00</div>
       <div class="dd-trigger" id="bal-type-trigger" onclick="toggleBalMenu(event)">
-        <span id="bal-type-label">Nominal</span>
+        <span id="bal-type-label">Номинал</span>
         <i data-lucide="chevron-down" class="chev"></i>
         <div class="dd-menu" id="bal-type-menu">
           <div class="dd-item active" data-bal="nominal" onclick="selectBalType(event,'nominal')">
-            <i data-lucide="wallet"></i> Nominal
+            <i data-lucide="wallet"></i> Номинал
           </div>
           <div class="dd-item" data-bal="mcsd" onclick="selectBalType(event,'mcsd')">
-            <i data-lucide="landmark"></i> MCSD Account
+            <i data-lucide="landmark"></i> ҮЦТХТ данс
           </div>
           <div class="dd-item" data-bal="assets" onclick="selectBalType(event,'assets')">
-            <i data-lucide="briefcase"></i> Total Assets
+            <i data-lucide="briefcase"></i> Нийт хөрөнгө
           </div>
         </div>
       </div>
     </div>
     <div class="balance-card-actions">
       <button class="balance-card-btn primary" onclick="goToBalance('deposit')">
-        <i data-lucide="plus-circle"></i> Deposit
+        <i data-lucide="plus-circle"></i> Цэнэглэх
       </button>
       <button class="balance-card-btn" onclick="goToBalance('withdraw')">
-        <i data-lucide="arrow-up-from-line"></i> Withdraw
+        <i data-lucide="arrow-up-from-line"></i> Зарлага
       </button>
     </div>
   </div>
@@ -375,27 +375,27 @@
   <!-- Stock Selector -->
   <div class="selector-bar" onclick="showSearch()">
     <i data-lucide="search" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
-    <span class="symbol" id="sel-symbol">AAPL</span>
+    <span class="symbol" id="sel-symbol">BDS</span>
     <span class="dot"></span>
-    <span class="name" id="sel-name">Apple Inc.</span>
+    <span class="name" id="sel-name">БДСек ХК</span>
     <i data-lucide="chevron-down" style="width:16px;height:16px;color:var(--color-text-disabled)"></i>
   </div>
 
   <!-- Section Header -->
   <div class="section-header">
     <div>
-      <div class="section-title">Markets</div>
+      <div class="section-title">Арилжаа</div>
       <div class="section-date">2026.06.06</div>
     </div>
     <div class="dd-trigger" id="market-filter-trigger" onclick="toggleFilterMenu(event)">
       <i data-lucide="star" id="market-filter-icon"></i>
-      <span id="market-filter-label">Watchlist</span>
+      <span id="market-filter-label">Онцлох жагсаалт</span>
       <i data-lucide="chevron-down" class="chev"></i>
       <div class="dd-menu" id="market-filter-menu"></div>
     </div>
   </div>
 
-  <!-- Stock Cards -->
+  <!-- Хувьцааны картууд -->
   <div class="cards-scroll" id="stock-cards"></div>
 
 
@@ -403,19 +403,19 @@
   <div class="detail-section">
     <div class="detail-header">
       <div style="display:flex;align-items:baseline;gap:0">
-        <span class="detail-symbol" id="d-symbol">AAPL</span>
+        <span class="detail-symbol" id="d-symbol">BDS</span>
         <span class="detail-price" id="d-price">$189.84</span>
       </div>
       <div class="detail-actions">
-        <button class="icon-btn" id="watch-btn" onclick="toggleWatchlist()" title="Watchlist">
+        <button class="icon-btn" id="watch-btn" onclick="toggleWatchlist()" title="Онцлох жагсаалт">
           <i data-lucide="star"></i>
         </button>
-        <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Add price alert">
+        <button class="icon-btn" id="alert-btn" onclick="openAlertModal()" title="Үнийн мэдэгдэл нэмэх">
           <i data-lucide="bell-plus"></i>
         </button>
       </div>
     </div>
-    <div class="detail-meta" id="d-meta">Last updated: 2026-06-06 14:32:11 &nbsp;·&nbsp; <span id="d-change" style="color:var(--color-buy)">+1.23 (+0.65%)</span></div>
+    <div class="detail-meta" id="d-meta">Сүүлд шинэчилсэн: 2026-06-06 14:32:11 &nbsp;·&nbsp; <span id="d-change" style="color:var(--color-buy)">+1.23 (+0.65%)</span></div>
     <div class="chart-tabs">
       <button class="chart-tab active" onclick="setChartType('line', this)" title="Line chart">
         <i data-lucide="chart-line"></i>
@@ -426,64 +426,64 @@
     </div>
     <div id="main-chart"></div>
     <div class="tf-tabs" id="tf-tabs">
-      <button class="tf-tab active" data-tf="1D" onclick="setTimeframe('1D', this)">1D</button>
-      <button class="tf-tab" data-tf="1W" onclick="setTimeframe('1W', this)">1W</button>
-      <button class="tf-tab" data-tf="1M" onclick="setTimeframe('1M', this)">1M</button>
-      <button class="tf-tab" data-tf="1Y" onclick="setTimeframe('1Y', this)">1Y</button>
-      <button class="tf-tab" data-tf="All" onclick="setTimeframe('All', this)">All</button>
+      <button class="tf-tab active" data-tf="1D" onclick="setTimeframe('1D', this)">1 сар</button>
+      <button class="tf-tab" data-tf="1W" onclick="setTimeframe('1W', this)">3 сар</button>
+      <button class="tf-tab" data-tf="1M" onclick="setTimeframe('1M', this)">6 сар</button>
+      <button class="tf-tab" data-tf="1Y" onclick="setTimeframe('1Y', this)">1 жил</button>
+      <button class="tf-tab" data-tf="Бүгд" onclick="setTimeframe('Бүгд', this)">Бүх</button>
     </div>
     <div class="trade-actions">
-      <button class="trade-btn buy" onclick="goToTrade('buy')">Buy</button>
-      <button class="trade-btn sell" onclick="goToTrade('sell')">Sell</button>
+      <button class="trade-btn buy" onclick="goToTrade('buy')">Авах</button>
+      <button class="trade-btn sell" onclick="goToTrade('sell')">Зарах</button>
     </div>
   </div>
 
   <!-- Company Info -->
   <div class="info-section">
-    <div class="info-section-title">About <span id="info-symbol">AAPL</span></div>
+    <div class="info-section-title"><span id="info-symbol">BDS</span> <span class="ml-1">дэлгэрэнгүй</span></div>
     <div class="info-card" id="info-card"></div>
   </div>
 
   <div style="height:20px"></div>
 
-  <!-- Add Price Alert Modal -->
+  <!-- Үнийн мэдэгдэл нэмэх Modal -->
   <div class="alert-modal-overlay" id="alert-modal">
     <div class="alert-modal-card">
       <div class="alert-modal-hdr">
-        <span class="alert-modal-title">Add Price Alert</span>
+        <span class="alert-modal-title">Үнийн мэдэгдэл нэмэх</span>
         <button class="alert-modal-close" onclick="closeAlertModal()"><i data-lucide="x"></i></button>
       </div>
       <div class="am-field">
-        <label class="am-label">Symbol</label>
+        <label class="am-label">Симбол</label>
         <input class="am-inp" id="alert-symbol" readonly />
       </div>
       <div class="am-field">
-        <label class="am-label">Price Type</label>
+        <label class="am-label">Үнийн төрөл</label>
         <select class="am-inp am-select" id="alert-price-type">
-          <option value="open">Opening Price</option>
-          <option value="close">Closing Price</option>
-          <option value="high">High Price</option>
-          <option value="low">Low Price</option>
-          <option value="last" selected>Last Traded Price</option>
+          <option value="open">Нээлтийн үнэ</option>
+          <option value="close">Хаалтын үнэ</option>
+          <option value="high">Дээд үнэ</option>
+          <option value="low">Доод үнэ</option>
+          <option value="last" selected>Сүүлийн арилжсан үнэ</option>
         </select>
       </div>
       <div class="am-row">
         <div class="am-field">
-          <label class="am-label">Condition</label>
+          <label class="am-label">Нөхцөл</label>
           <select class="am-inp am-select" id="alert-condition">
-            <option value="gt">Greater than</option>
-            <option value="lt">Less than</option>
-            <option value="eq">Equal to</option>
-            <option value="gte" selected>Greater than or equal to</option>
-            <option value="lte">Less than or equal to</option>
+            <option value="gt">Их</option>
+            <option value="lt">Бага</option>
+            <option value="eq">Тэнцүү</option>
+            <option value="gte" selected>Их буюу тэнцүү</option>
+            <option value="lte">Бага буюу тэнцүү</option>
           </select>
         </div>
         <div class="am-field">
-          <label class="am-label">Target Value</label>
+          <label class="am-label">Зорилтот утга</label>
           <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
         </div>
       </div>
-      <button class="am-btn-primary" onclick="saveAlert()">Create Alert</button>
+      <button class="am-btn-primary" onclick="saveAlert()">Мэдэгдэл үүсгэх</button>
     </div>
   </div>
 
@@ -492,36 +492,36 @@
   <script src="../scripts/chart.js"></script>
   <script src="../scripts/wallet-data.js"></script>
   <script>
-    // ── Intraday price data (AAPL today) ──
+    // ── Intraday price data (BDS today) ──
     const INTRADAY = {
-      AAPL:  [187.2,186.8,186.2,185.8,185.1,184.6,184.0,183.5,183.0,182.8,183.2,183.8,184.5,185.4,186.2,187.0,187.8,188.6,189.1,189.5,190.1,190.4,189.9,189.6,189.8,189.5,189.7,189.6,189.8,189.84],
-      TSLA:  [252.0,251.2,250.8,249.5,248.0,247.2,248.5,249.0,250.2,251.0,251.8,252.5,251.0,249.8,248.5,247.2,247.8,248.2,249.0,249.5,249.0,248.8,248.5,248.2,248.5,248.4,248.3,248.4,248.5,248.42],
-      MSFT:  [410.5,411.2,412.0,411.5,410.8,410.2,411.0,412.5,413.2,413.8,414.5,415.0,414.5,413.8,413.2,413.8,414.2,414.8,415.2,415.5,415.0,414.8,415.2,415.0,415.3,415.2,415.1,415.3,415.2,415.30],
-      NVDA:  [855.0,857.5,860.2,858.0,856.5,854.0,852.8,855.0,858.5,862.0,865.5,868.0,870.5,869.0,867.5,869.0,870.5,872.0,873.5,875.0,876.0,875.5,874.8,875.2,875.5,875.3,875.1,875.4,875.3,875.40],
-      GOOGL: [170.2,170.8,171.2,170.9,170.5,170.0,170.5,171.0,171.5,172.0,171.8,172.2,172.5,172.3,171.8,172.0,172.3,172.5,172.8,173.0,172.8,172.5,172.6,172.7,172.6,172.6,172.6,172.6,172.6,172.63],
+      BDS:   [1225, 1228, 1230, 1227, 1224, 1222, 1220, 1218, 1222, 1228, 1232, 1235, 1238, 1236, 1234, 1236, 1238, 1240, 1242, 1244, 1241, 1238, 1236, 1238, 1240, 1239, 1238, 1240, 1239, 1240],
+      KHAN:  [3852, 3860, 3870, 3862, 3855, 3848, 3840, 3845, 3855, 3865, 3875, 3880, 3890, 3885, 3878, 3882, 3888, 3895, 3905, 3912, 3908, 3904, 3900, 3904, 3908, 3912, 3916, 3918, 3920, 3920],
+      APU:   [620, 618, 616, 614, 612, 610, 608, 610, 612, 614, 616, 618, 614, 610, 606, 608, 610, 612, 610, 608, 606, 604, 606, 608, 610, 612, 610, 608, 612, 612],
+      TDB:   [1398, 1402, 1406, 1404, 1400, 1396, 1400, 1404, 1408, 1412, 1415, 1418, 1415, 1412, 1408, 1410, 1412, 1414, 1416, 1418, 1415, 1412, 1414, 1415, 1416, 1414, 1413, 1415, 1414, 1415],
+      GOLO:  [2155, 2158, 2162, 2160, 2156, 2152, 2148, 2152, 2158, 2162, 2165, 2168, 2172, 2168, 2164, 2166, 2168, 2170, 2172, 2175, 2172, 2168, 2165, 2168, 2170, 2168, 2166, 2168, 2167, 2168],
     };
 
     const CARDS = [
-      { symbol:'AAPL',  name:'Apple Inc.',     price:189.84, change:+1.23,  pct:+0.65 },
-      { symbol:'NVDA',  name:'NVIDIA Corp.',   price:875.40, change:+15.20, pct:+1.77 },
-      { symbol:'TSLA',  name:'Tesla Inc.',     price:248.42, change:-3.17,  pct:-1.26 },
-      { symbol:'MSFT',  name:'Microsoft Corp.',price:415.30, change:+2.55,  pct:+0.62 },
-      { symbol:'GOOGL', name:'Alphabet Inc.',  price:172.63, change:+0.88,  pct:+0.51 },
+      { symbol:'BDS',  name:'БДСек ХК',        price:1240,  change:+15.25, pct:+1.23 },
+      { symbol:'KHAN', name:'Хаан Банк ХК',    price:3920,  change:+69.50, pct:+1.77 },
+      { symbol:'APU',  name:'АПУ ХК',          price:612,   change:-7.80,  pct:-1.26 },
+      { symbol:'TDB',  name:'ХХБ ХК',          price:1415,  change:+8.75,  pct:+0.62 },
+      { symbol:'GOLO', name:'Голомт Банк ХК',  price:2168,  change:+11.00, pct:+0.51 },
     ];
 
     const AVATAR_COLORS = {
-      AAPL:'linear-gradient(135deg,#4949AA,#7c3aed)',
-      NVDA:'linear-gradient(135deg,#16a34a,#4949AA)',
-      TSLA:'linear-gradient(135deg,#dc2626,#9333ea)',
-      MSFT:'linear-gradient(135deg,#0ea5e9,#4949AA)',
-      GOOGL:'linear-gradient(135deg,#f59e0b,#ef4444)',
+      BDS:'linear-gradient(135deg,#4949AA,#7c3aed)',
+      KHAN:'linear-gradient(135deg,#0ea5e9,#4949AA)',
+      APU:'linear-gradient(135deg,#dc2626,#9333ea)',
+      TDB:'linear-gradient(135deg,#16a34a,#4949AA)',
+      GOLO:'linear-gradient(135deg,#f59e0b,#ef4444)',
       'MNTB-1':'linear-gradient(135deg,#6366f1,#4949AA)',
       'TDB-BD':'linear-gradient(135deg,#16a34a,#0ea5e9)',
     };
 
     // ── Bonds (shown under the "Bonds" market filter) ──
     const BOND_CARDS = [
-      { symbol:'MNTB-1', name:'Mongolia 1Y Bond', price:1000000, change:0, pct:+12.5 },
+      { symbol:'MNTB-1', name:'Монгол 1Y Bond', price:1000000, change:0, pct:+12.5 },
       { symbol:'TDB-BD',  name:'TDB Bond 2029',    price:1000000, change:0, pct:+13.8 },
     ];
     const BOND_INTRADAY = {
@@ -531,28 +531,28 @@
 
     // ── Company info shown below the chart ──
     const COMPANY_INFO = {
-      AAPL:  { isin:'US0378331005', code:'AAPL', shares:'15,550,061,000', marketCap:'$2.95T', pe:'31.24', prevClose:'188.61', open:'188.80', high:'190.40', low:'188.20', high52:'199.62', low52:'164.08' },
-      NVDA:  { isin:'US67066G1040', code:'NVDA', shares:'24,600,000,000', marketCap:'$21.5T', pe:'58.10', prevClose:'860.20', open:'862.00', high:'876.00', low:'854.00', high52:'974.00', low52:'392.30' },
-      TSLA:  { isin:'US88160R1014', code:'TSLA', shares:'3,190,000,000',  marketCap:'$792.5B', pe:'68.40', prevClose:'251.59', open:'252.00', high:'252.50', low:'247.20', high52:'299.29', low52:'138.80' },
-      MSFT:  { isin:'US5949181045', code:'MSFT', shares:'7,430,000,000',  marketCap:'$3.09T', pe:'35.70', prevClose:'412.75', open:'410.50', high:'415.50', low:'410.20', high52:'430.82', low52:'309.45' },
-      GOOGL: { isin:'US02079K3059', code:'GOOGL',shares:'12,460,000,000', marketCap:'$2.15T', pe:'26.90', prevClose:'171.75', open:'170.20', high:'173.00', low:'170.00', high52:'191.75', low52:'130.67' },
+      BDS:  { isin:'MN0000000BDS', code:'BDS',  shares:'12,500,000',  marketCap:'15.5Т₮',  pe:'18.4', prevClose:'1,225', open:'1,228', high:'1,252', low:'1,220', high52:'1,350', low52:'880' },
+      KHAN: { isin:'MN0000000KHN', code:'KHAN', shares:'8,200,000',   marketCap:'31.6Т₮',  pe:'11.2', prevClose:'3,892', open:'3,870', high:'3,910', low:'3,840', high52:'4,200', low52:'3,100' },
+      APU:  { isin:'MN0000000APU', code:'APU',  shares:'21,000,000',  marketCap:'12.9Т₮',  pe:'22.1', prevClose:'620',   open:'618',   high:'622',   low:'608',   high52:'680',   low52:'480' },
+      TDB:  { isin:'MN0000000TDB', code:'TDB',  shares:'9,800,000',   marketCap:'13.9Т₮',  pe:'9.6',  prevClose:'1,398', open:'1,405', high:'1,420', low:'1,392', high52:'1,520', low52:'1,100' },
+      GOLO: { isin:'MN0000000GLO', code:'GOLO', shares:'14,200,000',  marketCap:'30.9Т₮',  pe:'13.7', prevClose:'2,162', open:'2,168', high:'2,195', low:'2,155', high52:'2,400', low52:'1,800' },
     };
     const BOND_INFO = {
-      'MNTB-1': { isin:'MNTB-2027-1', issuer:'Government of Mongolia', coupon:'12.5%', maturity:'2027-03-15', nominal:'₮1,000,000', category:'Class I' },
+      'MNTB-1': { isin:'MNTB-2027-1', issuer:'Government of Монгол', coupon:'12.5%', maturity:'2027-03-15', nominal:'₮1,000,000', category:'Class I' },
       'TDB-BD':  { isin:'MN-TDB-2029', issuer:'Trade & Development Bank', coupon:'13.8%', maturity:'2029-01-20', nominal:'₮1,000,000', category:'Class II' },
     };
 
-    // ── Market filter (replaces the old "Active" status pill) ──
+    // ── Зах зээлийн filter (replaces the old "Active" status pill) ──
     const MARKET_FILTERS = [
-      { key:'active',    label:'Active',    icon:'activity' },
-      { key:'watchlist', label:'Watchlist', icon:'star' },
-      { key:'gainers',   label:'Gainers',   icon:'trending-up' },
-      { key:'losers',    label:'Losers',    icon:'trending-down' },
-      { key:'bonds',     label:'Bonds',     icon:'landmark' },
+      { key:'active',    label:'Идэвхтэй',    icon:'activity' },
+      { key:'watchlist', label:'Онцлох жагсаалт', icon:'star' },
+      { key:'gainers',   label:'Өсөлттэй',   icon:'trending-up' },
+      { key:'losers',    label:'Бууралттай',    icon:'trending-down' },
+      { key:'bonds',     label:'Бонд',     icon:'landmark' },
     ];
-    let currentFilter = 'watchlist';
+    let currentFilter = 'active';
 
-    // ── Account balances shown on the home balance card ──
+    // ── Данс balances shown огноо the home balance card ──
     const ACCOUNT_BALANCES = {
       nominal: 50000,
       mcsd:    0,
@@ -573,10 +573,10 @@
       return INTRADAY[symbol] || BOND_INTRADAY[symbol] || [];
     }
 
-    let selectedSymbol = 'AAPL';
-    let watchlist = new Set(['AAPL', 'NVDA']);
+    let selectedSymbol = 'BDS';
+    let watchlist = new Set(['BDS', 'KHAN']);
     let currentTimeframe = '1D';
-    const TIMEFRAME_POINTS = { '1D': 0, '1W': 7, '1M': 30, '1Y': 52, 'All': 120 };
+    const TIMEFRAME_POINTS = { '1D': 0, '1W': 7, '1M': 30, '1Y': 52, 'Бүгд': 120 };
 
     // ── Generate a deterministic price series for a given timeframe ──
     function generateSeries(symbol, timeframe) {
@@ -628,7 +628,7 @@
       }
 
       if (!list.length) {
-        container.innerHTML = `<div style="padding:24px 16px;color:var(--color-text-disabled);font-size:13px">No items in this view.</div>`;
+        container.innerHTML = `<div style="padding:24px 16px;color:var(--color-text-disabled);font-size:13px">Энэ харагдацад зүйл алга.</div>`;
         return;
       }
 
@@ -652,7 +652,7 @@
             <div class="card-name">${s.name}</div>
             <div class="card-bottom">
               <div>
-                <div class="card-price-label">Close</div>
+                <div class="card-price-label">Хаалт</div>
                 <div class="card-price">${priceUnit}${s.price.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
               </div>
               <div>${sparkline(data, sparkColor)}</div>
@@ -661,7 +661,7 @@
       }).join('');
     }
 
-    // ── Market filter dropdown ──
+    // ── Зах зээлийн filter dropdown ──
     function renderFilterMenu() {
       const menu = document.getElementById('market-filter-menu');
       menu.innerHTML = MARKET_FILTERS.map(f => `
@@ -762,7 +762,7 @@
       renderChart(selectedSymbol);
     }
 
-    // ── Chart timeframe filter ──
+    // ── График timeframe filter ──
     function setTimeframe(tf, btn) {
       currentTimeframe = tf;
       document.querySelectorAll('.tf-tab').forEach(t => t.classList.remove('active'));
@@ -781,7 +781,7 @@
       }
     }
 
-    // ── Deposit / Withdraw → their own pages ──
+    // ── Цэнэглэх / Зарлага → their own pages ──
     function goToBalance(action) {
       try {
         window.parent.navigateTo(action);
@@ -814,43 +814,43 @@
 
       if (bond) {
         card.innerHTML = `
-          <div class="info-row"><span class="info-label">Issuer</span><span class="info-value">${bond.issuer}</span></div>
+          <div class="info-row"><span class="info-label">Үнэт цаас гаргагч</span><span class="info-value">${bond.issuer}</span></div>
           <div class="info-row"><span class="info-label">ISIN</span><span class="info-value">${bond.isin}</span></div>
-          <div class="info-row"><span class="info-label">Coupon Rate</span><span class="info-value">${bond.coupon}</span></div>
-          <div class="info-row"><span class="info-label">Maturity</span><span class="info-value">${bond.maturity}</span></div>
-          <div class="info-row"><span class="info-label">Nominal Value</span><span class="info-value">${bond.nominal}</span></div>
-          <div class="info-row"><span class="info-label">Category</span><span class="info-value">${bond.category}</span></div>
+          <div class="info-row"><span class="info-label">Купоны хувь</span><span class="info-value">${bond.coupon}</span></div>
+          <div class="info-row"><span class="info-label">Дуусах хугацаа</span><span class="info-value">${bond.maturity}</span></div>
+          <div class="info-row"><span class="info-label">Номинал үнэ</span><span class="info-value">${bond.nominal}</span></div>
+          <div class="info-row"><span class="info-label">Ангилал</span><span class="info-value">${bond.category}</span></div>
           <div class="info-toggle" onclick="toggleInfoExtra(this)">
-            Financial Report
+            Санхүүгийн тайлан
             <i data-lucide="chevron-down"></i>
           </div>
-          <div class="info-extra">No financial report has been published for this bond yet.</div>`;
+          <div class="info-extra">Энэ бондын санхүүгийн тайлан хараахан нийтлэгдээгүй байна.</div>`;
         lucide.createIcons();
         return;
       }
 
       const info = COMPANY_INFO[symbol];
       if (!info) {
-        card.innerHTML = `<div class="info-row"><span class="info-label">No company information available.</span></div>`;
+        card.innerHTML = `<div class="info-row"><span class="info-label">Компанийн мэдээлэл алга.</span></div>`;
         return;
       }
       card.innerHTML = `
         <div class="info-row"><span class="info-label">ISIN</span><span class="info-value">${info.isin}</span></div>
-        <div class="info-row"><span class="info-label">Symbol</span><span class="info-value">${info.code}</span></div>
-        <div class="info-row"><span class="info-label">Shares Outstanding</span><span class="info-value">${info.shares}</span></div>
-        <div class="info-row"><span class="info-label">Market Cap</span><span class="info-value">${info.marketCap}</span></div>
+        <div class="info-row"><span class="info-label">Симбол</span><span class="info-value">${info.code}</span></div>
+        <div class="info-row"><span class="info-label">Нийт гаргасан ширхэг</span><span class="info-value">${info.shares}</span></div>
+        <div class="info-row"><span class="info-label">Зах зээлийн үнэлгээ</span><span class="info-value">${info.marketCap}</span></div>
         <div class="info-row"><span class="info-label">P/E Ratio</span><span class="info-value">${info.pe}</span></div>
-        <div class="info-row"><span class="info-label">Previous Close</span><span class="info-value">$${info.prevClose}</span></div>
-        <div class="info-row"><span class="info-label">Open</span><span class="info-value">$${info.open}</span></div>
-        <div class="info-row"><span class="info-label">Day High</span><span class="info-value">$${info.high}</span></div>
-        <div class="info-row"><span class="info-label">Day Low</span><span class="info-value">$${info.low}</span></div>
-        <div class="info-row"><span class="info-label">52-Week High</span><span class="info-value">$${info.high52}</span></div>
-        <div class="info-row"><span class="info-label">52-Week Low</span><span class="info-value">$${info.low52}</span></div>
+        <div class="info-row"><span class="info-label">Өмнөх хаалт</span><span class="info-value">$${info.prevClose}</span></div>
+        <div class="info-row"><span class="info-label">Нээлт</span><span class="info-value">$${info.open}</span></div>
+        <div class="info-row"><span class="info-label">Өдрийн дээд</span><span class="info-value">$${info.high}</span></div>
+        <div class="info-row"><span class="info-label">Өдрийн доод</span><span class="info-value">$${info.low}</span></div>
+        <div class="info-row"><span class="info-label">52 долоо хоногийн дээд</span><span class="info-value">$${info.high52}</span></div>
+        <div class="info-row"><span class="info-label">52 долоо хоногийн доод</span><span class="info-value">$${info.low52}</span></div>
         <div class="info-toggle" onclick="toggleInfoExtra(this)">
-          Financial Report
+          Санхүүгийн тайлан
           <i data-lucide="chevron-down"></i>
         </div>
-        <div class="info-extra">Quarterly and annual financial statements for ${symbol} will appear here.</div>`;
+        <div class="info-extra">${symbol}-ийн улирал болон жилийн санхүүгийн тайлан энд харагдана.</div>`;
       lucide.createIcons();
     }
 
@@ -859,7 +859,7 @@
       el.nextElementSibling.classList.toggle('open');
     }
 
-    // ── Add price alert modal ──
+    // ── Үнийн мэдэгдэл нэмэх modal ──
     function openAlertModal() {
       document.getElementById('alert-symbol').value = selectedSymbol;
       document.getElementById('alert-price-type').value = 'last';
@@ -880,7 +880,7 @@
       if (!target) return;
       addPriceAlert({ symbol: selectedSymbol, priceType, condition, target: Number(target), active: true });
       closeAlertModal();
-      showToast(`Alert created: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
+      showToast(`Мэдэгдэл үүслээ: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
     }
 
     function showToast(msg) {
@@ -901,9 +901,9 @@
     currentFilter = 'watchlist';
     renderFilterMenu();
     renderCards();
-    renderChart('AAPL');
-    renderCompanyInfo('AAPL');
-    document.getElementById('alert-symbol').value = 'AAPL';
+    renderChart('BDS');
+    renderCompanyInfo('BDS');
+    document.getElementById('alert-symbol').value = 'BDS';
     document.getElementById('watch-btn').classList.add('active');
     refreshAccountBanner();
     lucide.createIcons();
@@ -933,17 +933,17 @@
       const kycDone       = localStorage.getItem('bdsec-kyc-done') === '1';
 
       if (!accountOpened) {
-        return; // default "Open Account" state already in markup
+        return; // default "Данс нээх" state already in markup
       }
       if (!kycDone) {
         icon.setAttribute('data-lucide', 'shield-alert');
-        text.textContent = 'Complete your KYC verification to start trading online.';
-        btn.textContent = 'Complete KYC';
+        text.textContent = 'Та Харилцагчийг танин баталгаажуулах KYC формыг бөглөснөөр арилжаанд оролцох боломжтой.';
+        btn.textContent = 'KYC форм бөглөх';
         btn.onclick = completeKycForm;
         return;
       }
       banner.style.display = 'none';
-      // Account Balance Card is disabled for now — see commented markup above
+      // Данс Balance Карт is disabled for now — see commented markup above
     }
   </script>
 </body>
