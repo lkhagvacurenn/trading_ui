@@ -194,8 +194,8 @@
             <div class="eyebrow">Одоогийн үнэлгээ</div>
             <button class="hero-eye-btn" onclick="toggleVisibility()" title="Toggle values"><i data-lucide="eye" id="val-eye"></i></button>
           </div>
-          <div class="hero-value" id="hero-val">$112,680.00</div>
-          <div class="hero-change"><i data-lucide="trending-up"></i> +$25,340.00 (+29.01%)</div>
+          <div class="hero-value" id="hero-val">₮112,680,000</div>
+          <div class="hero-change"><i data-lucide="trending-up"></i> +₮25,340,000 (+29.01%)</div>
         </div>
       </div>
       <div class="hero-range-tabs">
@@ -210,12 +210,12 @@
     <!-- <section class="metric-grid">
       <div class="metric-card primary">
         <div class="metric-label"><i data-lucide="line-chart"></i> Нийт ашиг/алдагдал</div>
-        <div class="metric-value gain">+$25,340.00</div>
+        <div class="metric-value gain">+₮25,340,000</div>
         <div class="metric-sub">Бодит болон бодит бус Өгөөжын ашиг</div>
       </div>
       <div class="metric-card">
         <div class="metric-label"><i data-lucide="wallet"></i> Нийт хөрөнгө оруулалт</div>
-        <div class="metric-value">$87,340.00</div>
+        <div class="metric-value">₮87,340,000</div>
         <div class="metric-sub">Оруулсан цэвэр хөрөнгө</div>
       </div>
       <div class="metric-card">
@@ -301,11 +301,11 @@
     const total = HOLDINGS.reduce((s, h) => s + h.value, 0);
 
     function money(v) {
-      return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return '₮' + Math.round(v).toLocaleString('mn-MN');
     }
 
     function compactMoney(v) {
-      return '$' + Math.round(v).toLocaleString('en-US');
+      return '₮' + Math.round(v).toLocaleString('mn-MN');
     }
 
     function renderMiniChart() {
@@ -383,7 +383,7 @@
 
     function toggleVisibility() {
       visible = !visible;
-      document.getElementById('hero-val').textContent = visible ? '$112,680.00' : '••••••••';
+      document.getElementById('hero-val').textContent = visible ? '₮112,680,000' : '••••••••';
       document.getElementById('val-eye').setAttribute('data-lucide', visible ? 'eye' : 'eye-off');
       lucide.createIcons();
     }

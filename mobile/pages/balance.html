@@ -351,10 +351,11 @@
     </div>
     <div class="hero-actions">
       <button class="hero-action-btn" onclick="goDeposit()">
-        <i data-lucide="wallet"></i> Цэнэглэх
+          <i data-lucide="arrow-down-to-line"></i>
+        Цэнэглэх
       </button>
       <button class="hero-action-btn" onclick="goWithdraw()">
-        <i data-lucide="banknote"></i> Мөнгө хүсэх
+        <i data-lucide="arrow-up-from-line"></i>  Мөнгө хүсэх
       </button>
     </div>
   </div>
@@ -593,7 +594,7 @@
     ];
 
     function formatUSD(v) {
-      return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return '₮' + Math.round(v).toLocaleString('mn-MN');
     }
 
     function showSecurityDetail(symbol) {

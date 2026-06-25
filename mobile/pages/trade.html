@@ -410,7 +410,7 @@
       <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--color-text-disabled)"></i>
     </div>
     <div class="price-info">
-      <div class="price-big">$189.84</div>
+      <div class="price-big">₮0</div>
       <div class="price-date">2026-06-06</div>
       <div class="price-change up">+1.23 (+0.65%)</div>
     </div>
@@ -517,7 +517,7 @@
     <div class="balance-row">
       <span class="bal-label">Боломжит үлдэгдэл:</span>
       <div style="display:flex;align-items:center;gap:8px">
-        <span class="bal-value">$24,850.00</span>
+        <span class="bal-value" id="trade-bal-value">₮0</span>
         <span class="bal-link" onclick="openDeposit()">Цэнэглэх</span>
       </div>
     </div>
@@ -536,15 +536,15 @@
 
     <!-- Step -->
     <div class="step-row">
-      <span>Алхам: $0.01</span>
+      <span>Алхам: ₮1</span>
       <button class="step-btn" onclick="setMarketPrice()">Зах зээлийн үнэ ашиглах</button>
     </div>
 
     <!-- Order summary -->
     <div class="verify-card order-summary">
-      <div class="verify-row"><span>Нийт</span><span id="ord-total">$0.00</span></div>
-      <div class="verify-row"><span>Шимтгэл (0.2%)</span><span id="ord-fee">$0.00</span></div>
-      <div class="verify-row total"><span>Шимтгэлтэй нийт</span><span id="ord-total-fee">$0.00</span></div>
+      <div class="verify-row"><span>Нийт</span><span id="ord-total">₮0</span></div>
+      <div class="verify-row"><span>Шимтгэл (0.2%)</span><span id="ord-fee">₮0</span></div>
+      <div class="verify-row total"><span>Шимтгэлтэй нийт</span><span id="ord-total-fee">₮0</span></div>
     </div>
 
     <!-- Submit -->
@@ -580,10 +580,10 @@
         <div class="verify-row"><span>Захиалгын төрөл</span><span id="vf-order-type">Зах зээлийн</span></div>
         <div class="verify-row"><span>Хугацаа</span><span id="vf-duration">Өдрийн захиалга</span></div>
         <div class="verify-row"><span>Тоо хэмжээ</span><span id="vf-qty">0</span></div>
-        <div class="verify-row"><span>Үнэ</span><span id="vf-price">$0.00</span></div>
-        <div class="verify-row"><span>Нийт</span><span id="vf-total">$0.00</span></div>
-        <div class="verify-row"><span>Шимтгэл (0.2%)</span><span id="vf-fee">$0.00</span></div>
-        <div class="verify-row total"><span>Шимтгэлтэй нийт</span><span id="vf-total-fee">$0.00</span></div>
+        <div class="verify-row"><span>Үнэ</span><span id="vf-price">₮0</span></div>
+        <div class="verify-row"><span>Нийт</span><span id="vf-total">₮0</span></div>
+        <div class="verify-row"><span>Шимтгэл (0.2%)</span><span id="vf-fee">₮0</span></div>
+        <div class="verify-row total"><span>Шимтгэлтэй нийт</span><span id="vf-total-fee">₮0</span></div>
       </div>
       <div class="btn-row">
         <button class="btn-outline" onclick="closeVerifyModal()">Цуцлах</button>
@@ -733,11 +733,11 @@
           <div class="hist-icon side-${t.side}"><i data-lucide="${t.side === 'buy' ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
           <div class="hist-info">
             <div class="hist-title">${t.side === 'buy' ? 'Авах' : 'Зарах'} BDS</div>
-            <div class="hist-sub">${t.qty} ширхэг  $${t.price.toFixed(2)}</div>
+            <div class="hist-sub">${t.qty} ширхэг  ₮${Math.round(t.price).toLocaleString('mn-MN')}</div>
             <div class="hist-date">${t.date}</div>
           </div>
           <div class="hist-right">
-            <div class="hist-amount">$${t.total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+            <div class="hist-amount">₮${Math.round(t.total).toLocaleString('mn-MN')}</div>
             <div class="hist-status status-${t.status}">${t.status.charAt(0).toUpperCase() + t.status.slice(1)}</div>
           </div>
         </div>`).join('');
@@ -819,9 +819,9 @@
       const price = parseFloat(document.getElementById('price-input').value) || 0;
       const total = qty * price;
       const fee = total * FEE_RATE;
-      document.getElementById('ord-total').textContent = `$${total.toFixed(2)}`;
-      document.getElementById('ord-fee').textContent = `$${fee.toFixed(2)}`;
-      document.getElementById('ord-total-fee').textContent = `$${(total + fee).toFixed(2)}`;
+      document.getElementById('ord-total').textContent = `₮${Math.round(total).toLocaleString('mn-MN')}`;
+      document.getElementById('ord-fee').textContent = `₮${Math.round(fee).toLocaleString('mn-MN')}`;
+      document.getElementById('ord-total-fee').textContent = `₮${Math.round(total + fee).toLocaleString('mn-MN')}`;
     }
 
     // ── Inline field errors ──
@@ -890,10 +890,10 @@
       document.getElementById('vf-order-type').textContent = document.getElementById('order-type-label').textContent;
       document.getElementById('vf-duration').textContent = document.getElementById('duration-label').textContent;
       document.getElementById('vf-qty').textContent = qty;
-      document.getElementById('vf-price').textContent = `$${price.toFixed(2)}`;
-      document.getElementById('vf-total').textContent = `$${total.toFixed(2)}`;
-      document.getElementById('vf-fee').textContent = `$${fee.toFixed(2)}`;
-      document.getElementById('vf-total-fee').textContent = `$${(total + fee).toFixed(2)}`;
+      document.getElementById('vf-price').textContent = `₮${Math.round(price).toLocaleString('mn-MN')}`;
+      document.getElementById('vf-total').textContent = `₮${Math.round(total).toLocaleString('mn-MN')}`;
+      document.getElementById('vf-fee').textContent = `₮${Math.round(fee).toLocaleString('mn-MN')}`;
+      document.getElementById('vf-total-fee').textContent = `₮${Math.round(total + fee).toLocaleString('mn-MN')}`;
 
       const confirmBtn = document.getElementById('vf-confirm-btn');
       confirmBtn.className = 'submit-btn ' + (currentSide === 'buy' ? 'buy-btn' : 'sell-btn');
@@ -946,6 +946,12 @@
     renderExecutedOrders();
     renderTradeHistory();
     updateOrderSummary();
+    // Show wallet balance
+    try {
+      const b = getBalances();
+      const el = document.getElementById('trade-bal-value');
+      if (el) el.textContent = '₮' + (b.nominal||0).toLocaleString('mn-MN');
+    } catch(e) {}
     lucide.createIcons();
   </script>
 </body>

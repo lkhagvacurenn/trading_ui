@@ -770,9 +770,11 @@
       <div class="f-field">
         <div class="f-label">Үнийн төрөл</div>
         <select class="f-select" id="ta-price-type" style="background:var(--color-bg)">
-          <option value="LAST_PRICE">Сүүлийн үнэ</option>
-          <option value="OPENING_PRICE">Нээлтийн үнэ</option>
-          <option value="CLOSING_PRICE">Хаалтын үнэ</option>
+          <option value="last" selected>Сүүлийн арилжааны үнэ</option>
+          <option value="open">Нээлтийн үнэ</option>
+          <option value="close">Хаалтын үнэ</option>
+          <option value="high">Өдрийн дээд үнэ</option>
+          <option value="low">Өдрийн доод үнэ</option>
         </select>
       </div>
       <!-- Condition + target -->
@@ -780,8 +782,11 @@
         <div class="f-field">
           <div class="f-label">Нөхцөл</div>
           <select class="f-select" id="ta-condition" style="background:var(--color-bg)">
-            <option value="ABOVE">Дээш (&gt;=)</option>
-            <option value="BELOW">Доош (&lt;=)</option>
+            <option value="gte" selected>Их буюу тэнцүү (≥)</option>
+            <option value="lte">Бага буюу тэнцүү (≤)</option>
+            <option value="gt">Их байвал (&gt;)</option>
+            <option value="lt">Бага байвал (&lt;)</option>
+            <option value="eq">Тэнцүү (=)</option>
           </select>
         </div>
         <div class="f-field">
@@ -969,7 +974,7 @@ function renderExecuted() {
     const isUp = rand() > 0.45;
     return `<div class="exec-row">
       <span>${t.qty.toLocaleString()}</span>
-      <span class="${isUp ? 'ep-up' : 'ep-down'}">${t.price.toFixed(2)}</span>
+      <span class="${isUp ? 'ep-up' : 'ep-down'}">₮${Math.round(t.price).toLocaleString('mn-MN')}</span>
       <span>${t.time}</span>
     </div>`;
   }).join('');
@@ -1306,36 +1311,29 @@ function cancelOrder(id) {
 function goAllOrders() { try { window.parent.navigateTo('all-orders'); } catch(e) {} }
 function goRecharge()  { try { window.parent.navigateTo('recharge');   } catch(e) {} }
 /* ── Trade alert modal ── */
+const TA_PRICE_LABELS = { last:'Сүүлийн үнэ', open:'Нээлтийн үнэ', close:'Хаалтын үнэ', high:'Дээд үнэ', low:'Доод үнэ' };
+const TA_COND_LABELS  = { gte:'≥', lte:'≤', gt:'>', lt:'<', eq:'=' };
+
 function openTradeAlertModal() {
   document.getElementById('ta-symbol').value = selectedStock.symbol + ' — ' + selectedStock.name;
-  document.getElementById('ta-price-type').value = 'LAST_PRICE';
-  document.getElementById('ta-condition').value = 'ABOVE';
-  document.getElementById('ta-target').value = fmtPrice(selectedStock.price).replace(/,/g,'');
+  document.getElementById('ta-price-type').value = 'last';
+  document.getElementById('ta-condition').value = 'gte';
+  document.getElementById('ta-target').value = Math.round(selectedStock.price);
   updateAlertPreview();
   document.getElementById('modal-trade-alert').classList.add('open');
 }
 function closeTradeAlertModal() { document.getElementById('modal-trade-alert').classList.remove('open'); }
 function updateAlertPreview() {
-  const cond = document.getElementById('ta-condition').value;
+  const pt     = document.getElementById('ta-price-type').value;
+  const cond   = document.getElementById('ta-condition').value;
   const target = document.getElementById('ta-target').value;
-  const condLabel = cond === 'ABOVE' ? 'дэнзэнгээс дээш' : 'дэнзэнгээс доош';
-  const el = document.getElementById('ta-preview');
+  const el     = document.getElementById('ta-preview');
   if (!target) { el.textContent = 'Нөхцөл оруулна уу'; return; }
-  el.innerHTML = `<strong>${selectedStock.symbol}</strong> үнэ <strong>₮${parseFloat(target).toLocaleString('mn-MN')}</strong>-${condLabel} гарахад мэдэгдэнэ`;
+  el.innerHTML = `<strong>${selectedStock.symbol}</strong> — ${TA_PRICE_LABELS[pt]||pt} <strong>${TA_COND_LABELS[cond]||cond} ₮${parseFloat(target).toLocaleString('mn-MN')}</strong> болоход мэдэгдэнэ`;
 }
 function saveTradeAlert() {
   const target = parseFloat(document.getElementById('ta-target').value);
   if (!target || target <= 0) { showToast('Зорилтот үнэ оруулна уу'); return; }
-  if (typeof PRICE_ALERTS !== 'undefined') {
-    PRICE_ALERTS.push({
-      id: 'AL-' + Math.random().toString(36).slice(2,5).toUpperCase(),
-      symbol: selectedStock.symbol,
-      priceType: document.getElementById('ta-price-type').value,
-      condition: document.getElementById('ta-condition').value,
-      targetValue: target,
-      isActive: true, lastTriggered: null
-    });
-  }
   closeTradeAlertModal();
   showToast(selectedStock.symbol + ' сэрэмжлүүлэг нэмэгдлээ');
 }

@@ -284,40 +284,40 @@
 
 <div class="web-modal-overlay" id="alert-modal">
   <div class="web-modal">
-    <h3 class="web-modal-title">Add Price Alert</h3>
+    <h3 class="web-modal-title">Үнийн мэдэгдэл нэмэх</h3>
     <div class="am-field">
-      <label class="am-label">Symbol</label>
+      <label class="am-label">Тикер</label>
       <input class="am-inp" id="alert-symbol" readonly />
     </div>
     <div class="am-field">
-      <label class="am-label">Price Type</label>
+      <label class="am-label">Үнийн төрөл</label>
       <select class="am-inp am-select" id="alert-price-type">
-        <option value="open">Opening Price</option>
-        <option value="close">Closing Price</option>
-        <option value="high">High Price</option>
-        <option value="low">Low Price</option>
-        <option value="last" selected>Last Traded Price</option>
+        <option value="last" selected>Сүүлийн арилжааны үнэ</option>
+        <option value="open">Нээлтийн үнэ</option>
+        <option value="close">Хаалтын үнэ</option>
+        <option value="high">Өдрийн дээд үнэ</option>
+        <option value="low">Өдрийн доод үнэ</option>
       </select>
     </div>
     <div class="am-row">
       <div class="am-field">
-        <label class="am-label">Condition</label>
+        <label class="am-label">Нөхцөл</label>
         <select class="am-inp am-select" id="alert-condition">
-          <option value="gt">Greater than</option>
-          <option value="lt">Less than</option>
-          <option value="eq">Equal to</option>
-          <option value="gte" selected>Greater than or equal to</option>
-          <option value="lte">Less than or equal to</option>
+          <option value="gte" selected>Их буюу тэнцүү (≥)</option>
+          <option value="lte">Бага буюу тэнцүү (≤)</option>
+          <option value="gt">Их байвал (&gt;)</option>
+          <option value="lt">Бага байвал (&lt;)</option>
+          <option value="eq">Тэнцүү (=)</option>
         </select>
       </div>
       <div class="am-field">
-        <label class="am-label">Target Value</label>
-        <input class="am-inp" id="alert-price" type="number" placeholder="0.00" step="0.01" />
+        <label class="am-label">Зорилтот үнэ (₮)</label>
+        <input class="am-inp" id="alert-price" type="number" placeholder="0" step="1" />
       </div>
     </div>
     <div class="web-modal-actions" style="margin-top:0">
-      <button class="btn btn-outline" onclick="closeAlertModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveAlert()">Create Alert</button>
+      <button class="btn btn-outline" onclick="closeAlertModal()">Цуцлах</button>
+      <button class="btn btn-primary" onclick="saveAlert()">Мэдэгдэл үүсгэх</button>
     </div>
   </div>
 </div>
@@ -508,17 +508,17 @@ function sparkline(data, color) {
     const d = STOCK_DETAILS[symbol] || {};
     document.getElementById('info-title').textContent = `${s.name} — ${symbol}`;
     const items = [
-      { label:'ISIN',               value: d.isin || '—' },
-      { label:'Symbol',             value: symbol },
-      { label:'Shares Outstanding', value: d.sharesOut || '—' },
-      { label:'Market Cap',         value: d.marketCap ? d.marketCap + '₮' : '—' },
-      { label:'P/E Ratio',          value: d.pe || '—' },
-      { label:'Previous Close',     value: d.prevClose ? fmtMNT(d.prevClose) : '—' },
-      { label:'Open',               value: d.open ? fmtMNT(d.open) : '—' },
-      { label:'Day High',           value: d.dayHigh ? fmtMNT(d.dayHigh) : '—' },
-      { label:'Day Low',            value: d.dayLow  ? fmtMNT(d.dayLow)  : '—' },
-      { label:'52-Week High',       value: d.wkHigh52 ? fmtMNT(d.wkHigh52) : '—' },
-      { label:'52-Week Low',        value: d.wkLow52  ? fmtMNT(d.wkLow52)  : '—' },
+      { label:'ISIN',                  value: d.isin || '—' },
+      { label:'Тикер',               value: symbol },
+      { label:'Нийт хувьцаа',        value: d.sharesOut || '—' },
+      { label:'Зах зээлийн үнэлгээ', value: d.marketCap ? d.marketCap + '₮' : '—' },
+      { label:'P/E харьцаа',         value: d.pe || '—' },
+      { label:'Өмнөх хаалт',         value: d.prevClose ? fmtMNT(d.prevClose) : '—' },
+      { label:'Нээлт',               value: d.open ? fmtMNT(d.open) : '—' },
+      { label:'Өдрийн дээд',         value: d.dayHigh ? fmtMNT(d.dayHigh) : '—' },
+      { label:'Өдрийн доод',         value: d.dayLow  ? fmtMNT(d.dayLow)  : '—' },
+      { label:'52 долоо хоногийн дээд', value: d.wkHigh52 ? fmtMNT(d.wkHigh52) : '—' },
+      { label:'52 долоо хоногийн доод', value: d.wkLow52  ? fmtMNT(d.wkLow52)  : '—' },
     ];
     document.getElementById('stock-info-grid').innerHTML = items.map(i =>
       `<div class="sinfo-item"><span class="sinfo-label">${i.label}</span><span class="sinfo-value">${i.value}</span></div>`
@@ -787,7 +787,7 @@ function sparkline(data, color) {
     if (!target) return;
     addPriceAlert({ symbol: selectedSymbol, priceType, condition, target: Number(target), active: true });
     closeAlertModal();
-    showToast(`Alert created: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ${target}`);
+    showToast(`Мэдэгдэл үүслээ: ${selectedSymbol} — ${PRICE_TYPE_LABELS[priceType]} ${ALERT_CONDITION_LABELS[condition]} ₮${Number(target).toLocaleString('mn-MN')}`);
   }
 
   /* ── Navigation helpers ── */
