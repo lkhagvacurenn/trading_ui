@@ -1,0 +1,10 @@
+# Claude / Cowork internal files — never commit these
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
