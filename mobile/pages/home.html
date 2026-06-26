@@ -256,6 +256,58 @@
     .info-extra { display: none; padding: 0 14px 14px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
     .info-extra.open { display: block; }
 
+    /* ── Stock search modal ── */
+    .search-overlay {
+      display: none; position: fixed; inset: 0; z-index: 290;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    .search-overlay.open { display: block; }
+    .search-sheet {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      max-height: 82vh;
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: 20px 20px 0 0;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .search-inp-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .search-inp-row svg { width: 16px; height: 16px; color: var(--color-text-disabled); flex-shrink: 0; }
+    .search-inp {
+      flex: 1; background: transparent; border: none; outline: none;
+      font-size: 15px; font-weight: 600; color: var(--color-text-primary);
+      font-family: 'Manrope', sans-serif;
+    }
+    .search-inp::placeholder { color: var(--color-text-disabled); font-weight: 400; }
+    .search-close {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      background: var(--color-bg-input); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary);
+    }
+    .search-close svg { width: 14px; height: 14px; }
+    .search-results { overflow-y: auto; flex: 1; }
+    .search-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; cursor: pointer;
+      border-bottom: 1px solid var(--color-border);
+      transition: background 0.1s;
+    }
+    .search-item:last-child { border-bottom: none; }
+    .search-item:active { background: var(--color-bg-input); }
+    .search-item-avatar {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #fff; letter-spacing: -0.3px;
+    }
+    .search-item-name { font-size: 14px; font-weight: 700; }
+    .search-item-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .search-item-price { font-size: 13px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; text-align: right; }
+    .search-empty { padding: 40px 16px; text-align: center; color: var(--color-text-disabled); font-size: 13px; }
+
     /* ── Add alert modal ── */
     .alert-modal-overlay {
       display: none; position: fixed; inset: 0; z-index: 280;
@@ -613,6 +665,20 @@
   <div style="height:20px"></div>
 
   <!-- Үнийн мэдэгдэл нэмэх Modal -->
+  <!-- ── Stock search modal ── -->
+  <div class="search-overlay" id="search-overlay" onclick="if(event.target===this)closeSearch()">
+    <div class="search-sheet">
+      <div class="search-inp-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-inp" id="search-inp" type="text" placeholder="Хувьцаа хайх…" oninput="renderSearchResults()" autocomplete="off" autocorrect="off" />
+        <button class="search-close" onclick="closeSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="search-results" id="search-results"></div>
+    </div>
+  </div>
+
   <div class="alert-modal-overlay" id="alert-modal">
     <div class="alert-modal-card">
       <div class="alert-modal-hdr">
@@ -1017,7 +1083,48 @@
     }
 
     function showSearch() {
-      // Future: open search modal
+      document.getElementById('search-overlay').classList.add('open');
+      const inp = document.getElementById('search-inp');
+      inp.value = '';
+      renderSearchResults();
+      setTimeout(() => inp.focus(), 120);
+    }
+
+    function closeSearch() {
+      document.getElementById('search-overlay').classList.remove('open');
+    }
+
+    function renderSearchResults() {
+      const q = document.getElementById('search-inp').value.toLowerCase().trim();
+      const all = [...CARDS, ...BOND_CARDS];
+      const results = q
+        ? all.filter(c => c.symbol.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))
+        : all;
+      const container = document.getElementById('search-results');
+      if (!results.length) {
+        container.innerHTML = '<div class="search-empty">Илэрц олдсонгүй</div>';
+        return;
+      }
+      container.innerHTML = results.map(c => {
+        const isUp   = c.pct > 0;
+        const isFlat = c.pct === 0;
+        const cls    = isFlat ? 'flat' : isUp ? 'up' : 'down';
+        const sign   = isUp ? '+' : '';
+        const isBond = !!BOND_CARDS.find(b => b.symbol === c.symbol);
+        return `<div class="search-item" onclick="selectStock('${c.symbol}');closeSearch()">
+          <div class="search-item-avatar" style="background:${AVATAR_COLORS[c.symbol]||'var(--color-primary)'}">
+            ${c.symbol.slice(0,2)}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="search-item-name">${c.symbol}</div>
+            <div class="search-item-sub">${c.name}${isBond ? ' · Бонд' : ''}</div>
+          </div>
+          <div style="flex-shrink:0;text-align:right">
+            <div class="search-item-price">₮${c.price.toLocaleString('mn-MN')}</div>
+            <span class="change-badge ${cls}">${sign}${c.pct.toFixed(2)}%</span>
+          </div>
+        </div>`;
+      }).join('');
     }
 
     // ── Company info section ──
