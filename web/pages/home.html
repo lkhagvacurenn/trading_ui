@@ -97,11 +97,8 @@
 <body>
 <div class="web-page">
 
-  <div id="open-acct-banner" class="info-banner">
-    <i data-lucide="info" style="width:16px;height:16px;color:var(--color-primary);flex-shrink:0;margin-top:2px"></i>
-    <p id="acct-banner-text">ҮЦТХТ-ны данс нээж, онлайн арилжаанд оролцоно уу.</p>
-    <button id="acct-banner-btn" class="btn btn-primary btn-sm" onclick="openAccountForm()" style="flex-shrink:0">Данс нээх</button>
-  </div>
+  <!-- Balance gate (shown when account/KYC not done) -->
+  <div id="home-bal-gate" style="display:none;margin-bottom:16px"></div>
 
   <!-- Balance summary cards -->
   <div id="balance-cards-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
@@ -323,6 +320,7 @@
 </div>
 
 <script src="../../data/static.js"></script>
+<script src="../scripts/user-state.js"></script>
 <script src="../scripts/components.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script src="../../mobile/scripts/wallet-data.js"></script>
@@ -806,17 +804,21 @@ function sparkline(data, color) {
   }
   function quickTradeSymbol(sym, side) { selectStock(sym); quickTrade(side); }
 
-  function refreshAccountBanner() {
-    const banner = document.getElementById('open-acct-banner');
-    const text = document.getElementById('acct-banner-text');
-    const btn = document.getElementById('acct-banner-btn');
-    if (localStorage.getItem('bdsec-account-opened') !== '1') return;
-    if (localStorage.getItem('bdsec-kyc-done') !== '1') {
-      text.textContent = 'KYC баталгаажуулалтаа дуусгаж онлайн арилжаа эхлүүлнэ үү.';
-      btn.textContent = 'KYC дуусгах';
-      return;
+  function checkBalGate() {
+    const gate = document.getElementById('home-bal-gate');
+    const row  = document.getElementById('balance-cards-row');
+    if (isAccountOpened() && isKYCDone()) {
+      gate.style.display = 'none';
+      row.style.display  = 'grid';
+    } else {
+      row.style.display  = 'none';
+      gate.style.display = 'block';
+      renderOnboardingGate(gate, {
+        title: 'Данс үлдэгдэл харах',
+        subtitle: 'Данс нээж KYC баталгаажуулснаар үлдэгдэл харагдана.',
+        requiredSteps: ['open-account', 'kyc'],
+      });
     }
-    banner.style.display = 'none';
   }
 
   /* ── Balance summary cards ── */
@@ -837,7 +839,7 @@ function sparkline(data, color) {
   selectStock('BDS');
   renderStockInfo('BDS');
   renderStockOrders('BDS');
-  refreshAccountBanner();
+  checkBalGate();
   lucide.createIcons();
 
   /* ── Drag-to-scroll for horizontal card row ── */

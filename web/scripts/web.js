@@ -5,6 +5,7 @@
 const PAGE_MAP = {
   home:             'pages/home.html',
   balance:          'pages/balance.html',
+  statement:        'pages/statement.html',
   trade:            'pages/trade.html',
   returns:          'pages/returns.html',
   ipo:              'pages/ipo.html',
@@ -26,6 +27,7 @@ const PAGE_MAP = {
   'opening-process':'pages/opening-process.html',
   broker:           'pages/broker.html',
   kyc:              'pages/kyc.html',
+  tripartite:       'pages/bank-account.html',
 };
 
 function applyTheme(theme) {

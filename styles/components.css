@@ -262,3 +262,69 @@ tbody td {
 .page-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 .page-btn:disabled { opacity: 0.4; cursor: default; }
 .page-btn svg { width: 14px; height: 14px; }
+
+/* ── Onboarding gate card ── */
+.onb-gate {
+  margin: 16px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 28px 20px 24px;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+.onb-gate-icon {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(73,73,170,0.12);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+.onb-gate-icon svg { width: 24px; height: 24px; color: var(--color-primary); }
+.onb-gate-title {
+  font-size: 16px; font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+.onb-gate-sub {
+  font-size: 13px; color: var(--color-text-secondary);
+  line-height: 1.5; margin-bottom: 22px;
+}
+.onb-steps { width: 100%; display: flex; flex-direction: column; gap: 0; margin-bottom: 22px; }
+.onb-step {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  margin-bottom: 8px;
+  transition: border-color 0.15s;
+}
+.onb-step:last-child { margin-bottom: 0; }
+.onb-step.done   { border-color: rgba(0,192,118,0.3); background: rgba(0,192,118,0.05); }
+.onb-step.active { border-color: var(--color-primary); background: rgba(73,73,170,0.06); }
+.onb-step-num {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800;
+  background: var(--color-bg-input); color: var(--color-text-disabled);
+}
+.onb-step-num svg { width: 14px; height: 14px; }
+.onb-step.done   .onb-step-num { background: rgba(0,192,118,0.15); color: var(--color-buy); }
+.onb-step.active .onb-step-num { background: var(--color-primary); color: #fff; }
+.onb-step-label { flex: 1; font-size: 13px; font-weight: 600; text-align: left; }
+.onb-step.done   .onb-step-label { color: var(--color-text-secondary); }
+.onb-step.active .onb-step-label { color: var(--color-text-primary); }
+.onb-step-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 99px;
+  background: rgba(0,192,118,0.12); color: var(--color-buy);
+}
+.onb-step-badge.pending { background: rgba(73,73,170,0.12); color: var(--color-primary); }
+.onb-gate-btn {
+  width: 100%; padding: 14px;
+  background: var(--color-primary); color: #fff;
+  border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  transition: opacity 0.15s;
+}
+.onb-gate-btn:hover { opacity: 0.88; }

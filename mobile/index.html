@@ -29,7 +29,7 @@
     /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body {
-      height: 100%; margin: 0; overflow: hidden; font-family: 'Manrope', sans-serif;
+      height: 100%; margin: 0; overflow: clip; font-family: 'Manrope', sans-serif;
     }
     body {
       display: flex; align-items: center; justify-content: center;
@@ -46,7 +46,7 @@
       margin: 0 auto;
       background: var(--color-bg);
       position: relative;
-      overflow: hidden;
+      overflow: clip;
     }
 
     /* ── Desktop "phone frame" presentation only (not огноо real mobile devices) ── */
@@ -662,6 +662,7 @@ const PAGE_MAP = {
   tripartite:   'pages/tripartite.html',
   profile:      'pages/profile.html',
   alerts:       'pages/alerts.html',
+  statement:    'pages/statement.html',
 };
 function menuNav(key) {
   closeMenu();

@@ -419,6 +419,7 @@
 </div>
 
 <script src="../../data/static.js"></script>
+<script src="../scripts/user-state.js"></script>
 <script>
 /* ── Helpers ── */
 function fmtMNT(n, compact) {
@@ -612,6 +613,21 @@ function renderAllocList() {
     </div>`;
   }).join('');
 }
+/* ── Account gate: must have account to view portfolio ── */
+(function initReturns() {
+  if (!isAccountOpened()) {
+    const page = document.querySelector('.pf-page');
+    page.innerHTML = '';
+    page.style.padding = '0';
+    renderOnboardingGate(page, {
+      title: 'Портфолио харах',
+      subtitle: 'Данс нээж KYC баталгаажуулснаар таны хувьцааны мэдээлэл харагдана.',
+      requiredSteps: ['open-account', 'kyc'],
+    });
+    lucide.createIcons();
+    return;
+  }
+
 renderAllocList();
 
 /* ── Sector breakdown ── */
@@ -647,6 +663,7 @@ function renderSectors() {
 renderSectors();
 
 lucide.createIcons();
+})(); // end initReturns
 </script>
 </body>
 </html>

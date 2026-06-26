@@ -533,9 +533,9 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       const subEl = document.getElementById('profile-status-sub');
       if (doneCount === 3) {
         pillEl.innerHTML = `<span class="status-pill online"><i data-lucide="badge-check"></i>Онлайн арилжаа</span>`;
-        subEl.textContent = 'Бүх баталгаажуулалт амжилттай хийгдсэн';
+        subEl.textContent = 'Бүх баталгаажуулалт амжилттай хийгдсэн.';
       } else {
-        pillEl.innerHTML = `<span class="status-pill pending"><i data-lucide="clock"></i>Тохиргоо хийгдэж байна</span>`;
+        pillEl.innerHTML = `<span class="status-pill pending"><i data-lucide="clock"></i>Хүлээгдэж байна</span>`;
         subEl.textContent = `${doneCount} of 3 steps completed`;
       }
     }
@@ -546,13 +546,13 @@ By signing below, the Client acknowledges they have read, understood, and agree 
       const steps = [
         { title: 'ҮЦТХТ данс нээх', icon: 'building-2', done: getAccountOpened(),
           doneSub: getAccountOpenedDate() ? `Баталгаажсан огноо ${getAccountOpenedDate()}` : 'Биелсэн',
-          todoSub: 'Not started — tap to open your account', page: 'open-account' },
+          todoSub: 'Данс нээгдээгүй', page: 'open-account' },
         { title: 'KYC баталгаажуулалт', icon: 'shield-check', done: getKycDone(),
           doneSub: getKycDoneDate() ? `Баталгаажсан огноо ${getKycDoneDate()}` : 'Биелсэн',
-          todoSub: 'Required before you can trade — tap to start', page: 'kyc' },
-        { title: 'Sign Tripartite Agreement', icon: 'file-signature', done: !!(tri && tri.signed),
+          todoSub: 'Форм бөглөөгүй', page: 'kyc' },
+        { title: 'Гурвалсан гэрээ', icon: 'file-signature', done: !!(tri && tri.signed),
           doneSub: tri && tri.date ? `Гэрээ байгуулсан огноо ${tri.date}` : 'Гарын үсэг зурсан',
-          todoSub: 'Link your bank, brokerage and MCSD accounts', page: 'tripartite' },
+          todoSub: 'Гэрээ байгуулаагүй', page: 'tripartite' },
       ];
       const el = document.getElementById('status-list');
       el.innerHTML = steps.map(s => `

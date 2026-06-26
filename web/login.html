@@ -302,7 +302,7 @@
             <path d="M3.18 23.76c.37.2.8.2 1.17.01l12.44-7.19-2.65-2.64-10.96 9.82zM.1 1.05C.04 1.28 0 1.52 0 1.78v20.44c0 .26.04.5.1.73l11.53-11.48L.1 1.05zM20.34 10.38l-2.78-1.61-3.05 3.05 3.05 3.05 2.8-1.62c.8-.46.8-1.61-.02-2.07v.2zM4.35.22L16.79 7.4 14.14 10.05 3.18.23C3.55.04 3.98.03 4.35.22z"/>
           </svg>
           <div class="al-store-text">
-            <span class="al-store-sub">Авах</span>
+            <span class="al-store-sub">Татаж авах</span>
             <span class="al-store-name">Google Play</span>
           </div>
         </a>
@@ -382,7 +382,7 @@
 
           <button class="btn-emongolia" onclick="goHome()">
             <img class="emongolia-logo" src="../public/emongolia.png" alt="E-Mongolia" />
-            Continue with E-Mongolia
+            Үргэлжлүүлэх with E-Mongolia
           </button>
         </div>
 
@@ -404,7 +404,7 @@
               <label class="field-label">Хэрэглэгчийн төрөл</label>
               <select class="inp inp-select" id="reg-usertype"><option>Хувь хүн</option><option>Байгууллага</option></select>
             </div>
-            <button class="btn-primary" onclick="regStep1Continue()">Үргэлжлүүлэх</button>
+            <button class="btn-primary" onclick="regStep1Үргэлжлүүлэх()">Үргэлжлүүлэх</button>
           </div>
 
           <!-- Step 2 -->
@@ -704,7 +704,7 @@ function setRegChar(c) {
 }
 
 /* ── Step 1 → save country / user type, adapt step 2 labels (persisted like mobile) ── */
-function regStep1Continue() {
+function regStep1Үргэлжлүүлэх() {
   const country  = document.getElementById('reg-country').value;
   const usertype = document.getElementById('reg-usertype').value;
   localStorage.setItem('reg-country', country);

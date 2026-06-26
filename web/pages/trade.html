@@ -579,8 +579,10 @@
     </div>
 
     <!-- ── Order Form ── -->
-    <div class="tr-form">
-      <div class="tr-form-inner">
+    <div class="tr-form" id="tr-form-wrap">
+      <!-- Gate slot (shown when not fully onboarded) -->
+      <div id="tr-gate" style="display:none;padding:16px"></div>
+      <div id="tr-form-inner" class="tr-form-inner">
         <!-- BUY / SELL -->
         <div class="side-tabs">
           <button class="side-tab active-buy" id="btn-buy" onclick="setSide('BUY')">АВАХ</button>
@@ -810,6 +812,7 @@
 
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script src="../../data/static.js"></script>
+<script src="../scripts/user-state.js"></script>
 <script>
 /* ── Constants ── */
 const feePct = typeof FEE_EQUITY !== 'undefined' ? FEE_EQUITY : 1;
@@ -1351,6 +1354,18 @@ updateHeader();
 renderOrderBook();
 renderChart('panel-chart', selectedStock, '1D');
 updateSummary();
+
+(function checkTradeGate() {
+  if (isFullyOnboarded()) return;
+  document.getElementById('tr-form-inner').style.display = 'none';
+  const gate = document.getElementById('tr-gate');
+  gate.style.display = 'block';
+  renderOnboardingGate(gate, {
+    title: 'Захиалга өгөхийн тулд',
+    subtitle: 'Доорх алхмуудыг дуусгаснаар арилжаанд оролцох боломжтой болно.',
+    requiredSteps: ['open-account', 'kyc', 'tripartite'],
+  });
+})();
 </script>
 </body>
 </html>

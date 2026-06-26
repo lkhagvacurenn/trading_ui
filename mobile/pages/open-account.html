@@ -97,7 +97,7 @@
     .btn-primary:hover { opacity: 0.88; }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ── Back + Continue row ── */
+    /* ── Back + Үргэлжлүүлэх row ── */
     .btn-row { display: flex; gap: 10px; margin-bottom: 24px; }    .btn-outline {
       width: 100%; min-height: 52px; padding: 14px; background: transparent;
       border: 1.5px solid var(--color-border); border-radius: 12px;
@@ -370,7 +370,7 @@
         <input class="inp" type="text" id="oa-address" placeholder="Хаяг" />
       </div>
 
-      <button class="btn-primary" onclick="oaStep1Continue()">Үргэлжлүүлэх</button>
+      <button class="btn-primary" onclick="oaStep1Үргэлжлүүлэх()">Үргэлжлүүлэх</button>
     </div>
   </div>
 
@@ -614,7 +614,7 @@ function closeAgreement() {
 }
 
 /* ── Step navigation ── */
-function oaStep1Continue() {
+function oaStep1Үргэлжлүүлэх() {
   localStorage.setItem('oa-first-name', document.getElementById('oa-first-name').value.trim());
   localStorage.setItem('oa-last-name', document.getElementById('oa-last-name').value.trim());
   localStorage.setItem('oa-dob', document.getElementById('oa-dob').value);

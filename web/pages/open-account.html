@@ -315,7 +315,7 @@
         </div>
 
         <div class="btn-row">
-          <button class="btn btn-primary" onclick="oaStep1Continue()">Үргэлжлүүлэх</button>
+          <button class="btn btn-primary" onclick="oaStep1Үргэлжлүүлэх()">Үргэлжлүүлэх</button>
         </div>
       </div>
 
@@ -573,7 +573,7 @@ function closeAgreement() {
 }
 
 /* ── Step navigation ── */
-function oaStep1Continue() {
+function oaStep1Үргэлжлүүлэх() {
   localStorage.setItem('oa-first-name', document.getElementById('oa-first-name').value.trim());
   localStorage.setItem('oa-last-name', document.getElementById('oa-last-name').value.trim());
   localStorage.setItem('oa-dob', document.getElementById('oa-dob').value);

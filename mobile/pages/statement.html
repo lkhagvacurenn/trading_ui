@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Хуулга — BDSec</title>
+  <link rel="stylesheet" href="../../styles/tokens.css" />
+  <link rel="stylesheet" href="../../styles/components.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+  <style>
+    body { margin:0; font-family:'Manrope',sans-serif; background:var(--color-bg); color:var(--color-text-primary); overflow-x:hidden; }
+    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    /* ── Header ── */
+    .sub-header {
+      display:flex; align-items:center; gap:12px;
+      padding:14px 16px 12px;
+      position:sticky; top:0; z-index:20;
+      background:var(--color-bg);
+      border-bottom:1px solid var(--color-border);
+    }
+    .back-btn {
+      width:36px; height:36px; border-radius:50%;
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--color-text-secondary); flex-shrink:0;
+    }
+    .back-btn svg { width:18px; height:18px; }
+    .sub-title { font-size:16px; font-weight:700; flex:1; }
+
+    /* ── Account tabs ── */
+    .acct-tabs {
+      display:flex; margin:14px 16px 0;
+      background:var(--color-bg-card);
+      border:1px solid var(--color-border);
+      border-radius:12px; padding:3px; gap:3px;
+    }
+    .acct-tab {
+      flex:1; text-align:center; padding:8px 6px; border-radius:9px;
+      font-size:12px; font-weight:700; border:none;
+      background:transparent; color:var(--color-text-disabled); cursor:pointer;
+      transition:all 0.18s ease; white-space:nowrap;
+    }
+    .acct-tab.active {
+      background:var(--color-primary); color:#fff;
+      box-shadow:0 4px 12px rgba(73,73,170,0.35);
+    }
+
+    /* ── Summary cards ── */
+    .summary-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:12px 16px 0; }
+    .sum-card {
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:14px; padding:10px 8px 12px; text-align:center;
+    }
+    .sum-icon {
+      width:28px; height:28px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center; margin:0 auto 6px;
+    }
+    .sum-icon svg { width:14px; height:14px; }
+    .sum-icon.in   { background:rgba(0,192,118,0.15);  color:var(--color-buy); }
+    .sum-icon.out  { background:rgba(239,68,68,0.15);   color:var(--color-sell); }
+    .sum-icon.bal  { background:rgba(73,73,170,0.15);   color:var(--color-primary); }
+    .sum-icon.buy  { background:rgba(239,68,68,0.12);   color:var(--color-sell); }
+    .sum-icon.sell { background:rgba(0,192,118,0.12);   color:var(--color-buy); }
+    .sum-label { font-size:10px; color:var(--color-text-disabled); font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:3px; }
+    .sum-value { font-size:12px; font-weight:800; font-family:'IBM Plex Mono',monospace; line-height:1.2; }
+    .sum-value.clr-in  { color:var(--color-buy); }
+    .sum-value.clr-out { color:var(--color-sell); }
+    .sum-value.clr-bal { color:var(--color-primary); }
+
+    /* ── Date chips ── */
+    .date-chips {
+      display:flex; gap:6px; padding:12px 16px 0;
+      overflow-x:visible; scrollbar-width:none; align-items:center;
+    }
+    .date-chips::-webkit-scrollbar { display:none; }
+    .date-chip {
+      flex-shrink:0; padding:6px 14px; border-radius:20px;
+      font-size:12px; font-weight:700;
+      border:1px solid var(--color-border);
+      background:var(--color-bg-card); color:var(--color-text-secondary);
+      cursor:pointer; white-space:nowrap; transition:all 0.15s;
+    }
+    .date-chip.active { background:var(--color-primary); border-color:var(--color-primary); color:#fff; }
+    /* Calendar icon button — right-aligned, not a pill */
+    #custom-chip {
+      margin-left:auto; flex-shrink:0;
+      width:34px; height:34px; border-radius:10px; padding:0;
+      display:flex; align-items:center; justify-content:center;
+    }
+    #custom-chip svg { width:16px; height:16px; }
+    #custom-chip.active { background:var(--color-primary); border-color:var(--color-primary); color:#fff; }
+
+    /* custom range inputs row */
+    .custom-range-row {
+      display:none; align-items:center; gap:6px;
+      padding:8px 16px 0; flex-wrap:nowrap;
+    }
+    .custom-range-row.show { display:flex; }
+    .range-inp {
+      flex:1; min-width:0;
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:10px; padding:7px 10px;
+      font-size:12px; font-weight:600; color:var(--color-text-primary);
+      font-family:'Manrope',sans-serif; outline:none;
+    }
+    .range-inp:focus { border-color:var(--color-primary); }
+    [data-theme="dark"] .range-inp { color-scheme:dark; }
+    .range-sep { font-size:12px; color:var(--color-text-disabled); flex-shrink:0; }
+    .range-err { font-size:11px; color:var(--color-sell); padding:4px 16px 0; display:none; }
+    .range-err.show { display:block; }
+
+    /* ── Toolbar ── */
+    .toolbar { margin:10px 16px 0; display:flex; flex-direction:column; gap:8px; }
+    .search-bar {
+      display:flex; align-items:center; gap:10px;
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:12px; padding:10px 14px;
+    }
+    .search-bar svg { width:15px; height:15px; color:var(--color-text-disabled); flex-shrink:0; }
+    .search-bar input {
+      border:none; background:transparent; outline:none;
+      font-size:13px; color:var(--color-text-primary); flex:1;
+      font-family:'Manrope',sans-serif;
+    }
+    .search-bar input::placeholder { color:var(--color-text-disabled); }
+    .filter-row { display:flex; gap:6px; }
+    .hist-select {
+      flex:1; background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:10px; padding:8px 28px 8px 10px;
+      font-size:12px; font-weight:600; color:var(--color-text-primary);
+      font-family:'Manrope',sans-serif; appearance:none; -webkit-appearance:none; cursor:pointer;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 8px center;
+    }
+    .sort-btn {
+      display:flex; align-items:center; gap:5px;
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:10px; padding:8px 12px;
+      font-size:12px; font-weight:600; color:var(--color-text-primary);
+      cursor:pointer; white-space:nowrap; flex-shrink:0;
+    }
+    .sort-btn svg { width:13px; height:13px; transition:transform 0.18s; }
+    .sort-btn.asc svg { transform:rotate(180deg); }
+
+    /* ── Statement list ── */
+    .stmt-wrap { margin:12px 16px 0; }
+    .date-group-hdr {
+      font-size:11px; font-weight:700; color:var(--color-text-disabled);
+      padding:10px 2px 6px; display:flex; align-items:center; gap:8px;
+    }
+    .date-group-hdr::after { content:''; flex:1; height:1px; background:var(--color-border); }
+    .stmt-card {
+      background:var(--color-bg-card); border:1px solid var(--color-border);
+      border-radius:16px; overflow:hidden; margin-bottom:6px;
+    }
+    .stmt-item {
+      display:flex; align-items:center; gap:12px;
+      padding:13px 14px; border-bottom:1px solid var(--color-border);
+      cursor:pointer; transition:background 0.1s; user-select:none;
+    }
+    .stmt-item:last-child { border-bottom:none; }
+    .stmt-item:active { background:rgba(255,255,255,0.04); }
+    .stmt-icon {
+      width:40px; height:40px; border-radius:12px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .stmt-icon svg { width:18px; height:18px; }
+    .stmt-icon.deposit  { background:rgba(0,192,118,0.15); color:var(--color-buy); }
+    .stmt-icon.withdraw { background:rgba(239,68,68,0.15); color:var(--color-sell); }
+    .stmt-icon.buy      { background:rgba(239,68,68,0.12); color:var(--color-sell); }
+    .stmt-icon.sell     { background:rgba(0,192,118,0.12); color:var(--color-buy); }
+    .stmt-info { flex:1; min-width:0; }
+    .stmt-title { font-size:13px; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .stmt-sub { font-size:11px; color:var(--color-text-secondary); font-family:'IBM Plex Mono',monospace; }
+    .stmt-right { text-align:right; flex-shrink:0; }
+    .stmt-amount { font-size:13px; font-weight:800; font-family:'IBM Plex Mono',monospace; margin-bottom:3px; }
+    .stmt-amount.clr-in  { color:var(--color-buy); }
+    .stmt-amount.clr-out { color:var(--color-sell); }
+    .stmt-amount.clr-neu { color:var(--color-text-secondary); }
+    .stmt-badge {
+      font-size:10px; font-weight:700; padding:2px 7px; border-radius:99px; display:inline-block;
+    }
+    .stmt-badge.completed { background:rgba(0,192,118,0.12); color:var(--color-buy); }
+    .stmt-badge.pending   { background:rgba(245,158,11,0.12); color:#f59e0b; }
+    .stmt-badge.cancelled { background:rgba(239,68,68,0.12); color:var(--color-sell); }
+
+    .stmt-empty { padding:48px 20px; text-align:center; color:var(--color-text-disabled); }
+    .stmt-empty svg { width:40px; height:40px; margin-bottom:12px; opacity:0.35; }
+    .stmt-empty p { font-size:13px; margin:0; }
+
+    /* ── Detail modal overrides ── */
+    .detail-amount-in  { color:var(--color-buy) !important; }
+    .detail-amount-out { color:var(--color-sell) !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Header (no download button — download available after filtering) -->
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <span class="sub-title">Дансны хуулга</span>
+  </div>
+
+  <!-- 3-tab account selector -->
+  <div class="acct-tabs">
+    <button class="acct-tab active" onclick="setAccount('nominal',this)">Номинал данс</button>
+    <button class="acct-tab" onclick="setAccount('mcsd',this)">ҮЦТХТ данс</button>
+    <button class="acct-tab" onclick="setAccount('securities',this)">Хувьцаа</button>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="summary-row" id="stmt-summary"></div>
+
+  <!-- Date range chips (max 3 months) -->
+  <div class="date-chips">
+    <button class="date-chip" onclick="setRange('today',this)">Өнөөдөр</button>
+    <button class="date-chip" onclick="setRange('week',this)">7 хоног</button>
+    <button class="date-chip active" onclick="setRange('month',this)">Энэ сар</button>
+    <button class="date-chip" onclick="setRange('3month',this)">3 сар</button>
+    <button class="date-chip" id="custom-chip" onclick="toggleCustomRange(this)">
+      <i data-lucide="calendar"></i>
+    </button>
+  </div>
+  <div class="custom-range-row" id="custom-range-row">
+    <input type="date" class="range-inp" id="range-from" onchange="applyCustomRange()" />
+    <span class="range-sep">—</span>
+    <input type="date" class="range-inp" id="range-to" onchange="applyCustomRange()" />
+  </div>
+  <div class="range-err" id="range-err">Хамгийн ихдээ 3 сарын хугацаа сонгоно уу</div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="stmt-search" placeholder="Хайх…" oninput="render()" />
+    </div>
+    <div class="filter-row">
+      <select class="hist-select" id="type-filter" onchange="render()"></select>
+      <select class="hist-select" id="symbol-filter" onchange="render()" style="display:none"></select>
+      <select class="hist-select" id="status-filter" onchange="render()">
+        <option value="all">Бүх төлөв</option>
+        <option value="completed">Биелсэн</option>
+        <option value="pending">Хүлээгдэж буй</option>
+        <option value="cancelled">Цуцлагдсан</option>
+      </select>
+      <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Statement list -->
+  <div id="stmt-wrap" class="stmt-wrap"></div>
+
+  <div style="height:28px"></div>
+
+  <!-- Detail bottom sheet -->
+  <div class="modal-overlay" id="detail-modal" onclick="if(event.target===this)closeDetail()">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div style="font-size:15px;font-weight:700;margin:0 0 12px 2px;" id="detail-title">Дэлгэрэнгүй</div>
+      <div class="verify-card" id="detail-body"></div>
+      <div style="height:8px"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ── State ── */
+    let currentAccount = 'nominal';
+    let currentRange   = 'month';
+    let customFrom     = null;   // Date object
+    let customTo       = null;   // Date object
+    let sortDesc       = true;
+
+    /* ── Transaction data ── */
+
+    // Nominal account — recharge (Цэнэглэх) and withdrawal (Мөнгө хүсэх) only
+    const NOMINAL_TXNS = [
+      { id:'n01', type:'deposit',  status:'completed', amount:1000000, date:'2026-06-20 09:15', desc:'Цэнэглэх',     bank:'Хаан Банк',   ref:'DEP-20260620-001' },
+      { id:'n02', type:'withdraw', status:'completed', amount:200000,  date:'2026-06-12 16:30', desc:'Мөнгө хүсэх',  bank:'Голомт Банк', ref:'WDR-20260612-001' },
+      { id:'n03', type:'deposit',  status:'completed', amount:500000,  date:'2026-06-08 08:45', desc:'Цэнэглэх',     bank:'ХХБ Банк',    ref:'DEP-20260608-001' },
+      { id:'n04', type:'withdraw', status:'pending',   amount:150000,  date:'2026-06-03 15:00', desc:'Мөнгө хүсэх',  bank:'Хаан Банк',   ref:'WDR-20260603-001' },
+      { id:'n05', type:'deposit',  status:'completed', amount:300000,  date:'2026-05-28 09:30', desc:'Цэнэглэх',     bank:'Голомт Банк', ref:'DEP-20260528-001' },
+      { id:'n06', type:'deposit',  status:'completed', amount:2000000, date:'2026-05-15 08:00', desc:'Цэнэглэх',     bank:'Хаан Банк',   ref:'DEP-20260515-001' },
+      { id:'n07', type:'withdraw', status:'cancelled', amount:500000,  date:'2026-04-30 17:00', desc:'Мөнгө хүсэх',  bank:'ХХБ Банк',    ref:'WDR-20260430-001' },
+      { id:'n08', type:'deposit',  status:'completed', amount:750000,  date:'2026-04-15 09:10', desc:'Цэнэглэх',     bank:'Голомт Банк', ref:'DEP-20260415-001' },
+    ];
+
+    // MCSD account — settlements: buy trade = cash out, sell trade = cash in
+    const MCSD_TXNS = [
+      { id:'m01', type:'withdraw', status:'completed', amount:124000, date:'2026-06-19 10:06', desc:'BDS авах тооцоо',  symbol:'BDS',  qty:100, price:1240 },
+      { id:'m02', type:'deposit',  status:'completed', amount:78400,  date:'2026-06-15 14:23', desc:'KHAN зарах тооцоо', symbol:'KHAN', qty:20,  price:3920 },
+      { id:'m03', type:'withdraw', status:'completed', amount:61200,  date:'2026-06-06 11:11', desc:'APU авах тооцоо',   symbol:'APU',  qty:100, price:612  },
+      { id:'m04', type:'deposit',  status:'completed', amount:141500, date:'2026-05-25 13:45', desc:'TDB зарах тооцоо',  symbol:'TDB',  qty:100, price:1415 },
+      { id:'m05', type:'withdraw', status:'completed', amount:65100,  date:'2026-05-20 10:23', desc:'GOLO авах тооцоо',  symbol:'GOLO', qty:30,  price:2170 },
+      { id:'m06', type:'withdraw', status:'completed', amount:248000, date:'2026-04-10 10:31', desc:'BDS авах тооцоо',   symbol:'BDS',  qty:200, price:1240 },
+    ];
+
+    // Securities — buy and sell transactions
+    const SECURITIES_TXNS = [
+      { id:'s01', type:'buy',  status:'completed', amount:124000, date:'2026-06-19 10:05', desc:'BDS авах',   symbol:'BDS',  qty:100, price:1240 },
+      { id:'s02', type:'sell', status:'completed', amount:78400,  date:'2026-06-15 14:22', desc:'KHAN зарах', symbol:'KHAN', qty:20,  price:3920 },
+      { id:'s03', type:'buy',  status:'completed', amount:61200,  date:'2026-06-06 11:10', desc:'APU авах',   symbol:'APU',  qty:100, price:612  },
+      { id:'s04', type:'sell', status:'completed', amount:141500, date:'2026-05-25 13:44', desc:'TDB зарах',  symbol:'TDB',  qty:100, price:1415 },
+      { id:'s05', type:'buy',  status:'completed', amount:65100,  date:'2026-05-20 10:22', desc:'GOLO авах',  symbol:'GOLO', qty:30,  price:2170 },
+      { id:'s06', type:'buy',  status:'completed', amount:248000, date:'2026-04-10 10:30', desc:'BDS авах',   symbol:'BDS',  qty:200, price:1240 },
+      { id:'s07', type:'sell', status:'pending',   amount:92000,  date:'2026-06-22 11:30', desc:'APU зарах',  symbol:'APU',  qty:150, price:613  },
+    ];
+
+    const MOCK_BALANCE = { nominal: 3245600, mcsd: 487200, securities: 1850000 };
+
+    const TYPE_LABELS_CASH       = { deposit:'Цэнэглэх', withdraw:'Мөнгө хүсэх' };
+    const TYPE_LABELS_SECURITIES = { buy:'Авах захиалга', sell:'Зарах захиалга' };
+    const STATUS_LABELS = { completed:'Биелсэн', pending:'Хүлээгдэж буй', cancelled:'Цуцлагдсан' };
+
+    function typeLabel(t) {
+      return TYPE_LABELS_CASH[t.type] || TYPE_LABELS_SECURITIES[t.type] || t.type;
+    }
+    function isIn(type)  { return type === 'deposit' || type === 'sell'; }
+    function isOut(type) { return type === 'withdraw' || type === 'buy'; }
+
+    function txnPool() {
+      if (currentAccount === 'nominal')    return NOMINAL_TXNS;
+      if (currentAccount === 'mcsd')       return MCSD_TXNS;
+      return SECURITIES_TXNS;
+    }
+
+    /* ── Date range helpers ── */
+    const REF_DATE = new Date('2026-06-26T00:00:00');
+
+    function inRange(dateStr) {
+      const d = new Date(dateStr.replace(' ', 'T'));
+      if (currentRange === 'custom') {
+        if (!customFrom || !customTo) return true;
+        return d >= customFrom && d <= new Date(customTo.getTime() + 86400000 - 1);
+      }
+      const days = (REF_DATE - d) / 86400000;
+      if (currentRange === 'today')  return days < 1;
+      if (currentRange === 'week')   return days <= 7;
+      if (currentRange === 'month')  return days <= 30;
+      if (currentRange === '3month') return days <= 90;
+      return true;
+    }
+
+    /* ── Filtering ── */
+    function getFiltered() {
+      const q  = (document.getElementById('stmt-search').value || '').toLowerCase();
+      const tf = document.getElementById('type-filter').value;
+      const sf = document.getElementById('status-filter').value;
+      const sym = document.getElementById('symbol-filter').value;
+
+      return txnPool().filter(t => {
+        if (!inRange(t.date)) return false;
+        if (tf !== 'all' && t.type !== tf) return false;
+        if (sf !== 'all' && t.status !== sf) return false;
+        if (sym && sym !== 'all' && t.symbol !== sym) return false;
+        if (q) {
+          const hay = [typeLabel(t), t.desc, t.ref||'', t.symbol||'', t.bank||'', t.date].join(' ').toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      }).sort((a, b) => {
+        const da = new Date(a.date.replace(' ','T'));
+        const db = new Date(b.date.replace(' ','T'));
+        return sortDesc ? db - da : da - db;
+      });
+    }
+
+    /* ── Format helpers ── */
+    function fmtMNT(v) { return '₮' + Math.round(Math.abs(v)).toLocaleString('mn-MN'); }
+    function fmtShort(v) {
+      const abs = Math.abs(v);
+      const sign = v < 0 ? '-' : '';
+      if (abs >= 1000000) return sign + (abs / 1000000).toFixed(1) + 'M₮';
+      if (abs >= 1000)    return sign + Math.round(abs / 1000) + 'K₮';
+      return fmtMNT(v);
+    }
+    function formatDate(dateStr) {
+      const d = new Date(dateStr.replace(' ','T'));
+      const days = Math.round((REF_DATE - d) / 86400000);
+      if (days === 0) return 'Өнөөдөр';
+      if (days === 1) return 'Өчигдөр';
+      const months = ['1-р сар','2-р сар','3-р сар','4-р сар','5-р сар','6-р сар','7-р сар','8-р сар','9-р сар','10-р сар','11-р сар','12-р сар'];
+      return `${d.getFullYear()} оны ${months[d.getMonth()]} ${d.getDate()}`;
+    }
+
+    /* ── Render summary ── */
+    function renderSummary(data) {
+      const isSec = currentAccount === 'securities';
+      let a = 0, b = 0;
+      data.forEach(t => {
+        if (isIn(t.type))  a += t.amount;
+        if (isOut(t.type)) b += t.amount;
+      });
+      const balance = MOCK_BALANCE[currentAccount];
+
+      const ICON_DOWN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="15"/><path d="m5 10 7 7 7-7"/><line x1="5" y1="21" x2="19" y2="21"/></svg>`;
+      const ICON_UP   = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="21" x2="12" y2="9"/><path d="m5 14 7-7 7 7"/><line x1="5" y1="3" x2="19" y2="3"/></svg>`;
+      const ICON_BAL  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>`;
+
+      if (isSec) {
+        document.getElementById('stmt-summary').innerHTML = `
+          <div class="sum-card">
+            <div class="sum-icon buy">${ICON_DOWN}</div>
+            <div class="sum-label">Авах</div>
+            <div class="sum-value clr-out">${fmtShort(b)}</div>
+          </div>
+          <div class="sum-card">
+            <div class="sum-icon sell">${ICON_UP}</div>
+            <div class="sum-label">Зарах</div>
+            <div class="sum-value clr-in">${fmtShort(a)}</div>
+          </div>
+          <div class="sum-card">
+            <div class="sum-icon bal">${ICON_BAL}</div>
+            <div class="sum-label">Үлдэгдэл</div>
+            <div class="sum-value clr-bal">${fmtShort(balance)}</div>
+          </div>`;
+      } else {
+        document.getElementById('stmt-summary').innerHTML = `
+          <div class="sum-card">
+            <div class="sum-icon in">${ICON_DOWN}</div>
+            <div class="sum-label">Орлого</div>
+            <div class="sum-value clr-in">${fmtShort(a)}</div>
+          </div>
+          <div class="sum-card">
+            <div class="sum-icon out">${ICON_UP}</div>
+            <div class="sum-label">Мөнгө хүсэх</div>
+            <div class="sum-value clr-out">${fmtShort(b)}</div>
+          </div>
+          <div class="sum-card">
+            <div class="sum-icon bal">${ICON_BAL}</div>
+            <div class="sum-label">Үлдэгдэл</div>
+            <div class="sum-value clr-bal">${fmtShort(balance)}</div>
+          </div>`;
+      }
+    }
+
+    /* ── Render list ── */
+    const ICONS = {
+      deposit:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="15"/><path d="m5 10 7 7 7-7"/><line x1="5" y1="21" x2="19" y2="21"/></svg>`,
+      withdraw: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="21" x2="12" y2="9"/><path d="m5 14 7-7 7 7"/><line x1="5" y1="3" x2="19" y2="3"/></svg>`,
+      buy:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>`,
+      sell:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+    };
+
+    function groupByDate(data) {
+      const groups = {};
+      data.forEach(t => {
+        const key = t.date.split(' ')[0];
+        (groups[key] = groups[key] || []).push(t);
+      });
+      const keys = Object.keys(groups).sort((a,b) => sortDesc ? b.localeCompare(a) : a.localeCompare(b));
+      return keys.map(k => ({ key: k, items: groups[k] }));
+    }
+
+    function render() {
+      const data = getFiltered();
+      renderSummary(data);
+      const wrap = document.getElementById('stmt-wrap');
+      if (!data.length) {
+        wrap.innerHTML = `<div class="stmt-card"><div class="stmt-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          <p>Гүйлгээ олдсонгүй</p>
+        </div></div>`;
+        return;
+      }
+      wrap.innerHTML = groupByDate(data).map(g => `
+        <div class="date-group-hdr">${formatDate(g.key + ' 00:00')}</div>
+        <div class="stmt-card">${g.items.map(t => {
+          const amtCls = isIn(t.type) ? 'clr-in' : 'clr-out';
+          const prefix = isIn(t.type) ? '+' : '−';
+          const time   = t.date.split(' ')[1];
+          const sub    = t.symbol
+            ? `${t.symbol}${t.qty ? ' · ' + t.qty.toLocaleString() + ' ш' : ''} · ${time}`
+            : (t.bank ? `${t.bank} · ${time}` : time);
+          return `<div class="stmt-item" onclick="showDetail('${t.id}')">
+            <div class="stmt-icon ${t.type}">${ICONS[t.type] || ''}</div>
+            <div class="stmt-info">
+              <div class="stmt-title">${typeLabel(t)}</div>
+              <div class="stmt-sub">${sub}</div>
+            </div>
+            <div class="stmt-right">
+              <div class="stmt-amount ${amtCls}">${prefix}${fmtMNT(t.amount)}</div>
+              <span class="stmt-badge ${t.status}">${STATUS_LABELS[t.status]}</span>
+            </div>
+          </div>`;
+        }).join('')}</div>`).join('');
+    }
+
+    /* ── Controls ── */
+    function setAccount(acct, btn) {
+      currentAccount = acct;
+      document.querySelectorAll('.acct-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateFiltersForTab();
+      render();
+    }
+
+    function updateFiltersForTab() {
+      const isSec = currentAccount === 'securities';
+      const typeSel = document.getElementById('type-filter');
+      const symSel  = document.getElementById('symbol-filter');
+
+      if (isSec) {
+        typeSel.innerHTML = `
+          <option value="all">Бүх төрөл</option>
+          <option value="buy">Авах</option>
+          <option value="sell">Зарах</option>`;
+        // Build symbol list from securities data
+        const syms = [...new Set(SECURITIES_TXNS.map(t => t.symbol).filter(Boolean))].sort();
+        symSel.innerHTML = `<option value="all">Бүх хувьцаа</option>` + syms.map(s => `<option value="${s}">${s}</option>`).join('');
+        symSel.style.display = '';
+      } else {
+        typeSel.innerHTML = `
+          <option value="all">Бүх төрөл</option>
+          <option value="deposit">Цэнэглэх</option>
+          <option value="withdraw">Мөнгө хүсэх</option>`;
+        symSel.style.display = 'none';
+        symSel.value = 'all';
+      }
+      typeSel.value = 'all';
+    }
+
+    function setRange(range, chip) {
+      currentRange = range;
+      document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      // Hide custom range inputs when preset selected
+      document.getElementById('custom-range-row').classList.remove('show');
+      document.getElementById('range-err').classList.remove('show');
+      render();
+    }
+
+    function toggleCustomRange(chip) {
+      const row = document.getElementById('custom-range-row');
+      const isOpen = row.classList.contains('show');
+      if (isOpen) {
+        row.classList.remove('show');
+        // Revert to month if no valid custom range
+        if (!customFrom || !customTo) {
+          currentRange = 'month';
+          document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+          document.querySelector('.date-chip:nth-child(3)').classList.add('active');
+          render();
+        }
+      } else {
+        row.classList.add('show');
+        currentRange = 'custom';
+        document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        // Set default range: past month
+        const to   = new Date('2026-06-26');
+        const from = new Date(to); from.setDate(from.getDate() - 30);
+        document.getElementById('range-from').value = from.toISOString().slice(0,10);
+        document.getElementById('range-to').value   = to.toISOString().slice(0,10);
+        customFrom = from; customTo = to;
+        render();
+      }
+    }
+
+    function applyCustomRange() {
+      const fromVal = document.getElementById('range-from').value;
+      const toVal   = document.getElementById('range-to').value;
+      const errEl   = document.getElementById('range-err');
+      if (!fromVal || !toVal) return;
+      const from = new Date(fromVal);
+      const to   = new Date(toVal);
+      const diffDays = (to - from) / 86400000;
+      if (diffDays < 0) {
+        errEl.textContent = 'Эхлэх огноо дуусах огнооноос өмнө байх ёстой';
+        errEl.classList.add('show'); return;
+      }
+      if (diffDays > 90) {
+        errEl.textContent = 'Хамгийн ихдээ 3 сарын хугацаа сонгоно уу';
+        errEl.classList.add('show'); return;
+      }
+      errEl.classList.remove('show');
+      customFrom = from; customTo = to;
+      currentRange = 'custom';
+      render();
+    }
+
+    function toggleSort() {
+      sortDesc = !sortDesc;
+      document.getElementById('sort-btn').classList.toggle('asc', !sortDesc);
+      render();
+    }
+
+    function goBack() {
+      try { window.parent.navigateTo('home'); } catch(e) { window.history.back(); }
+    }
+
+    /* ── Detail modal ── */
+    function showDetail(id) {
+      const pool = [...NOMINAL_TXNS, ...MCSD_TXNS, ...SECURITIES_TXNS];
+      const t = pool.find(x => x.id === id);
+      if (!t) return;
+      const amtCls = isIn(t.type) ? 'detail-amount-in' : 'detail-amount-out';
+      const prefix = isIn(t.type) ? '+' : '−';
+      document.getElementById('detail-title').textContent = typeLabel(t) + ' — Дэлгэрэнгүй';
+      let rows = `
+        <div class="verify-row"><span>Төрөл</span><span>${typeLabel(t)}</span></div>
+        <div class="verify-row"><span>Огноо</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">${t.date}</span></div>
+        <div class="verify-row"><span>Дүн</span><span class="${amtCls}" style="font-weight:800;font-family:'IBM Plex Mono',monospace">${prefix}${fmtMNT(t.amount)}</span></div>
+        <div class="verify-row"><span>Тайлбар</span><span style="text-align:right;max-width:58%;line-height:1.4">${t.desc}</span></div>`;
+      if (t.ref)    rows += `<div class="verify-row"><span>Лавлагаа</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px">${t.ref}</span></div>`;
+      if (t.bank)   rows += `<div class="verify-row"><span>Банк</span><span>${t.bank}</span></div>`;
+      if (t.symbol) rows += `<div class="verify-row"><span>Хувьцаа</span><span style="font-weight:800">${t.symbol}</span></div>`;
+      if (t.qty)    rows += `<div class="verify-row"><span>Тоо хэмжээ</span><span>${t.qty.toLocaleString()} ширхэг</span></div>`;
+      if (t.price)  rows += `<div class="verify-row"><span>Нэгж үнэ</span><span>${fmtMNT(t.price)}</span></div>`;
+      rows += `<div class="verify-row"><span>Төлөв</span><span><span class="stmt-badge ${t.status}">${STATUS_LABELS[t.status]}</span></span></div>`;
+      document.getElementById('detail-body').innerHTML = rows;
+      document.getElementById('detail-modal').classList.add('show');
+      try { window.parent.postMessage({ type:'modal-open' }, '*'); } catch(e) {}
+    }
+    function closeDetail() {
+      document.getElementById('detail-modal').classList.remove('show');
+      try { window.parent.postMessage({ type:'modal-close' }, '*'); } catch(e) {}
+    }
+
+    /* ── Init ── */
+    updateFiltersForTab();
+    render();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

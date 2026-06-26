@@ -11,7 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin: 0; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); overflow-x: clip; }
+    html, body { max-width: 100%; overflow-x: hidden; }
+    body { margin: 0; font-family: 'Manrope', sans-serif; background: var(--color-bg); color: var(--color-text-primary); }
     * { box-sizing: border-box; }
 
     /* Stock selector bar */
@@ -102,12 +103,14 @@
     .cards-scroll {
       display: flex; gap: 10px;
       overflow-x: auto;
-      padding: 0 16px 4px;
-      box-sizing: border-box;
-      width: 100%;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      padding: 0 0 4px 16px;
       scrollbar-width: none;
     }
     .cards-scroll::-webkit-scrollbar { display: none; }
+    /* right-padding spacer — padding-right is ignored in overflow-x scroll flex containers */
+    .cards-scroll::after { content: ''; display: block; min-width: 16px; flex-shrink: 0; }
 
     .stock-card {
       flex-shrink: 0;
@@ -165,32 +168,52 @@
 
     .detail-meta { font-size: 11px; color: var(--color-text-disabled); margin-bottom: 12px; }
 
-    /* График type icon buttons */
-    .chart-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-    .chart-tab {
-      width: 34px; height: 34px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      border: none; cursor: pointer; transition: all 0.15s ease;
-      background: var(--color-bg-input); color: var(--color-text-secondary);
+    /* ── Order book ── */
+    .ob-card {
+      background: var(--color-bg-input);
+      border: 1px solid var(--color-border);
+      border-radius: 12px; overflow: hidden;
+      margin-bottom: 4px;
     }
-    .chart-tab svg { width: 17px; height: 17px; }
-    .chart-tab.active {
-      background: var(--color-primary); color: white;
+    .ob-header {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--color-border);
     }
-
-    /* График container */
-    #main-chart { width: 100%; overflow: hidden; }
-
-    /* Timeframe filter */
-    .tf-tabs { display: flex; gap: 6px; margin: 12px 0 0; }
-    .tf-tab {
-      flex: 1; padding: 8px 0; border-radius: 10px; border: none;
-      background: var(--color-bg-input); color: var(--color-text-secondary);
-      font-size: 12px; font-weight: 700; cursor: pointer;
-      font-family: 'IBM Plex Mono', monospace;
-      transition: background 0.15s ease, color 0.15s ease;
+    .ob-header span { font-size: 10px; font-weight: 700; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: 0.04em; }
+    .ob-header span:nth-child(1) { text-align: left; }
+    .ob-header span:nth-child(2) { text-align: center; color: var(--color-buy); }
+    .ob-header span:nth-child(3) { text-align: center; color: var(--color-sell); }
+    .ob-header span:nth-child(4) { text-align: right; }
+    .ob-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+      padding: 7px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      position: relative; cursor: pointer; align-items: center;
     }
-    .tf-tab.active { background: var(--color-primary); color: #fff; }
+    .ob-row:last-child { border-bottom: none; }
+    .ob-row:hover { background: rgba(255,255,255,0.04); }
+    .ob-row-depth-buy {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: rgba(0,192,118,0.09);
+      pointer-events: none; transition: width 0.5s ease;
+    }
+    .ob-row-depth-sell {
+      position: absolute; right: 0; top: 0; bottom: 0;
+      background: rgba(239,68,68,0.09);
+      pointer-events: none; transition: width 0.5s ease;
+    }
+    .ob-qty       { font-size: 12px; color: var(--color-text-secondary); font-family: 'IBM Plex Mono', monospace; text-align: left; position: relative; }
+    .ob-price-buy  { font-size: 12px; font-weight: 700; color: var(--color-buy); text-align: center; font-family: 'IBM Plex Mono', monospace; position: relative; }
+    .ob-price-sell { font-size: 12px; font-weight: 700; color: var(--color-sell); text-align: center; font-family: 'IBM Plex Mono', monospace; position: relative; }
+    .ob-qty-right  { font-size: 12px; color: var(--color-text-secondary); text-align: right; font-family: 'IBM Plex Mono', monospace; position: relative; }
+    .ob-spread-row {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 6px 12px; font-size: 11px; font-weight: 700; color: var(--color-text-disabled);
+      border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);
+      background: rgba(255,255,255,0.02);
+    }
+    .ob-spread-val { color: var(--color-text-primary); }
 
     /* Buy / Sell trade actions */
     .trade-actions { display: flex; gap: 10px; margin: 14px 0 4px; }
@@ -313,14 +336,10 @@
     .hbh-label { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7); }
     .hbh-amount { font-size: 26px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: #fff; letter-spacing: -0.5px; margin-bottom: 18px; position: relative; z-index: 1; }
     .hbh-eye {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.22);
       backdrop-filter: blur(6px);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; color: #fff; flex-shrink: 0;
-      transition: background 0.15s;
     }
-    .hbh-eye:hover { background: rgba(255,255,255,0.24); }
     .hbh-eye svg { width: 17px; height: 17px; }
 
     /* Balance type dropdown inside hero */
@@ -333,7 +352,7 @@
     }
     .hbh-dd svg { width: 12px; height: 12px; opacity: 0.8; }
     .hbh-dd-menu {
-      position: absolute; top: calc(100% + 8px); right: 0; z-index: 300;
+      position: absolute; top: calc(100% + 8px); left: 0; z-index: 300;
       background: var(--color-bg-card); border: 1px solid var(--color-border);
       border-radius: 12px; min-width: 170px;
       box-shadow: 0 12px 32px rgba(0,0,0,0.5); display: none;
@@ -397,33 +416,6 @@
 </head>
 <body>
 
-  <!-- ── Данс нээх Reminder Banner ── -->
-  <div id="open-acct-banner" style="
-    margin: 14px 16px 0;
-    background: linear-gradient(135deg, rgba(73,73,170,0.18) 0%, rgba(91,91,214,0.12) 100%);
-    border: 1px solid rgba(73,73,170,0.35);
-    border-radius: 14px;
-    padding: 14px 16px;
-    display: none; flex-direction: column; gap: 10px;
-  ">
-    <div style="display:flex;align-items:flex-start;gap:10px">
-      <div style="color:var(--color-primary);flex-shrink:0;margin-top:1px">
-        <i data-lucide="info" id="acct-banner-icon" style="width:16px;height:16px"></i>
-      </div>
-      <p id="acct-banner-text" style="margin:0;font-size:13px;color:var(--color-text-secondary);line-height:1.55">
-        Та онлайн арилжаанд оролцохын тулд үнэт цаасны данс нээх шаардлагатай.
-      </p>
-    </div>
-    <button id="acct-banner-btn" onclick="openAccountForm()" style="
-      width:100%; padding:11px;
-      background: var(--color-primary);
-      border:none; border-radius:9px;
-      font-size:13px; font-weight:700; color:#fff;
-      cursor:pointer; transition:opacity 0.15s;
-    " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-      Данс нээх
-    </button>
-  </div>
 
   <!-- Данс Balance Карт (shown once account is opened & KYC complete) -->
   <!-- Disabled for now — may bring this back in the future
@@ -464,19 +456,15 @@
   -->
 
 
-  <!-- ── Данс үлдэгдэл ── -->
+  <!-- ── Данс үлдэгдэл (gate slot + hero) ── -->
+  <div id="home-bal-gate" style="display:none"></div>
   <div class="home-bal-hero" id="home-bal-hero">
     <div class="hbh-top">
       <div class="hbh-top-left">
-        <span class="hbh-label" id="hbh-type-label">НОМИНАЛ ДАНС</span>
-        <button class="hbh-eye" id="hbh-eye-btn" onclick="toggleHbhVisibility()" title="Нуух / Харуулах">
-          <svg id="hbh-eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-      <div class="hbh-dd" id="hbh-dd-trigger" onclick="toggleHbhMenu(event)">
-        <span id="hbh-dd-label">Номинал</span>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        <div class="hbh-dd-menu" id="hbh-dd-menu">
+        <div class="hbh-dd" id="hbh-dd-trigger" onclick="toggleHbhMenu(event)">
+          <span id="hbh-dd-label">Номинал</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <div class="hbh-dd-menu" id="hbh-dd-menu">
           <div class="hbh-dd-item active" data-btype="nominal" onclick="selectBalType(event,'nominal')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
             Номинал данс
@@ -489,8 +477,17 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
             Хувьцаа
           </div>
+          </div>
         </div>
+        <button class="hbh-eye" id="hbh-eye-btn" onclick="toggleHbhVisibility()" title="Нуух / Харуулах">
+          <svg id="hbh-eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
+      <button onclick="openStatement()" style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.22);backdrop-filter:blur(6px);border-radius:20px;padding:4px 10px 4px 8px;font-size:11px;font-weight:700;color:#fff;cursor:pointer;font-family:'Manrope',sans-serif;-webkit-tap-highlight-color:transparent;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Хуулга
+        <i data-lucide="chevron-right" style="width:12px;height:12px;color:rgba(255,255,255,0.7)"></i>
+      </button>
     </div>
     <div class="hbh-amount" id="hbh-amount">₮50,000</div>
     <div style="display:flex;gap:10px;position:relative;z-index:1;">
@@ -589,21 +586,17 @@
       </div>
     </div>
     <div class="detail-meta" id="d-meta">Сүүлд шинэчилсэн: 2026-06-06 14:32:11 &nbsp;·&nbsp; <span id="d-change" style="color:var(--color-buy)">+1.23 (+0.65%)</span></div>
-    <div class="chart-tabs">
-      <button class="chart-tab active" onclick="setChartType('line', this)" title="Line chart">
-        <i data-lucide="chart-line"></i>
-      </button>
-      <button class="chart-tab" onclick="setChartType('candle', this)" title="Candlestick chart">
-        <i data-lucide="chart-candlestick"></i>
-      </button>
-    </div>
-    <div id="main-chart"></div>
-    <div class="tf-tabs" id="tf-tabs">
-      <button class="tf-tab active" data-tf="1D" onclick="setTimeframe('1D', this)">1 сар</button>
-      <button class="tf-tab" data-tf="1W" onclick="setTimeframe('1W', this)">3 сар</button>
-      <button class="tf-tab" data-tf="1M" onclick="setTimeframe('1M', this)">6 сар</button>
-      <button class="tf-tab" data-tf="1Y" onclick="setTimeframe('1Y', this)">1 жил</button>
-      <button class="tf-tab" data-tf="Бүгд" onclick="setTimeframe('Бүгд', this)">Бүх</button>
+    <div class="ob-card">
+      <div class="ob-header">
+        <span>Тоо (авах)</span>
+        <span>Авах үнэ</span>
+        <span>Зарах үнэ</span>
+        <span>Тоо (зарах)</span>
+      </div>
+      <div class="ob-spread-row" id="home-ob-spread">
+        <span>Спрэд</span><span class="ob-spread-val" id="home-ob-spread-val">—</span>
+      </div>
+      <div id="home-ob-rows"></div>
     </div>
     <div class="trade-actions">
       <button class="trade-btn buy" onclick="goToTrade('buy')">Авах</button>
@@ -662,8 +655,8 @@
 
   <div class="toast" id="toast"></div>
 
-  <script src="../scripts/chart.js"></script>
   <script src="../scripts/wallet-data.js"></script>
+  <script src="../scripts/user-state.js"></script>
   <script>
     // ── Intraday price data (BDS today) ──
     const INTRADAY = {
@@ -747,31 +740,75 @@
     }
 
     let selectedSymbol = 'BDS';
-    let watchlist = new Set(['BDS', 'KHAN']);
-    let currentTimeframe = '1D';
-    const TIMEFRAME_POINTS = { '1D': 0, '1W': 7, '1M': 30, '1Y': 52, 'Бүгд': 120 };
+    let watchlist = new Set(['BDS', 'KHAN', 'APU', 'TDB', 'GOLO']);
 
-    // ── Generate a deterministic price series for a given timeframe ──
-    function generateSeries(symbol, timeframe) {
-      const intraday = findIntraday(symbol);
-      if (timeframe === '1D' || !intraday.length) return intraday;
+    // ── Order book data (base levels per symbol) ──
+    const ORDER_BOOKS = {
+      BDS:  [
+        { buyQty:1800, bid:1240, ask:1245, sellQty:800  },
+        { buyQty:2500, bid:1238, ask:1248, sellQty:1200 },
+        { buyQty:800,  bid:1235, ask:1250, sellQty:2000 },
+        { buyQty:1500, bid:1232, ask:1252, sellQty:3500 },
+        { buyQty:500,  bid:1230, ask:1255, sellQty:1800 },
+        { buyQty:300,  bid:1228, ask:1258, sellQty:900  },
+        { buyQty:200,  bid:1225, ask:1260, sellQty:600  },
+      ],
+      KHAN: [
+        { buyQty:350,  bid:3920, ask:3928, sellQty:280  },
+        { buyQty:620,  bid:3915, ask:3932, sellQty:450  },
+        { buyQty:180,  bid:3910, ask:3936, sellQty:680  },
+        { buyQty:490,  bid:3905, ask:3940, sellQty:320  },
+        { buyQty:850,  bid:3900, ask:3944, sellQty:190  },
+        { buyQty:240,  bid:3895, ask:3948, sellQty:550  },
+        { buyQty:100,  bid:3890, ask:3952, sellQty:420  },
+      ],
+      APU:  [
+        { buyQty:4200, bid:612,  ask:614,  sellQty:3600 },
+        { buyQty:6800, bid:610,  ask:616,  sellQty:5000 },
+        { buyQty:3000, bid:608,  ask:618,  sellQty:2400 },
+        { buyQty:5500, bid:606,  ask:620,  sellQty:4800 },
+        { buyQty:2200, bid:604,  ask:622,  sellQty:3200 },
+        { buyQty:1800, bid:602,  ask:624,  sellQty:2800 },
+        { buyQty:900,  bid:600,  ask:626,  sellQty:1600 },
+      ],
+      TDB:  [
+        { buyQty:720,  bid:1415, ask:1418, sellQty:560  },
+        { buyQty:1050, bid:1412, ask:1420, sellQty:840  },
+        { buyQty:480,  bid:1410, ask:1422, sellQty:1200 },
+        { buyQty:860,  bid:1408, ask:1425, sellQty:700  },
+        { buyQty:320,  bid:1405, ask:1428, sellQty:380  },
+        { buyQty:200,  bid:1402, ask:1430, sellQty:280  },
+        { buyQty:150,  bid:1400, ask:1432, sellQty:180  },
+      ],
+      GOLO: [
+        { buyQty:420,  bid:2168, ask:2172, sellQty:340  },
+        { buyQty:680,  bid:2165, ask:2175, sellQty:520  },
+        { buyQty:280,  bid:2162, ask:2178, sellQty:890  },
+        { buyQty:940,  bid:2160, ask:2180, sellQty:460  },
+        { buyQty:380,  bid:2158, ask:2182, sellQty:280  },
+        { buyQty:200,  bid:2155, ask:2185, sellQty:350  },
+        { buyQty:120,  bid:2152, ask:2188, sellQty:160  },
+      ],
+    };
 
-      const points = TIMEFRAME_POINTS[timeframe];
-      const last = intraday[intraday.length - 1];
 
-      // Simple deterministic pseudo-random sequence seeded by symbol+timeframe
-      let seed = 0;
-      for (const c of symbol + timeframe) seed = (seed * 31 + c.charCodeAt(0)) % 233280;
-      function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
-
-      const data = [];
-      let val = last * (0.85 + rand() * 0.2);
-      for (let i = 0; i < points - 1; i++) {
-        val += (rand() - 0.48) * (last * 0.025);
-        data.push(val);
-      }
-      data.push(last);
-      return data;
+    // ── Mini sparkline SVG for stock cards ──
+    function sparkline(data, color) {
+      if (!data || data.length < 2) return '';
+      const W = 56, H = 28;
+      const mn = Math.min(...data), mx = Math.max(...data);
+      const range = mx - mn || 1;
+      const pts = data.map((v, i) => {
+        const x = (i / (data.length - 1)) * W;
+        const y = H - ((v - mn) / range) * (H - 4) - 2;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+      const last = data[data.length - 1];
+      const ly = H - ((last - mn) / range) * (H - 4) - 2;
+      return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" fill="none">
+        <polyline points="${pts}" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="${W}" cy="${ly.toFixed(1)}" r="2" fill="${color}"/>
+      </svg>`;
     }
 
     // ── Render stock cards ──
@@ -900,48 +937,52 @@
       const as = document.getElementById('alert-symbol');
       if (as) as.value = symbol;
 
-      // Reset timeframe selector to 1D
-      currentTimeframe = '1D';
-      document.querySelectorAll('.tf-tab').forEach(t => t.classList.toggle('active', t.dataset.tf === '1D'));
-
-      renderChart(symbol);
+      renderOrderBook(symbol);
       renderCompanyInfo(symbol);
       renderCards();
     }
 
-    // ── Render main chart ──
-    function renderChart(symbol) {
-      const data  = generateSeries(symbol, currentTimeframe);
-      const s     = findCard(symbol);
-      const isUp  = s && s.pct >= 0;
-      const color = isUp ? 'var(--color-buy)' : 'var(--color-sell)';
+    // ── Render order book ──
+    function renderOrderBook(symbol) {
+      const base = ORDER_BOOKS[symbol];
+      if (!base) {
+        document.getElementById('home-ob-rows').innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--color-text-disabled)">Мэдээлэл байхгүй</div>';
+        document.getElementById('home-ob-spread-val').textContent = '—';
+        return;
+      }
 
-      const mn = Math.min(...data);
-      const mx = Math.max(...data);
-      const mid = ((mx + mn) / 2);
+      // Add small random noise to volumes for live feel
+      const rows = base.map(r => ({
+        buyQty:  Math.max(1, Math.round(r.buyQty  * (0.85 + Math.random() * 0.30))),
+        bid:     r.bid,
+        ask:     r.ask,
+        sellQty: Math.max(1, Math.round(r.sellQty * (0.85 + Math.random() * 0.30))),
+      }));
 
-      renderLineChart('main-chart', data, {
-        height: 210,
-        color: isUp ? '#00C076' : '#EF4444',
-        showGrid: true,
-        yLabels: [mx.toFixed(2), mid.toFixed(2), mn.toFixed(2)],
-      });
+      const maxBuy  = Math.max(...rows.map(r => r.buyQty));
+      const maxSell = Math.max(...rows.map(r => r.sellQty));
+      const spread  = rows[0].ask - rows[0].bid;
+      const spreadPct = ((spread / rows[0].bid) * 100).toFixed(2);
+
+      document.getElementById('home-ob-spread-val').textContent =
+        `₮${spread.toLocaleString('mn-MN')} (${spreadPct}%)`;
+
+      document.getElementById('home-ob-rows').innerHTML = rows.map(r => {
+        const buyDepth  = ((r.buyQty  / maxBuy)  * 50).toFixed(1);
+        const sellDepth = ((r.sellQty / maxSell) * 50).toFixed(1);
+        return `<div class="ob-row">
+          <div class="ob-row-depth-buy"  style="width:${buyDepth}%"></div>
+          <div class="ob-row-depth-sell" style="width:${sellDepth}%"></div>
+          <span class="ob-qty">${r.buyQty.toLocaleString()}</span>
+          <span class="ob-price-buy">₮${r.bid.toLocaleString('mn-MN')}</span>
+          <span class="ob-price-sell">₮${r.ask.toLocaleString('mn-MN')}</span>
+          <span class="ob-qty-right">${r.sellQty.toLocaleString()}</span>
+        </div>`;
+      }).join('');
     }
 
-    function setChartType(type, btn) {
-      document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      // Candle chart: just re-render line for now (full candle impl goes here)
-      renderChart(selectedSymbol);
-    }
-
-    // ── График timeframe filter ──
-    function setTimeframe(tf, btn) {
-      currentTimeframe = tf;
-      document.querySelectorAll('.tf-tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      renderChart(selectedSymbol);
-    }
+    // Live-update order book every 3 seconds
+    setInterval(() => renderOrderBook(selectedSymbol), 3000);
 
     // ── Buy / Sell → Trade page ──
     function goToTrade(side) {
@@ -1074,12 +1115,29 @@
     currentFilter = 'watchlist';
     renderFilterMenu();
     renderCards();
-    renderChart('BDS');
+    renderOrderBook('BDS');
     renderCompanyInfo('BDS');
     document.getElementById('alert-symbol').value = 'BDS';
     document.getElementById('watch-btn').classList.add('active');
-    refreshAccountBanner();
-    initHomeBalance();
+    // ── Balance card onboarding gate ──
+    (function checkBalGate() {
+      const hero = document.getElementById('home-bal-hero');
+      const gate = document.getElementById('home-bal-gate');
+      if (isAccountOpened() && isKYCDone()) {
+        hero.style.display = '';
+        gate.style.display = 'none';
+        initHomeBalance();
+      } else {
+        hero.style.display = 'none';
+        gate.style.display = 'block';
+        renderOnboardingGate(gate, {
+          title: 'Дансны мэдээлэл харах',
+          subtitle: 'Данс нээж KYC баталгаажуулснаар таны үлдэгдэл харагдана.',
+          requiredSteps: ['open-account', 'kyc'],
+        });
+      }
+    })();
+
     lucide.createIcons();
 
     // ── Balance hero card ──
@@ -1103,11 +1161,9 @@
       try { sharesVal = PORTFOLIO.reduce((s,p) => s + p.shares, 0); } catch(e){}
 
       const amtEl  = document.getElementById('hbh-amount');
-      const typeEl = document.getElementById('hbh-type-label');
       const ddLbl  = document.getElementById('hbh-dd-label');
       if (!amtEl) return;
 
-      typeEl.textContent = HBH_LABELS[hbhType]    || 'НОМИНАЛ ДАНС';
       ddLbl.textContent  = HBH_DD_LABELS[hbhType] || 'Номинал';
 
       if (!hbhVisible) {
@@ -1150,6 +1206,10 @@
       const menu = document.getElementById('hbh-dd-menu');
       if (menu && !e.target.closest('#hbh-dd-trigger')) menu.classList.remove('open');
     });
+
+    function openStatement() {
+      try { window.parent.navigateTo('statement'); } catch(e) { window.location.href = 'statement.html'; }
+    }
 
     function openAccountForm() {
       try {

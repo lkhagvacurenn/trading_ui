@@ -150,6 +150,44 @@
     .verify-row span:last-child { font-weight: 700; color: var(--color-text-primary); text-align: right; }
     .verify-row.total span:last-child { color: var(--color-primary); font-family: 'IBM Plex Mono', monospace; font-size: 15px; }
 
+    /* ── History filters ── */
+    .hist-filter-bar { margin-bottom: 10px; }
+    .hist-date-chips { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; overflow-x: visible; }
+    .hist-chip {
+      flex-shrink: 0; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      border: 1px solid var(--color-border); background: var(--color-bg-card);
+      color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s;
+    }
+    .hist-chip.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .hist-cal-btn {
+      margin-left: auto; flex-shrink: 0; width: 32px; height: 32px; border-radius: 9px; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--color-border); background: var(--color-bg-card);
+      color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s;
+    }
+    .hist-cal-btn svg { width: 15px; height: 15px; }
+    .hist-cal-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .hist-range-row { display: none; align-items: center; gap: 6px; margin-bottom: 8px; }
+    .hist-range-row.show { display: flex; }
+    .hist-range-inp {
+      flex: 1; min-width: 0; background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 9px; padding: 6px 9px; font-size: 12px; font-weight: 600;
+      color: var(--color-text-primary); font-family: 'Manrope', sans-serif; outline: none;
+    }
+    .hist-range-inp:focus { border-color: var(--color-primary); }
+    [data-theme="dark"] .hist-range-inp { color-scheme: dark; }
+    .hist-range-sep { font-size: 12px; color: var(--color-text-disabled); flex-shrink: 0; }
+    .hist-range-err { font-size: 11px; color: var(--color-sell); margin-bottom: 6px; display: none; }
+    .hist-range-err.show { display: block; }
+    .hist-status-sel {
+      width: 100%; background: var(--color-bg-card); border: 1px solid var(--color-border);
+      border-radius: 9px; padding: 7px 28px 7px 10px; font-size: 12px; font-weight: 600;
+      color: var(--color-text-primary); font-family: 'Manrope', sans-serif;
+      appearance: none; -webkit-appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+
     /* ── History list ── */
     .hist-card { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; }
     .hist-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--color-border); }
@@ -230,6 +268,9 @@
     <div class="sub-title">Мөнгө хүсэх</div>
   </div>
 
+  <!-- Tripartite gate -->
+  <div id="tripartite-gate" style="display:none"></div>
+
   <!-- Мөнгө хүсэх form -->
   <div class="form-body" id="form-view">
     <div class="field-wrap">
@@ -275,6 +316,29 @@
   <!-- Хүсэлтийн түүх -->
   <div class="form-body">
     <div class="info-section-title">Хүсэлтийн түүх</div>
+    <div class="hist-filter-bar">
+      <div class="hist-date-chips">
+        <button class="hist-chip" onclick="setWdRange('today',this)">Өнөөдөр</button>
+        <button class="hist-chip" onclick="setWdRange('week',this)">7 хоног</button>
+        <button class="hist-chip active" onclick="setWdRange('month',this)">Энэ сар</button>
+        <button class="hist-chip" onclick="setWdRange('3month',this)">3 сар</button>
+        <button class="hist-cal-btn" id="wd-cal-btn" onclick="toggleWdCustomRange(this)" title="Хугацаа сонгох">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </button>
+      </div>
+      <div class="hist-range-row" id="wd-range-row">
+        <input type="date" class="hist-range-inp" id="wd-range-from" onchange="applyWdCustomRange()" />
+        <span class="hist-range-sep">—</span>
+        <input type="date" class="hist-range-inp" id="wd-range-to" onchange="applyWdCustomRange()" />
+      </div>
+      <div class="hist-range-err" id="wd-range-err">Хамгийн ихдээ 3 сарын хугацаа сонгоно уу</div>
+      <select class="hist-status-sel" id="wd-status-filter" onchange="renderHistory()">
+        <option value="all">Бүх төлөв</option>
+        <option value="completed">Биелсэн</option>
+        <option value="pending">Хүлээгдэж буй</option>
+        <option value="cancelled">Цуцлагдсан</option>
+      </select>
+    </div>
     <div class="hist-card" id="wd-history"></div>
     <div class="hist-pagination" id="wd-history-pagination"></div>
   </div>
@@ -328,6 +392,7 @@
   </div>
 
   <script src="../scripts/wallet-data.js"></script>
+  <script src="../scripts/user-state.js"></script>
   <script>
     let wdAccount = 'nominal';
     let selectedBankAccountId = null;
@@ -335,7 +400,7 @@
     let cancelTargetId = null;
 
     function goBack() {
-      try { window.parent.navigateTo('balance'); } catch (e) { window.history.back(); }
+      try { window.parent.navigateTo('home'); } catch (e) { window.history.back(); }
     }
 
     function showToast(msg) {
@@ -520,13 +585,79 @@
       showToast('Хүсэлт амжилттай илгээгдлээ');
     }
 
+    /* ── History filters ── */
+    let wdRange = 'month';
+    let wdCustomFrom = null, wdCustomTo = null;
+    const WD_REF = new Date('2026-06-26T00:00:00');
+
+    function wdInRange(dateStr) {
+      const d = new Date(dateStr.replace(' ', 'T'));
+      if (wdRange === 'custom') {
+        if (!wdCustomFrom || !wdCustomTo) return true;
+        return d >= wdCustomFrom && d <= new Date(wdCustomTo.getTime() + 86399999);
+      }
+      const days = (WD_REF - d) / 86400000;
+      if (wdRange === 'today')  return days < 1;
+      if (wdRange === 'week')   return days <= 7;
+      if (wdRange === 'month')  return days <= 30;
+      if (wdRange === '3month') return days <= 90;
+      return true;
+    }
+
+    function setWdRange(range, btn) {
+      wdRange = range;
+      document.querySelectorAll('.hist-date-chips .hist-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('wd-cal-btn').classList.remove('active');
+      document.getElementById('wd-range-row').classList.remove('show');
+      document.getElementById('wd-range-err').classList.remove('show');
+      wdHistPage = 1; renderHistory();
+    }
+
+    function toggleWdCustomRange(btn) {
+      const row = document.getElementById('wd-range-row');
+      const open = row.classList.contains('show');
+      if (open) {
+        row.classList.remove('show');
+        btn.classList.remove('active');
+        wdRange = 'month';
+        document.querySelectorAll('.hist-date-chips .hist-chip')[2].classList.add('active');
+      } else {
+        document.querySelectorAll('.hist-date-chips .hist-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        row.classList.add('show');
+        wdRange = 'custom';
+        const to = new Date(WD_REF); const from = new Date(to); from.setDate(from.getDate() - 30);
+        document.getElementById('wd-range-from').value = from.toISOString().slice(0,10);
+        document.getElementById('wd-range-to').value   = to.toISOString().slice(0,10);
+        wdCustomFrom = from; wdCustomTo = to;
+      }
+      wdHistPage = 1; renderHistory();
+    }
+
+    function applyWdCustomRange() {
+      const fv = document.getElementById('wd-range-from').value;
+      const tv = document.getElementById('wd-range-to').value;
+      const err = document.getElementById('wd-range-err');
+      if (!fv || !tv) return;
+      const from = new Date(fv), to = new Date(tv);
+      if ((to - from) / 86400000 > 90) { err.classList.add('show'); return; }
+      if (to < from) { err.textContent = 'Эхлэх огноо дуусах огнооноос өмнө байх ёстой'; err.classList.add('show'); return; }
+      err.classList.remove('show');
+      wdCustomFrom = from; wdCustomTo = to; wdRange = 'custom';
+      wdHistPage = 1; renderHistory();
+    }
+
     /* ── History ── */
     let wdHistPage = 1;
     const WD_HIST_PAGE_SIZE = 5;
 
     function renderHistory() {
-      const history = getWithdrawHistory().slice().sort((a, b) =>
-        new Date(b.date.replace(' ', 'T')) - new Date(a.date.replace(' ', 'T')));
+      const statusFilter = document.getElementById('wd-status-filter')?.value || 'all';
+      const history = getWithdrawHistory()
+        .filter(h => wdInRange(h.date) && (statusFilter === 'all' || h.status === statusFilter))
+        .slice().sort((a, b) =>
+          new Date(b.date.replace(' ', 'T')) - new Date(a.date.replace(' ', 'T')));
       const el = document.getElementById('wd-history');
       if (!history.length) {
         el.innerHTML = '<div class="hist-empty">Зарлагын түүх одоогоор алга</div>';
@@ -645,11 +776,26 @@
     }
 
     /* ── Init ── */
-    selectWdAccount('nominal');
-    renderBankAcctMenu();
-    updateWdSummary();
-    renderHistory();
-    lucide.createIcons();
+    (function checkWithdrawGate() {
+      if (!isTripartiteSigned()) {
+        document.getElementById('form-view').style.display = 'none';
+        const gate = document.getElementById('tripartite-gate');
+        gate.style.display = 'block';
+        renderOnboardingGate(gate, {
+          title: 'Мөнгө хүсэхийн тулд',
+          subtitle: 'Гурвалсан гэрээнд гарын үсэг зурснаар мөнгө хүсэх боломжтой болно.',
+          requiredSteps: ['tripartite'],
+        });
+        renderHistory();
+        lucide.createIcons();
+        return;
+      }
+      selectWdAccount('nominal');
+      renderBankAcctMenu();
+      updateWdSummary();
+      renderHistory();
+      lucide.createIcons();
+    })();
   </script>
 </body>
 </html>

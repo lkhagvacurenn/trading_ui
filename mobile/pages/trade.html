@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>(function(){try{const t=window.parent?.document?.documentElement?.getAttribute('data-theme')||localStorage.getItem('tradex-theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
   <style>
-    body { margin:0; font-family:'Manrope',sans-serif; background:var(--color-bg); color:var(--color-text-primary); }
+    body { margin:0; font-family:'Manrope',sans-serif; background:var(--color-bg); color:var(--color-text-primary); overflow-x: hidden; }
     * { box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
     /* ── Stock selector header ── */
@@ -464,8 +464,11 @@
     <div id="trade-chart" style="height:240px"></div>
   </div>
 
+  <!-- Onboarding gate (shown when not fully onboarded) -->
+  <div id="trade-gate" style="display:none"></div>
+
   <!-- Trade Form -->
-  <div class="trade-form">
+  <div class="trade-form" id="trade-form-wrap">
     <!-- Order type + Buy/Sell -->
     <div class="form-row">
       <div class="dd-trigger" id="order-type-trigger" onclick="toggleDropdown('order-type', event)">
@@ -640,6 +643,7 @@
   <script src="../../data/static.js"></script>
   <script src="../scripts/chart.js"></script>
   <script src="../scripts/wallet-data.js"></script>
+  <script src="../scripts/user-state.js"></script>
   <script>
     // ── Order book data ──
     const OB_DATA = [
@@ -945,13 +949,29 @@
     renderOrderBook();
     renderExecutedOrders();
     renderTradeHistory();
-    updateOrderSummary();
-    // Show wallet balance
-    try {
-      const b = getBalances();
-      const el = document.getElementById('trade-bal-value');
-      if (el) el.textContent = '₮' + (b.nominal||0).toLocaleString('mn-MN');
-    } catch(e) {}
+
+    // ── Onboarding gate ──
+    (function checkTradeGate() {
+      const formWrap = document.getElementById('trade-form-wrap');
+      const gate     = document.getElementById('trade-gate');
+      if (!isFullyOnboarded()) {
+        formWrap.style.display = 'none';
+        gate.style.display = 'block';
+        renderOnboardingGate(gate, {
+          title: 'Захиалга өгөхийн тулд',
+          subtitle: 'Доорх алхмуудыг дуусгаснаар арилжааны захиалга өгөх боломжтой болно.',
+          requiredSteps: ['open-account', 'kyc', 'tripartite'],
+        });
+      } else {
+        updateOrderSummary();
+        try {
+          const b = getBalances();
+          const el = document.getElementById('trade-bal-value');
+          if (el) el.textContent = '₮' + (b.nominal||0).toLocaleString('mn-MN');
+        } catch(e) {}
+      }
+    })();
+
     lucide.createIcons();
   </script>
 </body>

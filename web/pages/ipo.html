@@ -188,8 +188,8 @@
     </div>
   </div>
 
-  <!-- Balance card -->
-  <div class="ipo-balance-card">
+  <!-- Balance card (shown only when account + KYC done) -->
+  <div class="ipo-balance-card" id="ipo-bal-card">
     <div class="ipo-balance-info">
       <div class="ipo-balance-label">IPO Данс</div>
       <div class="ipo-balance-amt" id="ipo-balance">—</div>
@@ -200,8 +200,11 @@
     </button>
   </div>
 
+  <!-- Gate (shown when not fully onboarded) -->
+  <div id="ipo-gate" style="display:none;margin:16px 0"></div>
+
   <!-- Tabs -->
-  <div class="ipo-tabs">
+  <div class="ipo-tabs" id="ipo-tabs-bar">
     <button class="ipo-tab active" id="tab-btn-list"   onclick="switchTab('list')">Идэвхтэй IPO</button>
     <button class="ipo-tab"        id="tab-btn-orders" onclick="switchTab('orders')">Миний захиалга</button>
   </div>
@@ -239,6 +242,7 @@
 <div class="ipo-toast" id="ipo-toast"></div>
 
 <script src="../../data/static.js"></script>
+<script src="../scripts/user-state.js"></script>
 <script>
 const fmtM = v => '₮' + Math.round(v).toLocaleString('mn-MN');
 function go(key) { try { window.parent.navigateTo(key); } catch(e) {} }
@@ -453,11 +457,34 @@ function switchTab(tab) {
   if (tab === 'orders') renderOrders();
 }
 
-/* ── Init: default-select first open IPO ── */
-const firstOpen = IPO_LIST.find(i => i.status === 'open') || IPO_LIST[0];
-if (firstOpen) selectedIpo = firstOpen;
-renderCardList();
-renderDetail();
+/* ── Init: gate check then render ── */
+(function checkIpoGate() {
+  const balCard = document.getElementById('ipo-bal-card');
+  const tabsBar = document.getElementById('ipo-tabs-bar');
+
+  if (!isAccountOpened() || !isKYCDone()) {
+    balCard.style.display = 'none';
+  }
+
+  if (!isFullyOnboarded()) {
+    tabsBar.style.display = 'none';
+    document.getElementById('tab-list').style.display   = 'none';
+    document.getElementById('tab-orders').style.display = 'none';
+    const gate = document.getElementById('ipo-gate');
+    gate.style.display = 'block';
+    renderOnboardingGate(gate, {
+      title: 'IPO захиалга өгөхийн тулд',
+      subtitle: 'Доорх алхмуудыг дуусгаснаар IPO захиалга өгөх боломжтой болно.',
+      requiredSteps: ['open-account', 'kyc', 'tripartite'],
+    });
+    return;
+  }
+
+  const firstOpen = IPO_LIST.find(i => i.status === 'open') || IPO_LIST[0];
+  if (firstOpen) selectedIpo = firstOpen;
+  renderCardList();
+  renderDetail();
+})();
 </script>
 </body>
 </html>

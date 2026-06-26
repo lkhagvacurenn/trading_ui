@@ -458,7 +458,7 @@ function fVerifiable(id, label, kind, opts = {}) {
       <button type="button" class="verify-btn" id="${id}-vbtn" onclick="kycSendOtp('${id}','${kind}','${label}')">Баталгаажуулах</button>
     </div>
     <div class="verify-status" id="${id}-vstatus" style="display:none"><i data-lucide="check-circle"></i><span>Verified</span></div>
-    <div class="verify-hint" id="${id}-vhint">Please verify your ${label.toLowerCase()} to continue.</div>
+    <div class="verify-hint" id="${id}-vhint">Please verify your ${label.toLowerCase()} to Үргэлжлүүлэх.</div>
   </div>`;
 }
 function fRadio(id, label, options = ['Yes', 'No']) {
@@ -817,7 +817,7 @@ function renderCorporateUploads() {
 /* ════════════════════════════════════════════════════════
    VARIANT ASSEMBLY — each builder returns an array of wizard
    steps: { title, html, requireVerify }. requireVerify marks
-   the step that must pass the phone/email OTP gate to continue.
+   the step that must pass the phone/email OTP gate to Үргэлжлүүлэх.
 ════════════════════════════════════════════════════════ */
 function renderRepeatSection(icon, title, addLabel, makeTemplate) {
   const listId = uid('rep-list');
@@ -1065,8 +1065,8 @@ function renderStepShell(steps) {
   return steps.map((step, idx) => {
     const num = idx + 1;
     const isLast = idx === steps.length - 1;
-    const primaryAction = isLast ? 'submitKyc()' : (step.requireVerify ? `kycContinue(${num + 1})` : `kycGoStep(${num + 1})`);
-    const primaryBtn = `<button type="button" class="btn-primary" onclick="${primaryAction}">${isLast ? 'KYC илгээх' : 'Continue'}</button>`;
+    const primaryAction = isLast ? 'submitKyc()' : (step.requireVerify ? `kycҮргэлжлүүлэх(${num + 1})` : `kycGoStep(${num + 1})`);
+    const primaryBtn = `<button type="button" class="btn-primary" onclick="${primaryAction}">${isLast ? 'KYC илгээх' : 'Үргэлжлүүлэх'}</button>`;
     const nav = num === 1 ? primaryBtn : `<div class="btn-row">
         <button type="button" class="btn-outline" onclick="kycGoStep(${num - 1})"><i data-lucide="arrow-left"></i><span>Буцах</span></button>
         ${primaryBtn}
@@ -1101,7 +1101,7 @@ function kycGoStep(n) {
   window.scrollTo(0, 0);
   requestAnimationFrame(reportHeight);
 }
-function kycContinue(nextStep) {
+function kycҮргэлжлүүлэх(nextStep) {
   if (kycSteps[kycCurrentStep - 1].requireVerify && !kycVerifyGateOk()) return;
   kycGoStep(nextStep);
 }
@@ -1131,7 +1131,7 @@ function submitKyc() {
   localStorage.setItem('bdsec-kyc-done-date', new Date().toISOString().slice(0, 10));
   if (kycEmbeddedInFlow) {
     const btn = document.getElementById('kyc-success-btn');
-    btn.textContent = 'Continue to Tripartite Agreement';
+    btn.textContent = 'Үргэлжлүүлэх to Tripartite Agreement';
     btn.onclick = () => { try { window.parent.navigateTo('tripartite'); } catch (e) {} };
   }
   window.scrollTo(0, 0);
@@ -1183,7 +1183,7 @@ if (localStorage.getItem('bdsec-kyc-done') === '1') {
   successEl.style.display = 'flex';
   if (kycEmbeddedInFlow) {
     const btn = document.getElementById('kyc-success-btn');
-    btn.textContent = 'Continue to Tripartite Agreement';
+    btn.textContent = 'Үргэлжлүүлэх to Tripartite Agreement';
     btn.onclick = () => { try { window.parent.navigateTo('tripartite'); } catch (e) {} };
   }
 }

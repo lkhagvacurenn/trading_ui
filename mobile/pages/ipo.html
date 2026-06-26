@@ -127,8 +127,8 @@
 </head>
 <body>
 
-  <!-- Данс Balance Карт -->
-  <div class="balance-card">
+  <!-- Данс Balance Карт — shown only when account + KYC done -->
+  <div class="balance-card" id="ipo-balance-card">
     <div class="bc-left">
       <div class="bc-label">ҮЦТХТ дансны үлдэгдэл</div>
       <div class="bc-value">24,850.00 ₮</div>
@@ -223,6 +223,7 @@
 
   <div class="toast" id="toast"></div>
 
+  <script src="../scripts/user-state.js"></script>
   <script>
     function switchTab(tab, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -234,15 +235,46 @@
       try { window.parent.navigateTo('deposit'); } catch (e) {}
     }
     function orderIPO(sym) {
-      showToast(`IPO order placed for ${sym}`);
+      if (!isFullyOnboarded()) {
+        showToast('Захиалга өгөхийн өмнө бүртгэлээ дуусгана уу');
+        return;
+      }
+      showToast(`${sym} IPO захиалга амжилттай өгөгдлөө`);
     }
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.classList.add('show');
       clearTimeout(showToast._timer);
-      showToast._timer = setTimeout(() => t.classList.remove('show'), 1800);
+      showToast._timer = setTimeout(() => t.classList.remove('show'), 2200);
     }
+
+    // ── Gate: hide balance card without account/KYC; hide tabs without full onboarding ──
+    (function checkIpoGate() {
+      const balCard = document.getElementById('ipo-balance-card');
+      const tabsBar = document.querySelector('.tabs-bar');
+
+      // Balance card requires account + KYC
+      if (!isAccountOpened() || !isKYCDone()) {
+        balCard.style.display = 'none';
+      }
+
+      if (isFullyOnboarded()) { lucide.createIcons(); return; }
+
+      // Hide tabs + content, insert gate
+      tabsBar.style.display = 'none';
+      document.getElementById('tab-listed').style.display = 'none';
+      document.getElementById('tab-orders').style.display = 'none';
+      const gate = document.createElement('div');
+      gate.id = 'ipo-gate';
+      tabsBar.insertAdjacentElement('afterend', gate);
+      renderOnboardingGate(gate, {
+        title: 'IPO захиалга өгөхийн тулд',
+        subtitle: 'Доорх алхмуудыг дуусгаснаар IPO захиалга өгөх боломжтой болно.',
+        requiredSteps: ['open-account', 'kyc', 'tripartite'],
+      });
+      lucide.createIcons();
+    })();
   </script>
   <script>lucide.createIcons();</script>
 </body>

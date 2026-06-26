@@ -270,7 +270,10 @@
     <div class="page-title">Мөнгө хүсэх</div>
   </div>
 
-  <div class="wd-grid">
+  <!-- Tripartite gate (shown when agreement not signed) -->
+  <div id="wd-gate" style="display:none"></div>
+
+  <div id="wd-form-grid" class="wd-grid">
 
     <!-- LEFT: Form -->
     <div>
@@ -428,6 +431,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="../../data/static.js"></script>
+<script src="../scripts/user-state.js"></script>
 <script src="../scripts/components.js"></script>
 <script>
   /* ── Constants ── */
@@ -771,14 +775,28 @@
   function closeDetail() { document.getElementById('detail-overlay').classList.remove('show'); }
 
   /* ── Init ── */
-  refreshBalanceDisplay();
-  selBankId = MOCK_BANK_ACCOUNTS[0]?.id || null;
-  renderBankPickerList();
-  updateBankPickerHeader();
-  updateFee();
-  initDR();
-  renderHistory();
-  lucide.createIcons();
+  (function checkWdGate() {
+    if (isTripartiteSigned()) {
+      refreshBalanceDisplay();
+      selBankId = MOCK_BANK_ACCOUNTS[0]?.id || null;
+      renderBankPickerList();
+      updateBankPickerHeader();
+      updateFee();
+      initDR();
+    } else {
+      document.getElementById('wd-form-grid').style.display = 'none';
+      const gate = document.getElementById('wd-gate');
+      gate.style.display = 'block';
+      renderOnboardingGate(gate, {
+        title: 'Мөнгө хүсэхийн тулд',
+        subtitle: 'Гурвалсан гэрээ байгуулснаар дансруугаа мөнгө хүсэх боломжтой болно.',
+        requiredSteps: ['open-account', 'kyc', 'tripartite'],
+      });
+    }
+    initDR();
+    renderHistory();
+    lucide.createIcons();
+  })();
 </script>
 </body>
 </html>

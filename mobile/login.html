@@ -430,7 +430,7 @@
           <label class="field-label">Хэрэглэгчийн төрөл</label>
           <select class="inp inp-select" id="reg-usertype"><option>Хувь хүн</option><option>Байгууллага</option></select>
         </div>
-        <button class="btn-primary" onclick="regStep1Continue()">Үргэлжлүүлэх</button>
+        <button class="btn-primary" onclick="regStep1Үргэлжлүүлэх()">Үргэлжлүүлэх</button>
       </div>
 
       <!-- Step 2 -->
@@ -779,7 +779,7 @@ function setRegChar(c) {
 }
 
 /* ── Step 1 → save country / user type, adapt step 2 labels ── */
-function regStep1Continue() {
+function regStep1Үргэлжлүүлэх() {
   const country  = document.getElementById('reg-country').value;
   const usertype = document.getElementById('reg-usertype').value;
   localStorage.setItem('reg-country', country);
